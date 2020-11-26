@@ -7,12 +7,11 @@
             <div class="body">
                 <ul class="nav nav-tabs">                                
                     <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#Settings">General</a></li>
-                    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#email">Email</a></li>
-                    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#notification">Notification</a></li>
+                    {{-- <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#email">Email</a></li>
+                    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#notification">Notification</a></li> --}}
                 </ul>
             </div>
             <div class="tab-content">
-
                 <div class="tab-pane active" id="Settings">
                     <div class="body">
                         <form wire:submit.prevent="save">

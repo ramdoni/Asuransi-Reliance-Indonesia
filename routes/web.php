@@ -38,16 +38,25 @@ Route::group(['middleware' => ['auth','access:1']], function(){
 });
 
 // Sales and Business Development
-Route::group(['middleware' => ['auth','access:3']], function(){    
-    Route::get('customer',App\Http\Livewire\Customer\Index::class)->name('customer');
-    Route::get('customer/insert',App\Http\Livewire\Customer\Insert::class)->name('customer.insert');
-    Route::get('project',\App\Http\Livewire\Project\Index::class)->name('project');
-    Route::get('project/insert',\App\Http\Livewire\Project\Insert::class)->name('project.insert');
-});
-
-// Project Manager
-Route::group(['middleware' => ['auth','access:4']], function(){    
-    Route::get('vendor',App\Http\Livewire\Vendor\Index::class)->name('vendor');
-    Route::get('vendor/insert',App\Http\Livewire\Vendor\Insert::class)->name('vendor.insert');
-    Route::get('vendor/edit/{id}',App\Http\Livewire\Vendor\Edit::class)->name('vendor.edit');
+Route::group(['middleware' => ['auth','access:2']], function(){    
+    Route::get('coa-group',App\Http\Livewire\CoaGroup\Index::class)->name('coa-group');
+    Route::get('coa-group/insert',App\Http\Livewire\CoaGroup\Insert::class)->name('coa-group.insert');
+    Route::get('coa-group/edit/{id}',App\Http\Livewire\CoaGroup\Edit::class)->name('coa-group.edit');
+    Route::get('coa',App\Http\Livewire\Coa\Index::class)->name('coa');
+    Route::get('coa/insert',App\Http\Livewire\Coa\Insert::class)->name('coa.insert');
+    Route::get('coa/edit/{id}',App\Http\Livewire\Coa\Edit::class)->name('coa.edit');
+    Route::get('coa-type',App\Http\Livewire\CoaType\Index::class)->name('coa-type');
+    Route::get('coa-type/insert',App\Http\Livewire\CoaType\Insert::class)->name('coa-type.insert');
+    Route::get('coa-type/edit/{id}',App\Http\Livewire\CoaType\Edit::class)->name('coa-type.edit');
+    Route::get('journal',App\Http\Livewire\Journal\Index::class)->name('journal');
+    Route::get('bank-account',App\Http\Livewire\BankAccount\Index::class)->name('bank-account');
+    Route::get('bank-account/insert',App\Http\Livewire\BankAccount\Insert::class)->name('bank-account.insert');
+    Route::get('bank-account/edit/{id}',App\Http\Livewire\BankAccount\Edit::class)->name('bank-account.edit');
+    Route::get('account-payable',App\Http\Livewire\AccountPayable\Index::class)->name('account-payable');
+    Route::get('account-payable/insert',App\Http\Livewire\AccountPayable\Insert::class)->name('account-payable.insert');
+    Route::get('account-receivable',App\Http\Livewire\AccountReceivable\Index::class)->name('account-receivable');
+    Route::get('account-receivable/insert',App\Http\Livewire\AccountReceivable\Insert::class)->name('account-receivable.insert');
+    Route::get('code-cashflow',App\Http\Livewire\CodeCashflow\Index::class)->name('code-cashflow');
+    Route::get('code-cashflow/insert',App\Http\Livewire\CodeCashflow\Insert::class)->name('code-cashflow.insert');
+    Route::get('code-cashflow/edit/{id}',App\Http\Livewire\CodeCashflow\Edit::class)->name('code-cashflow.edit');
 });

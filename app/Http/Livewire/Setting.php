@@ -61,7 +61,7 @@ class Setting extends Component
             $this->validate([
                 'favicon' => 'image:max:1024', // 1Mb Max
             ]);
-            $name = 'favicon.'.$this->favicon->extension();
+            $name = 'favicon'.date('YmdHis').'.'.$this->favicon->extension();
             $this->favicon->storePubliclyAs('public',$name);
 
             update_setting('favicon',$name);

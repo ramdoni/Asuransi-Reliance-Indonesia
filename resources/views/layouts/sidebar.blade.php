@@ -71,6 +71,36 @@
                             </ul>
                         </li>
                         @endif
+                        @if(\Auth::user()->user_access_id==2)<!--Finance-->     
+                        <li class="{{ Request::segment(1) === 'account-payable' ? 'active' : null }}">
+                            <a href="{{route('account-payable')}}"><i class="fa fa-briefcase"></i> <span>Account Payable</span></a>
+                        </li>
+                        <li class="{{ Request::segment(1) === 'account-receivable' ? 'active' : null }}">
+                            <a href="{{route('account-receivable')}}"><i class="fa fa-briefcase"></i> <span>Account Receivable</span></a>
+                        </li>
+                        <li class="{{ Request::segment(1) === 'journal' ? 'active' : null }}">
+                            <a href="{{route('bank-account')}}"><i class="fa fa-database"></i> <span>Bank Account</span></a>
+                        </li>
+                        <li class="{{ Request::segment(1) === 'code-cashflow' ? 'active' : null }}">
+                            <a href="{{route('code-cashflow')}}"><i class="fa fa-database"></i> <span>Code Cashflow</span></a>
+                        </li>
+                        <li class="{{ (Request::segment(1) === 'coa' || Request::segment(1) === 'coa-group' || Request::segment(1) === 'coa-type') ? 'active' : null }}">
+                            <a href="#App" class="has-arrow"><i class="fa fa-database"></i> <span>COA</span></a>
+                            <ul>
+                                <li class="{{ Request::segment(1) === 'coa' ? 'active' : null }}"><a href="{{route('coa')}}">COA</a></li>
+                                <li class="{{ Request::segment(1) === 'coa-group' ? 'active' : null }}"><a href="{{route('coa-group')}}">COA Groups</a></li>
+                                <li class="{{ Request::segment(1) === 'coa-type' ? 'active' : null }}"><a href="{{route('coa-type')}}">COA Types</a></li>
+                            </ul>
+                        </li>
+                        <li class="{{ (Request::segment(1) === 'journal' || Request::segment(1) === 'cash-flow' || Request::segment(1) === 'balance-sheet') ? 'active' : null }}">
+                            <a href="#App" class="has-arrow"><i class="fa fa-clipboard"></i> <span>Reports</span></a>
+                            <ul>
+                                <li class="{{ Request::segment(1) === 'journal' ? 'active' : null }}"><a href="{{route('journal')}}">Journal</a></li>
+                                <li class="{{ Request::segment(1) === 'cash-flow' ? 'active' : null }}"><a href=""">Cash Flow</a></li>
+                                <li class="{{ Request::segment(1) === 'balance-sheet' ? 'active' : null }}"><a href="">Balance Sheet</a></li>
+                            </ul>
+                        </li>  
+                        @endif
                     </ul>
                 </nav>
             </div>
