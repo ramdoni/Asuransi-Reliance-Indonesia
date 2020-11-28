@@ -7,6 +7,13 @@
             <div class="body">
                 <form id="basic-form" method="post" wire:submit.prevent="save">
                     <div class="form-group">
+                        <label>{{ __('Code') }}</label>
+                        <input type="text" class="form-control" wire:model="code" >
+                        @error('code')
+                        <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                        @enderror
+                    </div>
+                    <div class="form-group">
                         <label>{{ __('Bank') }}</label>
                         <input type="text" class="form-control" wire:model="bank" >
                         @error('bank')

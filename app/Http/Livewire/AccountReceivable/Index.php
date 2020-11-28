@@ -13,11 +13,11 @@ class Index extends Component
     
     public function render()
     {
-        $data = \App\Models\Journal::orderBy('id','desc')->where('type',2);
+        $data = \App\Models\Income::orderBy('id','desc');
 
         if($this->keyword) $data = $data->where('description','LIKE', "%{$this->keyword}%")
                                         ->orWhere('no_voucher','LIKE',"%{$this->keyword}%")
-                                        ->orWhere('kredit','LIKE',"{$this->keyword}");
+                                        ;
 
         if($this->coa_id) $data = $data->where('coa_id',$this->coa_id);
 

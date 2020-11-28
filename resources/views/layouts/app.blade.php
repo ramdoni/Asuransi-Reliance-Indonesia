@@ -22,7 +22,46 @@
         <!-- Custom Css -->
         <link rel="stylesheet" href="{{ asset('assets/css/main.css') }}">
         <link rel="stylesheet" href="{{ asset('assets/css/color_skins.css') }}">
-
+        <style>
+            .theme-cyan .page-loader-wrapper{
+                background:#49c5b645;
+            }
+            .lds-ring {
+                display: inline-block;
+                position: relative;
+                width: 80px;
+                height: 80px;
+            }
+            .lds-ring div {
+                box-sizing: border-box;
+                display: block;
+                position: absolute;
+                width: 64px;
+                height: 64px;
+                margin: 8px;
+                border: 8px solid #fff;
+                border-radius: 50%;
+                animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+                border-color: #fff transparent transparent transparent;
+            }
+            .lds-ring div:nth-child(1) {
+                animation-delay: -0.45s;
+            }
+            .lds-ring div:nth-child(2) {
+                animation-delay: -0.3s;
+            }
+            .lds-ring div:nth-child(3) {
+                animation-delay: -0.15s;
+            }
+            @keyframes lds-ring {
+                0% {
+                    transform: rotate(0deg);
+                }
+                100% {
+                transform: rotate(360deg);
+                }
+            }
+        </style>
         @stack('after-styles')
 
         @if (trim($__env->yieldContent('page-styles')))
@@ -42,6 +81,7 @@
                 <p>Please wait...</p>        
             </div>
         </div>
+
         <div id="wrapper">
             @include('layouts.navbar')
             @include('layouts.sidebar')
@@ -73,14 +113,14 @@
                                     @endif
                                 </ul>
                             </div>            
-                            <div class="col-lg-7 col-md-4 col-sm-12 text-right">
-                                <div class="inlineblock text-center m-r-15 m-l-15 hidden-sm">
-                                    <div class="sparkline text-left" data-type="line" data-width="8em" data-height="20px" data-line-Width="1" data-line-Color="#00c5dc"
+                            <div class="text-right col-lg-7 col-md-4 col-sm-12">
+                                <div class="text-center inlineblock m-r-15 m-l-15 hidden-sm">
+                                    <div class="text-left sparkline" data-type="line" data-width="8em" data-height="20px" data-line-Width="1" data-line-Color="#00c5dc"
                                         data-fill-Color="transparent">3,5,1,6,5,4,8,3</div>
                                     <span>Visitors</span>
                                 </div>
-                                <div class="inlineblock text-center m-r-15 m-l-15 hidden-sm">
-                                    <div class="sparkline text-left" data-type="line" data-width="8em" data-height="20px" data-line-Width="1" data-line-Color="#f4516c"
+                                <div class="text-center inlineblock m-r-15 m-l-15 hidden-sm">
+                                    <div class="text-left sparkline" data-type="line" data-width="8em" data-height="20px" data-line-Width="1" data-line-Color="#f4516c"
                                         data-fill-Color="transparent">4,6,3,2,5,6,5,4</div>
                                     <span>Visits</span>
                                 </div>

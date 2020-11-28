@@ -19,15 +19,15 @@
             <hr>
             <ul class="row list-unstyled">
                 @if(\Auth::user()->user_access_id==3)<!--Sales and Business Development-->
-                <li class="col-4 text-center">
+                <li class="text-center col-4">
                     <small>Opportunity</small>
                     <h6>{{count_project_status(1)}}</h6>
                 </li>
-                <li class="col-4 text-center">
+                <li class="text-center col-4">
                     <small>Successful</small>
                     <h6>{{count_project_status(2)}}</h6>
                 </li>
-                <li class="col-4 text-center">
+                <li class="text-center col-4">
                     <small>Unsuccessful</small>
                     <h6>{{count_project_status(3)}}</h6>
                 </li>
@@ -72,6 +72,12 @@
                         </li>
                         @endif
                         @if(\Auth::user()->user_access_id==2)<!--Finance-->     
+                        <li class="{{ Request::segment(1) === 'policy' ? 'active' : null }}">
+                            <a href="{{route('policy')}}"><i class="fa fa-database"></i> <span>Polis</span></a>
+                        </li>
+                        <li class="{{ Request::segment(1) === 'data-teknis' ? 'active' : null }}">
+                            <a href="{{route('data-teknis')}}"><i class="fa fa-upload"></i> <span>Data Teknis</span></a>
+                        </li>
                         <li class="{{ Request::segment(1) === 'account-payable' ? 'active' : null }}">
                             <a href="{{route('account-payable')}}"><i class="fa fa-briefcase"></i> <span>Account Payable</span></a>
                         </li>

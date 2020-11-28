@@ -1,6 +1,6 @@
 @section('title', __('Account Receivable'))
 @section('parentPageTitle', 'Home')
-<div class="row clearfix">
+<div class="clearfix row">
     <div class="col-md-4">
         <div class="card">
             <div class="body">
@@ -48,8 +48,8 @@
                         @enderror
                     </div>
                     <hr>
-                    <a href="{{route('coa')}}"><i class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
-                    <button type="submit" class="btn btn-primary ml-3"><i class="fa fa-save"></i> {{ __('Save') }}</button>
+                    <a href="{{route('account-receivable')}}"><i class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
+                    <button type="submit" class="ml-3 btn btn-primary"><i class="fa fa-save"></i> {{ __('Save') }}</button>
                 </form>
             </div>
         </div>

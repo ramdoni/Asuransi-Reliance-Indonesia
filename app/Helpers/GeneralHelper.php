@@ -1,5 +1,17 @@
 <?php
 
+function replace_idr($nominal)
+{
+    if($nominal == "") return 0;
+
+    $nominal = str_replace('Rp. ', '', $nominal);
+    $nominal = str_replace(' ', '', $nominal);
+    $nominal = str_replace('.', '', $nominal);
+    $nominal = str_replace(',', '', $nominal);
+
+    return (int)$nominal;
+}
+
 function get_group_cashflow($key="")
 {
     $data = [1=>'Operation Activities',2=>'Investment Activities',3=>'Financing Activities'];

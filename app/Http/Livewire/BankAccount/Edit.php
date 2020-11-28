@@ -6,7 +6,7 @@ use Livewire\Component;
 
 class Edit extends Component
 {
-    public $owner,$bank,$no_rekening,$cabang,$data,$open_balance;
+    public $owner,$bank,$no_rekening,$cabang,$data,$open_balance,$code;
     public function render()
     {
         return view('livewire.bank-account.edit');
@@ -20,11 +20,13 @@ class Edit extends Component
         $this->no_rekening = $this->data->no_rekening;
         $this->cabang = $this->data->cabang;
         $this->open_balance = $this->data->open_balance;
+        $this->code = $this->data->code;
     }
 
     public function save()
     {
         $this->validate([
+            'code'=>'required',
             'owner'=>'required',
             'bank'=>'required',
             'no_rekening'=>'required',
@@ -37,6 +39,7 @@ class Edit extends Component
         $this->data->no_rekening = $this->no_rekening;
         $this->data->cabang = $this->cabang;
         $this->data->open_balance = $this->open_balance;
+        $this->data->code = $this->code;
         $this->data->save();
         
         session()->flash('message-success',__('Data saved successfully'));

@@ -18,6 +18,7 @@
                         <thead>
                             <tr>
                                 <th>No</th>
+                                <th>Code</th>                                    
                                 <th>Bank</th>                                    
                                 <th>No Rekening</th>                                    
                                 <th>Owner</th>                                    
@@ -30,6 +31,7 @@
                             @foreach($data as $k => $item)
                             <tr>
                                 <td style="width: 50px;">{{$k+1}}</td>
+                                <td><a href="{{route('bank-account.edit',['id'=>$item->id])}}">{{$item->code}}</a></td>
                                 <td><a href="{{route('bank-account.edit',['id'=>$item->id])}}">{{$item->bank}}</a></td>
                                 <td>{{$item->no_rekening}}</td>
                                 <td>{{$item->owner}}</td>

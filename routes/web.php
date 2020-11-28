@@ -56,7 +56,11 @@ Route::group(['middleware' => ['auth','access:2']], function(){
     Route::get('account-payable/insert',App\Http\Livewire\AccountPayable\Insert::class)->name('account-payable.insert');
     Route::get('account-receivable',App\Http\Livewire\AccountReceivable\Index::class)->name('account-receivable');
     Route::get('account-receivable/insert',App\Http\Livewire\AccountReceivable\Insert::class)->name('account-receivable.insert');
+    Route::get('account-receivable/edit/{id}',App\Http\Livewire\AccountReceivable\Edit::class)->name('account-receivable.edit');
     Route::get('code-cashflow',App\Http\Livewire\CodeCashflow\Index::class)->name('code-cashflow');
     Route::get('code-cashflow/insert',App\Http\Livewire\CodeCashflow\Insert::class)->name('code-cashflow.insert');
     Route::get('code-cashflow/edit/{id}',App\Http\Livewire\CodeCashflow\Edit::class)->name('code-cashflow.edit');
+    Route::get('data-teknis',App\Http\Livewire\DataTeknis\Index::class)->name('data-teknis');
+    Route::get('policy',App\Http\Livewire\Policy\Index::class)->name('policy');
+    Route::get('policy/insert',App\Http\Livewire\Policy\Insert::class)->name('policy.insert');
 });

@@ -1,7 +1,7 @@
-@section('title', 'Account Payable')
+@section('title', 'Account Receivable')
 @section('parentPageTitle', 'Home')
 
-<div class="row clearfix">
+<div class="clearfix row">
     <div class="col-lg-12">
         <div class="card">
             <div class="header row">
@@ -16,39 +16,67 @@
                         @endforeach
                     </select>
                 </div>
+                <div class="col-md-2">
+                    <select class="form-control" wire:model="status">
+                        <option value=""> --- Status --- </option>
+                        <option value="1"> Waiting </option>
+                        <option value="2"> Kurang Bayar </option>
+                        <option value="3"> Complete </option>
+                    </select>
+                </div>
                 <div class="col-md-1">
                     <a href="{{route('account-receivable.insert')}}" class="btn btn-primary"><i class="fa fa-plus"></i> Account Receivable</a>
                 </div>
             </div>
-            <div class="body">
+            <div class="pt-0 body">
                 <div class="table-responsive">
-                    <table class="table table-striped m-b-0 c_list">
+                    <table class="table table-striped table-hover m-b-0 c_list">
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th>COA</th>                                    
-                                <th>No Voucher</th>                                    
-                                <th>Date</th>                                    
-                                <th>Account</th>
+                                <th>Voucher No</th>                                    
+                                <th>Debit Note</th>                                    
+                                <th>DN Date</th>                                    
+                                <th>Police No</th>                                    
+                                <th>Customer/Police Holder</th>
                                 <th>Description</th>
-                                <th>Nominal</th>
-                                <th>Saldo</th>
+                                <th>Tax Inclusive Amount</th>
+                                <th>Tax Code</th>
+                                <th>Exclusive Amount</th>
+                                <th>Tax Amount</th>
+                                <th>Outstanding Balance</th>
+                                <th>Status</th>
+                                <th>Account Number</th>
+                                <th>Received Amount</th>
+                                <th>Payment Date</th>
+                                <th>Bank Code</th>
                                 <th></th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($data as $k => $item)
-                            <tr>
-                                <td style="width: 50px;">{{$k+1}}</td>
-                                <td>{{isset($item->coa->code) ? $item->coa->code : ''}}</td>
-                                <td>{{$item->no_voucher}}</td>
-                                <td>{{$item->date_journal}}</td>
-                                <td>{{isset($item->coa->name) ? $item->coa->name : ''}}</td>
-                                <td>{{$item->description}}</td>
-                                <td>{{format_idr($item->debit)}}</td>
-                                <td>{{format_idr($item->saldo)}}</td>
-                                <td><a href="javascript:void(0)" wire:click="delete({{$item->id}})" class="text-danger"><i class="fa fa-trash"></i></a></td>
-                            </tr>
+                                <tr>
+                                    <td style="width: 50px;">{{$k+1}}</td>
+                                    <td>{{$item->no_voucher ? $item->no_voucher : '-'}}</td>
+                                    <td><a href="{{route('account-receivable.edit',['id'=>$item->id])}}">{{$item->debit_note ? $item->debit_note : '-'}}</a></td>
+                                    <td>{{$item->debit_note_date ? $item->debit_note_date : '-'}}</td>
+                                    <td>{{isset($item->policys->no_polis) ? $item->policys->no_polis : '-'}}</td>
+                                    <td>{{isset($item->policys->pemegang_polis) ? $item->policys->pemegang_polis : '-'}}</td>
+                                    <td>{{$item->description ? $item->description : '-'}}</td>
+                                    <td>{{isset($item->tax->name) ? $item->tax->name : '-'}}</td>
+                                    <td>{{isset($item->tax->code) ? $item->tax->code : '-'}}</td>
+                                    <td>{{isset($item->amount) ? $item->amount : '-'}}</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td><a href="{{route('account-receivable.edit',['id'=>$item->id])}}">{!!status_income($item->status)!!}</a></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>{{isset($item->bank->name)?$item->bank->name : '-'}}</td>
+                                    <td>
+                                        <a href="{{route('account-receivable.edit',['id'=>$item->id])}}" class="btn btn-info btn-sm"><i class="fa fa-arrow-right"></i> Process</a>
+                                    </td>
+                                </tr>
                             @endforeach
                         </tbody>
                     </table>
