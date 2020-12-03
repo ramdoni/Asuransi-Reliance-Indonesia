@@ -8,7 +8,7 @@
                 <div class="col-md-2">
                     <input type="text" class="form-control" wire:model="keyword" placeholder="Searching..." />
                 </div>
-                <div class="col-md-2">
+                <div class="px-0 col-md-2">
                     <select class="form-control" wire:model="coa_id">
                         <option value=""> --- COA --- </option>
                         @foreach(\App\Models\Coa::orderBy('name','ASC')->get() as $i)
@@ -16,15 +16,15 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-1">
                     <select class="form-control" wire:model="status">
-                        <option value=""> --- Status --- </option>
+                        <option value=""> - Status - </option>
                         <option value="1"> Waiting </option>
                         <option value="2"> Kurang Bayar </option>
                         <option value="3"> Complete </option>
                     </select>
                 </div>
-                <div class="col-md-1">
+                <div class="px-0 col-md-1">
                     <a href="{{route('account-receivable.insert')}}" class="btn btn-primary"><i class="fa fa-plus"></i> Account Receivable</a>
                 </div>
             </div>
@@ -58,23 +58,31 @@
                                 <tr>
                                     <td style="width: 50px;">{{$k+1}}</td>
                                     <td>{{$item->no_voucher ? $item->no_voucher : '-'}}</td>
-                                    <td><a href="{{route('account-receivable.edit',['id'=>$item->id])}}">{{$item->debit_note ? $item->debit_note : '-'}}</a></td>
+                                    <td>
+                                        @if($item->status==3)
+                                            <a href="{{route('account-receivable.view',['id'=>$item->id])}}">{{$item->debit_note ? $item->debit_note : '-'}}</a>
+                                        @else
+                                            <a href="{{route('account-receivable.edit',['id'=>$item->id])}}">{{$item->debit_note ? $item->debit_note : '-'}}</a>
+                                        @endif
+                                    </td>
                                     <td>{{$item->debit_note_date ? $item->debit_note_date : '-'}}</td>
                                     <td>{{isset($item->policys->no_polis) ? $item->policys->no_polis : '-'}}</td>
                                     <td>{{isset($item->policys->pemegang_polis) ? $item->policys->pemegang_polis : '-'}}</td>
                                     <td>{{$item->description ? $item->description : '-'}}</td>
+                                    <td>{{format_idr($item->nominal)}}</td>
                                     <td>{{isset($item->tax->name) ? $item->tax->name : '-'}}</td>
                                     <td>{{isset($item->tax->code) ? $item->tax->code : '-'}}</td>
                                     <td>{{isset($item->amount) ? $item->amount : '-'}}</td>
-                                    <td></td>
-                                    <td></td>
+                                    <td>{{format_idr($item->outstanding_balance)}}</td>
                                     <td><a href="{{route('account-receivable.edit',['id'=>$item->id])}}">{!!status_income($item->status)!!}</a></td>
                                     <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td>{{isset($item->bank->name)?$item->bank->name : '-'}}</td>
+                                    <td>{{format_idr($item->payment_amount)}}</td>
+                                    <td>{{date('d-M-Y',strtotime($item->payment_date))}}</td>
+                                    <td>{{isset($item->bank_account->code)?$item->bank_account->code : '-'}}</td>
                                     <td>
+                                        @if($item->status!=3)
                                         <a href="{{route('account-receivable.edit',['id'=>$item->id])}}" class="btn btn-info btn-sm"><i class="fa fa-arrow-right"></i> Process</a>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

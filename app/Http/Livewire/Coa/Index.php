@@ -21,8 +21,8 @@ class Index extends Component
         return view('livewire.coa.index')->with(['data'=>$data->paginate(50)]);
     }
 
-    public function delete($id)
-    {
-        \App\Models\Coa::find($id)->delete();
-    }
+    // public function delete($id)
+    // {
+    //     \App\Models\Coa::find($id)->delete();
+    // }
 }

@@ -17,7 +17,7 @@ class Insert extends Component
         $this->validate([
             'group'=>'required',
             'name'=>'required',
-            'group'=>'required'
+            'code'=>'required'
         ]);
 
         $data = new \App\Models\CodeCashflow();

@@ -15,9 +15,10 @@ class Index extends Component
     {
         $data = \App\Models\Teknis::orderBy('id','DESC');
         if($this->keyword) 
-            $data = $data->where('no_debit_note','LIKE',"{$this->keyword}")
-                            ->orWhere('no_polis','LIKE',"{$this->keyword}")
-                            ->orWhere('pemegang_polis','LIKE',"{$this->keyword}")
+            $data = $data->where('no_debit_note','LIKE',"%{$this->keyword}%")
+                            ->orWhere('no_polis','LIKE',"%{$this->keyword}%")
+                            ->orWhere('pemegang_polis','LIKE',"%{$this->keyword}%")
+                            ->orWhere('bulan','LIKE',"%{$this->keyword}%")
                             ;
 
         return view('livewire.data-teknis.index')->with(['data'=>$data->paginate(100)]);

@@ -17,4 +17,12 @@
     <div class="modal-footer">
         <button type="submit" class="btn btn-info close-modal"><i class="fa fa-upload"></i> Upload</button>
     </div>
+    <div wire:loading>
+        <div class="page-loader-wrapper" style="display:block">
+            <div class="loader" style="display:block">
+                <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+                <p>Please wait...</p>        
+            </div>
+        </div>
+    </div>
 </form>

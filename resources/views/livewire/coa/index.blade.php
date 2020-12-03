@@ -1,14 +1,14 @@
 @section('title', 'COA')
 @section('parentPageTitle', 'Home')
 
-<div class="row clearfix">
+<div class="clearfix row">
     <div class="col-lg-12">
         <div class="card">
             <div class="header row">
                 <div class="col-md-2">
                     <input type="text" class="form-control" wire:model="keyword" placeholder="Searching..." />
                 </div>
-                <div class="col-md-2">
+                <div class="px-0 col-md-2">
                     <select class="form-control" wire:model="coa_group_id">
                         <option value=""> --- COA Group --- </option>
                         @foreach(\App\Models\CoaGroup::orderBy('name','ASC')->get() as $i)
@@ -20,7 +20,7 @@
                     <a href="{{route('coa.insert')}}" class="btn btn-primary"><i class="fa fa-plus"></i> COA</a>
                 </div>
             </div>
-            <div class="body">
+            <div class="pt-0 body">
                 <div class="table-responsive">
                     <table class="table table-striped m-b-0 c_list">
                         <thead>
@@ -32,7 +32,7 @@
                                 <th>Account Type</th>
                                 <th>Code Voucher</th>
                                 <th>Description</th>
-                                <th></th>
+                                {{-- <th></th> --}}
                             </tr>
                         </thead>
                         <tbody>
@@ -45,7 +45,7 @@
                                 <td>{{isset($item->type->name) ? $item->type->name : ''}}</td>
                                 <td>{{$item->code_voucher}}</td>
                                 <td>{{$item->description}}</td>
-                                <td><a href="javascript:void(0)" wire:click="delete({{$item->id}})" class="text-danger"><i class="fa fa-trash"></i></a></td>
+                                {{-- <td><a href="javascript:void(0)" wire:click="delete({{$item->id}})" class="text-danger"><i class="fa fa-trash"></i></a></td> --}}
                             </tr>
                             @endforeach
                         </tbody>

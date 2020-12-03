@@ -14,7 +14,10 @@ class Index extends Component
     public function render()
     {
         $data = \App\Models\Policy::orderBy('id','desc');
-
+        if($this->keyword) $data = $data->where('no_polis','LIKE',"%{$this->keyword}%")
+                                        ->orWhere('pemegang_polis','LIKE',"%{$this->keyword}%")
+                                        ->orWhere('alamat','LIKE',"%{$this->keyword}%")
+                                        ->orWhere('produk','LIKE',"%{$this->keyword}%");
         return view('livewire.policy.index')->with(['data'=>$data->paginate(50)]);
     }
 }

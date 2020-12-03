@@ -1,6 +1,6 @@
 <form wire:submit.prevent="save">
     <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel"><i class="fa fa-plus"></i> Upload Data Conven</h5>
+        <h5 class="modal-title" id="exampleModalLabel"><i class="fa fa-plus"></i> Upload Data</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true close-btn">×</span>
         </button>

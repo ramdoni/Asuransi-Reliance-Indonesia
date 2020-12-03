@@ -20,28 +20,43 @@
             </div>
             <div class="body">
                 <div class="table-responsive">
-                    <table class="table table-striped m-b-0 c_list">
+                    <table class="table table-striped m-b-0 table-hover c_list">
                         <thead>
                             <tr>
                                 <th>No</th>
+                                <th>Bulan</th>                                    
                                 <th>No Debit Note</th>                                    
                                 <th>No Polis</th>                                    
                                 <th>Pemegang Polis</th>                                    
-                                <th>Type</th>                                    
-                                <th>Nominal</th>
-                                <th></th>
+                                {{-- <th>Alamat</th>                                    
+                                <th>Produk</th> --}}
+                                <th>Jumlah Kepesertaan</th>
+                                <th>Nilai Manfaat</th>
+                                <th>Premi / Kontribusi</th>
+                                <th>Diskon</th>
+                                <th>Jumlah Diskon</th>
+                                <th>Premi Netto</th>
                             </tr>
                         </thead>
                         <tbody>
+                            @php($num=$data->firstItem())
                             @foreach($data as $k => $item)
                             <tr>
-                                <td style="width: 50px;">{{$k+1}}</td>
+                                <td style="width: 50px;">{{$num}}</td>
+                                <td>{{$item->bulan}}</td>
                                 <td>{{$item->no_debit_note}}</td>
                                 <td>{{$item->no_polis}}</td>
                                 <td>{{$item->pemegang_polis}}</td>
-                                <td></td>
-                                <td></td>
+                                {{-- <td>{{$item->alamat}}</td>
+                                <td>{{$item->jenis_produk}}</td> --}}
+                                <td>{{$item->jml_kepesertaan}}</td>
+                                <td>{{format_idr($item->nilai_manfaat)}}</td>
+                                <td>{{format_idr($item->kontribusi)}}</td>
+                                <td>{{format_idr($item->pot_langsung)}}</td>
+                                <td>{{format_idr($item->jumlah_diskon)}}</td>
+                                <td>{{format_idr($item->net_kontribusi)}}</td>
                             </tr>
+                            @php($num++)
                             @endforeach
                             @if(count($data)==0)
                             <tr>
@@ -62,14 +77,6 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <livewire:data-teknis.upload-sariah>
-        </div>
-    </div>
-</div>
-
-<div wire:ignore.self class="modal fade" id="modal_upload_teknis_conven" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <livewire:data-teknis.upload-conven>
         </div>
     </div>
 </div>

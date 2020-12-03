@@ -27,15 +27,15 @@ class Edit extends Component
     public function save()
     {
         $this->validate([
-            'coa_group_id'=>'required',
-            'code'=>'required',
+            //'coa_group_id'=>'required',
+            //'code'=>'required',
             'name'=>'required',
             'coa_type_id'=>'required',
             'code_voucher'=>'required'
         ]);
         
-        $this->data->coa_group_id = $this->coa_group_id;
-        $this->data->code = $this->code;
+        //$this->data->coa_group_id = $this->coa_group_id;
+        //$this->data->code = $this->code;
         $this->data->name = $this->name;
         $this->data->coa_type_id = $this->coa_type_id;
         $this->data->description = $this->description;

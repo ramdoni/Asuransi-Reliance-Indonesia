@@ -1,5 +1,12 @@
 <?php
 
+function month()
+{
+    $month = [1=>"Januari",2=>"Februari",3=>"Maret",4=>"April",5=>"Mei",6=>"Juni",7=>"Juli",8=>"Agustus",9=>"September",10=>"Oktober",11=>"November",12=>"Desember"];
+
+    return $month;
+}
+
 function replace_idr($nominal)
 {
     if($nominal == "") return 0;
@@ -8,6 +15,8 @@ function replace_idr($nominal)
     $nominal = str_replace(' ', '', $nominal);
     $nominal = str_replace('.', '', $nominal);
     $nominal = str_replace(',', '', $nominal);
+    $nominal = str_replace('(', '', $nominal);
+    $nominal = str_replace(')', '', $nominal);
 
     return (int)$nominal;
 }
@@ -20,6 +29,15 @@ function get_group_cashflow($key="")
     return $data;
 }
 
+function generate_no_voucher_konven_underwriting($coa_id)
+{
+    $coa = \App\Models\Coa::find($coa_id);
+    $count = \App\Models\KonvenUnderwriting::whereMonth('created_at',date('m'))->whereYear('created_at',date('Y'))->count()+1;
+    
+    if($coa) return $coa->code_voucher.'-'.str_pad($count,3, '0', STR_PAD_LEFT).'/'.date('m').'/'.date('Y');
+
+    return '';
+}
 function generate_no_voucher($coa_id)
 {
     $coa = \App\Models\Coa::find($coa_id);
@@ -32,6 +50,8 @@ function generate_no_voucher($coa_id)
 
 function format_idr($number)
 {
+    if(empty($number)) return 0;
+
     return number_format($number,0,0,'.');
 }
 

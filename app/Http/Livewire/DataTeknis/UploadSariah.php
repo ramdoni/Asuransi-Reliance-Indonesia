@@ -120,6 +120,18 @@ class UploadSariah extends Component
                 $channel = $i[83];
                 $gross_ajri_peserta_yang_direaskan = $i[84];
 
+                // cek no polis
+                $polis = \App\Models\Policy::where('no_polis',$no_polis)->first();
+                if(!$polis){
+                    $polis = new \App\Models\Policy();
+                    $polis->no_polis = $no_polis;
+                    $polis->pemegang_polis = $pemegang_polis;
+                    $polis->alamat = $alamat;
+                    $polis->cabang = $cabang;
+                    $polis->produk = $jenis_produk;
+                    $polis->save();
+                }
+
                 $data = new \App\Models\Teknis();
                 $data->user_id = \Auth::user()->id;
                 $data->bulan = $bulan;
@@ -206,8 +218,53 @@ class UploadSariah extends Component
                 $data->gross_ajri_peserta_yang_direaskan = $gross_ajri_peserta_yang_direaskan;
                 $data->gross_ajri_peserta_yang_direaskan = $gross_ajri_peserta_yang_direaskan;
                 $data->save();
+
+                // kredit
+                if(!empty($net_kontribusi)){
+                    $new = new \App\Models\Income();
+                    $new->teknis_id = $data->id;
+                    $new->debit_note = $no_debit_note;
+                    $new->nominal = $net_kontribusi;
+                    $new->policy_id = $polis->id;
+                    $new->save();
+                }
+                // debit
+                if(!empty($jml_discount)){
+                    $new = new \App\Models\Expenses();
+                    $new->nominal = $jml_discount;
+                    $new->recipient = $pemegang_polis;
+                    $new->reference_type = 'Diskon';
+                    $new->reference_no = $no_debit_note;
+                    $new->reference_date = $tanggal_produksi;
+                    $new->policy_id = $polis->id;
+                    $new->save();
+                }
+                // debit
+                if(!empty($kontribusi_netto_reas)){
+                    $new = new \App\Models\Expenses();
+                    $new->nominal = $kontribusi_netto_reas;
+                    $new->recipient = $pemegang_polis;
+                    $new->reference_type = 'Premi Reas';
+                    $new->reference_no = $no_debit_note;
+                    $new->reference_date = $tanggal_produksi;
+                    $new->policy_id = $polis->id;
+                    $new->save();
+                }
+                // debit
+                if(!empty($kontribusi_netto_reas)){
+                    $new = new \App\Models\Expenses();
+                    $new->nominal = $kontribusi_netto_reas;
+                    $new->recipient = $pemegang_polis;
+                    $new->reference_type = 'Premi Reas';
+                    $new->reference_no = $no_debit_note;
+                    $new->reference_date = $tanggal_produksi;
+                    $new->policy_id = $polis->id;
+                    $new->save();
+                }
             }
-            $this->emitTo('data-teknis.index','listenHideModal');
+            session()->flash('message-success','Upload success !');
+            
+            return redirect()->to('data-teknis');
         }
     }
 }
