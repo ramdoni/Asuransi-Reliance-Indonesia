@@ -27,8 +27,8 @@
                     <tr>
                         <td>{{$item->name}}</td>
                         <td style="width: 50px;">{{$item->code}}</td>
-                        @foreach(month() as $m)
-                            <td></td>
+                        @foreach(month() as $month => $m)
+                            <td>{{format_idr(sum_journal_cashflow($year,$month,$item->id))}}</td>
                         @endforeach
                     </tr>
                     @endforeach
@@ -37,8 +37,8 @@
                     <tr>
                         <th>Cash From {{$i}}</th>
                         <th></th>
-                        @foreach(month() as $m)
-                            <th></th>
+                        @foreach(month() as $m => $month)
+                            <th>{{format_idr(sum_journal_cashflow_by_group($year,$m,$k))}}</th>
                         @endforeach
                     </tr>
                     <tr><td colspan="14">&nbsp;</td></tr>

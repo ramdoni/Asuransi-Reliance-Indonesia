@@ -6,7 +6,8 @@ use Livewire\Component;
 
 class Index extends Component
 {
-    public $keyword,$year,$month,$coa_id,$id_active;
+    public $keyword,$year,$month,$coa_id,$id_active,$code_cashflow_id;
+    protected $listeners = ['modalEditHide'];
     public function render()
     {
         $data = \App\Models\Journal::orderBy('id','DESC');
@@ -15,6 +16,7 @@ class Index extends Component
         if($this->year) $data = $data->whereYear('date_journal',$this->year);
         if($this->month) $data = $data->whereMonth('date_journal',$this->month);
         if($this->coa_id) $data = $data->where('coa_id',$this->coa_id);
+        if($this->code_cashflow_id) $data = $data->where('code_cashflow_id',$this->code_cashflow_id);
 
         return view('livewire.journal.index')->with(['data'=>$data->paginate(100)]);
     }
@@ -131,6 +133,11 @@ class Index extends Component
             $writer->save('php://output');
         },'Journal-' .date('d-M-Y') .'.xlsx');
         //return response()->download($writer->save('php://output'));
+    }
+
+    public function modalEditHide()
+    {
+        
     }
 
     public function setCodeCashflow($id)

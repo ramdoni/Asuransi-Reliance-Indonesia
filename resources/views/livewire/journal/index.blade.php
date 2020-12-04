@@ -32,8 +32,19 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="px-0 col-md-4">
-                    {{-- <a href="{{route('journal.download-excel')}}" class="btn btn-info"><i class="fa fa-download"></i> Download Excel</a> --}}
+                <div class="px-0 col-md-2">
+                    <select class="form-control" wire:model="code_cashflow_id">
+                        <option value=""> --- Code Cash Flow --- </option>
+                        @foreach(get_group_cashflow() as $k=>$i)
+                        <optgroup label="{{$i}}">
+                            @foreach(\App\Models\CodeCashflow::where('group',$k)->get() as $k => $item)
+                                <option value="{{$item->id}}">{{$item->code}} - {{$item->name}}</option>
+                            @endforeach
+                        </optgroup>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-2">
                     <a href="javascript:void(0)" class="btn btn-info" wire:click="downloadExcel"><i class="fa fa-download"></i> Download Excel</a>
                 </div>
             </div>
@@ -79,7 +90,13 @@
                                 <td>{{format_idr($item->kredit)}}</td>
                                 <td>{{format_idr($item->saldo)}}</td>
                                 <td style="text-align:center;">
-                                    <a href="javascript:void(0)" class="btn btn-info btn-sm" wire:click="setCodeCashflow({{$item->id}})"><i class="fa fa-edit"></i> Set</a>
+                                    <a href="javascript:void(0)" class="{{isset($item->code_cashflow->code) ? 'btn btn-warning btn-sm' :''}}" wire:click="setCodeCashflow({{$item->id}})">
+                                    @if(isset($item->code_cashflow->code))
+                                        {{$item->code_cashflow->code}}
+                                    @else
+                                        <i class="fa fa-edit"></i> Set</a>
+                                    @endif
+                                    </a>
                                 </td>
                             </tr>
                             @php($br=$item->no_voucher)
@@ -104,5 +121,8 @@
 @section('page-script')
     Livewire.on('modalEdit', () =>{
         $("#modal_set_code_cashflow").modal("show");
+    });
+    Livewire.on('modalEditHide', () =>{
+        $("#modal_set_code_cashflow").modal("hide");
     });
 @endsection

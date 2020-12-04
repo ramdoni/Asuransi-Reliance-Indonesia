@@ -1,5 +1,18 @@
 <?php
 
+function sum_journal_cashflow_by_group($month,$year,$group)
+{
+    $sum = \App\Models\Journal::join('code_cashflows','code_cashflows.id','=','journals.code_cashflow_id')->where('group',$group)->whereYear('date_journal',$year)->whereMonth('date_journal',$month)->sum('saldo');
+    return $sum?$sum:'';
+}
+
+function sum_journal_cashflow($year,$month,$cashflow)
+{
+    $sum = \App\Models\Journal::whereYear('date_journal',$year)->whereMonth('date_journal',$month)->where('code_cashflow_id',$cashflow)->sum('saldo');
+    
+    return ($sum ? $sum : '');
+}
+
 function month()
 {
     $month = [1=>"Januari",2=>"Februari",3=>"Maret",4=>"April",5=>"Mei",6=>"Juni",7=>"Juli",8=>"Agustus",9=>"September",10=>"Oktober",11=>"November",12=>"Desember"];

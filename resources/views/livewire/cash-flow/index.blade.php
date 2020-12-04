@@ -1,4 +1,4 @@
-@section('title', 'Cashflow')
+@section('title', 'Cash Flow')
 @section('parentPageTitle', 'Home')
 
 <div class="clearfix row">
@@ -13,7 +13,7 @@
                     <div class="tab-pane show active" id="internal_report">
                         <livewire:cash-flow.internal-report />
                     </div>
-                    <div class="tab-pane show active" id="ojk_report">
+                    <div class="tab-pane" id="ojk_report">
                         <livewire:cash-flow.ojk-report />
                     </div>
                 </div>

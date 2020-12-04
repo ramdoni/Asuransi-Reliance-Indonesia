@@ -143,7 +143,7 @@ class PayableInsert extends Component
             $data->kredit = replace_idr(isset($this->kredit[$key])?$this->kredit[$key]:0);
             $data->description = isset($this->description_coa[$key])?$this->description_coa[$key]:'';
             $data->bank_account_id = $this->bank_account_id;
-            $data->saldo = (isset($this->debit[$key]) ? $this->debit[$key] : (isset($this->kredit[$key])?$this->kredit[$key] : 0));
+            $data->saldo = replace_idr(isset($this->debit[$key]) ? $this->debit[$key] : (isset($this->kredit[$key])?$this->kredit[$key] : 0));
             $data->save();
         }
 

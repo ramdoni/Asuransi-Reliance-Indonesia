@@ -74,7 +74,7 @@
                                 <li class="{{ Request::segment(1) === 'coa-type' ? 'active' : null }}"><a href="{{route('coa-type')}}">COA Types</a></li>
                             </ul>
                         </li>
-                        <li class="{{ (Request::segment(1) === 'coa' || Request::segment(1) === 'coa-group' || Request::segment(1) === 'coa-type') ? 'active' : null }}">
+                        <li class="{{ (Request::segment(1) === 'journal' || Request::segment(1) === 'cash-flow' || Request::segment(1) === 'trial-balance') ? 'active' : null }}">
                             <a href="#App" class="has-arrow"><i class="fa fa-database"></i> <span>Report</span></a>
                             <ul>
                                 <li class="{{ Request::segment(1) === 'journal' ? 'active' : null }}"><a href="{{route('journal')}}"><i class="fa fa-list-alt"></i> Journal</a></li>

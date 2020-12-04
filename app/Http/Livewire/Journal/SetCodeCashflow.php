@@ -25,5 +25,13 @@ class SetCodeCashflow extends Component
         $this->validate([
             'code_cashflow_id'=>'required'
         ]);
+
+        $data = \App\Models\Journal::find($this->active_id);
+        $data->code_cashflow_id = $this->code_cashflow_id;
+        $data->save();
+
+        $this->emit('modalEditHide');
+        
+        session()->flash('message-success',__('Data saved successfully'));
     }
 }
