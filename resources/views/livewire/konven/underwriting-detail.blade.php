@@ -17,7 +17,7 @@
                             <div class="row">
                                 <div class="form-group col-md-3">
                                     <label>{{ __('Bank Account') }}</label>
-                                    <select class="form-control" wire:model="bank_account_id">
+                                    <select class="form-control" wire:model="bank_account_id" {{$is_readonly?'disabled':''}}>
                                         <option value=""> --- Select --- </option>
                                         @foreach(\App\Models\BankAccount::orderBy('bank','ASC')->get() as $i)
                                         <option value="{{ $i->id}}">{{$i->bank}} - {{$i->no_rekening}} - {{$i->owner}}</option>
@@ -27,6 +27,12 @@
                                     <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                                     @enderror
                                 </div>
+                                @if($is_readonly)
+                                <div class="px-0 form-group col-md-2">
+                                    <label>{{ __('Date Journal') }}</label>
+                                    <input type="text" class="form-control" disabled value="{{$data->date_journal!="" ? date('d F Y', strtotime($data->date_journal)) : ''}}" />
+                                </div>
+                                @endif
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -47,13 +53,14 @@
                                     <th>Debit</th>
                                     <th>Credit</th>
                                     <th>Transaction Date</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($data->coa as $k => $item)
+                                @foreach($count_account as $k => $item)
                                 <tr>
                                     <td>
-                                        <select class="form-control" wire:model="coa_id.{{$k}}" required>
+                                        <select class="form-control" wire:model="coa_id.{{$k}}" required {{$is_readonly?'disabled':''}}>
                                             <option value=""> --- Account -- </option>
                                             @foreach(\App\Models\Coa::orderBy('name','ASC')->get() as $i)
                                             <option value="{{$i->id}}">{{$i->name}} / {{$i->code}}</option>
@@ -64,29 +71,33 @@
                                         @enderror
                                     </td>
                                     <td>
-                                        <input type="text" class="form-control" wire:model="description.{{$k}}" />
+                                        <input type="text" class="form-control" wire:model="description.{{$k}}" {{$is_readonly?'disabled':''}} />
                                     </td>
                                     <td style="width:10%;">
-                                        <input type="text" class="form-control format_number" wire:model="debit.{{$k}}" wire:input="sumDebit" />
+                                        <input type="text" class="form-control format_number" {{$is_readonly?'disabled':''}} wire:model="debit.{{$k}}" wire:input="sumDebit" />
                                         @error("debit.{{$k}}")
                                         <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                                         @enderror
                                     </td>
                                     <td style="width:10%;"> 
-                                        <input type="text" class="form-control format_number" wire:model="kredit.{{$k}}" wire:input="sumKredit" />
+                                        <input type="text" class="form-control format_number" {{$is_readonly?'disabled':''}} wire:model="kredit.{{$k}}" wire:input="sumKredit" />
                                         @error("kredit.{{$k}}")
                                         <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                                         @enderror
                                     </td>
                                     <td>
-                                       <input type="date" class="form-control" wire:model="payment_date.{{$k}}" />
+                                       <input type="date" class="form-control" wire:model="payment_date.{{$k}}" {{$is_readonly?'disabled':''}} />
                                     </td>
+                                    <td><a href="javascript:void(0)" wire:click="deleteAccountForm({{$k}})" class="text-danger"><i class="fa fa-trash"></i></a></td>
                                 </tr>
                                 @endforeach
                                 <tr>
                                     <td class="text-right" colspan="2">
+                                        @if(!$is_readonly)
                                         <a href="javascript:void(0)" class="float-left btn btn-info btn-sm" wire:click="addAccountForm"><i class="fa fa-plus"></i> Account</a>
-                                        Total</td>
+                                        @endif
+                                        Total
+                                    </td>
                                     <th><h6>{{format_idr($total_debit)}}</h6></th>
                                     <th><h6>{{format_idr($total_kredit)}}</h6></th>
                                 </tr>
@@ -95,8 +106,10 @@
                     </div>
                     <hr>
                     <a href="javascript:void(0)" onclick="history.back()"><i class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
+                    @if(!$is_readonly)
                     <button type="submit" class="ml-3 btn btn-primary"><i class="fa fa-archive"></i> {{ __('Save') }}</button>
-                    <button type="button" wire:click="saveToJournal" class="ml-3 btn btn-warning"><i class="fa fa-save"></i> {{ __('Submit to Journal') }}</button>
+                    <button type="button" wire:click="saveToJournal" class="ml-3 btn btn-warning" {{$is_disabled?'disabled':''}}><i class="fa fa-save"></i> {{ __('Submit to Journal') }}</button>
+                    @endif
                 </form>
             </div>
         </div>

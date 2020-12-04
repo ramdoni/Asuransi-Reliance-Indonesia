@@ -69,7 +69,7 @@
         @endif
         @livewireStyles
     </head>
-    <body class="theme-cyan">
+    <body class="theme-blue">
         <!-- Page Loader -->
         <div class="page-loader-wrapper">
             <div class="loader">
@@ -112,7 +112,7 @@
                                         <li class="breadcrumb-item active">@yield('title')</li>
                                     @endif
                                 </ul>
-                            </div>            
+                            </div>     
                             <div class="text-right col-lg-7 col-md-4 col-sm-12">
                                 <div class="text-center inlineblock m-r-15 m-l-15 hidden-sm">
                                     <div class="text-left sparkline" data-type="line" data-width="8em" data-height="20px" data-line-Width="1" data-line-Color="#00c5dc"
@@ -124,7 +124,7 @@
                                         data-fill-Color="transparent">4,6,3,2,5,6,5,4</div>
                                     <span>Visits</span>
                                 </div>
-                            </div>
+                            </div> 
                         </div>
                     </div>
                     @yield('content')

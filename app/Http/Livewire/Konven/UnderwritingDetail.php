@@ -6,9 +6,9 @@ use Livewire\Component;
 
 class UnderwritingDetail extends Component
 {
-    public $data,$coa_id,$debit,$kredit,$payment_date,$description;
+    public $data,$konven_underwriting_id,$coa_id,$debit,$kredit,$payment_date,$description;
     public $count_account=[],$total_debit=0,$total_kredit=0;
-    public $no_voucher,$bank_account_id;
+    public $no_voucher,$bank_account_id,$is_readonly=false,$is_disabled=false;
     public function render()
     {
         return view('livewire.konven.underwriting-detail');
@@ -18,7 +18,12 @@ class UnderwritingDetail extends Component
     {
         $this->data = \App\Models\KonvenUnderwriting::find($id);
         $this->no_voucher = $this->data->no_voucher;
+        $this->bank_account_id = $this->data->no_voucher;
+
+        if($this->data->status==3) $this->is_readonly=true;
         foreach($this->data->coa as $k => $item){
+            $this->count_account[$k] = $item->id;
+            $this->konven_underwriting_id[$k] = $item->id;
             $this->coa_id[$k] = $item->coa_id;
             $this->description[$k] = $item->description;
             $this->payment_date[$k] = $item->payment_date;
@@ -27,11 +32,71 @@ class UnderwritingDetail extends Component
             $this->total_debit += $item->debit;
             $this->total_kredit += $item->kredit;
         }
+        $this->sumDebit();
+        $this->sumKredit();
+    }
+
+    public function addAccountForm()
+    {
+        $this->count_account[] = count($this->count_account);
+        $this->coa_id[] = "";
+        $this->description[] = "";
+        $this->kredit[] = 0;
+        $this->debit[] = 0;
+        $this->payment_date[] = 0;
+        $this->konven_underwriting_id[$k] = '';
+
+        $this->emit('listenAddAccountForm');
+    }
+
+    public function deleteAccountForm($key)
+    {
+        // delete database
+        if(isset($this->konven_underwriting_id[$key]) and $this->konven_underwriting_id[$key]!="") \App\Models\KonvenUnderwritingCoa::find($this->konven_underwriting_id[$key])->delete();
+        
+        unset($this->count_account[$key]);
+        unset($this->coa_id[$key]);
+        unset($this->description[$key]);
+        unset($this->kredit[$key]);
+        unset($this->debit[$key]);
+        unset($this->payment_date[$key]);
+        unset($this->konven_underwriting_id[$key]);
+        
+        $this->sumDebit();
+        $this->sumKredit();
+    }
+
+    public function sumDebit()
+    {
+        if(!$this->debit) return false;
+
+        $this->total_debit=0;
+        foreach($this->debit as $i){
+            $this->total_debit += replace_idr($i);
+        }
+        if($this->total_debit != $this->total_kredit) 
+            $this->is_disabled=true;
+        else
+            $this->is_disabled=false;
+    }
+
+    public function sumKredit() 
+    {
+        $this->total_kredit=0;
+        foreach($this->kredit as $i){
+            $this->total_kredit += replace_idr($i);
+        }
+        if($this->total_debit != $this->total_kredit) 
+            $this->is_disabled=true;
+        else
+            $this->is_disabled=false;
     }
 
     public function save()
     {
+        if($this->is_readonly) return false;
         $this->data->status=2;
+        $this->data->bank_account_id = $this->bank_account_id;
         $this->data->save();
 
         foreach($this->data->coa as $k => $item){
@@ -42,19 +107,18 @@ class UnderwritingDetail extends Component
             $item->description = $this->description[$k];
             $item->save();
         }
-
         session()->flash('message-success',__('Data saved successfully'));
-        
         return redirect()->to('konven');
     }
 
     public function saveToJournal()
     {
+        if($this->is_readonly) return false;
         $this->validate([
             'bank_account_id'=>'required'
         ]);
-
         $this->data->status = 3;
+        $this->date_journal = date('Y-m-d');
         $this->data->save();
 
         foreach($this->data->coa as $k => $item){

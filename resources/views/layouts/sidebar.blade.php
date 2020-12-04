@@ -51,6 +51,9 @@
                         </li>
                         @endif
                         @if(\Auth::user()->user_access_id==2)<!--Finance-->     
+                        <li class="{{ Request::segment(1) === 'dashboard' ? 'active' : null }}">
+                            <a href="/"><i class="icon-home"></i> <span>Dashboard</span></a>
+                        </li>
                         <li class="{{ Request::segment(1) === 'sales-tax' ? 'active' : null }}">
                             <a href="{{route('sales-tax')}}"><i class="fa fa-database"></i> <span>Sales Tax</span></a>
                         </li>
@@ -74,7 +77,7 @@
                                 <li class="{{ Request::segment(1) === 'coa-type' ? 'active' : null }}"><a href="{{route('coa-type')}}">COA Types</a></li>
                             </ul>
                         </li>
-                        <li class="{{ (Request::segment(1) === 'journal' || Request::segment(1) === 'cash-flow' || Request::segment(1) === 'trial-balance') ? 'active' : null }}">
+                        {{-- <li class="{{ (Request::segment(1) === 'journal' || Request::segment(1) === 'cash-flow' || Request::segment(1) === 'trial-balance') ? 'active' : null }}">
                             <a href="#App" class="has-arrow"><i class="fa fa-database"></i> <span>Report</span></a>
                             <ul>
                                 <li class="{{ Request::segment(1) === 'journal' ? 'active' : null }}"><a href="{{route('journal')}}"><i class="fa fa-list-alt"></i> Journal</a></li>
@@ -83,7 +86,7 @@
                                 <li class="{{ Request::segment(1) === 'income-statement' ? 'active' : null }}"><a href="{{route('income-statement')}}"><i class="fa fa-list-alt"></i> Income Statement</a></li>
                                 <li class="{{ Request::segment(1) === 'balance-sheet' ? 'active' : null }}"><a href="{{route('balance-sheet')}}"><i class="fa fa-list-alt"></i> Balance Sheet</a></li>        
                             </ul>
-                        </li>
+                        </li> --}}
 
                         @endif
                     </ul>

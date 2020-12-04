@@ -46,7 +46,7 @@
         }
 
     ?>
-    <body class="<?= $theme ?>">
+    <body class="theme-blue">
         <!-- Page Loader -->
         <div class="page-loader-wrapper">
             <div class="loader">
