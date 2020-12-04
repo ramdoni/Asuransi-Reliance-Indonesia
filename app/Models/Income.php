@@ -28,6 +28,6 @@ class Income extends Model
 
     public function journals()
     {
-        return $this->hasMany('\App\Models\journal','transaction_id','id')->where('transaction_table','income');
+        return $this->hasMany('\App\Models\Journal','transaction_id','id')->where('transaction_table','income');
     }
 }
