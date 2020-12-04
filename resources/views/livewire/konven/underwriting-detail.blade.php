@@ -88,7 +88,11 @@
                                     <td>
                                        <input type="date" class="form-control" wire:model="payment_date.{{$k}}" {{$is_readonly?'disabled':''}} />
                                     </td>
-                                    <td><a href="javascript:void(0)" wire:click="deleteAccountForm({{$k}})" class="text-danger"><i class="fa fa-trash"></i></a></td>
+                                    <td>
+                                        @if(!$is_readonly)
+                                        <a href="javascript:void(0)" wire:click="deleteAccountForm({{$k}})" class="text-danger"><i class="fa fa-trash"></i></a>
+                                        @endif
+                                    </td>
                                 </tr>
                                 @endforeach
                                 <tr>

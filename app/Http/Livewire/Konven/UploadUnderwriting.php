@@ -91,6 +91,7 @@ class UploadUnderwriting extends Component
                 $extend_tgl_jatuh_tempo = date('Y-m-d',strtotime($i[54]));
                 $tgl_lunas = date('Y-m-d',strtotime($i[55]));
                 $ket_lampiran = $i[56];
+                $line_bussines = $i[68];
                 
                 // cek no polis
                 $polis = \App\Models\Policy::where('no_polis',$no_polis)->first();
@@ -163,12 +164,38 @@ class UploadUnderwriting extends Component
                 $data->tgl_lunas = $tgl_lunas;
                 $data->ket_lampiran = $ket_lampiran;
                 $data->no_voucher =  generate_no_voucher_konven_underwriting(58);
+                $data->line_bussines = $line_bussines;
                 $data->save();  
+
+                if($line_bussines=='DWIGUNA'){
+                    $coa_premi_netto = 60;
+                    $commision_paid = 91;
+                    $discount_coa = 60; 
+                    $gross_premium = 75;
+                }elseif($line_bussines=='JANGKAWARSA'){
+                    $coa_premi_netto = 58;
+                    $commision_paid = 89;
+                    $discount_coa = 65;
+                    $gross_premium = 73;
+                }elseif($line_bussines=='EKAWARSA'){
+                    $coa_premi_netto = 59;
+                    $commision_paid = 90;
+                    $discount_coa = 66;
+                    $gross_premium = 74;
+                }elseif($line_bussines=='KECELAKAAN'){
+                    $coa_premi_netto = 62;
+                    $commision_paid = 93;
+                    $discount_coa = 69;
+                    $gross_premium = 77;
+                }else{
+                    $coa_premi_netto = 63; //Premium Receivable Other Tradisional
+                    $commision_paid = 94; // Commision Paid Other Tradisional 
+                }
 
                 // Insert Transaksi
                 if(!empty($premi_netto)){
                     $new = new \App\Models\KonvenUnderwritingCoa();
-                    $new->coa_id = 58; // Premium Receivable Jangkawarsa
+                    $new->coa_id = $coa_premi_netto;
                     $new->konven_underwriting_id = $data->id;
                     $new->debit = $premi_netto;
                     $new->kredit = 0;
@@ -176,14 +203,14 @@ class UploadUnderwriting extends Component
                 }
                 if(!empty($ppn) and !empty($jumlah_discount)){
                     $new = new \App\Models\KonvenUnderwritingCoa();
-                    $new->coa_id = 89; // Commision Paid Jangkawarsa
+                    $new->coa_id = $commision_paid; 
                     $new->konven_underwriting_id = $data->id;
                     $new->debit = $jumlah_discount + $jumlah_ppn;
                     $new->kredit = 0;
                     $new->save();
                 }elseif(!empty($jumlah_discount)){
                     $new = new \App\Models\KonvenUnderwritingCoa();
-                    $new->coa_id = 65; // Discount Jangkawarsa
+                    $new->coa_id = $discount_coa; // Discount Jangkawarsa
                     $new->konven_underwriting_id = $data->id;
                     $new->debit = $jumlah_discount;
                     $new->kredit = 0;
@@ -191,7 +218,7 @@ class UploadUnderwriting extends Component
                 }
                 if(!empty($premi_gross) or !empty($extra_premi)){
                     $new = new \App\Models\KonvenUnderwritingCoa();
-                    $new->coa_id = 73; // 	Gross Premium Jangkawarsa
+                    $new->coa_id = $gross_premium; // 	Gross Premium Jangkawarsa
                     $new->konven_underwriting_id = $data->id;
                     $new->debit = 0;
                     $new->kredit = $premi_gross + $extra_premi;

@@ -118,7 +118,8 @@ class UnderwritingDetail extends Component
         ]);
         if($this->is_readonly) return false;
         $this->data->status = 3;
-        $this->date_journal = date('Y-m-d');
+        $this->data->date_journal = date('Y-m-d');
+        $this->data->bank_account_id = $this->bank_account_id;
         $this->data->save();
 
         foreach($this->data->coa as $k => $item){
