@@ -60,9 +60,9 @@
                         <li class="{{ Request::segment(1) === 'policy' ? 'active' : null }}">
                             <a href="{{route('policy')}}"><i class="fa fa-database"></i> <span>Polis</span></a>
                         </li>
-                        <li class="{{ Request::segment(1) === 'data-teknis' ? 'active' : null }}">
+                        {{-- <li class="{{ Request::segment(1) === 'data-teknis' ? 'active' : null }}">
                             <a href="{{route('data-teknis')}}"><i class="fa fa-upload"></i> <span>Data Teknis</span></a>
-                        </li>
+                        </li> --}}
                         <li class="{{ Request::segment(1) === 'journal' ? 'active' : null }}">
                             <a href="{{route('bank-account')}}"><i class="fa fa-database"></i> <span>Bank Account</span></a>
                         </li>
