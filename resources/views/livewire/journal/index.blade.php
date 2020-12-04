@@ -90,7 +90,7 @@
                                 <td>{{format_idr($item->kredit)}}</td>
                                 <td>{{format_idr($item->saldo)}}</td>
                                 <td style="text-align:center;">
-                                    <a href="javascript:void(0)" class="{{isset($item->code_cashflow->code) ? 'btn btn-warning btn-sm' :''}}" wire:click="setCodeCashflow({{$item->id}})">
+                                    <a href="javascript:void(0)" title="{{isset($item->code_cashflow->code)?$item->code_cashflow->name : ''}}" class="{{isset($item->code_cashflow->code) ? 'btn btn-warning btn-sm' :''}}" wire:click="setCodeCashflow({{$item->id}})">
                                     @if(isset($item->code_cashflow->code))
                                         {{$item->code_cashflow->code}}
                                     @else
