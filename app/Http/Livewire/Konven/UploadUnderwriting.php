@@ -213,48 +213,6 @@ class UploadUnderwriting extends Component
                     $new->kredit = $extsertifikat;
                     $new->save();
                 }
-
-
-                // Debit
-                // if(!empty($jml_discount)){
-                //     $new = new \App\Models\Expenses();
-                //     $new->nominal = $premi_netto;
-                //     $new->recipient = $pemegang_polis;
-                //     $new->reference_type = 'Diskon';
-                //     $new->reference_no = $no_reg;
-                //     $new->reference_date = $tanggal_produksi;
-                //     $new->policy_id = $polis->id;
-                //     $new->save();
-                // }
-                // // kredit
-                // if(!empty($premi_gross) or !empty($extra_premi)){
-                //     $new = new \App\Models\Income();
-                //     $new->teknis_id = $data->id;
-                //     $new->debit_note = $no_reg;
-                //     $new->nominal = $premi_gross+$extra_premi;
-                //     $new->policy_id = $polis->id;
-                //     $new->save();
-                // }
-                // // kredit
-                // if(!empty($jumlah_pph)){
-                //     $new = new \App\Models\Income();
-                //     $new->teknis_id = $data->id;
-                //     $new->debit_note = $no_reg;
-                //     $new->debit_note_date = $tanggal_produksi;
-                //     $new->nominal = $jumlah_pph;
-                //     $new->policy_id = $polis->id;
-                //     $new->save();       
-                // }
-                // // kredit
-                // if($extsertifikat!=""){
-                //     $new = new \App\Models\Income();
-                //     $new->teknis_id = $data->id;
-                //     $new->debit_note = $no_reg;
-                //     $new->nominal = $extsertifikat;
-                //     $new->debit_note_date = $tanggal_produksi;
-                //     $new->policy_id = $polis->id;
-                //     $new->save();    
-                // }
             }
             
             session()->flash('message-success','Upload success !');

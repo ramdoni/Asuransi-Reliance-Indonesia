@@ -18,7 +18,7 @@ class UnderwritingDetail extends Component
     {
         $this->data = \App\Models\KonvenUnderwriting::find($id);
         $this->no_voucher = $this->data->no_voucher;
-        $this->bank_account_id = $this->data->no_voucher;
+        $this->bank_account_id = $this->data->bank_account_id;
 
         if($this->data->status==3) $this->is_readonly=true;
         foreach($this->data->coa as $k => $item){
@@ -44,7 +44,7 @@ class UnderwritingDetail extends Component
         $this->kredit[] = 0;
         $this->debit[] = 0;
         $this->payment_date[] = 0;
-        $this->konven_underwriting_id[$k] = '';
+        $this->konven_underwriting_id[] = '';
 
         $this->emit('listenAddAccountForm');
     }
@@ -113,10 +113,10 @@ class UnderwritingDetail extends Component
 
     public function saveToJournal()
     {
-        if($this->is_readonly) return false;
         $this->validate([
             'bank_account_id'=>'required'
         ]);
+        if($this->is_readonly) return false;
         $this->data->status = 3;
         $this->date_journal = date('Y-m-d');
         $this->data->save();

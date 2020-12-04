@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon"> <!-- Favicon-->
-        <title>@yield('title') - {{ config('app.name') }}</title>
+        <title>Login - Asuransi Reliance Indonesia</title>
         <meta name="description" content="@yield('meta_description', config('app.name'))">
         <meta name="author" content="@yield('meta_author', config('app.name'))">
         @yield('meta')
@@ -23,10 +23,7 @@
 
         @stack('after-styles')
         @livewireStyles
-
     </head>
-    
-    
     <?php 
         $setting = !empty($_GET['theme']) ? $_GET['theme'] : '';
         $theme = "theme-cyan";

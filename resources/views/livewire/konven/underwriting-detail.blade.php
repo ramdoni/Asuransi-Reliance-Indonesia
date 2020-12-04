@@ -4,7 +4,7 @@
     <div class="col-md-12">
         <div class="card">
             <div class="body">
-                <form id="basic-form" method="post" wire:submit.prevent="save">
+                <form id="basic-form" method="post" wire:submit.prevent="saveToJournal">
                     <div class="row">
                         <div class="col-md-8">
                             <div class="px-0 form-group col-md-5">
@@ -99,7 +99,11 @@
                                         Total
                                     </td>
                                     <th><h6>{{format_idr($total_debit)}}</h6></th>
-                                    <th><h6>{{format_idr($total_kredit)}}</h6></th>
+                                    <th colspan="2"><h6>{{format_idr($total_kredit)}}</h6></th>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" class="text-right">Outstanding</td>
+                                    <th colspan="4">{{format_idr($total_debit-$total_kredit)}}</th>
                                 </tr>
                             </tbody>
                         </table>
@@ -107,8 +111,8 @@
                     <hr>
                     <a href="javascript:void(0)" onclick="history.back()"><i class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
                     @if(!$is_readonly)
-                    <button type="submit" class="ml-3 btn btn-primary"><i class="fa fa-archive"></i> {{ __('Save') }}</button>
-                    <button type="button" wire:click="saveToJournal" class="ml-3 btn btn-warning" {{$is_disabled?'disabled':''}}><i class="fa fa-save"></i> {{ __('Submit to Journal') }}</button>
+                    <button type="button" wire:click="save" class="ml-3 btn btn-primary"><i class="fa fa-archive"></i> {{ __('Save') }}</button>
+                    <button type="submit" class="ml-3 btn btn-warning" {{$is_disabled?'disabled':''}}><i class="fa fa-save"></i> {{ __('Submit to Journal') }}</button>
                     @endif
                 </form>
             </div>

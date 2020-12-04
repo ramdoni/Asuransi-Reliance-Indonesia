@@ -45,7 +45,7 @@
     </div>
     <div class="px-0 body">
         <div class="table-responsive">
-            <table class="table table-striped m-b-0 c_list">
+            <table class="table table-striped m-b-0 c_list table-bordered">
                 <thead>
                     <tr>                    
                         <th>COA</th>                                    

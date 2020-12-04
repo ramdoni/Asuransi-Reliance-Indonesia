@@ -31,7 +31,7 @@ class SetCodeCashflow extends Component
         $data->save();
 
         $this->emit('modalEditHide');
-        
+        $this->code_cashflow_id = '';
         session()->flash('message-success',__('Data saved successfully'));
     }
 }
