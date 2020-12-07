@@ -13,11 +13,11 @@ class KonvenUnderwriting extends Model
 
     public function coa()
     {
-        return $this->hasMany('\App\Models\KonvenUnderwritingCoa','konven_underwriting_id','id');
+        return $this->hasMany('\App\Models\KonvenUnderwritingCoa','konven_underwriting_id','id')->orderBy('ordering','ASC');
     }
 
     public function coaDesc()
     {
-        return $this->hasMany('\App\Models\KonvenUnderwritingCoa','konven_underwriting_id','id')->orderBy('id','DESC');  
+        return $this->hasMany('\App\Models\KonvenUnderwritingCoa','konven_underwriting_id','id')->orderBy('ordering','DESC');  
     }
 }

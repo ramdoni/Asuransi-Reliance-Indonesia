@@ -13,7 +13,7 @@
         </div>
     </div>
     <div class="px-0 table-responsive">
-        <table class="table table-striped m-b-0 c_list table-bordered">
+        <table class="table table-hover table-striped m-b-0 c_list table-bordered table-style1">
             <tr>
                 <td></td>
                 @foreach(month() as $m)

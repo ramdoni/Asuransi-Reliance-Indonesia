@@ -22,7 +22,7 @@ class UnderwritingDetail extends Component
 
         if($this->data->status==3) $this->is_readonly=true;
         foreach($this->data->coa as $k => $item){
-            $this->count_account[$k] = $item->id;
+            $this->count_account[$k] = $item->id; 
             $this->konven_underwriting_id[$k] = $item->id;
             $this->coa_id[$k] = $item->coa_id;
             $this->description[$k] = $item->description;
@@ -36,6 +36,20 @@ class UnderwritingDetail extends Component
         $this->sumKredit();
     }
 
+    public function setOrdering($id,$ordering_before,$ordering_after)
+    {
+        $check_ordering = \App\Models\KonvenUnderwritingCoa::find($id);
+        $check_child = \App\Models\KonvenUnderwritingCoa::where('konven_underwriting_id',$check_ordering->konven_underwriting_id)->where('ordering',$ordering_after)->first();
+        if($check_child){
+            $check_child->ordering = $ordering_before;
+            $check_child->save();
+        }
+        $check_ordering->ordering = $ordering_after;
+        $check_ordering->save();
+
+        $this->mount($this->data->id);
+    }
+
     public function addAccountForm()
     {
         $this->count_account[] = count($this->count_account);
@@ -47,6 +61,30 @@ class UnderwritingDetail extends Component
         $this->konven_underwriting_id[] = '';
 
         $this->emit('listenAddAccountForm');
+    }
+
+    public function autoSave()
+    {
+        $this->data->bank_account_id = $this->bank_account_id;
+        $this->data->save();
+
+        foreach($this->count_account as $k => $i){
+            if(isset($this->konven_underwriting_id[$k]) and !empty($this->konven_underwriting_id[$k])){
+                $item  = \App\Models\KonvenUnderwritingCoa::find($this->konven_underwriting_id[$k]);
+            }else{
+                $item  = new \App\Models\KonvenUnderwritingCoa();
+                $item->konven_underwriting_id = $this->data->id;
+                $item->ordering = \App\Models\KonvenUnderwritingCoa::where('konven_underwriting_id',$this->data->id)->count()+1;
+            }
+
+            $item->coa_id = $this->coa_id[$k];
+            $item->kredit = replace_idr($this->kredit[$k]);
+            $item->debit = replace_idr($this->debit[$k]);
+            if($this->payment_date[$k]!="")
+                $item->payment_date = date('Y-m-d',strtotime($this->payment_date[$k]));
+            $item->description = $this->description[$k];
+            $item->save();
+        }
     }
 
     public function deleteAccountForm($key)

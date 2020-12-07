@@ -48,6 +48,7 @@
                         <table class="table">
                             <thead>
                                 <tr>
+                                    <th><label title="Ordering"><i class="fa fa-sort"></i></label></th>
                                     <th>Account</th>
                                     <th>Description</th>
                                     <th>Debit</th>
@@ -57,10 +58,21 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @php($ordering=1)
                                 @foreach($count_account as $k => $item)
                                 <tr>
                                     <td>
-                                        <select class="form-control" wire:model="coa_id.{{$k}}" required {{$is_readonly?'disabled':''}}>
+                                        @if($k==0)
+                                            <a href="javascript:void(0)" title="Ordering Bottom" wire:click="setOrdering({{$item}},{{$ordering}},{{$ordering+1}})"><i class="fa fa-arrow-down"></i></a>
+                                        @elseif($ordering==count($count_account))
+                                            <a href="javascript:void(0)" title="Ordering Top" wire:click="setOrdering({{$item}},{{$ordering}},{{$ordering-1}})"><i class="fa fa-arrow-up"></i></a>
+                                        @else
+                                            <a href="javascript:void(0)" title="Ordering Top" class="mr-2" wire:click="setOrdering({{$item}},{{$ordering}},{{$ordering-1}})"><i class="fa fa-arrow-up"></i></a>
+                                            <a href="javascript:void(0)"  title="Ordering Bottom" wire:click="setOrdering({{$item}},{{$ordering}},{{$ordering+1}})"><i class="fa fa-arrow-down"></i></a>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <select class="form-control" wire:model="coa_id.{{$k}}" wire:change="autoSave" required {{$is_readonly?'disabled':''}}>
                                             <option value=""> --- Account -- </option>
                                             @foreach(\App\Models\Coa::orderBy('name','ASC')->get() as $i)
                                             <option value="{{$i->id}}">{{$i->name}} / {{$i->code}}</option>
@@ -74,19 +86,19 @@
                                         <input type="text" class="form-control" wire:model="description.{{$k}}" {{$is_readonly?'disabled':''}} />
                                     </td>
                                     <td style="width:10%;">
-                                        <input type="text" class="form-control format_number" {{$is_readonly?'disabled':''}} wire:model="debit.{{$k}}" wire:input="sumDebit" />
+                                        <input type="text" class="form-control format_number" {{$is_readonly?'disabled':''}} wire:change="autoSave" wire:model="debit.{{$k}}" wire:input="sumDebit" />
                                         @error("debit.{{$k}}")
                                         <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                                         @enderror
                                     </td>
                                     <td style="width:10%;"> 
-                                        <input type="text" class="form-control format_number" {{$is_readonly?'disabled':''}} wire:model="kredit.{{$k}}" wire:input="sumKredit" />
+                                        <input type="text" class="form-control format_number" {{$is_readonly?'disabled':''}} wire:change="autoSave" wire:model="kredit.{{$k}}" wire:input="sumKredit" />
                                         @error("kredit.{{$k}}")
                                         <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                                         @enderror
                                     </td>
                                     <td>
-                                       <input type="date" class="form-control" wire:model="payment_date.{{$k}}" {{$is_readonly?'disabled':''}} />
+                                       <input type="date" class="form-control" wire:change="autoSave" wire:model="payment_date.{{$k}}" {{$is_readonly?'disabled':''}} />
                                     </td>
                                     <td>
                                         @if(!$is_readonly)
@@ -94,6 +106,7 @@
                                         @endif
                                     </td>
                                 </tr>
+                                @php($ordering++)
                                 @endforeach
                                 <tr>
                                     <td class="text-right" colspan="2">
@@ -117,6 +130,10 @@
                     @if(!$is_readonly)
                     <button type="button" wire:click="save" class="ml-3 btn btn-primary"><i class="fa fa-archive"></i> {{ __('Save') }}</button>
                     <button type="submit" class="ml-3 btn btn-warning" {{$is_disabled?'disabled':''}}><i class="fa fa-save"></i> {{ __('Submit to Journal') }}</button>
+                    <div wire:loading.delay="3000"> 
+                        <i class="fa fa-spinner fa-spin fa-1x fa-fw"></i>
+                        <span class="sr-only">Loading...</span> Auto save
+                    </div>
                     @endif
                 </form>
             </div>

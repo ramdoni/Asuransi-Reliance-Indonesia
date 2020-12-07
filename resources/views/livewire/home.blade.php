@@ -12,7 +12,7 @@
                     <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#">Income Statement</a></li>
                     <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#">Balance Sheet</a></li>
                 </ul>
-                <div class="tab-content">
+                <div class="px-0 tab-content">
                     <div class="tab-pane show active" id="payable">
                         <livewire:journal.index />
                     </div>

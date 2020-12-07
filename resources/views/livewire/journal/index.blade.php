@@ -39,13 +39,19 @@
                 @endforeach
             </select>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-3">
             <a href="javascript:void(0)" class="btn btn-info" wire:click="downloadExcel"><i class="fa fa-download"></i> Download Excel</a>
+            @if($set_multiple_cashflow)
+                <a href="javascript:void(0)" class="btn btn-danger" wire:click="$set('set_multiple_cashflow',false)"><i class="fa fa-times"></i> Cancel</a>
+                <a href="javascript:void(0)" class="btn btn-success" wire:click="submitCashFlow"><i class="fa fa-check"></i> Submit</a>
+            @else
+                <a href="javascript:void(0)" class="btn btn-warning" wire:click="$set('set_multiple_cashflow',true)"><i class="fa fa-check"></i> Set Cash Flow</a>
+            @endif
         </div>
     </div>
     <div class="px-0 body">
         <div class="table-responsive">
-            <table class="table table-striped m-b-0 c_list table-bordered">
+            <table class="table table-striped m-b-0 c_list table-bordered table-style1 table-hover">
                 <thead>
                     <tr>                    
                         <th>COA</th>                                    
@@ -56,14 +62,22 @@
                         <th>Debit</th>                                    
                         <th>Kredit</th>
                         <th>Saldo</th>
-                        <th style="text-align:center;">Code Cashflow</th>
+                        <th style="text-align:center;">
+                            @if($set_multiple_cashflow)
+                                <label class="text-succes" wire:click="checkAll"><input type="checkbox" wire:model="check_all" value="1" /> Check All</label>
+                            @else
+                                Code Cashflow
+                            @endif
+                            
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
                     @php($br=0)
+                    @php($key_code_cashflow=0)
                     @foreach($data as $k => $item)
                     @if($item->no_voucher!=$br)
-                    <tr><td colspan="9">&nbsp;</td></tr>
+                    <tr><td colspan="9"></td></tr>
                     @endif
                     <tr>
                         <td>{{isset($item->coa->code)?$item->coa->code:''}}</td>
@@ -79,17 +93,18 @@
                         <td>{{date('d-M-Y',strtotime($item->date_journal))}}</td>
                         <td>{{isset($item->coa->name)?$item->coa->name:''}}</td>
                         <td>{{$item->description}}</td>
-                        <td>{{format_idr($item->debit)}}</td>
-                        <td>{{format_idr($item->kredit)}}</td>
-                        <td>{{format_idr($item->saldo)}}</td>
+                        <td class="text-right">{{format_idr($item->debit)}}</td>
+                        <td class="text-right">{{format_idr($item->kredit)}}</td>
+                        <td class="text-right">{{format_idr($item->saldo)}}</td>
                         <td style="text-align:center;">
-                            <a href="javascript:void(0)" title="{{isset($item->code_cashflow->code)?$item->code_cashflow->name : ''}}" class="{{isset($item->code_cashflow->code) ? 'btn btn-warning btn-sm' :''}}" wire:click="setCodeCashflow({{$item->id}})">
                             @if(isset($item->code_cashflow->code))
-                                {{$item->code_cashflow->code}}
+                                <label class="btn btn-sm btn-warning">{{$item->code_cashflow->code}}</label>
+                            @elseif($set_multiple_cashflow)
+                                <input type="checkbox" wire:model="value_multiple_cashflow.{{$key_code_cashflow}}" value="{{$item->id}}" />
+                                @php($key_code_cashflow++)
                             @else
-                                <i class="fa fa-edit"></i> Set</a>
+                                <a href="javascript:void(0)" title="{{isset($item->code_cashflow->code)?$item->code_cashflow->name : ''}}" class="{{isset($item->code_cashflow->code) ? 'btn btn-warning btn-sm' :''}}" wire:click="setCodeCashflow({{$item->id}})"><i class="fa fa-edit"></i> Set</a>
                             @endif
-                            </a>
                         </td>
                     </tr>
                     @php($br=$item->no_voucher)
@@ -99,7 +114,6 @@
         </div>
         <br />
         {{$data->links()}}
-        
         <div wire:ignore.self class="modal fade" id="modal_set_code_cashflow" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -107,14 +121,31 @@
                 </div>
             </div>
         </div>
+        <div wire:ignore.self class="modal fade" id="modal_set_code_cashflow_checkbox" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <livewire:journal.set-code-cashflow-checkbox>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 @section('page-script')
+    Livewire.on('message', msg =>{
+        alert(msg);
+    });
+
     Livewire.on('modalEdit', () =>{
         $("#modal_set_code_cashflow").modal("show");
     });
     Livewire.on('modalEditHide', () =>{
         $("#modal_set_code_cashflow").modal("hide");
+    });
+    Livewire.on('modalSetCodeCashflowCheckbox', () =>{
+        $("#modal_set_code_cashflow_checkbox").modal("show");
+    });
+    Livewire.on('modalSetCodeCashflowCheckboxHide', () =>{
+        $("#modal_set_code_cashflow_checkbox").modal("hide");
     });
 @endsection

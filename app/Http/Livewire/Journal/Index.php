@@ -6,8 +6,9 @@ use Livewire\Component;
 
 class Index extends Component
 {
-    public $keyword,$year,$month,$coa_id,$id_active,$code_cashflow_id;
-    protected $listeners = ['modalEditHide'];
+    public $keyword,$year,$month,$coa_id,$id_active,$code_cashflow_id,$data_temp;
+    protected $listeners = ['modalEditHide','modalSetCodeCashflowCheckboxHide'];
+    public $set_multiple_cashflow = false,$value_multiple_cashflow=[],$check_all=false;
     public function render()
     {
         $data = \App\Models\Journal::orderBy('id','DESC');
@@ -17,8 +18,37 @@ class Index extends Component
         if($this->month) $data = $data->whereMonth('date_journal',$this->month);
         if($this->coa_id) $data = $data->where('coa_id',$this->coa_id);
         if($this->code_cashflow_id) $data = $data->where('code_cashflow_id',$this->code_cashflow_id);
-
+        
+        $temp = clone $data;
+        foreach($temp->whereNull('code_cashflow_id')->paginate(100) as $k => $i){
+            $this->data_temp[$k] = $i;
+        }
+        
         return view('livewire.journal.index')->with(['data'=>$data->paginate(100)]);
+    }
+    public function mount(){}
+    public function modalEditHide(){}
+    public function modalSetCodeCashflowCheckboxHide(){
+        $this->value_multiple_cashflow = []; // Clear data
+        $this->set_multiple_cashflow = false;
+        $this->check_all = false;
+    } 
+    public function saveCodeCashflow(){
+        $this->emit('modalEdit',$id);
+    }
+    public function submitCashFlow()
+    {
+        if(count($this->value_multiple_cashflow)==0){
+            $this->emit('message',__("Select Journal First !"));
+        }else $this->emit('modalSetCodeCashflowCheckbox',$this->value_multiple_cashflow);
+    }
+    public function checkAll()
+    {
+        if($this->check_all){
+            foreach($this->data_temp as $k => $item){
+                $this->value_multiple_cashflow[$k] = $item['id'];
+            }
+        }else $this->value_multiple_cashflow=[];
     }
 
     public function downloadExcel()
@@ -134,12 +164,7 @@ class Index extends Component
         },'Journal-' .date('d-M-Y') .'.xlsx');
         //return response()->download($writer->save('php://output'));
     }
-
-    public function modalEditHide()
-    {
-        
-    }
-
+    
     public function setCodeCashflow($id)
     {
         $this->emit('modalEdit',$id);

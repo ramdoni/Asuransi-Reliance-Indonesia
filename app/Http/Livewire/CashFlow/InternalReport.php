@@ -7,6 +7,8 @@ use Livewire\Component;
 class InternalReport extends Component
 {
     public $year,$month;
+    public $total_januari=0,$total_februari=0,$total_maret=0,$total_april=0,$total_mei=0,$total_juni=0,$total_juli=0,$total_agustus=0,$total_september=0,$total_oktober=0,$total_november=0,$total_desember=0;
+    public $sub_total_januari=0,$sub_total_februari=0,$sub_total_maret=0,$sub_total_april=0,$sub_total_mei=0,$sub_total_juni=0,$sub_total_juli=0,$sub_total_agustus=0,$sub_total_september=0,$sub_total_oktober=0,$sub_total_november=0,$sub_total_desember=0;
     public function render()
     {
         return view('livewire.cash-flow.internal-report');
@@ -25,86 +27,101 @@ class InternalReport extends Component
         $objPHPExcel->getProperties()->setCreator("Stalavista System")
                                      ->setLastModifiedBy("Stalavista System")
                                      ->setTitle("Office 2007 XLSX Product Database")
-                                     ->setSubject("Journal Database")
-                                     ->setDescription("Journal Database.")
+                                     ->setSubject("Cash Flow Database")
+                                     ->setDescription("Cash Flow Database.")
                                      ->setKeywords("office 2007 openxml php")
-                                     ->setCategory("Journal");
+                                     ->setCategory("Cashflow");
 
-        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A1', 'JOURNAL '.$this->year?$this->year:date('Y'));
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A1', 'Cash Flow '.($this->year?$this->year:date('Y')));
         $objPHPExcel->getActiveSheet()->getStyle('A1')->getFont()->setSize(16);
         $objPHPExcel->getActiveSheet()->getStyle('A1')->getAlignment()->setWrapText(false);
-        
-        $objPHPExcel->setActiveSheetIndex(0)
-                    ->setCellValue('A3', 'COA')
-                    ->setCellValue('B3', 'No Voucher')
-                    ->setCellValue('C3', 'Date')
-                    ->setCellValue('D3', 'Account')
-                    ->setCellValue('E3', 'Description')
-                    ->setCellValue('F3', 'Debit')
-                    ->setCellValue('G3', 'Kredit')
-                    ->setCellValue('H3', 'Saldo');
-
-        $objPHPExcel->getActiveSheet()->getStyle('A3:H3')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
-        $objPHPExcel->getActiveSheet()->getStyle('A3:H3')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-        //$objPHPExcel->getActiveSheet()->getStyle('A3:I3')->getFill()
-                            //->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                            //->getStartColor()->setRGB('e2efd9')
-                           // ;
-        $objPHPExcel->getActiveSheet()->getRowDimension('3')->setRowHeight(34);
-        $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(20);
-        $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
-        $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
-        $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
-        $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setAutoSize(true);
-        $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(20);
-        $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(20);
-        $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(20);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:N3')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:N3')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+        // $objPHPExcel->getActiveSheet()->getRowDimension('3')->setRowHeight(34);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(2);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(50);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(5);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(15);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(15);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(15);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(15);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(15);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('I')->setWidth(15);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('J')->setWidth(15);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('K')->setWidth(15);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('L')->setWidth(15);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('M')->setWidth(15);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('N')->setWidth(15);
         $objPHPExcel->getActiveSheet()->freezePane('A4');
 
-        $objPHPExcel->getActiveSheet()->setAutoFilter('A3:H3');
+        // $objPHPExcel->getActiveSheet()->setAutoFilter('A3:H3');
+        $num=3;
+        $objPHPExcel->setActiveSheetIndex(0)
+                  ->setCellValue('D'.$num,'Januari')
+                  ->setCellValue('E'.$num,'Februari')
+                  ->setCellValue('F'.$num,'Maret')
+                  ->setCellValue('G'.$num,'April')
+                  ->setCellValue('H'.$num,'Mei')
+                  ->setCellValue('I'.$num,'Juni')
+                  ->setCellValue('J'.$num,'Juli')
+                  ->setCellValue('K'.$num,'Agustus')
+                  ->setCellValue('L'.$num,'September')
+                  ->setCellValue('M'.$num,'Oktober')
+                  ->setCellValue('N'.$num,'November')
+                  ->setCellValue('O'.$num,'Desember');
+        $objPHPExcel->getActiveSheet()->getStyle('D3:O3')->getFont()->setBold(true);
         
-        $data = \App\Models\Journal::orderBy('id','DESC');
-        
-        if($this->keyword) $data = $data->where('no_voucher','LIKE',"%{$this->keyword}%");
-        if($this->year) $data = $data->whereYear('date_journal',$this->year);
-        if($this->month) $data = $data->whereMonth('date_journal',$this->month);
-        if($this->coa_id) $data = $data->where('coa_id',$this->coa_id);
-        
-        $param = $data->get();
-        $num=4;
-        $br='';
-        foreach($param as $k => $i){
-            if($i->no_voucher!=$br and $br!=""){
-                $num++;
-                $objPHPExcel->setActiveSheetIndex(0)
-                  ->setCellValue('A'.$num,'')
-                  ->setCellValue('B'.$num,'')
-                  ->setCellValue('C'.$num,'')
-                  ->setCellValue('D'.$num,'')
-                  ->setCellValue('E'.$num,'')
-                  ->setCellValue('F'.$num,'')
-                  ->setCellValue('G'.$num,'')
-                  ->setCellValue('H'.$num,'');
-            }
-            
+        $num++;
+        $alphabet = [1=>'A',2=>'B',3=>'C',4=>'D',5=>'E'];
+        foreach(get_group_cashflow() as $group_id =>$group){
             $objPHPExcel->setActiveSheetIndex(0)
-                ->setCellValue('A'.$num,(isset($i->coa->code)?$i->coa->code:''))
-                ->setCellValue('B'.$num,$i->no_voucher)
-                ->setCellValue('C'.$num,$i->date_journal)
-                ->setCellValue('D'.$num,(isset($i->coa->name)?$i->coa->name:''))
-                ->setCellValue('E'.$num,$i->description)
-                ->setCellValue('F'.$num,$i->debit)
-                ->setCellValue('G'.$num,$i->kredit)
-                ->setCellValue('H'.$num,$i->saldo);
-
-            $objPHPExcel->getActiveSheet()->getStyle('F'.$num)->getNumberFormat()->setFormatCode('#,##0');
-            $objPHPExcel->getActiveSheet()->getStyle('G'.$num)->getNumberFormat()->setFormatCode('#,##0');
-            $objPHPExcel->getActiveSheet()->getStyle('H'.$num)->getNumberFormat()->setFormatCode('#,##0');
+                  ->setCellValue('A'.$num,@$alphabet[$group_id])
+                  ->setCellValue('B'.$num,$group);
+            $objPHPExcel->getActiveSheet()->getStyle("B".$num)->getFont()->setBold(true);
             
-            $br = $i->no_voucher;
             $num++;
-        }
+            foreach(\App\Models\CodeCashflow::where('group',$group_id)->get() as $key => $item){
+                $objPHPExcel->setActiveSheetIndex(0)
+                ->setCellValue('A'.$num,($key+1))
+                ->setCellValue('B'.$num,$item->name)
+                ->setCellValue('C'.$num,$item->code)
+                ->setCellValue('D'.$num,sum_journal_cashflow($this->year,1,$item->id))
+                ->setCellValue('E'.$num,sum_journal_cashflow($this->year,2,$item->id))
+                ->setCellValue('F'.$num,sum_journal_cashflow($this->year,3,$item->id))
+                ->setCellValue('G'.$num,sum_journal_cashflow($this->year,4,$item->id))
+                ->setCellValue('H'.$num,sum_journal_cashflow($this->year,5,$item->id))
+                ->setCellValue('I'.$num,sum_journal_cashflow($this->year,6,$item->id))
+                ->setCellValue('J'.$num,sum_journal_cashflow($this->year,7,$item->id))
+                ->setCellValue('K'.$num,sum_journal_cashflow($this->year,8,$item->id))
+                ->setCellValue('L'.$num,sum_journal_cashflow($this->year,9,$item->id))
+                ->setCellValue('M'.$num,sum_journal_cashflow($this->year,10,$item->id))
+                ->setCellValue('N'.$num,sum_journal_cashflow($this->year,11,$item->id))
+                ->setCellValue('O'.$num,sum_journal_cashflow($this->year,12,$item->id));
 
+                $objPHPExcel->getActiveSheet()->getStyle('D'.$num.":O".$num)->getNumberFormat()->setFormatCode('#,##0');
+
+                $num++;
+            }
+
+            $objPHPExcel->setActiveSheetIndex(0)
+                  ->setCellValue('B'.$num,'Cash From '.$group)
+                  ->setCellValue('D'.$num,sum_journal_cashflow_by_group($this->year,1,$group_id))
+                  ->setCellValue('E'.$num,sum_journal_cashflow_by_group($this->year,2,$group_id))
+                  ->setCellValue('F'.$num,sum_journal_cashflow_by_group($this->year,3,$group_id))
+                  ->setCellValue('G'.$num,sum_journal_cashflow_by_group($this->year,4,$group_id))
+                  ->setCellValue('H'.$num,sum_journal_cashflow_by_group($this->year,5,$group_id))
+                  ->setCellValue('I'.$num,sum_journal_cashflow_by_group($this->year,6,$group_id))
+                  ->setCellValue('J'.$num,sum_journal_cashflow_by_group($this->year,7,$group_id))
+                  ->setCellValue('K'.$num,sum_journal_cashflow_by_group($this->year,8,$group_id))
+                  ->setCellValue('L'.$num,sum_journal_cashflow_by_group($this->year,9,$group_id))
+                  ->setCellValue('M'.$num,sum_journal_cashflow_by_group($this->year,10,$group_id))
+                  ->setCellValue('N'.$num,sum_journal_cashflow_by_group($this->year,11,$group_id))
+                  ->setCellValue('O'.$num,sum_journal_cashflow_by_group($this->year,12,$group_id));
+            $objPHPExcel->getActiveSheet()->getStyle('D'.$num.":O".$num)->getNumberFormat()->setFormatCode('#,##0');
+            $objPHPExcel->getActiveSheet()->getStyle('B'.$num.":O".$num)->getFont()->setBold(true);
+            $num=$num+2;
+        }
+    
         // Rename worksheet
         //$objPHPExcel->getActiveSheet()->setTitle('Iuran-'. date('d-M-Y'));
 
@@ -115,7 +132,7 @@ class InternalReport extends Component
 
         // Redirect output to a client’s web browser (Excel5)
         header('Content-Type: application/vnd.ms-excel');
-        header('Content-Disposition: attachment;filename="Journal-' .date('d-M-Y') .'.xlsx"');
+        header('Content-Disposition: attachment;filename="Cash-flow-' .date('d-M-Y') .'.xlsx"');
         header('Cache-Control: max-age=0');
         // If you're serving to IE 9, then the following may be needed
         //header('Cache-Control: max-age=1');
@@ -127,7 +144,7 @@ class InternalReport extends Component
         header ('Pragma: public'); // HTTP/1.0
         return response()->streamDownload(function() use($writer){
             $writer->save('php://output');
-        },'Journal-' .date('d-M-Y') .'.xlsx');
+        },'cash-flow-' .date('d-M-Y') .'.xlsx');
         //return response()->download($writer->save('php://output'));
     }
 

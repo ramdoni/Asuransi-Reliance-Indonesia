@@ -65,7 +65,8 @@ class Underwriting extends Component
                                     ->orWhere('tgl_jatuh_tempo', 'LIKE',"%{$this->keyword}%")
                                     ->orWhere('extend_tgl_jatuh_tempo', 'LIKE',"%{$this->keyword}%")
                                     ->orWhere('tgl_lunas', 'LIKE',"%{$this->keyword}%")
-                                    ->orWhere('ket_lampiran', 'LIKE',"%{$this->keyword}%"); 
+                                    ->orWhere('ket_lampiran', 'LIKE',"%{$this->keyword}%")
+                                    ->orWhere('line_bussines', 'LIKE',"%{$this->keyword}%"); 
         
         if($this->status) $data = $data->where('status', $this->status);
 
