@@ -15,7 +15,7 @@
                                 @enderror
                             </div>
                             <div class="row">
-                                <div class="form-group col-md-3">
+                                <div class="pr-0 form-group col-md-5">
                                     <label>{{ __('Bank Account') }}</label>
                                     <select class="form-control" wire:model="bank_account_id" {{$is_readonly?'disabled':''}}>
                                         <option value=""> --- Select --- </option>
@@ -76,10 +76,14 @@
                                     </td>
                                     @endif
                                     <td>
-                                        <select class="form-control" wire:model="coa_id.{{$k}}" wire:change="autoSave" required {{$is_readonly?'disabled':''}}>
+                                        <select class="form-control select2" id="coa_id.{{$k}}" wire:model="coa_id.{{$k}}" wire:change="autoSave" required {{$is_readonly?'disabled':''}}>
                                             <option value=""> --- Account -- </option>
-                                            @foreach(\App\Models\Coa::orderBy('name','ASC')->get() as $i)
-                                            <option value="{{$i->id}}">{{$i->name}} / {{$i->code}}</option>
+                                            @foreach(\App\Models\CoaGroup::orderBy('name','ASC')->get() as $group)
+                                                <optgroup label="{{$group->name}}">
+                                                    @foreach(\App\Models\Coa::where('coa_group_id',$group->id)->orderBy('name','ASC')->get() as $i)
+                                                    <option value="{{$i->id}}">{{$i->name}} / {{$i->code}}</option>
+                                                    @endforeach
+                                                </optgroup>
                                             @endforeach
                                         </select>
                                         @error("coa_id.".$k)
@@ -146,22 +150,45 @@
 </div>
 @push('after-scripts')
 <script src="{{ asset('assets/js/jquery.priceformat.min.js') }}"></script>
+<link rel="stylesheet" href="{{ asset('assets/vendor/select2/css/select2.min.css') }}"/>
+<script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
+<style>
+    .select2-container .select2-selection--single {height:36px;}
+    .select2-container .select2-selection--single .select2-selection__rendered{padding-top:3px;}
+    .select2-container--default .select2-selection--single .select2-selection__arrow{top:4px;right:10px;}
+    .select2-container {width: 100% !important;}
+</style>
 @endpush
 @section('page-script')
+
+    document.addEventListener('livewire:load', function () {
+        window.livewire.hook('afterDomUpdate', () => {
+            init_form();
+        });
+    });
+    function init_form(){
+        $('.format_number').priceFormat({
+            prefix: '',
+            centsSeparator: '.',
+            thousandsSeparator: '.',
+            centsLimit: 0
+        });
+        {{-- $('.select2').select2();
+        $('.select2').each(function(){
+            $(this).on('change', function (e) {
+                let elementName = $(this).attr('id');
+                var data = $(this).select2("val");
+                @this.set(elementName, data);
+            });
+        }); --}}
+    }
+    setTimeout(function(){
+        init_form()
+    })
     Livewire.on('listenAddAccountForm', () =>{
         setTimeout(function(){
-            $('.format_number').priceFormat({
-                prefix: '',
-                centsSeparator: '.',
-                thousandsSeparator: '.',
-                centsLimit: 0
-            });
+            init_form();
         },1000);
     });
-    $('.format_number').priceFormat({
-        prefix: '',
-        centsSeparator: '.',
-        thousandsSeparator: '.',
-        centsLimit: 0
-    });
+    
 @endsection

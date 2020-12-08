@@ -62,18 +62,22 @@
                                         <th>Description</th>
                                         <th>Debit</th>
                                         <th>Credit</th>
-                                        <th>Transaction Date</th>
+                                        <th>Transaction <br/>Date</th>
                                         <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach($count_account as $k => $form)
                                     <tr>
-                                        <td>
-                                            <select class="form-control" wire:model="coa_id.{{$k}}" wire:change="setNoVoucher({{$k}})">
+                                        <td style="width: 30%">
+                                            <select class="form-control select2" id="coa_id.{{$k}}" wire:model="coa_id.{{$k}}" wire:change="setNoVoucher({{$k}})">
                                                 <option value=""> --- Account -- </option>
-                                                @foreach(\App\Models\Coa::orderBy('name','ASC')->get() as $i)
-                                                <option value="{{$i->id}}">{{$i->name}} / {{$i->code}}</option>
+                                                @foreach(\App\Models\CoaGroup::orderBy('name','ASC')->get() as $group)
+                                                    <optgroup label="{{$group->name}}">
+                                                        @foreach(\App\Models\Coa::where('coa_group_id',$group->id)->orderBy('name','ASC')->get() as $i)
+                                                        <option value="{{$i->id}}">{{$i->name}} / {{$i->code}}</option>
+                                                        @endforeach
+                                                    </optgroup>
                                                 @endforeach
                                             </select>
                                             @error("coa_id.".$k)
@@ -81,15 +85,15 @@
                                             @enderror
                                         </td>
                                         <td>
-                                            <input type="text" class="form-control" wire:model="description_coa.{{$k}}" />
+                                            <textarea class="form-control" wire:model="description_coa.{{$k}}" style="height:37px;"></textarea>
                                         </td>
-                                        <td style="width:10%;">
+                                        <td style="width:15%;">
                                             <input type="text" class="form-control format_number" wire:model="debit.{{$k}}" wire:input="sumDebit" />
                                             @error("debit.{{$k}}")
                                             <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                                             @enderror
                                         </td>
-                                        <td style="width:10%;"> 
+                                        <td style="width:15%;"> 
                                             <input type="text" class="form-control format_number" wire:model="kredit.{{$k}}" wire:input="sumKredit" />
                                             @error("kredit.{{$k}}")
                                             <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
@@ -125,22 +129,38 @@
 </div>
 @push('after-scripts')
 <script src="{{ asset('assets/js/jquery.priceformat.min.js') }}"></script>
+<link rel="stylesheet" href="{{ asset('assets/vendor/select2/css/select2.min.css') }}"/>
+<script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
+<style>
+    .select2-container .select2-selection--single {height:36px;}
+    .select2-container .select2-selection--single .select2-selection__rendered{padding-top:3px;}
+    .select2-container--default .select2-selection--single .select2-selection__arrow{top:4px;right:10px;}
+    .select2-container {width: 100% !important;}
+</style>
 @endpush
 @section('page-script')
+    function init_form(){
+        $('.format_number').priceFormat({
+            prefix: '',
+            centsSeparator: '.',
+            thousandsSeparator: '.',
+            centsLimit: 0
+        });
+        {{-- $('.select2').select2();
+        $('.select2').each(function(){
+            $(this).on('change', function (e) {
+                let elementName = $(this).attr('id');
+                var data = $(this).select2("val");
+                @this.set(elementName, data);
+            });
+        }); --}}
+    }
+    setTimeout(function(){
+        init_form()
+    })
     Livewire.on('listenAddAccountForm', () =>{
         setTimeout(function(){
-            $('.format_number').priceFormat({
-                prefix: '',
-                centsSeparator: '.',
-                thousandsSeparator: '.',
-                centsLimit: 0
-            });
-        },1000);
-    });
-    $('.format_number').priceFormat({
-        prefix: '',
-        centsSeparator: '.',
-        thousandsSeparator: '.',
-        centsLimit: 0
+            init_form();
+        },500);
     });
 @endsection

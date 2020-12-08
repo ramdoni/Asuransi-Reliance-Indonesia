@@ -10,7 +10,7 @@ class PayableInsert extends Component
     public $account_id,$count_account,$bank_account_id,$receive_amount=0,$date,$outstanding_balance;
     public $kredit,$debit,$description_coa,$coa_id,$no_voucher,$payment_date;
     public $total_kredit,$total_debit;
-    public $recipient,$reference_type,$reference_no,$reference_date,$description;
+    public $recipient,$reference_type,$reference_no,$reference_date,$description,$is_submit_journal=false;
     public function render()
     {
         return view('livewire.operation.payable-insert');

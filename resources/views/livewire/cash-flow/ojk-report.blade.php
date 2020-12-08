@@ -108,14 +108,17 @@
             </tr>
             <tr>
                 <td>c. Komisi</td>
-                @foreach(month() as $m)
-                    <td></td>
+                @foreach(month() as $key_month => $month)
+                    <td>{{format_idr(sum_journal_cashflow($year,$key_month,5))}}</td>
                 @endforeach
             </tr>
             <tr>
                 <td>d. Biaya-biaya</td>
-                @foreach(month() as $m)
-                    <th></th>
+                @foreach(month() as $key_month => $month)
+                    <td>{{format_idr(sum_journal_cashflow($year,$key_month,4)+sum_journal_cashflow($year,$key_month,6)+sum_journal_cashflow($year,$key_month,7))}}</td>
+                    <!--Marketing Expenses--->
+                    <!--Taxation--->
+                    <!--General & Administration Expenses--->
                 @endforeach
             </tr>
             <tr>
