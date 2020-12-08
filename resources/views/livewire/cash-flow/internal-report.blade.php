@@ -112,9 +112,8 @@
                         <th>{{format_idr($sub_total_november)}}</th>
                         <th>{{format_idr($sub_total_desember)}}</th>
                     </tr>
-                    <tr><td colspan="15">&nbsp;</td></tr>
+                    <tr><td colspan="15"></td></tr>
                 @endforeach
-                
                 <tr>
                     <th></th>
                     <th>Increase/ Decrease Cash and Equivalent Cash</th>
@@ -135,14 +134,53 @@
                 <tr>
                     <th></th>
                     <th>Cash and Equivalent Cash Beginning</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
                 </tr>
                 <tr>
                     <th></th>
                     <th>Cash And Equivalent Cash End Periode</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
                 </tr>
                 <tr>
                     <th></th>
                     <th>CEK</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
                 </tr>
             </tbody>
         </table>

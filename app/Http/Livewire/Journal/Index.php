@@ -3,9 +3,12 @@
 namespace App\Http\Livewire\Journal;
 
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class Index extends Component
 {
+    use WithPagination;
+    protected $paginationTheme = 'bootstrap';
     public $keyword,$year,$month,$coa_id,$id_active,$code_cashflow_id,$data_temp;
     protected $listeners = ['modalEditHide','modalSetCodeCashflowCheckboxHide'];
     public $set_multiple_cashflow = false,$value_multiple_cashflow=[],$check_all=false;

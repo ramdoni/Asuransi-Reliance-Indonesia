@@ -98,7 +98,7 @@
                         <td class="text-right">{{format_idr($item->saldo)}}</td>
                         <td style="text-align:center;">
                             @if(isset($item->code_cashflow->code))
-                                <label class="btn btn-sm btn-warning">{{$item->code_cashflow->code}}</label>
+                                <span>{{$item->code_cashflow->code}}</span>
                             @elseif($set_multiple_cashflow)
                                 <input type="checkbox" wire:model="value_multiple_cashflow.{{$key_code_cashflow}}" value="{{$item->id}}" />
                                 @php($key_code_cashflow++)

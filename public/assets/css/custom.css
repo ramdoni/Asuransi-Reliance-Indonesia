@@ -36,12 +36,9 @@
     transform: rotate(360deg);
     }
 }
-.table tr th{
-    padding-top:8px;
-    padding-bottom:8px;
-}
-.table tr td{
-    padding-top:5px;
-    padding-bottom:5px;
+.table-style1 tr td,
+.table-style1 tr th{
+    padding-top:4px;
+    padding-bottom:4px;
     font-size:13px;
 }

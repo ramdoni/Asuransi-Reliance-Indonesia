@@ -175,7 +175,7 @@ class UnderwritingDetail extends Component
             $data->transaction_table = 'konven_underwriting'; 
             $data->coa_id = $item->coa_id;
             $data->no_voucher = $this->no_voucher;
-            $data->date_journal = date('Y-m-d',strtotime($this->payment_date[$k]));
+            $data->date_journal = date('Y-m-d');//date('Y-m-d',strtotime($this->payment_date[$k]));
             $data->debit = replace_idr(isset($this->debit[$k])?$this->debit[$k]:0);
             $data->kredit = replace_idr(isset($this->kredit[$k])?$this->kredit[$k]:0);
             $data->description = isset($this->description[$k])?$this->description[$k]:'';

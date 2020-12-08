@@ -16,68 +16,76 @@
         <table class="table table-hover table-striped m-b-0 c_list table-bordered table-style1">
             <tr>
                 <td></td>
-                @foreach(month() as $m)
-                    <th>{{$m}}</th>
+                @foreach(month() as $month)
+                    <th>{{$month}}</th>
                 @endforeach
             </tr>
             <tr>
                 <th>SALDO AWAL KAS DAN BANK</th>
-                @foreach(month() as $m)
+                @foreach(month() as $month)
                     <th></th>
                 @endforeach
             </tr>
             <tr>
                 <th>ARUS KAS DARI AKTIVITAS OPERASI</th>
-                @foreach(month() as $m)
+                @foreach(month() as $month)
                     <th></th>
                 @endforeach
             </tr>
             <tr>
                 <th>Arus Kas Masuk</th>
-                @foreach(month() as $m)
+                @foreach(month() as $month)
                     <th></th>
                 @endforeach
             </tr>
             <tr>
                 <td>a. Premi</td>
-                @foreach(month() as $m)
-                    <td>{{format_idr(\App\Models\Journal::whereYear('date_journal',$year)->whereMonth('date_journal',$month)->where('code_cashflow_id',1)->sum('saldo'))}}</td>
+                @foreach(month() as $key_month => $month)
+                    <td>{{format_idr(sum_journal_cashflow($year,$key_month,1))}}</td>
                 @endforeach
             </tr>
             <tr>
                 <td>b. Klaim Koasuransi</td>
-                @foreach(month() as $m)
+                @foreach(month() as $month)
                     <td></td>
                 @endforeach
             </tr>
             <tr>
                 <td>c. Klaim Reasuransi</td>
-                @foreach(month() as $m)
-                    <td>{{format_idr(\App\Models\Journal::whereYear('date_journal',$year)->whereMonth('date_journal',$month)->where('code_cashflow_id',2)->sum('saldo'))}}</td>
+                @foreach(month() as $key_month => $month)
+                    <td>{{format_idr(sum_journal_cashflow($year,$key_month,2))}}</td>
                 @endforeach
             </tr>
             <tr>
                 <td>d. Komisi</td>
-                @foreach(month() as $m)
+                @foreach(month() as $month)
                     <th></th>
                 @endforeach
             </tr>
             <tr>
                 <td>e. Piutang</td>
-                @foreach(month() as $m)
+                @foreach(month() as $month)
                     <th></th>
                 @endforeach
             </tr>
             <tr>
                 <td>f. Lain-lain</td>
-                @foreach(month() as $m)
-                    <td>{{format_idr(\App\Models\Journal::whereYear('date_journal',$year)->whereMonth('date_journal',$month)->where('code_cashflow_id',3)->sum('saldo'))}}</td>
+                @foreach(month() as $key_month => $month)
+                    <td>{{format_idr(sum_journal_cashflow($year,$key_month,3))}}</td>
                 @endforeach
             </tr>
             <tr>
                 <th>Jumlah Arus Kas Masuk</td>
-                @foreach(month() as $m)
-                    <th></th>
+                @foreach(month() as $key_month => $month)
+                    <th>
+                        {{
+                            format_idr(
+                                sum_journal_cashflow($year,$key_month,1)+
+                                sum_journal_cashflow($year,$key_month,2)+
+                                sum_journal_cashflow($year,$key_month,3)
+                                )
+                        }}
+                    </th>
                 @endforeach
             </tr>
             <tr>
@@ -88,14 +96,14 @@
             </tr>
             <tr>
                 <td>a. Premi Reasuransi</td>
-                @foreach(month() as $m)
-                    <td>{{format_idr(\App\Models\Journal::whereYear('date_journal',$year)->whereMonth('date_journal',$month)->where('code_cashflow_id',8)->sum('saldo'))}}</td>
+                @foreach(month() as $key_month => $month)
+                    <td>{{format_idr(sum_journal_cashflow($year,$key_month,8))}}</td>
                 @endforeach
             </tr>
             <tr>
                 <td>b. Klaim</td>
-                @foreach(month() as $m)
-                    <td>{{format_idr(\App\Models\Journal::whereYear('date_journal',$year)->whereMonth('date_journal',$month)->where('code_cashflow_id',9)->sum('saldo'))}}</td>
+                @foreach(month() as $key_month => $month)
+                    <td>{{format_idr(sum_journal_cashflow($year,$key_month,9))}}</td>
                 @endforeach
             </tr>
             <tr>
@@ -113,7 +121,7 @@
             <tr>
                 <td>e. Lain-lain</td>
                 @foreach(month() as $m)
-                <td>{{format_idr(\App\Models\Journal::whereYear('date_journal',$year)->whereMonth('date_journal',$month)->where('code_cashflow_id',4)->sum('saldo')+\App\Models\Journal::whereYear('date_journal',$year)->whereMonth('date_journal',$month)->where('code_cashflow_id',6)->sum('saldo')+\App\Models\Journal::whereYear('date_journal',$year)->whereMonth('date_journal',$month)->where('code_cashflow_id',7)->sum('saldo'))}}</td>
+                <td>{{format_idr(\App\Models\Journal::whereYear('date_journal',$year)->whereMonth('date_journal',$month)->where('code_cashflow_id',3)->sum('saldo'))}}</td>
                 @endforeach
             </tr>
             <tr>

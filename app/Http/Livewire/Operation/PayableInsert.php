@@ -138,7 +138,7 @@ class PayableInsert extends Component
             $data->transaction_table = 'expenses'; 
             $data->coa_id = $val;
             $data->no_voucher = $this->no_voucher;
-            $data->date_journal = date('Y-m-d',strtotime($this->payment_date[$key]));
+            $data->date_journal = date('Y-m-d');//date('Y-m-d',strtotime($this->payment_date[$key]));
             $data->debit = replace_idr(isset($this->debit[$key])?$this->debit[$key]:0);
             $data->kredit = replace_idr(isset($this->kredit[$key])?$this->kredit[$key]:0);
             $data->description = isset($this->description_coa[$key])?$this->description_coa[$key]:'';

@@ -48,7 +48,9 @@
                         <table class="table">
                             <thead>
                                 <tr>
+                                    @if(!$is_readonly)
                                     <th><label title="Ordering"><i class="fa fa-sort"></i></label></th>
+                                    @endif
                                     <th>Account</th>
                                     <th>Description</th>
                                     <th>Debit</th>
@@ -61,6 +63,7 @@
                                 @php($ordering=1)
                                 @foreach($count_account as $k => $item)
                                 <tr>
+                                    @if(!$is_readonly)
                                     <td>
                                         @if($k==0)
                                             <a href="javascript:void(0)" title="Ordering Bottom" wire:click="setOrdering({{$item}},{{$ordering}},{{$ordering+1}})"><i class="fa fa-arrow-down"></i></a>
@@ -71,6 +74,7 @@
                                             <a href="javascript:void(0)"  title="Ordering Bottom" wire:click="setOrdering({{$item}},{{$ordering}},{{$ordering+1}})"><i class="fa fa-arrow-down"></i></a>
                                         @endif
                                     </td>
+                                    @endif
                                     <td>
                                         <select class="form-control" wire:model="coa_id.{{$k}}" wire:change="autoSave" required {{$is_readonly?'disabled':''}}>
                                             <option value=""> --- Account -- </option>
@@ -130,7 +134,7 @@
                     @if(!$is_readonly)
                     <button type="button" wire:click="save" class="ml-3 btn btn-primary"><i class="fa fa-archive"></i> {{ __('Save') }}</button>
                     <button type="submit" class="ml-3 btn btn-warning" {{$is_disabled?'disabled':''}}><i class="fa fa-save"></i> {{ __('Submit to Journal') }}</button>
-                    <div wire:loading.delay="3000"> 
+                    <div wire:loading.delay class="float-right"> 
                         <i class="fa fa-spinner fa-spin fa-1x fa-fw"></i>
                         <span class="sr-only">Loading...</span> Auto save
                     </div>
