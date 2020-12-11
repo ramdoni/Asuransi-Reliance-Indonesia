@@ -18,4 +18,9 @@ class Expenses extends Model
     {
         return $this->hasMany('\App\Models\ExpenseCoa','expense_id','id');
     }
+
+    public function tax()
+    {
+        return $this->hasOne('\App\Models\SalesTax','id','tax_id');
+    }
 }

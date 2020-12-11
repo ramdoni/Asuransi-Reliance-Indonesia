@@ -48,6 +48,7 @@ class UnderwritingDetail extends Component
         $check_ordering->save();
 
         $this->mount($this->data->id);
+        $this->emit('listenChangeForm');
     }
 
     public function addAccountForm()
@@ -60,7 +61,7 @@ class UnderwritingDetail extends Component
         $this->payment_date[] = 0;
         $this->konven_underwriting_id[] = '';
 
-        $this->emit('listenAddAccountForm');
+        $this->emit('listenChangeForm');
     }
 
     public function autoSave()

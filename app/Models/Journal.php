@@ -14,6 +14,11 @@ class Journal extends Model
         return $this->hasOne('\App\Models\Coa','id','coa_id');
     }
 
+    public function bank()
+    {
+        return $this->hasOne('\App\Models\BankAccount','id','bank_account_id');
+    }
+
     public function code_cashflow()
     {
         return $this->hasOne('\App\Models\CodeCashflow','id','code_cashflow_id');

@@ -30,29 +30,19 @@
         </div>
         <!-- Nav tabs -->
         <ul class="nav nav-tabs">
-            <li class="nav-item"><a class="nav-link {{(Request::segment(1)!='konven' and Request::segment(1)!='syariah' && Request::segment(1)!='operation') ? 'active' : 'null'}}" data-toggle="tab" href="#menu"><i class="fa fa-database"></i> Data</a></li>    
-            <li class="nav-item"><a class="nav-link {{(Request::segment(1)=='konven' || Request::segment(1)=='syariah' || Request::segment(1)=='operation') ? 'active' : 'null'}}" data-toggle="tab" href="#transaction"><i class="fa fa-list-alt"></i> Transaction</a></li>          
+            <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#menu"><i class="fa fa-database"></i> Data</a></li>    
         </ul>
         <!-- Tab panes -->
         <div class="tab-content p-l-0 p-r-0">
-            <div class="tab-pane {{(Request::segment(1)!='konven' and Request::segment(1)!='syariah' and Request::segment(1)!='operation') ? 'active' : 'null'}}" id="menu">
+            <div class="tab-pane active" id="menu">
                 <nav id="left-sidebar-nav" class="sidebar-nav">
                     <ul id="main-menu" class="metismenu">    
                         @if(\Auth::user()->user_access_id==1)<!--Administrator-->                   
                         <li class="{{ Request::segment(1) === 'dashboard' ? 'active' : null }}">
-                            <a href="/"><i class="icon-home"></i> <span>Dashboard</span></a>
+                            <a href="/"><i class="fa fa-home"></i> <span>Dashboard</span></a>
                         </li>
-                        <li class="{{ (Request::segment(1) === 'users' || Request::segment(1) === 'user-access') ? 'active' : null }}">
-                            <a href="#App" class="has-arrow"><i class="icon-users"></i> <span>Management User</span></a>
-                            <ul>
-                                <li class="{{ (Request::segment(2) === 'insert' || Request::segment(2) === 'index') ? 'active' : null }}"><a href="{{route('users.index')}}">Users</a></li>
-                                <li class="{{ Request::segment(2) === 'access' ? 'active' : null }}"><a href="{{route('user-access.index')}}">Access</a></li>
-                            </ul>
-                        </li>
-                        @endif
-                        @if(\Auth::user()->user_access_id==2)<!--Finance-->     
-                        <li class="{{ Request::segment(1) === 'dashboard' ? 'active' : null }}">
-                            <a href="/"><i class="icon-home"></i> <span>Dashboard</span></a>
+                        <li class="{{ Request::segment(1) === 'users' ? 'active' : null }}">
+                            <a href="{{route('users.index')}}"><i class="fa fa-users"></i> <span>Users</span></a>
                         </li>
                         <li class="{{ Request::segment(1) === 'sales-tax' ? 'active' : null }}">
                             <a href="{{route('sales-tax')}}"><i class="fa fa-database"></i> <span>Sales Tax</span></a>
@@ -60,9 +50,6 @@
                         <li class="{{ Request::segment(1) === 'policy' ? 'active' : null }}">
                             <a href="{{route('policy')}}"><i class="fa fa-database"></i> <span>Polis</span></a>
                         </li>
-                        {{-- <li class="{{ Request::segment(1) === 'data-teknis' ? 'active' : null }}">
-                            <a href="{{route('data-teknis')}}"><i class="fa fa-upload"></i> <span>Data Teknis</span></a>
-                        </li> --}}
                         <li class="{{ Request::segment(1) === 'journal' ? 'active' : null }}">
                             <a href="{{route('bank-account')}}"><i class="fa fa-database"></i> <span>Bank Account</span></a>
                         </li>
@@ -74,28 +61,14 @@
                             <ul>
                                 <li class="{{ Request::segment(1) === 'coa' ? 'active' : null }}"><a href="{{route('coa')}}">COA</a></li>
                                 <li class="{{ Request::segment(1) === 'coa-group' ? 'active' : null }}"><a href="{{route('coa-group')}}">COA Groups</a></li>
-                                <li class="{{ Request::segment(1) === 'coa-type' ? 'active' : null }}"><a href="{{route('coa-type')}}">COA Types</a></li>
+                                {{-- <li class="{{ Request::segment(1) === 'coa-type' ? 'active' : null }}"><a href="{{route('coa-type')}}">COA Types</a></li> --}}
                             </ul>
                         </li>
-                        {{-- <li class="{{ (Request::segment(1) === 'journal' || Request::segment(1) === 'cash-flow' || Request::segment(1) === 'trial-balance') ? 'active' : null }}">
-                            <a href="#App" class="has-arrow"><i class="fa fa-database"></i> <span>Report</span></a>
-                            <ul>
-                                <li class="{{ Request::segment(1) === 'journal' ? 'active' : null }}"><a href="{{route('journal')}}"><i class="fa fa-list-alt"></i> Journal</a></li>
-                                <li class="{{ Request::segment(1) === 'cash-flow' ? 'active' : null }}"><a href="{{route('cash-flow')}}"><i class="fa fa-list-alt"></i> Cash Flow</a></li>
-                                <li class="{{ Request::segment(1) === 'trial-balance' ? 'active' : null }}"><a href="{{route('trial-balance')}}"><i class="fa fa-list-alt"></i> Trial Balance</a></li>
-                                <li class="{{ Request::segment(1) === 'income-statement' ? 'active' : null }}"><a href="{{route('income-statement')}}"><i class="fa fa-list-alt"></i> Income Statement</a></li>
-                                <li class="{{ Request::segment(1) === 'balance-sheet' ? 'active' : null }}"><a href="{{route('balance-sheet')}}"><i class="fa fa-list-alt"></i> Balance Sheet</a></li>        
-                            </ul>
-                        </li> --}}
-
                         @endif
-                    </ul>
-                </nav>
-            </div>
-            
-            <div class="tab-pane p-l-15 p-r-15 {{(Request::segment(1)=='konven' || Request::segment(1)=='syariah' || Request::segment(1)=='operation') ? 'active' : 'null'}}" id="transaction" >
-                <nav class="sidebar-nav">
-                    <ul class="metismenu" id="main-menu2"> 
+                        @if(\Auth::user()->user_access_id==2)<!--Finance-->     
+                        <li class="{{ Request::segment(1) === 'dashboard' ? 'active' : null }}">
+                            <a href="/"><i class="icon-home"></i> <span>Dashboard</span></a>
+                        </li>
                         <li class="{{ (Request::segment(1) === 'konven' || Request::segment(1) === 'syariah') ? 'active' : null }}">
                             <a href="#" class="has-arrow"><i class="fa fa-database"></i> <span>Teknis</span></a>
                             <ul>
@@ -105,13 +78,27 @@
                         </li>
                         <li class="{{ (Request::segment(1) === 'operation') ? 'active' : null }}">
                             <a href="{{route('operation')}}"><i class="fa fa-database"></i> <span>Operation</span></a>
+                        </li>  
+                        @endif
+                        @if(\Auth::user()->user_access_id==3)<!--Accounting-->     
+                        <li class="{{ Request::segment(1) === 'dashboard' ? 'active' : null }}">
+                            <a href="/"><i class="icon-home"></i> <span>Dashboard</span></a>
                         </li>
+                        <li class="{{ Request::segment(1) === 'income' ? 'active' : null }}">
+                            <a href="{{route('income')}}"><i class="fa fa-database"></i> <span>Income </span><span class="float-right badge badge-danger">{{\App\Models\Income::where('status',1)->count()}}</span></a>
+                        </li>
+                        <li class="{{ Request::segment(1) === 'expense' ? 'active' : null }}">
+                            <a href="{{route('expense')}}"><i class="fa fa-database"></i> <span>Expense</span><span class="float-right badge badge-danger">{{\App\Models\Expenses::where('status',1)->count()}}</span></a>
+                        </li>
+                        @endif
+                        @if(\Auth::user()->user_access_id==4)<!--Treasury-->     
+                        <li class="{{ Request::segment(1) === 'dashboard' ? 'active' : null }}">
+                            <a href="{{route('treasury.index')}}"><i class="icon-home"></i> <span>Dashboard</span></a>
+                        </li>
+                        @endif
                     </ul>
                 </nav>
-            </div>          
+            </div>        
         </div>          
     </div>
 </div>
-@section('page-script')
-$("#main-menu2").metisMenu()
-@endsection

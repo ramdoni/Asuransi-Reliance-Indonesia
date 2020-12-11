@@ -51,7 +51,7 @@ function generate_no_voucher_konven_underwriting($coa_id)
 
     return '';
 }
-function generate_no_voucher($coa_id)
+function generate_no_voucher($coa_id="")
 {
     $coa = \App\Models\Coa::find($coa_id);
     $count = \App\Models\Journal::whereMonth('created_at',date('m'))->whereYear('created_at',date('Y'))->count()+1;

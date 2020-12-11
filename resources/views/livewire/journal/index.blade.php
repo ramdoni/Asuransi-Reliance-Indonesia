@@ -130,7 +130,6 @@
         </div>
     </div>
 </div>
-
 @section('page-script')
     Livewire.on('message', msg =>{
         alert(msg);

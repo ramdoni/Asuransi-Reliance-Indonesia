@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Konven;
 
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Illuminate\Support\Facades\Storage;
 
 class UploadUnderwriting extends Component
 {
@@ -21,9 +22,8 @@ class UploadUnderwriting extends Component
             'file'=>'required|mimes:xls,xlsx|max:51200' // 50MB maksimal
         ]);
         
-        $this->emit('listenUploaded');
-        
         $path = $this->file->getRealPath();
+       
         $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
         $data = $reader->load($path);
         $sheetData = $data->getActiveSheet()->toArray();
@@ -163,7 +163,7 @@ class UploadUnderwriting extends Component
                 $data->extend_tgl_jatuh_tempo = $extend_tgl_jatuh_tempo;
                 $data->tgl_lunas = $tgl_lunas;
                 $data->ket_lampiran = $ket_lampiran;
-                $data->no_voucher =  generate_no_voucher_konven_underwriting(58);
+                //$data->no_voucher =  generate_no_voucher_konven_underwriting(58);
                 $data->line_bussines = $line_bussines;
                 $data->save();  
 
@@ -254,11 +254,22 @@ class UploadUnderwriting extends Component
                     $new->save();
                     $ordering++;
                 }
+                foreach($data->coaDesc as $k => $item){
+                    $new  = new \App\Models\Journal();
+                    $new->transaction_number = $no_kwitansi_debit_note;
+                    $new->transaction_id = $data->id;
+                    $new->transaction_table = 'konven_underwriting'; 
+                    $new->coa_id = $item->coa_id;
+                    $new->no_voucher = generate_no_voucher_konven_underwriting($item->coa_id);
+                    $new->date_journal = date('Y-m-d');
+                    $new->debit = $item->debit;
+                    $new->kredit = $item->kredit;
+                    $new->saldo = replace_idr($item->debit!=0 ? $item->debit : ($item->kredit!=0?$item->kredit : 0));
+                    $new->save();
+                }
             }
-            
-            session()->flash('message-success','Upload success !');
-            
-            return redirect()->to('konven');
         }
+        session()->flash('message-success','Upload success !');   
+        return redirect()->to('konven');
     }
 }

@@ -45,6 +45,11 @@ class Index extends Component
             $this->emit('message',__("Select Journal First !"));
         }else $this->emit('modalSetCodeCashflowCheckbox',$this->value_multiple_cashflow);
     }
+    public function cancelCheckAll()
+    {
+        $this->check_all=false;
+        $this->set_multiple_cashflow=false;
+    }
     public function checkAll()
     {
         if($this->check_all){

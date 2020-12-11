@@ -160,7 +160,6 @@
 </style>
 @endpush
 @section('page-script')
-
     document.addEventListener('livewire:load', function () {
         window.livewire.hook('afterDomUpdate', () => {
             init_form();
@@ -185,10 +184,9 @@
     setTimeout(function(){
         init_form()
     })
-    Livewire.on('listenAddAccountForm', () =>{
+    Livewire.on('listenChangeForm', () =>{
         setTimeout(function(){
             init_form();
         },1000);
     });
-    
 @endsection

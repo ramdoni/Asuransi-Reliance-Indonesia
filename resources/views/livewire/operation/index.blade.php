@@ -6,15 +6,15 @@
         <div class="card">
             <div class="body">
                 <ul class="nav nav-tabs">
-                    <li class="nav-item"><a class="nav-link active show" data-toggle="tab" href="#payable">Payable</a></li>
-                    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#receivable">Receivable</a></li>
+                    <li class="nav-item"><a class="nav-link active show" data-toggle="tab" href="#expense">Expense</a></li>
+                    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#income">Income</a></li>
                 </ul>
                 <div class="tab-content">
-                    <div class="tab-pane show active" id="payable">
-                        <livewire:operation.payable />
+                    <div class="tab-pane show active" id="expense">
+                        <livewire:operation.expense />
                     </div>
-                    <div class="tab-pane" id="receivable">
-                        <livewire:operation.receivable />
+                    <div class="tab-pane" id="income">
+                        <livewire:operation.income />
                     </div>
                 </div>
             </div>

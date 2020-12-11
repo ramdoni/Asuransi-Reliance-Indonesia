@@ -41,7 +41,7 @@
                         <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                         @enderror
                     </div>
-                    <div class="form-group">
+                    {{-- <div class="form-group">
                         <label>{{ __('COA Type') }}</label>
                         <select class="form-control" wire:model="coa_type_id">
                             <option value=""> --- Select --- </option>
@@ -52,7 +52,7 @@
                         @error('coa_type_id')
                         <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                         @enderror
-                    </div>
+                    </div> --}}
                     
                     <div class="form-group">
                         <label>{{ __('Description') }}</label>

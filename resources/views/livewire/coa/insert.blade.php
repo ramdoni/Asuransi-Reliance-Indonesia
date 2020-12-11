@@ -1,7 +1,7 @@
 @section('title', __('COA Type'))
 @section('parentPageTitle', 'Home')
 
-<div class="row clearfix">
+<div class="clearfix row">
     <div class="col-md-4">
         <div class="card">
             <div class="body">
@@ -10,7 +10,7 @@
                         <label>{{ __('COA Group') }}</label>
                         <select class="form-control" wire:model="coa_group_id">
                             <option value=""> --- Select --- </option>
-                            @foreach(\App\Models\CoaGroup::orderBy('name','ASC')->get() as $k =>$i)
+                            @foreach(\App\Models\CoaGroup::orderBy('id','ASC')->get() as $k =>$i)
                             <option value="{{$i->id}}">{{$i->name}} / {{$i->code}}</option>
                             @endforeach
                         </select>
@@ -41,7 +41,7 @@
                         <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                         @enderror
                     </div>
-                    <div class="form-group">
+                    {{-- <div class="form-group">
                         <label>{{ __('COA Type') }}</label>
                         <select class="form-control" wire:model="coa_type_id">
                             <option value=""> --- Select --- </option>
@@ -52,7 +52,7 @@
                         @error('coa_type_id')
                         <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                         @enderror
-                    </div>
+                    </div> --}}
                     <div class="form-group">
                         <label>{{ __('Description') }}</label>
                         <textarea class="form-control" wire:model="description" style="height:100px;"></textarea>
@@ -62,7 +62,7 @@
                     </div>
                     <hr>
                     <a href="{{route('coa')}}"><i class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
-                    <button type="submit" class="btn btn-primary ml-3"><i class="fa fa-save"></i> {{ __('Save') }}</button>
+                    <button type="submit" class="ml-3 btn btn-primary"><i class="fa fa-save"></i> {{ __('Save') }}</button>
                 </form>
             </div>
         </div>

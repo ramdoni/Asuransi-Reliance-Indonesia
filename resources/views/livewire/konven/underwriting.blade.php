@@ -6,9 +6,8 @@
         <div class="px-0 col-md-1">
             <select class="form-control" wire:model="status">
                 <option value=""> --- Status --- </option>
-                <option value="1">Waiting</option>
-                <option value="2">Save As Draft</option>
-                <option value="3">Journal</option>
+                <option value="1">Journal</option>
+                <option value="2">Outstanding</option>
             </select>
         </div>
         <div class="col-md-2">
@@ -85,13 +84,10 @@
                     <td>{{$num}}</td>
                     <td>
                         @if($item->status==1)
-                        <span class="btn btn-outline-warning btn-sm">Waiting</span>
+                        <span class="badge text-success">Journal</span>
                         @endif
                         @if($item->status==2)
-                        <span class="btn btn-outline-info btn-sm">Save as Draft</span>
-                        @endif
-                        @if($item->status==3)
-                        <span class="btn btn-outline-success btn-sm">Journal</span>
+                        <span class="badge text-danger">Outstanding</span>
                         @endif
                     </td>
                     <td>{{$item->bulan}}</td>

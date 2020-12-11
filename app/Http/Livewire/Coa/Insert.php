@@ -18,14 +18,14 @@ class Insert extends Component
             'coa_group_id'=>'required',
             'code'=>'required',
             'name'=>'required',
-            'coa_type_id'=>'required'
+            // 'coa_type_id'=>'required'
         ]);
         
         $data = new \App\Models\Coa();
         $data->coa_group_id = $this->coa_group_id;
         $data->code = $this->code;
         $data->name = $this->name;
-        $data->coa_type_id = $this->coa_type_id;
+        // $data->coa_type_id = $this->coa_type_id;
         $data->description = $this->description;
         $data->code_voucher = $this->code_voucher;
         $data->save();

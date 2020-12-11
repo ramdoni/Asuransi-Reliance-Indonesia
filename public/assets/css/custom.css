@@ -36,6 +36,10 @@
     transform: rotate(360deg);
     }
 }
+.table tr td,.table tr th{
+    padding-top:6px;
+    padding-bottom:6px;
+}
 .table-style1 tr td,
 .table-style1 tr th{
     padding-top:4px;

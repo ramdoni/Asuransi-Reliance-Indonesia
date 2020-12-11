@@ -3,10 +3,17 @@
 function status_income($status) {
     switch($status){
         case 1:
-            return "<label class=\"badge text-warning\">Save as Draft</label>";
+            return "<label class=\"badge text-warning\">Waiting</label>";
         break;
         case 2:
-            return "<label class=\"badge text-success\">Journal</label>";
+            return "<label class=\"badge text-success\">Completed</label>";
         break;
     }
+}
+
+function generate_no_voucher_income()
+{
+    $count = \App\Models\Income::whereMonth('created_at',date('m'))->whereYear('created_at',date('Y'))->count()+1;
+    
+    return date('y').date('m').str_pad($count,5, '0', STR_PAD_LEFT);
 }

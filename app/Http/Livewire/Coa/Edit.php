@@ -30,7 +30,7 @@ class Edit extends Component
             //'coa_group_id'=>'required',
             //'code'=>'required',
             'name'=>'required',
-            'coa_type_id'=>'required',
+            // 'coa_type_id'=>'required',
             'code_voucher'=>'required'
         ]);
         
