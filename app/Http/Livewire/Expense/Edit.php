@@ -11,7 +11,7 @@ class Edit extends Component
     public $expense_coa_id,$kredit,$debit,$description_coa,$coa_id,$no_voucher;
     public $total_kredit,$total_debit,$is_readonly=false;
     public $tax_amount,$total_amount;
-    public $recipient,$reference_type,$reference_no,$reference_date,$description,$is_submit_journal=false;
+    public $recipient,$reference_type,$reference_no,$reference_date,$description,$is_submit_journal=false,$payment_amount;
     public function render()
     {
         return view('livewire.expense.edit');
@@ -150,7 +150,7 @@ class Edit extends Component
             $data->transaction_id = $this->data->id;
             $data->transaction_table = 'expenses'; 
             $data->coa_id = $val;
-            $data->no_voucher = $this->no_voucher;
+            $data->no_voucher = generate_no_voucher($val,$data->id);
             $data->date_journal = date('Y-m-d');
             $data->debit = replace_idr(isset($this->debit[$key])?$this->debit[$key]:0);
             $data->kredit = replace_idr(isset($this->kredit[$key])?$this->kredit[$key]:0);

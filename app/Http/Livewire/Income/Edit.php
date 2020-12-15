@@ -14,7 +14,6 @@ class Edit extends Component
     public $nominal,$tax_id,$payment_amount;
     public $tax_amount,$total_amount;
     public $is_readonly = false,$is_submit_journal=false;
-
     public function render()
     {
         return view('livewire.income.edit');
@@ -151,7 +150,7 @@ class Edit extends Component
             $data->transaction_id = $this->data->id;
             $data->transaction_table = 'income'; 
             $data->coa_id = $val;
-            $data->no_voucher = $this->no_voucher;
+            $data->no_voucher = generate_no_voucher($val,$data->id);
             $data->date_journal = date('Y-m-d');
             $data->debit = replace_idr(isset($this->debit[$key])?$this->debit[$key]:0);
             $data->kredit = replace_idr(isset($this->kredit[$key])?$this->kredit[$key]:0);

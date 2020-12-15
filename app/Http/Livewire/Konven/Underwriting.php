@@ -9,7 +9,7 @@ class Underwriting extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
-    public $keyword,$status;
+    public $keyword,$status,$total_sync;
     public function render()
     {
         $data = \App\Models\KonvenUnderwriting::orderBy('id','DESC');
@@ -71,5 +71,10 @@ class Underwriting extends Component
         if($this->status) $data = $data->where('status', $this->status);
 
         return view('livewire.konven.underwriting')->with(['data'=>$data->paginate(100)]);
+    }
+
+    public function mount()
+    {
+        $this->total_sync = \App\Models\KonvenUnderwriting::where('status',1)->count();
     }
 }

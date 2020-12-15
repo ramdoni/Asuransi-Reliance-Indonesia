@@ -63,6 +63,9 @@ Route::group(['middleware' => ['auth','access:1']], function(){
     Route::get('sales-tax',App\Http\Livewire\SalesTax\Index::class)->name('sales-tax');
     Route::get('sales-tax/insert',App\Http\Livewire\SalesTax\Insert::class)->name('sales-tax.insert');
     Route::get('sales-tax/edit/{id}',App\Http\Livewire\SalesTax\Edit::class)->name('sales-tax.edit');
+    Route::get('konven-underwriting',App\Http\Livewire\Konven\Underwriting::class)->name('konven.underwriting');
+    Route::get('konven-reinsurance',App\Http\Livewire\Konven\Reinsurance::class)->name('konven.reinsurance');
+    Route::get('konven-claim',App\Http\Livewire\Konven\Claim::class)->name('konven.claim');
 });
 
 // Accounting
@@ -91,6 +94,15 @@ Route::group(['middleware' => ['auth','access:2']], function(){
     Route::get('operation/expense/edit/{id}',App\Http\Livewire\Operation\ExpenseEdit::class)->name('operation.expense.edit');
     Route::get('operation/income/insert',App\Http\Livewire\Operation\IncomeInsert::class)->name('operation.income.insert');
     Route::get('operation/income/edit/{id}',App\Http\Livewire\Operation\IncomeEdit::class)->name('operation.income.edit');
+    Route::get('income-premium-receivable',App\Http\Livewire\IncomePremiumReceivable\Index::class)->name('income.premium-receivable');
+    Route::get('income-premium-receivable/detail/{id}',App\Http\Livewire\IncomePremiumReceivable\Detail::class)->name('income.premium-receivable.detail');
+    Route::get('income-reinsurance',App\Http\Livewire\IncomeReinsurance\Index::class)->name('income.reinsurance');
+    Route::get('income-reinsurance/detail/{id}',App\Http\Livewire\IncomeReinsurance\Detail::class)->name('income.reinsurance.detail');
+    Route::get('income-investment',App\Http\Livewire\IncomeInvesment\Index::class)->name('income.investment');
+    Route::get('expense-claim',App\Http\Livewire\ExpenseClaim\Index::class)->name('expense.claim');
+    Route::get('expense-claim/detail/{id}',App\Http\Livewire\ExpenseClaim\Detail::class)->name('expense.claim.detail');
+    Route::get('expense-others',App\Http\Livewire\ExpenseOthers\Index::class)->name('expense.others');
+    Route::get('expense-others/detail/{id}',App\Http\Livewire\ExpenseOthers\Detail::class)->name('expense.others.detail');
 });
 
 // Treasury

@@ -20,4 +20,8 @@ class Index extends Component
                                         ->orWhere('produk','LIKE',"%{$this->keyword}%");
         return view('livewire.policy.index')->with(['data'=>$data->paginate(50)]);
     }
+    public function delete($id)
+    {
+        \App\Models\Policy::find($id)->delete();
+    }
 }

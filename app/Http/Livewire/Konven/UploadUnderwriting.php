@@ -105,8 +105,13 @@ class UploadUnderwriting extends Component
                     $polis->produk = $produk;
                     $polis->save();
                 }
+                // find debit note
+                $find = \App\Models\KonvenUnderwriting::where('status',2)->where('no_kwitansi_debit_note',$no_kwitansi_debit_note)->first();
+                if($find) continue; // skip jika data sudah pernah di upload
 
-                $data = new \App\Models\KonvenUnderwriting();
+                $data = \App\Models\KonvenUnderwriting::where('no_kwitansi_debit_note',$no_kwitansi_debit_note)->first();
+                if(!$data) $data = new \App\Models\KonvenUnderwriting();
+
                 $data->user_id = \Auth::user()->id;
                 $data->bulan = $bulan;
                 $data->no_reg = $no_reg;
@@ -164,112 +169,12 @@ class UploadUnderwriting extends Component
                 $data->tgl_lunas = $tgl_lunas;
                 $data->ket_lampiran = $ket_lampiran;
                 //$data->no_voucher =  generate_no_voucher_konven_underwriting(58);
+                $data->status = 1;
                 $data->line_bussines = $line_bussines;
-                $data->save();  
-
-                if($line_bussines=='DWIGUNA'){
-                    $coa_premi_netto = 60;
-                    $commision_paid = 91;
-                    $discount_coa = 60; 
-                    $gross_premium = 75;
-                }elseif($line_bussines=='JANGKAWARSA'){
-                    $coa_premi_netto = 58;
-                    $commision_paid = 89;
-                    $discount_coa = 65;
-                    $gross_premium = 73;
-                }elseif($line_bussines=='EKAWARSA'){
-                    $coa_premi_netto = 59;
-                    $commision_paid = 90;
-                    $discount_coa = 66;
-                    $gross_premium = 74;
-                }elseif($line_bussines=='KECELAKAAN'){
-                    $coa_premi_netto = 62;
-                    $commision_paid = 93;
-                    $discount_coa = 69;
-                    $gross_premium = 77;
-                }else{
-                    $coa_premi_netto = 63; //Premium Receivable Other Tradisional
-                    $commision_paid = 94; // Commision Paid Other Tradisional 
-                    $discount_coa = 70;
-                    $gross_premium = 78;
-                }
-                $ordering = 1;
-                // Insert Transaksi
-                if(!empty($premi_netto)){
-                    $new = new \App\Models\KonvenUnderwritingCoa();
-                    $new->coa_id = $coa_premi_netto;
-                    $new->konven_underwriting_id = $data->id;
-                    $new->debit = $premi_netto;
-                    $new->kredit = 0;
-                    $new->ordering = $ordering;
-                    $new->save();
-                    $ordering++;
-                }
-                if(!empty($ppn) and !empty($jumlah_discount)){
-                    $new = new \App\Models\KonvenUnderwritingCoa();
-                    $new->coa_id = $commision_paid; 
-                    $new->konven_underwriting_id = $data->id;
-                    $new->debit = $jumlah_discount + $jumlah_ppn;
-                    $new->kredit = 0;
-                    $new->ordering = $ordering;
-                    $new->save();
-                    $ordering++;
-                }elseif(!empty($jumlah_discount)){
-                    $new = new \App\Models\KonvenUnderwritingCoa();
-                    $new->coa_id = $discount_coa; // Discount Jangkawarsa
-                    $new->konven_underwriting_id = $data->id;
-                    $new->debit = $jumlah_discount;
-                    $new->kredit = 0;
-                    $new->ordering = $ordering;
-                    $new->save();
-                    $ordering++;
-                }
-                if(!empty($premi_gross) or !empty($extra_premi)){
-                    $new = new \App\Models\KonvenUnderwritingCoa();
-                    $new->coa_id = $gross_premium; // 	Gross Premium Jangkawarsa
-                    $new->konven_underwriting_id = $data->id;
-                    $new->debit = 0;
-                    $new->kredit = $premi_gross + $extra_premi;
-                    $new->ordering = $ordering;
-                    $new->save();
-                    $ordering++;
-                }
-                if(!empty($jumlah_pph)){
-                    $new = new \App\Models\KonvenUnderwritingCoa();
-                    $new->coa_id = 83; // PPH 23 Payable
-                    $new->konven_underwriting_id = $data->id;
-                    $new->debit = 0;
-                    $new->kredit = $jumlah_pph;
-                    $new->ordering = $ordering;
-                    $new->save();
-                    $ordering++;
-                }
-                if(!empty($extsertifikat)){
-                    $new = new \App\Models\KonvenUnderwritingCoa();
-                    $new->coa_id = 88; // Policy Administration Income
-                    $new->konven_underwriting_id = $data->id;
-                    $new->debit = 0;
-                    $new->kredit = $extsertifikat;
-                    $new->ordering = $ordering;
-                    $new->save();
-                    $ordering++;
-                }
-                foreach($data->coaDesc as $k => $item){
-                    $new  = new \App\Models\Journal();
-                    $new->transaction_number = $no_kwitansi_debit_note;
-                    $new->transaction_id = $data->id;
-                    $new->transaction_table = 'konven_underwriting'; 
-                    $new->coa_id = $item->coa_id;
-                    $new->no_voucher = generate_no_voucher_konven_underwriting($item->coa_id);
-                    $new->date_journal = date('Y-m-d');
-                    $new->debit = $item->debit;
-                    $new->kredit = $item->kredit;
-                    $new->saldo = replace_idr($item->debit!=0 ? $item->debit : ($item->kredit!=0?$item->kredit : 0));
-                    $new->save();
-                }
+                $data->save(); 
             }
         }
         session()->flash('message-success','Upload success !');   
-        return redirect()->to('konven');
+        return redirect()->route('konven.underwriting');
     }
 }

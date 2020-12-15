@@ -12,7 +12,7 @@
             <thead>
                 <tr>
                     <th>No</th>      
-                    <th>Voucher Number</th>                              
+                    <th>Finance Voucher</th>                              
                     <th>Client</th>                                    
                     <th>Reference Type</th>                                    
                     <th>Reference No</th>                                    

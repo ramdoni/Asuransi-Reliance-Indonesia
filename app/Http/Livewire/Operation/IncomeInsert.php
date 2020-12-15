@@ -15,7 +15,7 @@ class IncomeInsert extends Component
 
     public function mount()
     {
-        $this->no_voucher = generate_no_voucher_expense();
+        $this->no_voucher = generate_no_voucher_income();
     }
 
     public function calculate()

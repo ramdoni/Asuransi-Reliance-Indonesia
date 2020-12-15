@@ -12,7 +12,7 @@
             <thead>
                 <tr>
                     <th class="align-middle">No</th>
-                    <th class="align-middle">Voucher Number</th>                                    
+                    <th class="align-middle">Finance Voucher</th>                                    
                     <th class="align-middle">Recipient</th>                                    
                     <th class="align-middle">Reference Type</th>                                    
                     <th class="align-middle">Reference No.</th>

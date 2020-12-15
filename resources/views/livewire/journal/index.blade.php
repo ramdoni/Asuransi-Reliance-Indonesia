@@ -56,7 +56,7 @@
                     <tr>                    
                         <th>COA</th>                                    
                         <th>No Voucher</th>                                    
-                        <th>Date</th>                                    
+                        <th>Journal Date</th>                                    
                         <th>Account</th>                                    
                         <th>Description</th>                                    
                         <th>Debit</th>                                    

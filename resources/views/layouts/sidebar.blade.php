@@ -41,6 +41,22 @@
                         <li class="{{ Request::segment(1) === 'dashboard' ? 'active' : null }}">
                             <a href="/"><i class="fa fa-home"></i> <span>Dashboard</span></a>
                         </li>
+                        <li class="{{ (Request::segment(1) === 'konven-underwriting' || Request::segment(1) === 'konven-reinsurance'  || Request::segment(1) === 'konven-claim') ? 'active' : null }}">
+                            <a href="#App" class="has-arrow"><i class="fa fa-database"></i> <span>Konven</span></a>
+                            <ul>
+                                <li class="{{ Request::segment(1) === 'konven-underwriting' ? 'active' : null }}"><a href="{{route('konven.underwriting')}}">Underwriting</a></li>
+                                <li class="{{ Request::segment(1) === 'konven-reinsurance' ? 'active' : null }}"><a href="{{route('konven.reinsurance')}}">Reinsurance</a></li>
+                                <li class="{{ Request::segment(1) === 'konven-claim' ? 'active' : null }}"><a href="{{route('konven.claim')}}">Claim</a></li>
+                            </ul>
+                        </li>
+                        <li class="{{ (Request::segment(1) === 'coa') ? 'active' : null }}">
+                            <a href="#App" class="has-arrow"><i class="fa fa-database"></i> <span>Syariah</span></a>
+                            <ul>
+                                <li class="{{ Request::segment(1) === 'coa' ? 'active' : null }}"><a href="{{route('coa')}}">Underwriting</a></li>
+                                <li class="{{ Request::segment(1) === 'coa-group' ? 'active' : null }}"><a href="{{route('coa-group')}}">Reinsurance</a></li>
+                                <li class="{{ Request::segment(1) === 'coa-group' ? 'active' : null }}"><a href="">Claim</a></li>
+                            </ul>
+                        </li>
                         <li class="{{ Request::segment(1) === 'users' ? 'active' : null }}">
                             <a href="{{route('users.index')}}"><i class="fa fa-users"></i> <span>Users</span></a>
                         </li>
@@ -61,7 +77,6 @@
                             <ul>
                                 <li class="{{ Request::segment(1) === 'coa' ? 'active' : null }}"><a href="{{route('coa')}}">COA</a></li>
                                 <li class="{{ Request::segment(1) === 'coa-group' ? 'active' : null }}"><a href="{{route('coa-group')}}">COA Groups</a></li>
-                                {{-- <li class="{{ Request::segment(1) === 'coa-type' ? 'active' : null }}"><a href="{{route('coa-type')}}">COA Types</a></li> --}}
                             </ul>
                         </li>
                         @endif
@@ -69,16 +84,21 @@
                         <li class="{{ Request::segment(1) === 'dashboard' ? 'active' : null }}">
                             <a href="/"><i class="icon-home"></i> <span>Dashboard</span></a>
                         </li>
-                        <li class="{{ (Request::segment(1) === 'konven' || Request::segment(1) === 'syariah') ? 'active' : null }}">
-                            <a href="#" class="has-arrow"><i class="fa fa-database"></i> <span>Teknis</span></a>
+                        <li class="{{ (Request::segment(1) === 'income-premium-receivable' || Request::segment(1) === 'income-reinsurance' ||  Request::segment(1) ==='income-investment') ? 'active' : null }}">
+                            <a href="#" class="has-arrow"><i class="fa fa-database"></i> <span>Income</span></a>
                             <ul>
-                                <li class="{{ Request::segment(1) === 'konven' ? 'active' : null }}"><a href="{{route('konven')}}"><i class="fa fa-list-alt"></i> Konven</a></li>
-                                <li class="{{ Request::segment(1) === 'syariah' ? 'active' : null }}"><a href="{{route('syariah')}}"><i class="fa fa-list-alt"></i> Syariah</a></li>        
+                                <li class="{{ Request::segment(1) === 'income-premium-receivable' ? 'active' : null }}"><a href="{{route('income.premium-receivable')}}"> Premium Receivable</a></li>
+                                <li class="{{ Request::segment(1) === 'income-reinsurance' ? 'active' : null }}"><a href="{{route('income.reinsurance')}}"> Reinsurance</a></li>        
+                                <li class="{{ Request::segment(1) === 'income-investment' ? 'active' : null }}"><a href="{{route('income.investment')}}"> Invesment</a></li>        
                             </ul>
                         </li>
-                        <li class="{{ (Request::segment(1) === 'operation') ? 'active' : null }}">
-                            <a href="{{route('operation')}}"><i class="fa fa-database"></i> <span>Operation</span></a>
-                        </li>  
+                        <li class="{{ (Request::segment(1) === 'expense-claim' || Request::segment(1) === 'expense-others') ? 'active' : null }}">
+                            <a href="#" class="has-arrow"><i class="fa fa-database"></i> <span>Expense</span></a>
+                            <ul>
+                                <li class="{{ Request::segment(1) === 'expense-claim' ? 'active' : null }}"><a href="{{route('expense.claim')}}"> Claim</a></li>
+                                <li class="{{ Request::segment(1) === 'expense-others' ? 'active' : null }}"><a href="{{route('expense.others')}}"> Others</a></li>        
+                            </ul>
+                        </li>
                         @endif
                         @if(\Auth::user()->user_access_id==3)<!--Accounting-->     
                         <li class="{{ Request::segment(1) === 'dashboard' ? 'active' : null }}">

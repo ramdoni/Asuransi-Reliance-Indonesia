@@ -7,8 +7,8 @@
             <div class="body">
                 <ul class="nav nav-tabs">
                     <li class="nav-item"><a class="nav-link active show" data-toggle="tab" href="#underwriting">Underwriting</a></li>
-                    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#claim">Claim</a></li>
                     <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#reinsurance">Reinsurance</a></li>
+                    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#claim">Claim</a></li>
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane show active" id="underwriting">

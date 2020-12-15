@@ -3,10 +3,13 @@
 function status_expense($status) {
     switch($status){
         case 1:
-            return "<label class=\"badge text-warning\">Waiting</label>";
+            return "<label class=\"badge text-warning\">Unpaid</label>";
         break;
         case 2:
-            return "<label class=\"badge text-success\">Completed</label>";
+            return "<label class=\"badge text-success\">Paids</label>";
+        break;
+        case 3:
+            return "<label class=\"badge text-danger\">Outstanding</label>";
         break;
     }
 }

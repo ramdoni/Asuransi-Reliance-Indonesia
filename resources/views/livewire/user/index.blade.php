@@ -1,7 +1,7 @@
 @section('title', 'All User')
 @section('parentPageTitle', 'Management User')
 
-<div class="row clearfix">
+<div class="clearfix row">
     <div class="col-lg-12">
         <div class="card">
             <div class="header row">
@@ -39,14 +39,21 @@
                             @foreach($data as $k => $item)
                             <tr>
                                 <td style="width: 50px;">{{$k+1}}</td>
-                                <td><a href="{{route('users.edit',['id'=>$item->id])}}">{{$item->name}}</a></td>
+                                <td>
+                                    @if(\Auth::user()->id!=$item->id)
+                                    <a href="#" class="pr-2 text-success" onclick="autologin('{{ route('users.autologin',['id'=>$item->id]) }}','{{$item->name}}')" title="Autologin"><i class="fa fa-sign-in"></i></a> 
+                                    @endif
+                                    <a href="{{route('users.edit',['id'=>$item->id])}}">{{$item->name}}</a>
+                                </td>
                                 <td>{{$item->telepon}}</td> 
                                 <td>{{$item->email}}</td>                                   
                                 <td>{{$item->address}}</td>
                                 <td>{{isset($item->access->name)?$item->access->name:''}}</td>
                                 <td>{{$item->updated_at}}</td>
                                 <td>  
-                                    <a href="#" class="text-success pr-2" onclick="autologin('{{ route('users.autologin',['id'=>$item->id]) }}','{{$item->name}}')" title="Autologin"><i class="fa fa-sign-in"></i></a>
+                                    @if(\Auth::user()->id!=$item->id)
+                                    <a href="#" class="pr-2 text-success" onclick="autologin('{{ route('users.autologin',['id'=>$item->id]) }}','{{$item->name}}')" title="Autologin"><i class="fa fa-sign-in"></i></a>
+                                    @endif
                                     <a href="#" class="text-danger" wire:click="delete({{$item->id}})" title="Delete"><i class="fa fa-trash-o"></i></a>
                                     {{-- <a href="#" class="text-danger" data-toggle="modal" data-target="#confirm_delete" wire:click="setActiveId({{$item->id}})" title="Delete"><i class="fa fa-trash-o"></i></a> --}}
                                 </td>

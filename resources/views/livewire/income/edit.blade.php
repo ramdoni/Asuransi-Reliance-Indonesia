@@ -42,22 +42,22 @@
                                 </tr>
                                 <tr>
                                     <th>{{ __('Tax')}}</th>
-                                    <td>@if(isset($data->tax->code)) {{$data->tax->code}} {{$data->tax->description}} / {{$data->tax->percen}} @endif</td>
+                                    <td>@if(isset($data->tax->code)) {{$data->tax->code}} {{$data->tax->description}} / {{$data->tax->percen}}@else - @endif</td>
                                 </tr>
                                 <tr>
                                     <th>{{ __('Tax Amount')}}</th>
-                                    <td>{{format_idr($data->tax_amount)}}</td>
+                                    <td><span class="btn btn-outline-danger btn-sm">{{format_idr($data->tax_amount)}}</span></td>
                                 </tr>
                                 <tr>
                                     <th>{{ __('Total Amount')}}</th>
-                                    <td>{{format_idr($data->total_amount)}}</td>
+                                    <td><span class="btn btn-outline-danger btn-sm">{{format_idr($total_amount)}}</span></td>
                                 </tr>
                                 <tr>
                                     <th>{{ __('Payment Amount')}}</th>
-                                    <td>{{format_idr($data->payment_amount)}}</td>
+                                    <td><span class="btn btn-outline-danger btn-sm">{{format_idr($payment_amount)}}</span></td>
                                 </tr>
                                 <tr>
-                                    <th>{{ __('Pament Amount')}}</th>
+                                    <th>{{ __('Outstanding Balance')}}</th>
                                     <td>{{format_idr($data->outstanding_balance)}}</td>
                                 </tr>
                             </table>
