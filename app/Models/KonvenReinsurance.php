@@ -9,4 +9,9 @@ class KonvenReinsurance extends Model
 {
     use HasFactory;
     protected $table = 'konven_reinsurance';
+
+    public function uw()
+    {
+        return $this->hasOne('\App\Models\KonvenUnderwriting','id','transaction_id');
+    }
 }

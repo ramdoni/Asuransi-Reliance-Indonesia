@@ -1,7 +1,7 @@
 @section('title', 'Bank Account')
 @section('parentPageTitle', 'Home')
 
-<div class="row clearfix">
+<div class="clearfix row">
     <div class="col-lg-12">
         <div class="card">
             <div class="header row">
@@ -24,6 +24,7 @@
                                 <th>Owner</th>                                    
                                 <th>Cabang</th>
                                 <th>Open Balance</th>
+                                <th>Chart of Account</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -37,6 +38,7 @@
                                 <td>{{$item->owner}}</td>
                                 <td>{{$item->cabang}}</td>
                                 <td>{{format_idr($item->open_balance)}}</td>
+                                <td>{{isset($item->coa->name)?$item->coa->code.' - '.$item->coa->name : ''}}</td>
                                 <td><a href="javascript:void(0)" wire:click="delete({{$item->id}})" class="text-danger"><i class="fa fa-trash"></i></a></td>
                             </tr>
                             @endforeach

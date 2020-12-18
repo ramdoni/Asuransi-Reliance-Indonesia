@@ -1,5 +1,5 @@
-@section('title', 'Claim Payable #'.$data->no_voucher)
-@section('parentPageTitle', 'Home')
+@section('title', 'Commision Payable #'.$data->no_voucher)
+@section('parentPageTitle', 'Expense')
 <div class="clearfix row">
     <div class="col-md-7">
         <div class="card">
@@ -35,9 +35,20 @@
                                 <tr>
                                     <th>{{ __('Payment Amount')}}</th>
                                     <td>
-                                        <input type="text" class="form-control col-md-6" {{$is_readonly?'disabled':''}} wire:model="payment_amount" />
+                                        <input type="text" class="form-control col-md-6 format_number" {{$is_readonly?'disabled':''}} wire:model="payment_amount" />
                                     </td>
                                 </tr>
+                                <tr>
+                                    <th>{{ __('Description')}}</th>
+                                    <td>
+                                        <textarea class="form-control" wire:model="description"></textarea>
+                                    </td>
+                                </tr>
+                                
+                                {{-- <tr>
+                                    <th>{{ __('Outstanding Balance')}}</th>
+                                    <td>{{$outstanding_balance}}</td>
+                                </tr> --}}
                                 <tr>
                                     <th>{{__('Payment Date')}}*<small>{{__('Default today')}}</small></th>
                                     <td>
@@ -65,12 +76,6 @@
                                     <th>{{__('Bank Charges')}}</th>
                                     <td><input type="text" {{$is_readonly?'disabled':''}} class="form-control format_number col-md-6" wire:model="bank_charges" /></td>
                                 </tr>
-                                <tr>
-                                    <th>{{__('Description')}}</th>
-                                    <td>
-                                        <textarea style="height:100px;" class="form-control" wire:model="description"></textarea>
-                                    </td>
-                                </tr>
                             </table>
                         </div>
                     </div>
@@ -86,6 +91,9 @@
 <script src="{{ asset('assets/js/jquery.priceformat.min.js') }}"></script>
 @endpush
 @section('page-script')
+    document.addEventListener("livewire:load", () => {
+        init_form();
+    });
     Livewire.on('changeForm', () =>{
         setTimeout(function(){
             init_form();

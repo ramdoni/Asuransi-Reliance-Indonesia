@@ -1,7 +1,7 @@
 @section('title', __('Bank Account'))
 @section('parentPageTitle', 'Home')
 
-<div class="row clearfix">
+<div class="clearfix row">
     <div class="col-md-4">
         <div class="card">
             <div class="body">
@@ -48,9 +48,25 @@
                         <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                         @enderror
                     </div>
+                    <div class="form-group">
+                        <label>{{ __('Chart of Account (COA)') }}</label>
+                        <select class="form-control select2" id="coa_id" wire:model="coa_id">
+                            <option value=""> --- Account -- </option>
+                            @foreach(\App\Models\CoaGroup::orderBy('name','ASC')->get() as $group)
+                                <optgroup label="{{$group->name}}">
+                                    @foreach(\App\Models\Coa::where('coa_group_id',$group->id)->orderBy('name','ASC')->get() as $i)
+                                    <option value="{{$i->id}}">{{$i->name}} / {{$i->code}}</option>
+                                    @endforeach
+                                </optgroup>
+                            @endforeach
+                        </select>
+                        @error('cabang')
+                        <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                        @enderror
+                    </div>
                     <hr>
                     <a href="{{route('bank-account')}}"><i class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
-                    <button type="submit" class="btn btn-primary ml-3"><i class="fa fa-save"></i> {{ __('Save') }}</button>
+                    <button type="submit" class="ml-3 btn btn-primary"><i class="fa fa-save"></i> {{ __('Save') }}</button>
                 </form>
             </div>
         </div>

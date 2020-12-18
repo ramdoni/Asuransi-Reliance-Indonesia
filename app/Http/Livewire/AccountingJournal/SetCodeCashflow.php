@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Journal;
+namespace App\Http\Livewire\AccountingJournal;
 
 use Livewire\Component;
 
@@ -10,7 +10,7 @@ class SetCodeCashflow extends Component
     protected $listeners = ['modalEdit'];
     public function render()
     {
-        return view('livewire.journal.set-code-cashflow');
+        return view('livewire.accounting-journal.set-code-cashflow');
     }
 
     public function mount()

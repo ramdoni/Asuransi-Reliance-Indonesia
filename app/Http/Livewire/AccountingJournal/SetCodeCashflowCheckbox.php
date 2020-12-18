@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Journal;
+namespace App\Http\Livewire\AccountingJournal;
 
 use Livewire\Component;
 
@@ -10,7 +10,7 @@ class SetCodeCashflowCheckbox extends Component
     protected $listeners = ['modalSetCodeCashflowCheckbox'];
     public function render()
     {
-        return view('livewire.journal.set-code-cashflow-checkbox');
+        return view('livewire.accounting-journal.set-code-cashflow-checkbox');
     }
     public function mount()
     {

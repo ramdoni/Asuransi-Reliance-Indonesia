@@ -60,8 +60,9 @@ class ReinsuranceSync extends Component
                     $new->debit = 0;
                     $new->kredit = $item->komisi_reinsurance;
                     $new->saldo = $item->komisi_reinsurance;
+                    $new->description = $item->kirim_reas."({$item->keterangan})";
                     $new->save();
-                    // insert Income
+                    // insert Income - Reinsurance Commision
                     $income = new \App\Models\Income();
                     $income->user_id = \Auth::user()->id;
                     $income->no_voucher = generate_no_voucher_income();
@@ -69,7 +70,7 @@ class ReinsuranceSync extends Component
                     $income->reference_date = $uw->tanggal_produksi;
                     $income->nominal = $item->komisi_reinsurance;
                     $income->client = $item->pemegang_polis;
-                    $income->reference_type = 'Reinsurance';
+                    $income->reference_type = 'Reinsurance Commision';
                     $income->transaction_id = $item->id;
                     $income->transaction_table = 'konven_reinsurance';
                     $income->save();
@@ -85,19 +86,20 @@ class ReinsuranceSync extends Component
                     $new->debit = 0;
                     $new->kredit = $item->premi_reas_netto;
                     $new->saldo = $item->premi_reas_netto;
+                    $new->description = $item->kirim_reas."({$item->keterangan})";
                     $new->save();
                     // insert Income
-                    $income = new \App\Models\Income();
-                    $income->user_id = \Auth::user()->id;
-                    $income->no_voucher = generate_no_voucher_income();
-                    $income->reference_no = $uw->no_kwitansi_debit_note;
-                    $income->reference_date = $uw->tanggal_produksi;
-                    $income->nominal = $item->premi_reas_netto;
-                    $income->client = $item->pemegang_polis;
-                    $income->reference_type = 'Reinsurance';
-                    $income->transaction_id = $item->id;
-                    $income->transaction_table = 'konven_reinsurance';
-                    $income->save();
+                    // $income = new \App\Models\Income();
+                    // $income->user_id = \Auth::user()->id;
+                    // $income->no_voucher = generate_no_voucher_income();
+                    // $income->reference_no = $uw->no_kwitansi_debit_note;
+                    // $income->reference_date = $uw->tanggal_produksi;
+                    // $income->nominal = $item->premi_reas_netto;
+                    // $income->client = $item->pemegang_polis;
+                    // $income->reference_type = 'Reinsurance';
+                    // $income->transaction_id = $item->id;
+                    // $income->transaction_table = 'konven_reinsurance';
+                    // $income->save();
                 }
                 if($item->premi_reas){
                     // insert journal
@@ -111,19 +113,20 @@ class ReinsuranceSync extends Component
                     $new->debit = $item->premi_reas;
                     $new->kredit = 0;
                     $new->saldo = $item->premi_reas;
+                    $new->description = $item->kirim_reas."({$item->keterangan})";
                     $new->save();
-                    // insert Income
-                    $income = new \App\Models\Income();
-                    $income->user_id = \Auth::user()->id;
-                    $income->no_voucher = generate_no_voucher_income();
-                    $income->reference_no = $uw->no_kwitansi_debit_note;
-                    $income->reference_date = $uw->tanggal_produksi;
-                    $income->nominal = $item->premi_reas;
-                    $income->client = $item->pemegang_polis;
-                    $income->reference_type = 'Reinsurance';
-                    $income->transaction_id = $item->id;
-                    $income->transaction_table = 'konven_reinsurance';
-                    $income->save();
+                    // Expense -  Reinsurance Premium
+                    $expense = new \App\Models\Expenses();
+                    $expense->user_id = \Auth::user()->id;
+                    $expense->no_voucher = generate_no_voucher_expense();
+                    $expense->reference_no = $uw->no_kwitansi_debit_note;
+                    $expense->reference_date = $uw->tanggal_produksi;
+                    $expense->nominal = $item->premi_reas;
+                    $expense->recipient = $item->no_polis .' / '. $item->pemegang_polis;
+                    $expense->reference_type = 'Reinsurance Premium';
+                    $expense->transaction_id = $item->id;
+                    $expense->transaction_table = 'konven_reinsurance';
+                    $expense->save();
                 }
             }
             $this->total_finish++;

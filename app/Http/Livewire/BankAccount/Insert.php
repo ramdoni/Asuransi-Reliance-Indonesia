@@ -6,7 +6,7 @@ use Livewire\Component;
 
 class Insert extends Component
 {
-    public $owner,$bank,$no_rekening,$cabang,$open_balance,$code;
+    public $owner,$bank,$no_rekening,$cabang,$open_balance,$code,$coa_id;
     public function render()
     {
         return view('livewire.bank-account.insert');
@@ -20,9 +20,9 @@ class Insert extends Component
             'bank'=>'required',
             'no_rekening'=>'required',
             'cabang'=>'required',
-            'open_balance'=>'required'
+            'open_balance'=>'required',
+            'coa_id'=>'required'
         ]);
-        
         $data = new \App\Models\BankAccount();
         $data->owner = $this->owner;
         $data->bank = $this->bank;
@@ -30,10 +30,9 @@ class Insert extends Component
         $data->cabang = $this->cabang;
         $data->open_balance = $this->open_balance;
         $data->code = $this->code;
+        $data->coa_id = $this->coa_id;
         $data->save();
-        
         session()->flash('message-success',__('Data saved successfully'));
-
         return redirect()->to('bank-account');
     }
 }

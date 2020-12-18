@@ -1,5 +1,5 @@
-@section('title', 'Reinsurance')
-@section('parentPageTitle', 'Home')
+@section('title', 'Reinsurance Commision')
+@section('parentPageTitle', 'Income')
 
 <div class="clearfix row">
     <div class="col-lg-12">

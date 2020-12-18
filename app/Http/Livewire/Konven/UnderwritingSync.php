@@ -12,16 +12,13 @@ class UnderwritingSync extends Component
     {
         return view('livewire.konven.underwriting-sync');
     }
-
     public function mount()
     {
         $this->total_sync = \App\Models\KonvenUnderwriting::where('status',1)->count();
     }
-
     public function cancel_sync(){
         $this->is_sync=false;
     }
-
     public function uw_sync()
     {
         if($this->is_sync==false) return false;
@@ -66,6 +63,7 @@ class UnderwritingSync extends Component
                 $new->debit = $item->premi_netto;
                 $new->kredit = 0;
                 $new->ordering = $ordering;
+                $new->description = $item->pemegang_polis;
                 $new->save();
                 $ordering++;
                 // insert income premium receivable
@@ -90,9 +88,22 @@ class UnderwritingSync extends Component
                 $new->debit = $item->jumlah_discount + $item->jumlah_ppn;
                 $new->kredit = 0;
                 $new->ordering = $ordering;
+                $new->description = $item->pemegang_polis;
                 $new->save();
+                // Expense -  Commision Payable
+                $expense = new \App\Models\Expenses();
+                $expense->user_id = \Auth::user()->id;
+                $expense->no_voucher = generate_no_voucher_expense();
+                $expense->reference_no = $item->no_kwitansi_debit_note;
+                $expense->reference_date = $item->tanggal_produksi;
+                $expense->nominal = $item->jumlah_discount + $item->jumlah_ppn;
+                $expense->recipient = $item->no_polis .' / '. $item->pemegang_polis;
+                $expense->reference_type = 'Commision Payable';
+                $expense->transaction_id = $item->id;
+                $expense->transaction_table = 'konven_underwriting';
+                $expense->save();
                 $ordering++;
-                $this->data .= '<br /> Commision Paid : <strong>'.format_idr($item->jumlah_discount + $item->jumlah_ppn).'</strong>';
+                $this->data .= '<br /> Commision Payable : <strong>'.format_idr($item->jumlah_discount + $item->jumlah_ppn).'</strong>';
             }elseif(!empty($item->jumlah_discount)){
                 $new = new \App\Models\KonvenUnderwritingCoa();
                 $new->coa_id = $discount_coa; // Discount Jangkawarsa
@@ -100,6 +111,7 @@ class UnderwritingSync extends Component
                 $new->debit = $item->jumlah_discount;
                 $new->kredit = 0;
                 $new->ordering = $ordering;
+                $new->description = $item->pemegang_polis;
                 $new->save();
                 $ordering++;
                 $this->data .= '<br /> Commision Paid : <strong>'.format_idr($item->jumlah_discount).'</strong>';
@@ -111,6 +123,7 @@ class UnderwritingSync extends Component
                 $new->debit = 0;
                 $new->kredit = $item->premi_gross + $item->extra_premi;
                 $new->ordering = $ordering;
+                $new->description = $item->pemegang_polis;
                 $new->save();
                 $ordering++;
             }
@@ -121,6 +134,7 @@ class UnderwritingSync extends Component
                 $new->debit = 0;
                 $new->kredit = $item->jumlah_pph;
                 $new->ordering = $ordering;
+                $new->description = $item->pemegang_polis;
                 $new->save();
                 $ordering++;
             }
@@ -131,6 +145,7 @@ class UnderwritingSync extends Component
                 $new->debit = 0;
                 $new->kredit = $item->extsertifikat;
                 $new->ordering = $ordering;
+                $new->description = $item->pemegang_polis;
                 $new->save();
                 $ordering++;
             }
@@ -140,10 +155,11 @@ class UnderwritingSync extends Component
                 $new->transaction_id = $item->id;
                 $new->transaction_table = 'konven_underwriting'; 
                 $new->coa_id = $coa->coa_id;
-                $new->no_voucher = generate_no_voucher_konven_underwriting($coa->coa_id);
+                $new->no_voucher = generate_no_voucher($coa->coa_id,$item->id);
                 $new->date_journal = date('Y-m-d');
                 $new->debit = $coa->debit;
                 $new->kredit = $coa->kredit;
+                $new->description = $coa->description;
                 $new->saldo = replace_idr($coa->debit!=0 ? $coa->debit : ($coa->kredit!=0?$coa->kredit : 0));
                 $new->save();
             }

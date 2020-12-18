@@ -1,5 +1,6 @@
-@section('title', 'Others')
-@section('parentPageTitle', 'Home')
+@section('title', 'Commision Payable')
+@section('parentPageTitle', 'Expense')
+
 <div class="clearfix row">
     <div class="col-lg-12">
         <div class="card">
@@ -15,9 +16,6 @@
                             <option value="2"> Paid</option>
                             <option value="3"> Outstanding</option>
                         </select>
-                    </div>
-                    <div class="col-md-1">
-                        <a href="{{route('expense.others.insert')}}" class="btn btn-primary"><i class="fa fa-plus"></i> Expense</a>
                     </div>
                 </div>
                 <div class="table-responsive">
@@ -42,12 +40,11 @@
                         @foreach($data as $k => $item)
                             <tr>
                                 <td style="width: 50px;">{{$k+1}}</td>
-                                <td><a href="{{route('expense.others.detail',['id'=>$item->id])}}">{!!status_expense($item->status)!!}</a></td>
-                                <td><a href="{{route('expense.others.detail',['id'=>$item->id])}}">{{$item->no_voucher}}</a></td>
+                                <td><a href="{{route('expense.commision-payable.detail',['id'=>$item->id])}}">{!!status_income($item->status)!!}</a></td>
+                                <td><a href="{{route('expense.commision-payable.detail',['id'=>$item->id])}}">{{$item->no_voucher}}</a></td>
+                                <td>{{$item->payment_date?date('d M Y', strtotime($item->payment_date)):'-'}}</td>
                                 <td>{{date('d M Y', strtotime($item->created_at))}}</td>
-                                <td>{{date('d M Y', strtotime($item->payment_date))}}</td>
-                                <td>{{date('d M Y', strtotime($item->reference_date))}}</td>
-                                {{-- <td>{{$item->description}}</td> --}}
+                                <td>{{$item->reference_date?date('d M Y', strtotime($item->reference_date)):'-'}}</td>
                                 <td>{{$item->reference_no ? $item->reference_no : '-'}}</td>
                                 <td>{{$item->recipient ? $item->recipient : '-'}}</td>
                                 <td>{{isset($item->nominal) ? format_idr($item->nominal) : '-'}}</td>

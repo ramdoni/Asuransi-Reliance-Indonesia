@@ -2,6 +2,10 @@
     @section('page-script')
     document.location ='{{route('treasury.index')}}';
     @endsection
+@elseif(\Auth::user()->user_access_id==3)
+    @section('page-script')
+    document.location ='{{route('accounting-journal.index')}}';
+    @endsection
 @else
     @section('title', 'Report')
     @section('parentPageTitle', 'Dashboard')

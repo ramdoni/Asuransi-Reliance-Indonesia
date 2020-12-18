@@ -30,4 +30,8 @@ class Income extends Model
     {
         return $this->hasMany('\App\Models\Journal','transaction_id','id')->where('transaction_table','income');
     }
+    public function uw()
+    {
+        return $this->hasOne('\App\Models\KonvenUnderwriting','id','transaction_id');
+    }
 }

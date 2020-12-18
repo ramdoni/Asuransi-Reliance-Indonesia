@@ -13,14 +13,20 @@ class Expenses extends Model
     {
         return $this->hasOne('\App\Models\BankAccount','id','rekening_bank_id');
     }
-    
+    public function uw()
+    {
+        return $this->hasOne('\App\Models\KonvenUnderwriting','id','transaction_id');
+    }
     public function coa()
     {
         return $this->hasMany('\App\Models\ExpenseCoa','expense_id','id');
     }
-
     public function tax()
     {
         return $this->hasOne('\App\Models\SalesTax','id','tax_id');
+    }
+    public function claim()
+    {
+        return $this->hasOne('\App\Models\KonvenClaim','id','transaction_id');
     }
 }

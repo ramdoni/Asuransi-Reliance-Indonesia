@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\IncomeReinsurance;
+namespace App\Http\Livewire\ExpenseCommisionPayable;
 
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -12,13 +12,13 @@ class Index extends Component
     protected $paginationTheme = 'bootstrap';
     public function render()
     {
-        $data = \App\Models\Income::orderBy('id','desc')->where('reference_type','Reinsurance Commision');
+        $data = \App\Models\Expenses::orderBy('id','desc')->where('reference_type','Commision Payable');
         if($this->keyword) $data = $data->where('description','LIKE', "%{$this->keyword}%")
                                         ->orWhere('no_voucher','LIKE',"%{$this->keyword}%")
                                         ->orWhere('debit_note','LIKE',"%{$this->keyword}%");
         if($this->coa_id) $data = $data->where('coa_id',$this->coa_id);
         if($this->status) $data = $data->where('status',$this->status);
 
-        return view('livewire.income-reinsurance.index')->with(['data'=>$data->paginate(100)]);
+        return view('livewire.expense-commision-payable.index')->with(['data'=>$data->paginate(100)]);
     }
 }
