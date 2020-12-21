@@ -1,5 +1,5 @@
-@section('title', 'Others')
-@section('parentPageTitle', 'Home')
+@section('title', 'Others Expense')
+@section('parentPageTitle', 'Expense')
 <div class="clearfix row">
     <div class="col-lg-12">
         <div class="card">

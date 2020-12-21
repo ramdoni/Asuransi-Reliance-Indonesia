@@ -106,6 +106,9 @@ Route::group(['middleware' => ['auth','access:2']], function(){
     Route::get('expense-others/insert',App\Http\Livewire\ExpenseOthers\Insert::class)->name('expense.others.insert');
     Route::get('expense-commision-payable',App\Http\Livewire\ExpenseCommisionPayable\Index::class)->name('expense.commision-payable');
     Route::get('expense-commision-payable/detail/{id}',App\Http\Livewire\ExpenseCommisionPayable\Detail::class)->name('expense.commision-payable.detail');
+    Route::get('expense-endorsement',App\Http\Livewire\ExpenseEndorsement\Index::class)->name('expense.endorsement');
+    Route::get('expense-cancelation',App\Http\Livewire\ExpenseCancelation\Index::class)->name('expense.cancelation');
+    Route::get('expense-refund',App\Http\Livewire\ExpenseRefund\Index::class)->name('expense.refund');
 });
 
 // Treasury
