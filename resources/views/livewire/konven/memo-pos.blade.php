@@ -13,7 +13,7 @@
         <div class="col-md-4">
             <a href="javascript:void(0)" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal_upload_memo_pos" class="mb-2 btn btn-info btn-sm" style="width:150px;"><i class="fa fa-upload"></i> Upload</a>
             @if($total_sync>0)
-            <a href="javascript:void(0)" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal_confirm_sync" class="mb-2 btn btn-warning btn-sm"><i class="fa fa-refresh"></i> Sync {{$total_sync?"(".$total_sync.")" : "(0)"}}</a>
+            <a href="javascript:void(0)" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal_confirm_sync_memo_pos" class="mb-2 btn btn-warning btn-sm"><i class="fa fa-refresh"></i> Sync {{$total_sync?"(".$total_sync.")" : "(0)"}}</a>
             @endif
         </div>
     </div>
@@ -22,6 +22,7 @@
             <thead>
                 <tr>
                     <th>No</th>
+                    <th>Status</th>
                     <th>Bulan</th>
                     <th>User</th>
                     <th>User Akseptasi</th>
@@ -143,6 +144,15 @@
                 @foreach($data as $item)
                 <tr>
                     <td>{{$num}}</td>
+                    <td>
+                        @if($item->status_sync==0)
+                            <span class="badge badge-warning">Draft</span>
+                        @elseif($item->status_sync==1)
+                            <span class="badge badge-success">Sync</span>
+                        @elseif($item->status_sync==2)
+                            <span class="badge badge-danger">Invalid</span>
+                        @endif
+                    </td>
                     <td>{{$item->bulan}}</td>
                     <td>{{$item->user}}</td>
                     <td>{{$item->user_akseptasi}}</td>
@@ -266,6 +276,13 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <livewire:konven.memo-pos-upload>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modal_confirm_sync_memo_pos" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <livewire:konven.memo-pos-sync>
             </div>
         </div>
     </div>
