@@ -1,4 +1,4 @@
-<form wire:submit.prevent="uw_sync">
+<form wire:submit.prevent="memo_sync">
     <div class="modal-header">
         <div wire:loading.remove>
             <h5 class="modal-title" id="exampleModalLabel"><i class="fa fa-refresh"></i> Sync Data</h5>
@@ -20,6 +20,6 @@
     </div>
     <div class="modal-footer">
         <a href="javascript:void(0)" wire:click="cancel_sync" data-dismiss="modal" aria-label="Close" class="btn btn-danger btn-sm">Cancel</a>
-        <button type="submit" {{$is_sync?'disabled':''}} wire:click="$set('is_sync',true)" class="btn btn-info btn-sm"><i class="fa fa-refresh"></i> Sync</button>
+        <button type="submit" {{$is_sync_memo?'disabled':''}} wire:click="$set('is_sync_memo',true)" class="btn btn-info btn-sm"><i class="fa fa-refresh"></i> Sync</button>
     </div>
 </form>

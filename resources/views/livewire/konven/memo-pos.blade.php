@@ -56,6 +56,7 @@
                     <th>sd</th>
                     <th>No Peserta Akhir</th>
                     <th>No Sertifikat Awal</th>
+                    <th>No Sertifikat Akhir</th>
                     <th>Periode Awal</th>
                     <th>Periode Akhir</th>
                     <th>Tgl Proses</th>
@@ -179,8 +180,8 @@
                     <td>{{$item->bank}}</td>
                     <td>{{$item->no_rekening}}</td>
                     <td>{{$item->jumlah_peserta_pending}}</td>
-                    <td>{{$item->up_peserta_pending}}</td>
-                    <td>{{$item->premi_peserta_pending}}</td>
+                    <td>{{format_idr($item->up_peserta_pending)}}</td>
+                    <td>{{format_idr($item->premi_peserta_pending)}}</td>
                     <td>{{$item->peserta}}</td>
                     <td>{{$item->no_peserta_awal}}</td>
                     <td>s/d</td>
@@ -190,52 +191,55 @@
                     <td>{{$item->periode_awal}}</td>
                     <td>{{$item->periode_akhir}}</td>
                     <td>{{$item->tgl_proses}}</td>
+                    <td>{{$item->movement}}</td>
                     <td>{{$item->tgl_invoice}}</td>
                     <td>{{$item->tgl_invoice2}}</td>
                     <td>{{$item->no_kwitansi_finance}}</td>
                     <td>{{$item->no_kwitansi_finance2}}</td>
-                    <td>{{$item->total_gross_kwitansi}}</td>
-                    <td>{{$item->total_gross_kwitansi2}}</td>
+                    <td>{{format_idr($item->total_gross_kwitansi)}}</td>
+                    <td>{{format_idr($item->total_gross_kwitansi2)}}</td>
                     <td>{{$item->jumlah_peserta_update}}</td>
-                    <td>{{$item->up_cancel}}</td>
-                    <td>{{$item->premi_gross_cancel}}</td>
-                    <td>{{$item->extra_premi}}</td>
+                    <td>{{format_idr($item->up_cancel)}}</td>
+                    <td>{{format_idr($item->premi_gross_cancel)}}</td>
+                    <td>{{format_idr($item->extra_premi)}}</td>
                     <td>{{$item->extextra}}</td>
                     <td>{{$item->rpextra}}</td>
-                    <td>{{$item->diskon_premi}}</td>
-                    <td>{{$item->jml_diskon}}</td>
+                    <td>{{format_idr($item->diskon_premi)}}</td>
+                    <td>{{format_idr(abs($item->jml_diskon))}}</td>
                     <td>{{$item->rp_diskon}}</td>
                     <td>{{$item->extdiskon}}</td>
-                    <td>{{$item->fee}}</td>
-                    <td>{{$item->jml_handling_fee}}</td>
-                    <td>{{$item->ext_fee}}</td>
+                    <td>{{format_idr($item->fee)}}</td>
+                    <td>{{$item->handling_fee}}</td>
+                    <td>{{format_idr($item->ext_fee)}}</td>
+                    <td>{{$item->rp_fee}}</td>
                     <td>{{$item->tampilan_fee}}</td>
                     <td>{{$item->pph}}</td>
-                    <td>{{$item->jml_pph}}</td>
-                    <td>{{$item->extpph}}</td>
-                    <td>{{$item->rppph}}</td>
-                    <td>{{$item->ppn}}</td>
-                    <td>{{$item->jml_ppn}}</td>
-                    <td>{{$item->extppn}}</td>
-                    <td>{{$item->rpppn}}</td>
-                    <td>{{$item->biaya_sertifikat}}</td>
-                    <td>{{$item->extbiayasertifikat}}</td>
-                    <td>{{$item->rpbiayasertifikat}}</td>
-                    <td>{{$item->extpstsertifikat}}</td>
-                    <td>{{$item->net_sblm_endors}}</td>
-                    <td>{{$item->data_stlh_endors}}</td>
-                    <td>{{$item->up_stlh_endors}}</td>
-                    <td>{{$item->premi_gross_endors}}</td>
-                    <td>{{$item->extra_premi2}}</td>
-                    <td>{{$item->extem}}</td>
-                    <td>{{$item->rpxtra}}</td>
-                    <td>{{$item->discount}}</td>
-                    <td>{{$item->jml_discount}}</td>
+                    <td>{{($item->jml_pph)}}</td>
+                    <td>{{($item->extpph)}}</td>
+                    <td>{{($item->rppph)}}</td>
+                    <td>{{($item->ppn)}}</td>
+                    <td>{{($item->jml_ppn)}}</td>
+                    <td>{{($item->extppn)}}</td>
+                    <td>{{($item->rpppn)}}</td>
+                    <td>{{format_idr($item->biaya_sertifikat)}}</td>
+                    <td>{{format_idr($item->extbiayasertifikat)}}</td>
+                    <td>{{format_idr($item->rpbiayasertifikat)}}</td>
+                    <td>{{format_idr($item->extpstsertifikat)}}</td>
+                    <td>{{format_idr($item->net_sblm_endors)}}</td>
+                    <td>{{format_idr($item->data_stlh_endors)}}</td>
+                    <td>{{format_idr($item->up_stlh_endors)}}</td>
+                    <td>{{format_idr($item->premi_gross_endors)}}</td>
+                    <td>{{format_idr($item->extra_premi2)}}</td>
+                    <td>{{format_idr($item->extem)}}</td>
+                    <td>{{format_idr($item->rpxtra)}}</td>
+                    <td>{{format_idr($item->discount)}}</td>
+                    <td>{{format_idr($item->jml_discount)}}</td>
                     <td>{{$item->ext_discount}}</td>
                     <td>{{$item->rpdiscount}}</td>
                     <td>{{$item->handling_fee}}</td>
+                    <td>{{$item->jml_fee}}</td>
                     <td>{{$item->extfee}}</td>
-                    <td>{{$item->rpfee}}</td>
+                    <td>{{format_idr($item->rpfee)}}</td>
                     <td>{{$item->tampilanfee}}</td>
                     <td>{{$item->pph2}}</td>
                     <td>{{$item->jml_pph2}}</td>
@@ -244,12 +248,13 @@
                     <td>{{$item->ppn2}}</td>
                     <td>{{$item->jml_ppn2}}</td>
                     <td>{{$item->extppn2}}</td>
+                    <td>{{$item->rpppn2}}</td>
                     <td>{{$item->biaya_sertifikat2}}</td>
                     <td>{{$item->extbiayasertifikat2}}</td>
                     <td>{{$item->rpbiayasertifikat2}}</td>
                     <td>{{$item->extpstsertifikat2}}</td>
-                    <td>{{$item->net_stlh_endors}}</td>
-                    <td>{{$item->refund}}</td>
+                    <td>{{format_idr($item->net_stlh_endors)}}</td>
+                    <td>{{format_idr($item->refund)}}</td>
                     <td>{{$item->terbilang}}</td>
                     <td>{{$item->ket_lampiran}}</td>
                     <td>{{$item->grace_periode}}</td>

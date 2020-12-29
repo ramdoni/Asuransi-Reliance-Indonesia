@@ -25,6 +25,7 @@ function replace_idr($nominal)
     $nominal = str_replace(' ', '', $nominal);
     $nominal = str_replace('.', '', $nominal);
     $nominal = str_replace(',', '', $nominal);
+    $nominal = str_replace('-', '', $nominal);
     $nominal = str_replace('(', '', $nominal);
     $nominal = str_replace(')', '', $nominal);
 
@@ -60,7 +61,7 @@ function generate_no_voucher($coa_id="",$count="")
 function format_idr($number)
 {
     if(empty($number)) return 0;
-
+    $number = (int) $number;
     return number_format($number,0,0,'.');
 }
 function get_setting($key)

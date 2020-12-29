@@ -24,6 +24,7 @@ class Underwriting extends Component
                                     ->orWhere('no_reg', 'LIKE',"%{$this->keyword}%")
                                     ->orWhere('no_polis', 'LIKE',"%{$this->keyword}%")
                                     ->orWhere('no_polis_sistem', 'LIKE',"%{$this->keyword}%")
+                                    ->orWhere('pemegang_polis', 'LIKE',"%{$this->keyword}%")
                                     ->orWhere('alamat', 'LIKE',"%{$this->keyword}%")
                                     ->orWhere('cabang', 'LIKE',"%{$this->keyword}%")
                                     ->orWhere('jumlah_peserta_pending', 'LIKE',"%{$this->keyword}%")
