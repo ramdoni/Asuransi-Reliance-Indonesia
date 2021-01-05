@@ -107,8 +107,11 @@ Route::group(['middleware' => ['auth','access:2']], function(){
     Route::get('expense-commision-payable',App\Http\Livewire\ExpenseCommisionPayable\Index::class)->name('expense.commision-payable');
     Route::get('expense-commision-payable/detail/{id}',App\Http\Livewire\ExpenseCommisionPayable\Detail::class)->name('expense.commision-payable.detail');
     Route::get('expense-endorsement',App\Http\Livewire\ExpenseEndorsement\Index::class)->name('expense-endorsement');
-    Route::get('expense-cancelation',App\Http\Livewire\ExpenseCancelation\Index::class)->name('expense.cancelation');
-    Route::get('expense-refund',App\Http\Livewire\ExpenseRefund\Index::class)->name('expense.refund');
+    Route::get('expense-endorsement/detail/{id}',App\Http\Livewire\ExpenseEndorsement\Detail::class)->name('expense-endorsement.detail');
+    Route::get('expense-cancelation',App\Http\Livewire\ExpenseCancelation\Index::class)->name('expense-cancelation');
+    Route::get('expense-cancelation/detail/{id}',App\Http\Livewire\ExpenseCancelation\Detail::class)->name('expense-cancelation.detail');
+    Route::get('expense-refund',App\Http\Livewire\ExpenseRefund\Index::class)->name('expense-refund');
+    Route::get('expense-refund/detail/{id}',App\Http\Livewire\ExpenseRefund\Detail::class)->name('expense-refund.detail');
 });
 
 // Treasury

@@ -29,7 +29,8 @@
                                 <th>Voucher Date</th>                                    
                                 <th>Reference Date</th>
                                 <th>Debit Note / Kwitansi</th>
-                                <th>Policy Number / Policy Holder</th>                    
+                                <th>Policy Number / Policy Holder</th> 
+                                <th>Cancelation</th>                   
                                 <th>Total</th>                                               
                                 <th>No Rekening</th>
                                 <th>Outstanding Balance</th>
@@ -48,6 +49,7 @@
                                 {{-- <td>{{$item->description}}</td> --}}
                                 <td>{{$item->reference_no ? $item->reference_no : '-'}}</td>
                                 <td>{{$item->client ? $item->client : '-'}}</td>
+                                <td>{{ isset($item->cancelation)?format_idr($item->total_cancelation->sum('nominal')):0 }}</td>
                                 <td>{{isset($item->nominal) ? format_idr($item->nominal) : '-'}}</td>
                                 <td>{{isset($item->bank_account->no_rekening) ? $item->bank_account->no_rekening .'('.$item->bank_account->bank.')' : '-'}}</td>
                                 <td>{{isset($item->outstanding_balance) ? format_idr($item->outstanding_balance) : '-'}}</td>

@@ -34,4 +34,12 @@ class Income extends Model
     {
         return $this->hasOne('\App\Models\KonvenUnderwriting','id','transaction_id');
     }
+    public function cancelation()
+    {
+        return $this->hasMany('\App\Models\KonvenUnderwritingCancelation','income_id','id');
+    }
+    public function total_cancelation()
+    {
+        return $this->hasMany('\App\Models\KonvenUnderwritingCancelation','income_id','id');
+    }
 }

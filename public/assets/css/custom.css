@@ -46,3 +46,6 @@
     padding-bottom:4px;
     font-size:13px;
 }
+.table-nowrap tr td{
+    white-space:unset !important;
+}

@@ -7,7 +7,7 @@
             <select class="form-control" wire:model="status">
                 <option value=""> --- Status --- </option>
                 <option value="1">Draft</option>
-                <option value="2">Journal</option>
+                <option value="2">Sync</option>
             </select>
         </div>
         <div class="col-md-4">

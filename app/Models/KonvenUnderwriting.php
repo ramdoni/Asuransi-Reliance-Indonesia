@@ -15,9 +15,12 @@ class KonvenUnderwriting extends Model
     {
         return $this->hasMany('\App\Models\KonvenUnderwritingCoa','konven_underwriting_id','id')->orderBy('ordering','ASC');
     }
-
     public function coaDesc()
     {
         return $this->hasMany('\App\Models\KonvenUnderwritingCoa','konven_underwriting_id','id')->orderBy('ordering','DESC');  
+    }
+    public function cancelation()
+    {
+        return $this->hasMany('\App\Models\KonvenUnderwritingCancelation','konven_underwriting_id','id');
     }
 }

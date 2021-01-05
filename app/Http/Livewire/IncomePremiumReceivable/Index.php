@@ -16,7 +16,8 @@ class Index extends Component
 
         if($this->keyword) $data = $data->where('description','LIKE', "%{$this->keyword}%")
                                         ->orWhere('no_voucher','LIKE',"%{$this->keyword}%")
-                                        ->orWhere('debit_note','LIKE',"%{$this->keyword}%")
+                                        ->orWhere('reference_no','LIKE',"%{$this->keyword}%")
+                                        ->orWhere('client','LIKE',"%{$this->keyword}%")
                                         ;
 
         if($this->coa_id) $data = $data->where('coa_id',$this->coa_id);

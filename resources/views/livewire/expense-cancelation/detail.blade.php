@@ -1,4 +1,4 @@
-@section('title', 'Reinsurance #'.$data->no_voucher)
+@section('title', 'Cancelation #'.$data->no_voucher)
 @section('parentPageTitle', 'Expense')
 <div class="clearfix row">
     <div class="col-md-7">
