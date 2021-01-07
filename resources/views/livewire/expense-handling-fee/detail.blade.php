@@ -1,4 +1,4 @@
-@section('title', 'Cancelation #'.$data->no_voucher)
+@section('title', 'Handling Fee #'.$data->no_voucher)
 @section('parentPageTitle', 'Expense')
 <div class="clearfix row">
     <div class="col-md-7">
@@ -22,15 +22,19 @@
                                 </tr>
                                 <tr>
                                     <th>{{ __('Debit Note / Kwitansi Number')}}</th>
-                                    <td>{{$data->reference_no}}</td>
+                                    <td class="text-success">{{$data->reference_no}}</td>
                                 </tr>
                                 <tr>
                                     <th>{{ __('Reference Date')}}</th>
                                     <td>{{$data->reference_date}}</td>
                                 </tr>
                                 <tr>
-                                    <th>{{ __('Total')}}</th>
-                                    <td>{{format_idr($data->nominal)}}</td>
+                                    <th>{{ __('Total PPH')}}</th>
+                                    <td>{{format_idr($data->uw->jumlah_pph)}}</td>
+                                </tr>
+                                <tr>
+                                    <th>{{ __('Total PPN')}}</th>
+                                    <td>{{format_idr($data->uw->jumlah_ppn)}}</td>
                                 </tr>
                                 <tr>
                                     <th>{{ __('From Bank Account')}}</th>
@@ -44,7 +48,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th>{{ __('Bank Account')}}</th>
+                                    <th>{{ __('To Bank Account')}}</th>
                                     <td>{{ isset($data->bank_account->no_rekening) ? $data->bank_account->no_rekening .' - '.$data->bank_account->bank.' an '.$data->bank_account->owner :'' }}</td>
                                 </tr>
                                 <tr>
@@ -53,10 +57,6 @@
                                         <input type="text" class="form-control col-md-6 format_number" {{$is_readonly?'disabled':''}} wire:model="payment_amount" />
                                     </td>
                                 </tr>
-                                {{-- <tr>
-                                    <th>{{ __('Outstanding Balance')}}</th>
-                                    <td>{{$outstanding_balance}}</td>
-                                </tr> --}}
                                 <tr>
                                     <th>{{__('Payment Date')}}*<small>{{__('Default today')}}</small></th>
                                     <td>
@@ -90,11 +90,11 @@
                 <h6 class="text-success">{{$data->reference_no}}</h6>
                 <hr />
                 <table class="table pl-0 mb-0 table-striped table-nowrap"> 
-                    @foreach(\Illuminate\Support\Facades\Schema::getColumnListing('konven_memo_pos') as $column)
+                    @foreach(\Illuminate\Support\Facades\Schema::getColumnListing('konven_underwriting') as $column)
                     @if($column=='id' || $column=='created_at'||$column=='updated_at') @continue @endif
                     <tr>
                         <th style="width:40%;">{{ ucfirst($column) }}</th>
-                        <td style="width:60%;">{{ in_array($column,['total_gross_kwitansi','up_cancel','premi_gross_cancel','jml_diskon','net_sblm_endors','up_stlh_endors','premi_gross_endors','net_stlh_endors','refund']) ? format_idr($data->memo->$column) : $data->memo->$column }}</td>
+                        <td style="width:60%;">{{ in_array($column,['up_peserta_pending','premi_peserta_pending','up','premi_gross','extra_premi','jumlah_discount','handling_fee','jumlah_fee','jumlah_pph','jumlah_ppn','biaya_polis','biaya_sertifikat','extsertifikat','premi_netto','total_gross_kwitansi']) ? format_idr($data->uw->$column) : $data->uw->$column }}</td>
                     </tr>
                     @endforeach
                 </table>

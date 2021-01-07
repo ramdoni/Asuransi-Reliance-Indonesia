@@ -93,7 +93,7 @@
                                 <li class="{{ Request::segment(1) === 'income-investment' ? 'active' : null }}"><a href="{{route('income.investment')}}"> Invesment</a></li>        
                             </ul>
                         </li>
-                        <li class="{{ (Request::segment(1) === 'expense-refund' || Request::segment(1) === 'expense-cancelation' || Request::segment(1) === 'expense-endorsement' || Request::segment(1) === 'expense-claim' || Request::segment(1) === 'expense-others' || Request::segment(1) === 'expense-reinsurance-premium' || Request::segment(1) === 'expense-commision-payable') ? 'active' : null }}">
+                        <li class="{{ (Request::segment(1) === 'expense-handling-fee' || Request::segment(1) === 'expense-cancelation' || Request::segment(1) === 'expense-endorsement' || Request::segment(1) === 'expense-claim' || Request::segment(1) === 'expense-others' || Request::segment(1) === 'expense-reinsurance-premium' || Request::segment(1) === 'expense-commision-payable') ? 'active' : null }}">
                             <a href="#" class="has-arrow"><i class="fa fa-database"></i> <span>Expense</span></a>
                             <ul>
                                 <li class="{{ Request::segment(1) === 'expense-reinsurance-premium' ? 'active' : null }}">
@@ -104,6 +104,7 @@
                                 <li class="{{ Request::segment(1) === 'expense-refund' ? 'active' : null }}"><a href="{{route('expense-refund')}}"> Refund</a></li>
                                 <li class="{{ Request::segment(1) === 'expense-claim' ? 'active' : null }}"><a href="{{route('expense.claim')}}"> Claim Payable</a></li>
                                 <li class="{{ Request::segment(1) === 'expense-others' ? 'active' : null }}"><a href="{{route('expense.others')}}"> Others Expense</a></li>        
+                                <li class="{{ Request::segment(1) === 'expense-handling-fee' ? 'active' : null }}"><a href="{{route('expense-handling-fee')}}"> Handling Fee</a></li>        
                             </ul>
                         </li>
                         @endif

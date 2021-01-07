@@ -6,7 +6,7 @@ use Livewire\Component;
 
 class Detail extends Component
 {
-    public $data,$no_voucher,$client,$recipient,$reference_type,$reference_no,$reference_date,$description,$outstanding_balance,$tax_id,$payment_amount=0,$bank_account_id;
+    public $data,$no_voucher,$client,$recipient,$reference_type,$reference_no,$reference_date,$description,$outstanding_balance,$tax_id,$payment_amount=0,$bank_account_id,$from_bank_account_id;
     public $payment_date,$tax_amount,$total_payment_amount,$is_readonly=false,$is_finish=false;
     public $bank_charges;
     public function render()
@@ -31,6 +31,7 @@ class Detail extends Component
         $this->validate(
             [
                 'bank_account_id'=>'required',
+                'from_bank_account_id'=>'required',
                 'payment_amount'=>'required',
             ]
         );

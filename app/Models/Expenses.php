@@ -29,4 +29,8 @@ class Expenses extends Model
     {
         return $this->hasOne('\App\Models\KonvenClaim','id','transaction_id');
     }
+    public function memo()
+    {
+        return $this->hasOne('\App\Models\KonvenMemo','id','transaction_id');
+    }
 }

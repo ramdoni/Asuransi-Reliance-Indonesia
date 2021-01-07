@@ -6,9 +6,9 @@ use Livewire\Component;
 
 class Detail extends Component
 {
-    public $data,$no_voucher,$client,$recipient,$reference_type,$reference_no,$reference_date,$description,$outstanding_balance,$tax_id,$payment_amount=0,$bank_account_id;
+    public $data,$no_voucher,$client,$recipient,$reference_type,$reference_no,$reference_date,$description,$outstanding_balance,$tax_id,$payment_amount=0,$bank_account_id,$from_bank_account_id;
     public $payment_date,$tax_amount,$total_payment_amount,$is_readonly=false,$is_finish=false;
-    public $bank_charges;
+    public $bank_charges,$showDetail='underwriting',$cancelation;
     public function render()
     {
         return view('livewire.income-premium-receivable.detail');
@@ -29,11 +29,26 @@ class Detail extends Component
         if($this->payment_amount =="") $this->payment_amount=format_idr($this->data->nominal);
         if($this->data->status==2) $this->is_finish = true;
     }
+    public function showDetailCancelation($id)
+    {
+        $this->cancelation = \App\Models\KonvenUnderwritingCancelation::find($id);
+        $this->showDetail='cancelation';
+    }
+    public function cancel()
+    {
+        \App\Models\Income::where('id',$this->data->id)->update(['status'=>4]);
+        \App\Models\KonvenUnderwriting::where(['id'=>$this->data->transaction_id])->update(['status'=>4]);
+
+        session()->flash('message-success',__('Data saved successfully'));
+        return redirect()->route('income.premium-receivable');
+
+    }
     public function save()
     {
         $this->validate(
             [
                 'bank_account_id'=>'required',
+                'from_bank_account_id'=>'required',
                 'payment_amount'=>'required',
             ]
         );

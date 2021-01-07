@@ -1,4 +1,4 @@
-@section('title', 'Reinsurance #'.$data->no_voucher)
+@section('title', 'Endorsement #'.$data->no_voucher)
 @section('parentPageTitle', 'Expense')
 <div class="clearfix row">
     <div class="col-md-7">
@@ -22,7 +22,7 @@
                                 </tr>
                                 <tr>
                                     <th>{{ __('Debit Note / Kwitansi Number')}}</th>
-                                    <td>{{$data->reference_no}}</td>
+                                    <td class="text-success">{{$data->reference_no}}</td>
                                 </tr>
                                 <tr>
                                     <th>{{ __('Reference Date')}}</th>
@@ -33,7 +33,18 @@
                                     <td>{{format_idr($data->nominal)}}</td>
                                 </tr>
                                 <tr>
-                                    <th>{{ __('Bank Account')}}</th>
+                                    <th>{{ __('From Bank Account')}}</th>
+                                    <td>
+                                        <select class="form-control" wire:model="bank_account_id" {{$is_readonly?'disabled':''}}>
+                                            <option value=""> --- {{__('Select')}} --- </option>
+                                            @foreach (\App\Models\BankAccount::where('is_client',0)->orderBy('owner','ASC')->get() as $bank)
+                                                <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
+                                            @endforeach
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>{{ __('To Bank Account')}}</th>
                                     <td>{{ isset($data->bank_account->no_rekening) ? $data->bank_account->no_rekening .' - '.$data->bank_account->bank.' an '.$data->bank_account->owner :'' }}</td>
                                 </tr>
                                 <tr>
@@ -42,10 +53,6 @@
                                         <input type="text" class="form-control col-md-6 format_number" {{$is_readonly?'disabled':''}} wire:model="payment_amount" />
                                     </td>
                                 </tr>
-                                {{-- <tr>
-                                    <th>{{ __('Outstanding Balance')}}</th>
-                                    <td>{{$outstanding_balance}}</td>
-                                </tr> --}}
                                 <tr>
                                     <th>{{__('Payment Date')}}*<small>{{__('Default today')}}</small></th>
                                     <td>
@@ -66,6 +73,27 @@
                     <a href="javascript:void0()" onclick="history.back()"><i class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
                     <button type="submit" class="ml-3 btn btn-primary"><i class="fa fa-save"></i> {{ __('Submit') }}</button>
                 </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-5 px-0">
+        <div class="card mt-0">
+            <div wire:loading style="position:absolute;right:0;">
+                <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                <span class="sr-only">Loading...</span>
+            </div>
+            <div class="body" style="max-height:700px;overflow-y:scroll">
+                <h6 class="text-success">{{$data->reference_no}}</h6>
+                <hr />
+                <table class="table pl-0 mb-0 table-striped table-nowrap"> 
+                    @foreach(\Illuminate\Support\Facades\Schema::getColumnListing('konven_memo_pos') as $column)
+                    @if($column=='id' || $column=='created_at'||$column=='updated_at') @continue @endif
+                    <tr>
+                        <th style="width:40%;">{{ ucfirst($column) }}</th>
+                        <td style="width:60%;">{{ in_array($column,['total_gross_kwitansi','up_cancel','premi_gross_cancel','jml_diskon','net_sblm_endors','up_stlh_endors','premi_gross_endors','net_stlh_endors','refund']) ? format_idr($data->memo->$column) : $data->memo->$column }}</td>
+                    </tr>
+                    @endforeach
+                </table>
             </div>
         </div>
     </div>

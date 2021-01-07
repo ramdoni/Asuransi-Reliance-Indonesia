@@ -1,5 +1,5 @@
-@section('title', 'Premium Receivable')
-@section('parentPageTitle', 'Home')
+@section('title', 'Handling Fee')
+@section('parentPageTitle', 'Expense')
 
 <div class="clearfix row">
     <div class="col-lg-12">
@@ -29,8 +29,8 @@
                                 <th>Voucher Date</th>                                    
                                 <th>Reference Date</th>
                                 <th>Debit Note / Kwitansi</th>
-                                <th>Policy Number / Policy Holder</th> 
-                                <th>Cancelation</th>                   
+                                <th>Policy Number / Policy Holder</th>                    
+                                <th>Description</th>                    
                                 <th>Total</th>                                               
                                 <th>No Rekening</th>
                                 <th>Outstanding Balance</th>
@@ -41,17 +41,16 @@
                         @foreach($data as $k => $item)
                             <tr>
                                 <td style="width: 50px;">{{$k+1}}</td>
-                                <td><a href="{{route('income.premium-receivable.detail',['id'=>$item->id])}}">{!!status_income($item->status)!!}</a></td>
-                                <td><a href="{{route('income.premium-receivable.detail',['id'=>$item->id])}}">{{$item->no_voucher}}</a></td>
+                                <td><a href="{{route('expense-handling-fee.detail',['id'=>$item->id])}}">{!!status_income($item->status)!!}</a></td>
+                                <td><a href="{{route('expense-handling-fee.detail',['id'=>$item->id])}}">{{$item->no_voucher}}</a></td>
                                 <td>{{$item->payment_date?date('d M Y', strtotime($item->payment_date)):'-'}}</td>
                                 <td>{{date('d M Y', strtotime($item->created_at))}}</td>
-                                <td>{{date('d M Y', strtotime($item->reference_date))}}</td>
-                                {{-- <td>{{$item->description}}</td> --}}
+                                <td>{{$item->reference_date?date('d M Y', strtotime($item->reference_date)):'-'}}</td>
                                 <td>{{$item->reference_no ? $item->reference_no : '-'}}</td>
-                                <td>{{$item->client ? $item->client : '-'}}</td>
-                                <td>{{ isset($item->cancelation)?format_idr($item->total_cancelation->sum('nominal')):0 }}</td>
+                                <td>{{$item->recipient ? $item->recipient : '-'}}</td>
+                                <td>{{$item->description}}</td>
                                 <td>{{isset($item->nominal) ? format_idr($item->nominal) : '-'}}</td>
-                                <td>{{isset($item->bank_account->no_rekening) ? $item->bank_account->no_rekening .'('.$item->bank_account->bank.')' : '-'}}</td>
+                                <td>{{isset($item->bank_account->no_rekening) ? $item->bank_account->no_rekening .' - '.$item->bank_account->bank.' an '.$item->bank_account->owner : '-'}}</td>
                                 <td>{{isset($item->outstanding_balance) ? format_idr($item->outstanding_balance) : '-'}}</td>
                                 <td>{{isset($item->payment_amount) ? format_idr($item->payment_amount) : '-'}}</td>
                             </tr>

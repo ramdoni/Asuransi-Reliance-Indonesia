@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\ExpenseRefund;
+namespace App\Http\Livewire\ExpenseHandlingFee;
 
 use Livewire\Component;
 
@@ -11,7 +11,7 @@ class Detail extends Component
     public $bank_charges;
     public function render()
     {
-        return view('livewire.expense-refund.detail');
+        return view('livewire.expense-handling-fee.detail');
     }
     public function mount($id)
     {

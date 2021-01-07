@@ -82,28 +82,28 @@ class UnderwritingSync extends Component
                 $this->data .= '<br /> Premium Receivable : <strong>'.format_idr($item->premi_netto).'</strong>';
             }
             if(!empty($item->ppn) and !empty($item->jumlah_discount)){
-                $new = new \App\Models\KonvenUnderwritingCoa();
-                $new->coa_id = $commision_paid; 
-                $new->konven_underwriting_id = $item->id;
-                $new->debit = $item->jumlah_discount + $item->jumlah_ppn;
-                $new->kredit = 0;
-                $new->ordering = $ordering;
-                $new->description = $item->pemegang_polis;
-                $new->save();
+                // $new = new \App\Models\KonvenUnderwritingCoa();
+                // $new->coa_id = $commision_paid; 
+                // $new->konven_underwriting_id = $item->id;
+                // $new->debit = $item->jumlah_discount + $item->jumlah_ppn;
+                // $new->kredit = 0;
+                // $new->ordering = $ordering;
+                // $new->description = $item->pemegang_polis;
+                // $new->save();
                 // Expense -  Commision Payable
                 $expense = new \App\Models\Expenses();
                 $expense->user_id = \Auth::user()->id;
                 $expense->no_voucher = generate_no_voucher_expense();
                 $expense->reference_no = $item->no_kwitansi_debit_note;
                 $expense->reference_date = $item->tanggal_produksi;
-                $expense->nominal = $item->jumlah_discount + $item->jumlah_ppn;
+                $expense->nominal = $item->jumlah_pph + $item->jumlah_ppn;
                 $expense->recipient = $item->no_polis .' / '. $item->pemegang_polis;
-                $expense->reference_type = 'Commision Payable';
+                $expense->reference_type = 'Handling Fee';
                 $expense->transaction_id = $item->id;
                 $expense->transaction_table = 'konven_underwriting';
                 $expense->save();
                 $ordering++;
-                $this->data .= '<br /> Commision Payable : <strong>'.format_idr($item->jumlah_discount + $item->jumlah_ppn).'</strong>';
+                $this->data .= '<br /> Handling Fee : <strong>'.format_idr($item->jumlah_discount + $item->jumlah_ppn).'</strong>';
             }elseif(!empty($item->jumlah_discount)){
                 $new = new \App\Models\KonvenUnderwritingCoa();
                 $new->coa_id = $discount_coa; // Discount Jangkawarsa

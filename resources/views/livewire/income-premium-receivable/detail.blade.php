@@ -22,20 +22,30 @@
                                 </tr>
                                 <tr>
                                     <th>{{ __('Debit Note / Kwitansi Number')}}</th>
-                                    <td><a href="#" wire:click="detailDN" title="Detail Debit Note / Kwitansi Number">{{$data->reference_no}}</a></td>
+                                    <td><a href="#"  wire:click="$set('showDetail','underwriting')" title="Detail Debit Note / Kwitansi Number">{{$data->reference_no}}</a></td>
                                 </tr>
                                 <tr>
                                     <th>{{ __('Reference Date')}}</th>
                                     <td>{{$data->reference_date}}</td>
                                 </tr>
                                 <tr>
-                                    <th>{{ __('Cancelation')}}</th>
-                                    <td>{!!isset($data->cancelation)?'<span class="text-danger">'.format_idr($data->cancelation->sum('nominal')).'</span>':0!!}</td>
-                                </tr>
-                                <tr>
-                                    <th>{{ __('Total')}}</th>
+                                    <th>{{ __('Premium Receivable')}}</th>
                                     <td>{{format_idr($data->nominal)}}</td>
                                 </tr>
+                                @if($data->cancelation->count())
+                                <tr>
+                                    <th>{{ __('Cancelation')}}</th>
+                                    <td>
+                                        @foreach($data->cancelation as $cancel)
+                                        {!!format_idr($cancel->nominal).' - <a href="#" class="text-danger" title="Klik Detail" wire:click="showDetailCancelation('.$cancel->id.')">'.$cancel->konven_memo_pos->no_dn_cn.'</a>'!!} 
+                                        @endforeach
+                                    </td>
+                                </tr> 
+                                <tr>
+                                    <th>{{ __('Total After Cancelation')}}</th>
+                                    <td>{{format_idr($data->nominal-$data->cancelation->sum('nominal'))}}</td>
+                                </tr>
+                                @endif
                                 <tr>
                                     <th>{{ __('Payment Amount')}}</th>
                                     <td>
@@ -60,7 +70,7 @@
                                     <td>
                                         <select class="form-control" wire:model="bank_account_id" {{$is_readonly?'disabled':''}}>
                                             <option value=""> --- {{__('Select')}} --- </option>
-                                            @foreach (\App\Models\BankAccount::orderBy('owner','ASC')->get() as $bank)
+                                            @foreach (\App\Models\BankAccount::where('is_client',0)->orderBy('owner','ASC')->get() as $bank)
                                                 <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
                                             @endforeach
                                         </select>
@@ -85,38 +95,43 @@
                     </div>
                     <hr />
                     <a href="javascript:void0()" onclick="history.back()"><i class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
-                    <button type="submit" class="ml-3 btn btn-primary"><i class="fa fa-save"></i> {{ __('Submit') }}</button>
+                    @if(!$is_readonly)
+                    <button type="submit" class="ml-3 btn btn-primary"><i class="fa fa-save"></i> {{ __('Receive') }}</button>
+                    <button type="button" class="ml-3 btn btn-danger float-right" data-target="#modal_confirm" data-toggle="modal" wire:click="cancel"><i class="fa fa-times"></i> {{ __('Cancel Premi') }}</button>
+                    @endif
                 </form>
             </div>
         </div>
     </div>
     <div class="col-md-5 px-0">
-        <div class="card mb-2">
-            <div class="body">
-                <h6 class="text-danger">Cancelation</h6>
+        @if($showDetail=='cancelation')
+        <div class="card mt-0">
+            <div wire:loading style="position:absolute;right:0;">
+                <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                <span class="sr-only">Loading...</span>
+            </div>
+            <div class="body" style="max-height:700px;overflow-y:scroll">
+                <h6 class="text-danger">{{$cancelation->konven_memo_pos->no_dn_cn}}</h6>
                 <hr />
-                @if($data->cancelation)
-                    <table class="table pl-0 mb-0 table-striped"> 
-                        <tr>
-                            <th>No Credit Note</th>
-                            <th>Tanggal</th>
-                            <th>Keterangan</th>
-                            <th>Nominal</th>
-                        </tr>
-                        @foreach($data->cancelation as $cancel)
-                        <tr>
-                            <td>{{$cancel->konven_memo_pos->no_dn_cn}}</td>
-                            <td>{{$cancel->konven_memo_pos->tgl_produksi}}</td>
-                            <td>{{$cancel->konven_memo_pos->ket_perubahan1}}</td>
-                            <td>{{format_idr($cancel->nominal)}}</td>
-                        </tr>
-                        @endforeach
-                    </table>
-                @endif
+                <table class="table pl-0 mb-0 table-striped table-nowrap"> 
+                    @foreach(\Illuminate\Support\Facades\Schema::getColumnListing('konven_memo_pos') as $column)
+                    @if($column=='id' || $column=='created_at'||$column=='updated_at') @continue @endif
+                    <tr>
+                        <th style="width:40%;">{{ ucfirst($column) }}</th>
+                        <td style="width:60%;">{{$cancelation->konven_memo_pos->$column }}</td>
+                    </tr>
+                    @endforeach
+                </table>
             </div>
         </div>
+        @endif
+        @if($showDetail=='underwriting')
         <div class="card mt-0">
-            <div class="body" style="max-height:500px;overflow-y:scroll">
+            <div wire:loading style="position:absolute;right:0;">
+                <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                <span class="sr-only">Loading...</span>
+            </div>
+            <div class="body" style="max-height:700px;overflow-y:scroll">
                 <h6 style="color:#007bff">{{$data->reference_no}}</h6>
                 <hr />
                 @if($data->uw)
@@ -183,11 +198,11 @@
                     </tr>
                     <tr>
                         <th>UP Peserta Pending</th>
-                        <td>{{$data->uw->tanggal_produksi}}</td>
+                        <td>{{format_idr($data->uw->up_peserta_pending)}}</td>
                     </tr>
                     <tr>
                         <th>Premi Peserta Pending</th>
-                        <td>{{$data->uw->premi_peserta_pending}}</td>
+                        <td>{{format_idr($data->uw->premi_peserta_pending)}}</td>
                     </tr>
                     <tr>
                         <th>Jml Peserta</th>
@@ -223,7 +238,7 @@
                     </tr>
                     <tr>
                         <th>Jumlah Discount</th>
-                        <td>{{$data->uw->jumlah_discount}}</td>
+                        <td>{{format_idr($data->uw->jumlah_discount)}}</td>
                     </tr>
                     <tr>
                         <th>Jumlah CAD Klaim</th>
@@ -259,11 +274,11 @@
                     </tr>
                     <tr>
                         <th>Jumlah PPN</th>
-                        <td>{{$data->uw->jumlah_ppn}}</td>
+                        <td>{{format_idr($data->uw->jumlah_ppn)}}</td>
                     </tr>
                     <tr>
                         <th>Biaya Polis</th>
-                        <td>{{$data->uw->biaya_polis}}</td>
+                        <td>{{format_idr($data->uw->biaya_polis)}}</td>
                     </tr>
                     <tr>
                         <th>Biaya Sertifikat</th>
@@ -311,7 +326,7 @@
                     </tr>
                     <tr>
                         <th>Total Gross Kwitansi</th>
-                        <td>{{$data->uw->total_gross_kwitansi}}</td>
+                        <td>{{format_idr($data->uw->total_gross_kwitansi)}}</td>
                     </tr>
                     <tr>
                         <th>Grace Periode Terbilang</th>
@@ -345,26 +360,28 @@
                 @endif
             </div>
         </div>
+        @endif
     </div>
+    
 </div>
 @push('after-scripts')
 <script src="{{ asset('assets/js/jquery.priceformat.min.js') }}"></script>
 @endpush
 @section('page-script')
-    Livewire.on('changeForm', () =>{
-        setTimeout(function(){
-            init_form();
-        },500);
-    });
-    function init_form(){
-        $('.format_number').priceFormat({
-            prefix: '',
-            centsSeparator: '.',
-            thousandsSeparator: '.',
-            centsLimit: 0
-        });
-    }
+Livewire.on('changeForm', () =>{
     setTimeout(function(){
-        init_form()
-    })
+        init_form();
+    },500);
+});
+function init_form(){
+    $('.format_number').priceFormat({
+        prefix: '',
+        centsSeparator: '.',
+        thousandsSeparator: '.',
+        centsLimit: 0
+    });
+}
+setTimeout(function(){
+    init_form()
+})
 @endsection

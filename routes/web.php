@@ -68,7 +68,6 @@ Route::group(['middleware' => ['auth','access:1']], function(){
 Route::group(['middleware' => ['auth','access:3']], function(){ 
     Route::get('accounting-journal',App\Http\Livewire\AccountingJournal\Index::class)->name('accounting-journal.index');
     Route::get('accounting-journal/detail/{id}',App\Http\Livewire\AccountingJournal\Detail::class)->name('accounting-journal.detail');
-    
     Route::get('income',App\Http\Livewire\Income\Index::class)->name('income');
     Route::get('income/edit/{id}',App\Http\Livewire\Income\Edit::class)->name('income.edit');
     Route::get('expense',App\Http\Livewire\Expense\Index::class)->name('expense');
@@ -112,8 +111,9 @@ Route::group(['middleware' => ['auth','access:2']], function(){
     Route::get('expense-cancelation/detail/{id}',App\Http\Livewire\ExpenseCancelation\Detail::class)->name('expense-cancelation.detail');
     Route::get('expense-refund',App\Http\Livewire\ExpenseRefund\Index::class)->name('expense-refund');
     Route::get('expense-refund/detail/{id}',App\Http\Livewire\ExpenseRefund\Detail::class)->name('expense-refund.detail');
+    Route::get('expense-handling-fee',App\Http\Livewire\ExpenseHandlingFee\Index::class)->name('expense-handling-fee');
+    Route::get('expense-handling-fee/detail/{id}',App\Http\Livewire\ExpenseHandlingFee\Detail::class)->name('expense-handling-fee.detail');
 });
-
 // Treasury
 Route::group(['middleware' => ['auth','access:4']], function(){ 
     Route::get('treasury/index',App\Http\Livewire\Treasury\Index::class)->name('treasury.index');

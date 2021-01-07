@@ -9,7 +9,10 @@ function status_income($status) {
             return "<label class=\"badge text-success\">Paid</label>";
         break;
         case 3:
-            return "<label class=\"badge text-infor\">Outstanding</label>";
+            return "<label class=\"badge text-info\">Outstanding</label>";
+        break;
+        case 4:
+            return "<label class=\"badge text-danger\">Cancel</label>";
         break;
     }
 }
