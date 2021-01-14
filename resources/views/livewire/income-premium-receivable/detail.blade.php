@@ -66,7 +66,21 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th>{{__('Bank Account')}}</th>
+                                    <th>{{__('From Bank Account')}}</th>
+                                    <td>
+                                        <select class="form-control" wire:model="from_bank_account_id" {{$is_readonly?'disabled':''}}>
+                                            <option value=""> --- {{__('Select')}} --- </option>
+                                            @foreach (\App\Models\BankAccount::where('is_client',1)->orderBy('owner','ASC')->get() as $bank)
+                                                <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('from_bank_account_id')
+                                        <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                                        @enderror
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>{{__('To Bank Account')}}</th>
                                     <td>
                                         <select class="form-control" wire:model="bank_account_id" {{$is_readonly?'disabled':''}}>
                                             <option value=""> --- {{__('Select')}} --- </option>
@@ -96,8 +110,8 @@
                     <hr />
                     <a href="javascript:void0()" onclick="history.back()"><i class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
                     @if(!$is_readonly)
-                    <button type="submit" class="ml-3 btn btn-primary"><i class="fa fa-save"></i> {{ __('Receive') }}</button>
-                    <button type="button" class="ml-3 btn btn-danger float-right" data-target="#modal_confirm" data-toggle="modal" wire:click="cancel"><i class="fa fa-times"></i> {{ __('Cancel Premi') }}</button>
+                    <button type="submit" class="ml-3 btn btn-primary btn-sm"><i class="fa fa-save"></i> {{ __('Receive') }}</button>
+                    <button type="button" class="ml-3 btn btn-danger btn-sm float-right" data-target="#modal_confirm" data-toggle="modal" wire:click="cancel"><i class="fa fa-times"></i> {{ __('Cancel Premi') }}</button>
                     @endif
                 </form>
             </div>

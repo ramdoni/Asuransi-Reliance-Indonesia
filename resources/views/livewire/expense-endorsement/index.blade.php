@@ -26,8 +26,7 @@
                                 <th>Status</th>                                    
                                 <th>No Voucher</th>                                    
                                 <th>Payment Date</th>                                    
-                                <th>Voucher Date</th>                                    
-                                <th>Reference Date</th>
+                                <th>Voucher Date</th>  
                                 <th>Debit Note / Kwitansi</th>
                                 <th>Policy Number / Policy Holder</th>                    
                                 <th>Description</th>                    
@@ -45,7 +44,6 @@
                                 <td><a href="{{route('expense-endorsement.detail',['id'=>$item->id])}}">{{$item->no_voucher}}</a></td>
                                 <td>{{$item->payment_date?date('d M Y', strtotime($item->payment_date)):'-'}}</td>
                                 <td>{{date('d M Y', strtotime($item->created_at))}}</td>
-                                <td>{{$item->reference_date?date('d M Y', strtotime($item->reference_date)):'-'}}</td>
                                 <td>{{$item->reference_no ? $item->reference_no : '-'}}</td>
                                 <td>{{$item->recipient ? $item->recipient : '-'}}</td>
                                 <td>{{$item->description}}</td>

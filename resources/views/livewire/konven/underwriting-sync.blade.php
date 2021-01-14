@@ -1,13 +1,13 @@
 <form wire:submit.prevent="uw_sync">
     <div class="modal-header">
-        <div wire:loading.remove>
+        @if(!$is_sync)
             <h5 class="modal-title" id="exampleModalLabel"><i class="fa fa-refresh"></i> Sync Data</h5>
-        </div>
-        <div wire:loading>
+        @endif
+        @if($is_sync)
             <h5 class="modal-title" id="exampleModalLabel">
                 <i class="fa fa-refresh fa-spin fa-1x fa-fw"></i>
                 <span class="sr-only">Loading...</span>  Sync Data</h5>
-        </div>
+        @endif
     </div>
     <div class="modal-body">
         <div class="form-group" wire:loading.remove>

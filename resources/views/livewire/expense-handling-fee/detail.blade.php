@@ -22,39 +22,80 @@
                                 </tr>
                                 <tr>
                                     <th>{{ __('Debit Note / Kwitansi Number')}}</th>
-                                    <td class="text-success">{{$data->reference_no}}</td>
-                                </tr>
-                                <tr>
-                                    <th>{{ __('Reference Date')}}</th>
-                                    <td>{{$data->reference_date}}</td>
+                                    <td>
+                                        <span class="text-success">{{$data->reference_no}}</span>
+                                        @if($paid_premi==1)
+                                            <a href="{{route('income.premium-receivable.detail',$paid_premi_id)}}" target="_blank" class="badge badge-warning" title="Handling Fee belum bisa di proses sebelum Status Premi diterima.">Unpaid</a>
+                                        @endif
+                                        @if($paid_premi==2)
+                                            <a href="{{route('income.premium-receivable.detail',$paid_premi_id)}}" target="_blank" class="badge badge-success" title="Premi Paid">Paid</a>
+                                        @endif
+                                        @if($paid_premi==3)
+                                            <a href="{{route('income.premium-receivable.detail',$paid_premi_id)}}" target="_blank" class="badge badge-danger" title="Premi Cancel">Cancel</a>
+                                        @endif
+                                    </td>
                                 </tr>
                                 <tr>
                                     <th>{{ __('Total PPH')}}</th>
-                                    <td>{{format_idr($data->uw->jumlah_pph)}}</td>
+                                    <td>
+                                        <label>
+                                            @if($is_readonly==false)
+                                            <input type="checkbox" wire:click="calculate_" wire:model="payment_pph" value="{{$data->uw->jumlah_pph}}" /> 
+                                            @endif
+                                            {{format_idr($data->uw->jumlah_pph)}}
+                                        </label>
+                                        </td>
                                 </tr>
                                 <tr>
                                     <th>{{ __('Total PPN')}}</th>
-                                    <td>{{format_idr($data->uw->jumlah_ppn)}}</td>
+                                    <td><label>
+                                            @if($is_readonly==false)
+                                            <input type="checkbox" wire:click="calculate_" wire:model="payment_ppn" value="{{$data->uw->jumlah_ppn}}" /> 
+                                            @endif
+                                            {{format_idr($data->uw->jumlah_ppn)}}
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>{{__('Bank Charges')}}</th>
+                                    <td>
+                                        <input type="text" {{$is_readonly?'disabled':''}} class="form-control format_number col-md-6" placeholder="{{__('Bank Charges')}}" wire:model="bank_charges" wire:input="calculate_" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>{{ __('Total Amount')}}</th>
+                                    <td>{{format_idr($payment_amount)}}
+                                        @error('payment_amount')
+                                        <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </td>
                                 </tr>
                                 <tr>
                                     <th>{{ __('From Bank Account')}}</th>
                                     <td>
-                                        <select class="form-control" wire:model="bank_account_id" {{$is_readonly?'disabled':''}}>
+                                        <select class="form-control" wire:model="from_bank_account_id" {{$is_readonly?'disabled':''}}>
                                             <option value=""> --- {{__('Select')}} --- </option>
                                             @foreach (\App\Models\BankAccount::where('is_client',0)->orderBy('owner','ASC')->get() as $bank)
                                                 <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
                                             @endforeach
                                         </select>
+                                        @error('from_bank_account_id')
+                                        <span class="text-danger">{{ $message }}</span>
+                                        @enderror
                                     </td>
                                 </tr>
                                 <tr>
                                     <th>{{ __('To Bank Account')}}</th>
-                                    <td>{{ isset($data->bank_account->no_rekening) ? $data->bank_account->no_rekening .' - '.$data->bank_account->bank.' an '.$data->bank_account->owner :'' }}</td>
-                                </tr>
-                                <tr>
-                                    <th>{{ __('Payment Amount')}}</th>
                                     <td>
-                                        <input type="text" class="form-control col-md-6 format_number" {{$is_readonly?'disabled':''}} wire:model="payment_amount" />
+                                        <select class="form-control" wire:model="bank_account_id" {{$is_readonly?'disabled':''}}>
+                                            <option value=""> --- {{__('Select')}} --- </option>
+                                            @foreach (\App\Models\BankAccount::where('is_client',1)->orderBy('owner','ASC')->get() as $bank)
+                                                <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('bank_account_id')
+                                        <span class="text-danger">{{ $message }}</span>
+                                        @enderror
                                     </td>
                                 </tr>
                                 <tr>
@@ -62,20 +103,18 @@
                                     <td>
                                         <input type="date" class="form-control col-md-6" {{$is_readonly?'disabled':''}} wire:model="payment_date" />
                                         @error('payment_date')
-                                        <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                                        <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                     </td>
-                                </tr>
-                                <tr>
-                                    <th>{{__('Bank Charges')}}</th>
-                                    <td><input type="text" {{$is_readonly?'disabled':''}} class="form-control format_number col-md-6" wire:model="bank_charges" /></td>
                                 </tr>
                             </table>
                         </div>
                     </div>
                     <hr />
                     <a href="javascript:void0()" onclick="history.back()"><i class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
+                    @if($is_readonly==false)
                     <button type="submit" class="ml-3 btn btn-primary"><i class="fa fa-save"></i> {{ __('Submit') }}</button>
+                    @endif
                 </form>
             </div>
         </div>

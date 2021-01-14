@@ -32,7 +32,8 @@
                                 <th>Policy Number / Policy Holder</th> 
                                 <th>Cancelation</th>                   
                                 <th>Total</th>                                               
-                                <th>No Rekening</th>
+                                <th>From Bank Account</th>
+                                <th>To Bank Account</th>
                                 <th>Outstanding Balance</th>
                                 <th>Payment Amount</th>
                             </tr>
@@ -51,7 +52,8 @@
                                 <td>{{$item->client ? $item->client : '-'}}</td>
                                 <td>{{ isset($item->cancelation)?format_idr($item->total_cancelation->sum('nominal')):0 }}</td>
                                 <td>{{isset($item->nominal) ? format_idr($item->nominal) : '-'}}</td>
-                                <td>{{isset($item->bank_account->no_rekening) ? $item->bank_account->no_rekening .'('.$item->bank_account->bank.')' : '-'}}</td>
+                                <td>{{isset($item->from_bank_account->no_rekening) ? $item->from_bank_account->no_rekening .'- '.$item->from_bank_account->bank.' an '. $item->from_bank_account->owner : '-'}}</td>
+                                <td>{{isset($item->bank_account->no_rekening) ? $item->bank_account->no_rekening .' - '.$item->bank_account->bank.' an '. $item->bank_account->owner : '-'}}</td>
                                 <td>{{isset($item->outstanding_balance) ? format_idr($item->outstanding_balance) : '-'}}</td>
                                 <td>{{isset($item->payment_amount) ? format_idr($item->payment_amount) : '-'}}</td>
                             </tr>

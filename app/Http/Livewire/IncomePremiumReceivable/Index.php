@@ -13,7 +13,6 @@ class Index extends Component
     public function render()
     {
         $data = \App\Models\Income::orderBy('id','desc')->where('reference_type','Premium Receivable');
-
         if($this->keyword) $data = $data->where('description','LIKE', "%{$this->keyword}%")
                                         ->orWhere('no_voucher','LIKE',"%{$this->keyword}%")
                                         ->orWhere('reference_no','LIKE',"%{$this->keyword}%")

@@ -33,4 +33,8 @@ class Expenses extends Model
     {
         return $this->hasOne('\App\Models\KonvenMemo','id','transaction_id');
     }
+    public function from_bank_account()
+    {
+        return $this->belongsTo(\App\Models\BankAccount::class,'from_bank_account_id');
+    }
 }

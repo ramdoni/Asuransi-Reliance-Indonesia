@@ -42,4 +42,8 @@ class Income extends Model
     {
         return $this->hasMany('\App\Models\KonvenUnderwritingCancelation','income_id','id');
     }
+    public function from_bank_account()
+    {
+        return $this->belongsTo(\App\Models\BankAccount::class,'from_bank_account_id');
+    }
 }

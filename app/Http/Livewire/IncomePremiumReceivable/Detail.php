@@ -19,6 +19,7 @@ class Detail extends Component
         $this->no_voucher = $this->data->no_voucher;
         $this->payment_date = $this->data->payment_date?$this->data->payment_date : date('Y-m-d');
         $this->bank_account_id = $this->data->rekening_bank_id;
+        $this->from_bank_account_id = $this->data->from_bank_account_id;
         $this->payment_amount = format_idr($this->data->payment_amount);
         $this->total_payment_amount = $this->data->total_payment_amount;
         
@@ -61,6 +62,7 @@ class Detail extends Component
         $this->data->rekening_bank_id = $this->bank_account_id;
         $this->data->payment_date = $this->payment_date;
         $this->data->description = $this->description;
+        $this->data->from_bank_account_id = $this->from_bank_account_id;
         $this->data->save();
         if($this->data->status==2){
             $coa_premium_receivable = 0;
@@ -97,7 +99,6 @@ class Detail extends Component
             $journal->transaction_table = 'expenses';
             $journal->transaction_number = isset($this->data->uw->no_kwitansi_debit_note)?$this->data->uw->no_kwitansi_debit_note:'';
             $journal->save();
-
             if($this->payment_amount < $this->data->nominal){
                 $journal = new \App\Models\Journal();
                 $journal->coa_id = 206;//Other Payable
