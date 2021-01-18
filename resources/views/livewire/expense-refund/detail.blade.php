@@ -25,12 +25,15 @@
                                     <td>
                                         <span class="text-success">{{$data->reference_no}}</span>
                                         @if($paid_premi==1)
-                                            <a href="{{route('income.premium-receivable.detail',$paid_premi_id)}}" target="_blank" class="badge badge-warning" title="Handling Fee belum bisa di proses sebelum Status Premi diterima.">Unpaid</a>
+                                            <a href="{{route('income.premium-receivable.detail',$paid_premi_id)}}" target="_blank" class="badge badge-warning" title="Refund belum bisa di proses sebelum Status Premi diterima.">Unpaid</a>
                                         @endif
                                         @if($paid_premi==2)
                                             <a href="{{route('income.premium-receivable.detail',$paid_premi_id)}}" target="_blank" class="badge badge-success" title="Premi Paid">Paid</a>
                                         @endif
                                         @if($paid_premi==3)
+                                            <a href="{{route('income.premium-receivable.detail',$paid_premi_id)}}" target="_blank" class="badge badge-warning" title="Premi Cancel">Outstanding</a>
+                                        @endif
+                                        @if($paid_premi==4)
                                             <a href="{{route('income.premium-receivable.detail',$paid_premi_id)}}" target="_blank" class="badge badge-danger" title="Premi Cancel">Cancel</a>
                                         @endif
                                     </td>

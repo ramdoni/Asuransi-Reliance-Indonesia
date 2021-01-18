@@ -59,4 +59,8 @@ class Komisi extends Component
                 
         return view('livewire.konven.komisi')->with(['data'=>$data->paginate(100)]);
     }
+    public function mount()
+    {
+        $this->total_sync = \App\Models\KonvenKomisi::where('status',0)->count();
+    }
 }

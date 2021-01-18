@@ -1,4 +1,4 @@
-<form wire:submit.prevent="memo_sync">
+<form wire:submit.prevent="komisi_sync">
     <div class="modal-header">
         @if(!$is_sync_komisi)
         <div wire:loading.remove>

@@ -12,7 +12,7 @@ class Index extends Component
     protected $paginationTheme = 'bootstrap';
     public function render()
     {
-        $data = \App\Models\Expenses::orderBy('id','desc')->where('reference_type','Commision Payable');
+        $data = \App\Models\Expenses::orderBy('id','desc')->where('reference_type','Komisi');
         if($this->keyword) $data = $data->where('description','LIKE', "%{$this->keyword}%")
                                         ->orWhere('no_voucher','LIKE',"%{$this->keyword}%")
                                         ->orWhere('debit_note','LIKE',"%{$this->keyword}%");

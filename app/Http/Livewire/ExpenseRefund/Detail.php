@@ -21,12 +21,15 @@ class Detail extends Component
         $this->bank_account_id = $this->data->rekening_bank_id;
         $this->payment_amount = format_idr($this->data->payment_amount);
         $this->total_payment_amount = $this->data->total_payment_amount;
-        $premi = \App\Models\Income::where('transaction_id',$this->data->uw->id)->where('transaction_table','konven_underwriting')->first();
-        if($premi){
-            $this->paid_premi = $premi->status;
-            $this->paid_premi_id =$premi->id;
-            if($premi->status!=2) $this->is_readonly = true;
+        if($this->data->uw->id){
+            $premi = \App\Models\Income::where('transaction_id',$this->data->uw->id)->where('transaction_table','konven_underwriting')->first();
+            if($premi){
+                $this->paid_premi = $premi->status;
+                $this->paid_premi_id =$premi->id;
+                if($premi->status!=2) $this->is_readonly = true;
+            }
         }
+        
         if($this->payment_amount =="") $this->payment_amount=$this->data->nominal;
         if($this->data->status==2) $this->is_finish = true;
     }
