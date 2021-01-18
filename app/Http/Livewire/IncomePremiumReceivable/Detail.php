@@ -22,13 +22,17 @@ class Detail extends Component
         $this->from_bank_account_id = $this->data->from_bank_account_id;
         $this->payment_amount = format_idr($this->data->payment_amount);
         $this->total_payment_amount = $this->data->total_payment_amount;
-        
+        $this->description = $this->data->description;
         if($this->data->status==1){
             $this->description = 'Premi ab '. (isset($this->data->uw->pemegang_polis) ? ($this->data->uw->pemegang_polis .' bulan '. $this->data->uw->bulan .' dengan No Invoice :'.$this->data->uw->no_kwitansi_debit_note) : ''); 
         }
 
         if($this->payment_amount =="") $this->payment_amount=format_idr($this->data->nominal);
-        if($this->data->status==2) $this->is_finish = true;
+        if($this->data->status==2){
+            $this->is_finish = true;
+            $this->is_readonly = true;
+        }
+        if($this->data->status==3) $this->is_redonly = true;
     }
     public function showDetailCancelation($id)
     {

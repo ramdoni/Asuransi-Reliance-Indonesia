@@ -22,7 +22,18 @@
                                 </tr>
                                 <tr>
                                     <th>{{ __('Debit Note / Kwitansi Number')}}</th>
-                                    <td><a href="#"  wire:click="$set('showDetail','underwriting')" title="Detail Debit Note / Kwitansi Number">{{$data->reference_no}}</a></td>
+                                    <td>
+                                        <a href="#"  wire:click="$set('showDetail','underwriting')" title="Detail Debit Note / Kwitansi Number">{{$data->reference_no}}</a>
+                                        @if($data->status==1)
+                                            <span class="badge badge-warning" title="Handling Fee belum bisa di proses sebelum Status Premi diterima.">Unpaid</span>
+                                        @endif
+                                        @if($data->status==2)
+                                            <span class="badge badge-success" title="Premi Paid">Paid</span>
+                                        @endif
+                                        @if($data->status==3)
+                                            <span class="badge badge-danger" title="Premi Cancel">Cancel</span>
+                                        @endif
+                                    </td>
                                 </tr>
                                 <tr>
                                     <th>{{ __('Reference Date')}}</th>
@@ -100,7 +111,7 @@
                                 <tr>
                                     <th>{{__('Description')}}</th>
                                     <td>
-                                        <textarea style="height:100px;" class="form-control" wire:model="description"></textarea>
+                                        <textarea style="height:100px;" {{$is_readonly?'disabled':''}} class="form-control" wire:model="description"></textarea>
                                     </td>
                                 </tr>
                             </table>

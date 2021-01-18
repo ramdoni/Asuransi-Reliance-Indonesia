@@ -22,14 +22,29 @@
                                 </tr>
                                 <tr>
                                     <th>{{ __('Debit Note / Kwitansi Number')}}</th>
-                                    <td class="text-success">{{$data->reference_no}}</td>
+                                    <td>
+                                        <span class="text-success">{{$data->reference_no}}</span>
+                                        @if($paid_premi==1)
+                                            <a href="{{route('income.premium-receivable.detail',$paid_premi_id)}}" target="_blank" class="badge badge-warning" title="Handling Fee belum bisa di proses sebelum Status Premi diterima.">Unpaid</a>
+                                        @endif
+                                        @if($paid_premi==2)
+                                            <a href="{{route('income.premium-receivable.detail',$paid_premi_id)}}" target="_blank" class="badge badge-success" title="Premi Paid">Paid</a>
+                                        @endif
+                                        @if($paid_premi==3)
+                                            <a href="{{route('income.premium-receivable.detail',$paid_premi_id)}}" target="_blank" class="badge badge-danger" title="Premi Cancel">Cancel</a>
+                                        @endif
+                                    </td>
                                 </tr>
                                 <tr>
                                     <th>{{ __('Reference Date')}}</th>
                                     <td>{{$data->reference_date}}</td>
                                 </tr>
                                 <tr>
-                                    <th>{{ __('Total')}}</th>
+                                    <th>{{__('Bank Charges')}}</th>
+                                    <td><input type="text" {{$is_readonly?'disabled':''}} class="form-control format_number col-md-6" wire:model="bank_charges" /></td>
+                                </tr>
+                                <tr>
+                                    <th>{{ __('Total Payment Amount')}}</th>
                                     <td>{{format_idr($data->nominal)}}</td>
                                 </tr>
                                 <tr>
@@ -61,10 +76,6 @@
                                         <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                                         @enderror
                                     </td>
-                                </tr>
-                                <tr>
-                                    <th>{{__('Bank Charges')}}</th>
-                                    <td><input type="text" {{$is_readonly?'disabled':''}} class="form-control format_number col-md-6" wire:model="bank_charges" /></td>
                                 </tr>
                             </table>
                         </div>

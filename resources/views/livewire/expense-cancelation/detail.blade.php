@@ -22,7 +22,18 @@
                                 </tr>
                                 <tr>
                                     <th>{{ __('Debit Note / Kwitansi Number')}}</th>
-                                    <td>{{$data->reference_no}}</td>
+                                    <td>
+                                        <span class="text-success">{{$data->reference_no}}</span>
+                                        @if($paid_premi==1)
+                                            <a href="{{route('income.premium-receivable.detail',$paid_premi_id)}}" target="_blank" class="badge badge-warning" title="Handling Fee belum bisa di proses sebelum Status Premi diterima.">Unpaid</a>
+                                        @endif
+                                        @if($paid_premi==2)
+                                            <a href="{{route('income.premium-receivable.detail',$paid_premi_id)}}" target="_blank" class="badge badge-success" title="Premi Paid">Paid</a>
+                                        @endif
+                                        @if($paid_premi==3)
+                                            <a href="{{route('income.premium-receivable.detail',$paid_premi_id)}}" target="_blank" class="badge badge-danger" title="Premi Cancel">Cancel</a>
+                                        @endif
+                                    </td>
                                 </tr>
                                 <tr>
                                     <th>{{ __('Reference Date')}}</th>
@@ -75,7 +86,9 @@
                     </div>
                     <hr />
                     <a href="javascript:void0()" onclick="history.back()"><i class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
+                    @if($is_readonly==false)
                     <button type="submit" class="ml-3 btn btn-primary"><i class="fa fa-save"></i> {{ __('Submit') }}</button>
+                    @endif
                 </form>
             </div>
         </div>
