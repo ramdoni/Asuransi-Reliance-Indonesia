@@ -7,6 +7,7 @@
                 <ul class="nav nav-tabs">
                     <li class="nav-item"><a class="nav-link active show" data-toggle="tab" href="#additional">Additional</a></li>
                     <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#memo_pos">Memo POS</a></li>
+                    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab_komisi">Komisi</a></li>
                 </ul>
                 <div class="px-0 tab-content">
                     <div class="tab-pane show active" id="additional">
@@ -174,6 +175,9 @@
                     </div>
                     <div class="tab-pane" id="memo_pos">
                         <livewire:konven.memo-pos />
+                    </div>
+                    <div class="tab-pane" id="tab_komisi">
+                        <livewire:konven.komisi />
                     </div>
                 </div>
                 <div wire:ignore.self class="modal fade" id="modal_upload_teknis_conven" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
