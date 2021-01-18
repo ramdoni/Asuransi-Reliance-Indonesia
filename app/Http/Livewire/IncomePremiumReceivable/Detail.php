@@ -32,7 +32,10 @@ class Detail extends Component
             $this->is_finish = true;
             $this->is_readonly = true;
         }
-        if($this->data->status==3) $this->is_redonly = true;
+        if($this->data->status==4){
+            $this->is_finish = true;
+            $this->is_readonly = true;
+        } 
     }
     public function showDetailCancelation($id)
     {

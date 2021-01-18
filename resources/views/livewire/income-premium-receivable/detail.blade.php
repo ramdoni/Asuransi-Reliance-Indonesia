@@ -31,6 +31,9 @@
                                             <span class="badge badge-success" title="Premi Paid">Paid</span>
                                         @endif
                                         @if($data->status==3)
+                                            <span class="badge badge-warning" title="Outstanding">Outstanding</span>
+                                        @endif
+                                        @if($data->status==4)
                                             <span class="badge badge-danger" title="Premi Cancel">Cancel</span>
                                         @endif
                                     </td>
