@@ -31,9 +31,10 @@
                                 <th>Policy Number / Policy Holder</th>                    
                                 <th>Description</th>                    
                                 <th>Total</th>                                               
-                                <th>No Rekening</th>
-                                <th>Outstanding Balance</th>
+                                <th>From Bank Account</th>
+                                <th>To Bank Account</th>
                                 <th>Payment Amount</th>
+                                <th>Bank Charges</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -48,9 +49,10 @@
                                 <td>{{$item->recipient ? $item->recipient : '-'}}</td>
                                 <td>{{$item->description}}</td>
                                 <td>{{isset($item->nominal) ? format_idr($item->nominal) : '-'}}</td>
+                                <td>{{isset($item->from_bank_account->no_rekening) ? $item->from_bank_account->no_rekening .' - '.$item->from_bank_account->bank.' an '.$item->from_bank_account->owner : '-'}}</td>
                                 <td>{{isset($item->bank_account->no_rekening) ? $item->bank_account->no_rekening .' - '.$item->bank_account->bank.' an '.$item->bank_account->owner : '-'}}</td>
-                                <td>{{isset($item->outstanding_balance) ? format_idr($item->outstanding_balance) : '-'}}</td>
                                 <td>{{isset($item->payment_amount) ? format_idr($item->payment_amount) : '-'}}</td>
+                                <td>{{isset($item->bank_charges) ? format_idr($item->bank_charges) : '-'}}</td>
                             </tr>
                         @endforeach
                         </tbody>

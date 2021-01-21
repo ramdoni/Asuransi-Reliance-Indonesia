@@ -202,7 +202,9 @@
                     <button type="button" class="btn btn-sm btn-info" wire:click="addPayment"><i class="fa fa-plus"></i> Payment</button>
                     <hr>
                     <a href="javascript:void0()" onclick="history.back()"><i class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
+                    @if($outstanding_balance==0 and $total_payment_amount!=0)
                     <button type="submit" class="ml-3 btn btn-primary"><i class="fa fa-save"></i> {{ __('Submit') }}</button>
+                    @endif
                 </form>
             </div>
         </div>

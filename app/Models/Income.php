@@ -38,6 +38,10 @@ class Income extends Model
     {
         return $this->hasMany('\App\Models\KonvenUnderwritingCancelation','income_id','id');
     }
+    public function endorsement()
+    {
+        return $this->hasMany(\App\Models\KonvenUnderwritingEndorsement::class,'income_id');
+    }
     public function total_cancelation()
     {
         return $this->hasMany('\App\Models\KonvenUnderwritingCancelation','income_id','id');

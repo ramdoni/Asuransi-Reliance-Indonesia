@@ -29,13 +29,45 @@
                                     <td>{{$data->reference_date}}</td>
                                 </tr>
                                 <tr>
-                                    <th>{{ __('Total')}}</th>
-                                    <td>{{format_idr($data->nominal)}}</td>
+                                    <th>{{ __('Payment Amount')}}</th>
+                                    <td>{{format_idr($payment_amount)}}</td>
                                 </tr>
                                 <tr>
-                                    <th>{{ __('Payment Amount')}}</th>
+                                    <th>{{__('From Bank Account')}}</th>
                                     <td>
-                                        <input type="text" class="form-control col-md-6" {{$is_readonly?'disabled':''}} wire:model="payment_amount" />
+                                        <div class="row">
+                                            <div class="col-md-10">
+                                                <select class="form-control from_bank_account" wire:model="from_bank_account_id" {{$is_readonly?'disabled':''}}>
+                                                    <option value=""> --- {{__('Select')}} --- </option>
+                                                    @foreach (\App\Models\BankAccount::where('is_client',1)->orderBy('owner','ASC')->get() as $bank)
+                                                        <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
+                                                    @endforeach
+                                                </select>
+                                                @error('from_bank_account_id')
+                                                <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                                                @enderror
+                                            </div>
+                                            <div class="col-md-2 px-0 pt-2">
+                                                @if(!$is_readonly)
+                                                <a href="#" data-toggle="modal" data-target="#modal_add_bank"><i class="fa fa-plus"></i> Add Bank</a>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>{{__('To Bank Account')}}</th>
+                                    <td>
+                                        <select class="form-control" wire:model="to_bank_account_id" {{$is_readonly?'disabled':''}}>
+                                            <option value=""> --- {{__('Select')}} --- </option>
+                                            @foreach (\App\Models\BankAccount::where('is_client',0)->orderBy('bank','ASC')->get() as $bank)
+                                                <option value="{{ $bank->id}}">{{ $bank->no_rekening}} ({{ $bank->bank}})</option>
+                                            @endforeach
+                                        </select>
+                                        @error('to_bank_account_id')
+                                        <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                                        @enderror
                                     </td>
                                 </tr>
                                 <tr>
@@ -47,20 +79,7 @@
                                         @enderror
                                     </td>
                                 </tr>
-                                <tr>
-                                    <th>{{__('Bank Account')}}</th>
-                                    <td>
-                                        <select class="form-control" wire:model="bank_account_id" {{$is_readonly?'disabled':''}}>
-                                            <option value=""> --- {{__('Select')}} --- </option>
-                                            @foreach (\App\Models\BankAccount::orderBy('bank','ASC')->get() as $bank)
-                                                <option value="{{ $bank->id}}">{{ $bank->no_rekening}} ({{ $bank->bank}})</option>
-                                            @endforeach
-                                        </select>
-                                        @error('bank_account_id')
-                                        <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                                        @enderror
-                                    </td>
-                                </tr>
+                                
                                 <tr>
                                     <th>{{__('Bank Charges')}}</th>
                                     <td><input type="text" {{$is_readonly?'disabled':''}} class="form-control format_number col-md-6" wire:model="bank_charges" /></td>
@@ -80,6 +99,32 @@
                 </form>
             </div>
         </div>
+    </div>
+    <div class="col-md-5 px-0">
+        <div class="card mt-0">
+            <div wire:loading style="position:absolute;right:0;">
+                <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                <span class="sr-only">Loading...</span>
+            </div>
+            <div class="body" style="max-height:700px;overflow-y:scroll">
+                <h6 class="text-success">{{$data->reference_no}}</h6>
+                <hr />
+                <table class="table pl-0 mb-0 table-striped table-nowrap"> 
+                    @foreach(\Illuminate\Support\Facades\Schema::getColumnListing('konven_underwriting') as $column)
+                    @if($column=='id' || $column=='created_at'||$column=='updated_at') @continue @endif
+                    <tr>
+                        <th style="width:40%;">{{ ucfirst($column) }}</th>
+                        <td style="width:60%;">{{ in_array($column,['up_peserta_pending','premi_peserta_pending','up','premi_gross','extra_premi','jumlah_discount','handling_fee','jumlah_fee','jumlah_pph','jumlah_ppn','biaya_polis','biaya_sertifikat','extsertifikat','premi_netto','total_gross_kwitansi']) ? format_idr($data->uw->$column) : $data->uw->$column }}</td>
+                    </tr>
+                    @endforeach
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div wire:ignore.self class="modal fade" id="modal_add_bank" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <livewire:income-reinsurance.add-bank />
     </div>
 </div>
 @push('after-scripts')

@@ -8,10 +8,24 @@ class Detail extends Component
 {
     public $data,$no_voucher,$client,$recipient,$reference_type,$reference_no,$reference_date,$description,$outstanding_balance,$tax_id,$payment_amount=0,$bank_account_id;
     public $payment_date,$tax_amount,$total_payment_amount,$is_readonly=false,$is_finish=false;
-    public $bank_charges;
+    public $bank_charges,$from_bank_account_id;
+    protected $listeners = ['emit-add-bank'=>'emitAddBank'];
+    protected $rules = [
+        'bank_account_id'=>'required',
+        'payment_amount'=>'required',
+        'from_bank_account_id' => 'required'
+    ];
     public function render()
     {
         return view('livewire.expense-reinsurance.detail');
+    }
+    public function emitAddBank($id)
+    {
+        $this->bank_account_id = $id;
+    }
+    public function updated($propertyName)
+    {
+        $this->emit('init-form');
     }
     public function mount($id)
     {
@@ -28,12 +42,7 @@ class Detail extends Component
     public function save()
     {
         // if($this->is_finish) return false;
-        $this->validate(
-            [
-                'bank_account_id'=>'required',
-                'payment_amount'=>'required',
-            ]
-        );
+        $this->validate();
         $this->payment_amount = replace_idr($this->payment_amount);
         if($this->payment_amount==$this->data->nominal) $this->data->status=2;//paid
         if($this->payment_amount!=$this->data->nominal) $this->data->status=3;//outstanding
@@ -41,6 +50,7 @@ class Detail extends Component
         $this->data->payment_amount = $this->payment_amount;
         $this->data->rekening_bank_id = $this->bank_account_id;
         $this->data->payment_date = $this->payment_date;
+        $this->data->from_bank_account_id = $this->from_bank_account_id;
         $this->data->save();
         if($this->data->status==2){
             if($this->data->transaction_table=='konven_reinsurance'){
@@ -68,22 +78,22 @@ class Detail extends Component
                 }    
             }
             $coa_bank_charges = 347;
-
-            
             // Bank
             $coa_bank_account = \App\Models\BankAccount::find($this->bank_account_id);
-            $journal = new \App\Models\Journal();
-            $journal->coa_id = $coa_bank_account->coa_id;
-            $journal->no_voucher = generate_no_voucher($coa_bank_account->coa_id,$this->data->id);
-            $journal->date_journal = date('Y-m-d');
-            $journal->kredit = $this->bank_charges + $this->payment_amount;
-            $journal->debit = 0;
-            $journal->saldo = $this->bank_charges + $this->payment_amount;
-            $journal->description = $this->description ? $this->description : 'Pembayaran Premi Reas '.$reas->broker_re.' ('.$reas->keterangan.')';
-            $journal->transaction_id = $this->data->id;
-            $journal->transaction_table = 'expenses';
-            $journal->transaction_number = isset($reas->uw->no_kwitansi_debit_note)?$reas->uw->no_kwitansi_debit_note:'';
-            $journal->save();
+            if($coa_bank_account->coa_id){
+                $journal = new \App\Models\Journal();
+                $journal->coa_id = $coa_bank_account->coa_id;
+                $journal->no_voucher = generate_no_voucher($coa_bank_account->coa_id,$this->data->id);
+                $journal->date_journal = date('Y-m-d');
+                $journal->kredit = $this->bank_charges + $this->payment_amount;
+                $journal->debit = 0;
+                $journal->saldo = $this->bank_charges + $this->payment_amount;
+                $journal->description = $this->description ? $this->description : 'Pembayaran Premi Reas '.$reas->broker_re.' ('.$reas->keterangan.')';
+                $journal->transaction_id = $this->data->id;
+                $journal->transaction_table = 'expenses';
+                $journal->transaction_number = isset($reas->uw->no_kwitansi_debit_note)?$reas->uw->no_kwitansi_debit_note:'';
+                $journal->save();
+            }
             // Bank Charges
             if(!empty($this->bank_charges)){
                 $journal = new \App\Models\Journal();

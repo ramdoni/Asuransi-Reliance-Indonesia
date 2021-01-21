@@ -113,6 +113,9 @@ Route::group(['middleware' => ['auth','access:2']], function(){
     Route::get('expense-refund/detail/{id}',App\Http\Livewire\ExpenseRefund\Detail::class)->name('expense-refund.detail');
     Route::get('expense-handling-fee',App\Http\Livewire\ExpenseHandlingFee\Index::class)->name('expense-handling-fee');
     Route::get('expense-handling-fee/detail/{id}',App\Http\Livewire\ExpenseHandlingFee\Detail::class)->name('expense-handling-fee.detail');
+    Route::get('endorsement',App\Http\Livewire\Endorsement\Index::class)->name('endorsement.index');
+    Route::get('endorsement/dn-detail/{id}',App\Http\Livewire\Endorsement\DnDetail::class)->name('endorsement.dn-detail');
+    Route::get('endorsement/cn-detail/{id}',App\Http\Livewire\Endorsement\CnDetail::class)->name('endorsement.cn-detail');
 });
 // Treasury
 Route::group(['middleware' => ['auth','access:4']], function(){ 

@@ -33,22 +33,25 @@ class Detail extends Component
         if($this->payment_amount =="") $this->payment_amount=$this->data->nominal;
         if($this->data->status==2) $this->is_finish = true;
     }
+    public function updated($propertyName)
+    {
+        $this->payment_amount = $this->payment_amount + replace_idr($this->bank_charges);
+        $this->emit('init-bank');
+    }
     public function save()
     {
-        // if($this->is_finish) return false;
         $this->validate(
             [
                 'bank_account_id'=>'required',
                 'payment_amount'=>'required',
             ]
         );
-        $this->payment_amount = replace_idr($this->payment_amount);
-        if($this->payment_amount==$this->data->nominal) $this->data->status=2;//paid
-        if($this->payment_amount!=$this->data->nominal) $this->data->status=3;//outstanding
-        $this->data->outstanding_balance = replace_idr($this->outstanding_balance);
+        $this->data->status = 2;
         $this->data->payment_amount = $this->payment_amount;
         $this->data->rekening_bank_id = $this->bank_account_id;
+        $this->data->from_bank_account_id = $this->from_bank_account_id;
         $this->data->payment_date = $this->payment_date;
+        $this->data->bank_charges = replace_idr($this->bank_charges);
         $this->data->save();    
         session()->flash('message-success',__('Data saved successfully'));
         return redirect()->route('expense-refund');

@@ -49,3 +49,6 @@
 .table-nowrap tr td{
     white-space:unset !important;
 }
+.select2-selection__placeholder{
+    color:#495057 !important;
+}

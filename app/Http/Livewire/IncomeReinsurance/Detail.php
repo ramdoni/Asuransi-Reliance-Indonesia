@@ -8,7 +8,7 @@ class Detail extends Component
 {
     public $data,$no_voucher,$client,$recipient,$reference_type,$reference_no,$reference_date,$description,$outstanding_balance,$tax_id,$payment_amount=0,$bank_account_id;
     public $payment_date,$tax_amount,$total_payment_amount,$is_readonly=false,$is_finish=false;
-    public $bank_charges;
+    public $bank_charges,$from_bank_account_id;
     public function render()
     {
         return view('livewire.income-reinsurance.detail');
@@ -19,6 +19,7 @@ class Detail extends Component
         $this->no_voucher = $this->data->no_voucher;
         $this->payment_date = $this->data->payment_date?$this->data->payment_date : date('Y-m-d');
         $this->bank_account_id = $this->data->rekening_bank_id;
+        $this->from_bank_account_id = $this->data->from_bank_account_id;
         $this->payment_amount = format_idr($this->data->payment_amount);
         $this->total_payment_amount = $this->data->total_payment_amount;
         
@@ -29,12 +30,14 @@ class Detail extends Component
         if($this->payment_amount =="") $this->payment_amount=format_idr($this->data->nominal);
         if($this->data->status==2) $this->is_finish = true;
     }
+    
     public function save()
     {
         $this->validate(
             [
                 'bank_account_id'=>'required',
                 'payment_amount'=>'required',
+                'from_bank_account_id' => 'required'
             ]
         );
         $this->payment_amount = replace_idr($this->payment_amount);
@@ -44,6 +47,7 @@ class Detail extends Component
         $this->data->outstanding_balance = replace_idr($this->outstanding_balance);
         $this->data->payment_amount = $this->payment_amount;
         $this->data->rekening_bank_id = $this->bank_account_id;
+        $this->data->from_bank_account_id = $this->from_bank_account_id;
         $this->data->payment_date = $this->payment_date;
         $this->data->description = $this->description;
         $this->data->save();

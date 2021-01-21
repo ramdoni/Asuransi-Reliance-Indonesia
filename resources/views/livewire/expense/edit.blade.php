@@ -158,7 +158,6 @@
 </style>
 @endpush
 @section('page-script')
-
 document.addEventListener("livewire:load", () => {
 		init_form();
     });

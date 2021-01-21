@@ -9,4 +9,9 @@ class KonvenKomisi extends Model
 {
     use HasFactory;
     protected $table = 'konven_komisi';
+
+    public function uw()
+    {
+        return $this->belongsTo(\App\Models\KonvenUnderwriting::class,'konven_underwriting_id');
+    }
 }

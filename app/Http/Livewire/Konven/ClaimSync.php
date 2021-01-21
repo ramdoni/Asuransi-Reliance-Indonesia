@@ -50,8 +50,6 @@ class ClaimSync extends Component
                 $data->transaction_table = 'konven_claim';
                 $data->transaction_id = $item->id;
                 $data->save();
-
-                
             }
             $item->save();
             

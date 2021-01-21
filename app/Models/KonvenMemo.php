@@ -9,4 +9,8 @@ class KonvenMemo extends Model
 {
     use HasFactory;
     protected $table="konven_memo_pos";
+    public function uw()
+    {
+        return $this->belongsTo(\App\Models\KonvenUnderwriting::class,'konven_underwriting_id');
+    }
 }

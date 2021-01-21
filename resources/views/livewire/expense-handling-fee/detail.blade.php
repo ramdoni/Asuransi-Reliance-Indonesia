@@ -7,6 +7,9 @@
                 <form id="basic-form" method="post" wire:submit.prevent="save">
                     <div class="row">
                         <div class="col-md-12">
+                            <div class="alert alert-warning alert-dismissible" role="alert">
+                                <i class="fa fa-warning"></i> Handling Fee tidak dapat dilakukan sebelum pembayaran premi diterima
+                            </div>
                             <table class="table pl-0 mb-0 table-striped">
                                 <tr>
                                     <th>{{ __('Voucher Number')}}</th>
@@ -44,7 +47,7 @@
                                             @endif
                                             {{format_idr($data->uw->jumlah_pph)}}
                                         </label>
-                                        </td>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <th>{{ __('Total PPN')}}</th>
@@ -80,20 +83,6 @@
                                             @endforeach
                                         </select>
                                         @error('from_bank_account_id')
-                                        <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>{{ __('To Bank Account')}}</th>
-                                    <td>
-                                        <select class="form-control" wire:model="bank_account_id" {{$is_readonly?'disabled':''}}>
-                                            <option value=""> --- {{__('Select')}} --- </option>
-                                            @foreach (\App\Models\BankAccount::where('is_client',1)->orderBy('owner','ASC')->get() as $bank)
-                                                <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('bank_account_id')
                                         <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                     </td>

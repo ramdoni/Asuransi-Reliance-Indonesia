@@ -13,6 +13,14 @@ class Expenses extends Model
     {
         return $this->hasOne('\App\Models\BankAccount','id','rekening_bank_id');
     }
+    public function reinsurance()
+    {
+        return $this->hasOne('\App\Models\KonvenReinsurance','id','transaction_id');
+    }
+    public function komisi()
+    {
+        return $this->belongsTo(\App\Models\KonvenKomisi::class,'transaction_id');
+    }
     public function uw()
     {
         return $this->hasOne('\App\Models\KonvenUnderwriting','id','transaction_id');

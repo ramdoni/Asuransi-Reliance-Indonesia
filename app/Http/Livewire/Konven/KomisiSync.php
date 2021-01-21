@@ -37,15 +37,14 @@ class KomisiSync extends Component
             }
             $item->save();
             // find bank_accounts
-            $bank = \App\Models\BankAccount::where('no_rekening',replace_idr($item->no_rekening))->first();
-            if(!$bank){
-                $bank = new \App\models\BankAccount();
-                //$bank->bank = $item->bank;
-                $bank->no_rekening = $item->no_rekening;
-                $bank->owner = $item->tujuan_pembayaran;
-                $bank->save();
-            }
-            
+            // $bank = \App\Models\BankAccount::where('no_rekening',$item->no_rekening)->first();
+            // if(!$bank){
+            //     $bank = new \App\models\BankAccount();
+            //     $bank->bank = $item->bank;
+            //     $bank->no_rekening = $item->no_rekening;
+            //     $bank->owner = $item->tujuan_pembayaran;
+            //     $bank->save();
+            // }
             $expense = new \App\Models\Expenses();
             $expense->user_id = \Auth::user()->id;
             $expense->no_voucher = generate_no_voucher_income();
@@ -56,7 +55,7 @@ class KomisiSync extends Component
             $expense->reference_type = 'Komisi';
             $expense->transaction_id = $item->id;
             $expense->transaction_table = 'konven_komisi';
-            $expense->rekening_bank_id = $bank->id;
+            // $expense->rekening_bank_id = $bank->id;
             $expense->save();
 
             $this->data .=$item->no_kwitansi.'<br />'.$item->no_polis.' / '.$item->pemegang_polis;

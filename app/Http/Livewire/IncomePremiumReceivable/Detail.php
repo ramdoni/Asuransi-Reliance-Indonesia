@@ -9,9 +9,25 @@ class Detail extends Component
     public $data,$no_voucher,$client,$recipient,$reference_type,$reference_no,$reference_date,$description,$outstanding_balance,$tax_id,$payment_amount=0,$bank_account_id,$from_bank_account_id;
     public $payment_date,$tax_amount,$total_payment_amount,$is_readonly=false,$is_finish=false;
     public $bank_charges,$showDetail='underwriting',$cancelation;
+    protected $listeners = ['emit-add-bank'=>'emitAddBank'];
+    protected $rules = 
+        [
+            'bank_account_id'=>'required',
+            'from_bank_account_id'=>'required',
+            'payment_amount'=>'required',
+        ];
     public function render()
     {
         return view('livewire.income-premium-receivable.detail');
+    }
+    public function updated($propertyName)
+    {
+        $this->emit('init-form');
+    }
+    public function emitAddBank($id)
+    {
+        $this->from_bank_account_id = $id;
+        $this->emit('init-form');
     }
     public function mount($id)
     {
@@ -20,7 +36,7 @@ class Detail extends Component
         $this->payment_date = $this->data->payment_date?$this->data->payment_date : date('Y-m-d');
         $this->bank_account_id = $this->data->rekening_bank_id;
         $this->from_bank_account_id = $this->data->from_bank_account_id;
-        $this->payment_amount = format_idr($this->data->payment_amount);
+        $this->payment_amount = $this->data->payment_amount;
         $this->total_payment_amount = $this->data->total_payment_amount;
         $this->description = $this->data->description;
         if($this->data->status==1){
@@ -36,35 +52,31 @@ class Detail extends Component
             $this->is_finish = true;
             $this->is_readonly = true;
         } 
+        $total_cancel = 0;
+        foreach($this->data->cancelation as $cancel){
+            $total_cancel += $cancel->nominal;
+        }
+        $end_cn=0;$end_dn=0;
+        foreach($this->data->endorsement as $end){
+            if($end->type=='CN') $end_cn += $end->nominal;
+            if($end->type=='DN') $end_dn += $end->nominal;
+        }
+        $this->payment_amount = $this->data->nominal-$end_cn+$end_dn-$total_cancel;
     }
     public function showDetailCancelation($id)
     {
         $this->cancelation = \App\Models\KonvenUnderwritingCancelation::find($id);
         $this->showDetail='cancelation';
-    }
-    public function cancel()
-    {
-        \App\Models\Income::where('id',$this->data->id)->update(['status'=>4]);
-        \App\Models\KonvenUnderwriting::where(['id'=>$this->data->transaction_id])->update(['status'=>4]);
-
-        session()->flash('message-success',__('Data saved successfully'));
-        return redirect()->route('income.premium-receivable');
-
+        $this->emit('init-form');
     }
     public function save()
     {
-        $this->validate(
-            [
-                'bank_account_id'=>'required',
-                'from_bank_account_id'=>'required',
-                'payment_amount'=>'required',
-            ]
-        );
-        $this->payment_amount = replace_idr($this->payment_amount);
+        dd($this->payment_amount);
+        $this->validate();
         if($this->payment_amount==$this->data->nominal || $this->payment_amount > $this->data->nominal) $this->data->status=2;//paid
         if($this->payment_amount<$this->data->nominal) $this->data->status=3;//outstanding
-        
-        $this->data->outstanding_balance = replace_idr($this->outstanding_balance);
+        $this->data->status = 2;
+        //$this->data->outstanding_balance = replace_idr($this->outstanding_balance);
         $this->data->payment_amount = $this->payment_amount;
         $this->data->rekening_bank_id = $this->bank_account_id;
         $this->data->payment_date = $this->payment_date;

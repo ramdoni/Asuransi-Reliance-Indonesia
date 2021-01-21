@@ -46,30 +46,50 @@
                                     <th>{{ __('Premium Receivable')}}</th>
                                     <td>{{format_idr($data->nominal)}}</td>
                                 </tr>
-                                @if($data->cancelation->count())
-                                <tr>
-                                    <th>{{ __('Cancelation')}}</th>
-                                    <td>
-                                        @foreach($data->cancelation as $cancel)
-                                        {!!format_idr($cancel->nominal).' - <a href="#" class="text-danger" title="Klik Detail" wire:click="showDetailCancelation('.$cancel->id.')">'.$cancel->konven_memo_pos->no_dn_cn.'</a>'!!} 
-                                        @endforeach
-                                    </td>
-                                </tr> 
-                                <tr>
-                                    <th>{{ __('Total After Cancelation')}}</th>
-                                    <td>{{format_idr($data->nominal-$data->cancelation->sum('nominal'))}}</td>
-                                </tr>
-                                @endif
+                                @if($data->endorsement->count() || $data->cancelation->count())
+                                    @if($data->cancelation->count())
+                                    <tr>
+                                        <th>{{ __('Cancelation')}}</th>
+                                        <td>
+                                            @foreach($data->cancelation as $cancel)
+                                            <p>{!!format_idr($cancel->nominal).' - <a href="javascript:void(0);" class="text-danger" title="Klik Detail" wire:click="showDetailCancelation('.$cancel->id.')">'.$cancel->konven_memo_pos->no_dn_cn.'</a>'!!}</p> 
+                                            @endforeach
+                                        </td>
+                                    </tr> 
+                                    <tr>
+                                        <th>{{ __('Total After Cancelation')}}</th>
+                                        <td>
+                                            {{format_idr($data->nominal-$data->cancelation->sum('nominal'))}}
+                                        </td>
+                                    </tr>
+                                    @endif
+                                    @if($data->endorsement->count())
+                                    <tr>
+                                        <th>{{ __('Endorsement')}}</th>
+                                        <td>
+                                            @php($end_cn=0)
+                                            @php($end_dn=0)
+                                            @foreach($data->endorsement as $end)
+                                            <p>{!!format_idr($end->nominal).' - <a href="javascript:void(0);" class="text-danger" title="Klik Detail" wire:click="showDetailCancelation('.$end->id.')">'.$end->konven_memo_pos->no_dn_cn.'</a>'!!} <span class="badge badge-warning">{{$end->type}}</span></p> 
+                                            @if($end->type=='CN') @php($end_cn += $end->nominal) @endif
+                                            @if($end->type=='DN') @php($end_dn += $end->nominal) @endif
+                                            @endforeach
+                                        </td>
+                                    </tr> 
+                                    <tr>
+                                        <th>{{ __('Total After Endorsement')}}</th>
+                                        <td>
+                                            @php($data->payment_amount = $data->nominal-$end_cn+$end_dn)
+                                            {{format_idr($data->nominal-$end_cn+$end_dn)}}
+                                        </td>
+                                    </tr>
+                                    @endif
+                                @else
                                 <tr>
                                     <th>{{ __('Payment Amount')}}</th>
-                                    <td>
-                                        <input type="text" class="form-control col-md-6" {{$is_readonly?'disabled':''}} wire:model="payment_amount" />
-                                    </td>
+                                    <td>{{format_idr($payment_amount)}}</td>
                                 </tr>
-                                {{-- <tr>
-                                    <th>{{ __('Outstanding Balance')}}</th>
-                                    <td>{{$outstanding_balance}}</td>
-                                </tr> --}}
+                                @endif
                                 <tr>
                                     <th>{{__('Payment Date')}}*<small>{{__('Default today')}}</small></th>
                                     <td>
@@ -82,15 +102,24 @@
                                 <tr>
                                     <th>{{__('From Bank Account')}}</th>
                                     <td>
-                                        <select class="form-control" wire:model="from_bank_account_id" {{$is_readonly?'disabled':''}}>
-                                            <option value=""> --- {{__('Select')}} --- </option>
-                                            @foreach (\App\Models\BankAccount::where('is_client',1)->orderBy('owner','ASC')->get() as $bank)
-                                                <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('from_bank_account_id')
-                                        <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                                        @enderror
+                                        <div class="row">
+                                            <div class="col-md-10">
+                                                <select class="form-control from_bank_account" id="from_bank_account_id" wire:model="from_bank_account_id" {{$is_readonly?'disabled':''}}>
+                                                    <option value=""> --- {{__('Select')}} --- </option>
+                                                    @foreach (\App\Models\BankAccount::where('is_client',1)->orderBy('owner','ASC')->get() as $bank)
+                                                        <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
+                                                    @endforeach
+                                                </select>
+                                                @error('from_bank_account_id')
+                                                <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                                                @enderror
+                                            </div>
+                                            <div class="col-md-2 px-0 pt-2">
+                                                @if(!$is_readonly)
+                                                <a href="#" data-toggle="modal" data-target="#modal_add_bank"><i class="fa fa-plus"></i> Add Bank</a>
+                                                @endif
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr>
@@ -125,7 +154,7 @@
                     <a href="javascript:void0()" onclick="history.back()"><i class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
                     @if(!$is_readonly)
                     <button type="submit" class="ml-3 btn btn-primary btn-sm"><i class="fa fa-save"></i> {{ __('Receive') }}</button>
-                    <button type="button" class="ml-3 btn btn-danger btn-sm float-right" data-target="#modal_confirm" data-toggle="modal" wire:click="cancel"><i class="fa fa-times"></i> {{ __('Cancel Premi') }}</button>
+                    <button type="button" class="ml-3 btn btn-danger btn-sm float-right" wire:click="$emit('emit-cancel',{{$data->id}})" data-target="#modal_cancel" data-toggle="modal""><i class="fa fa-times"></i> {{ __('Cancel Premi') }}</button>
                     @endif
                 </form>
             </div>
@@ -390,17 +419,35 @@
         </div>
         @endif
     </div>
-    
+    <div wire:ignore.self class="modal fade" id="modal_add_bank" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <livewire:income-premium-receivable.add-bank />
+        </div>
+    </div>
+    <div wire:ignore.self class="modal fade" id="modal_cancel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <livewire:income-premium-receivable.cancel />
+        </div>
+    </div>
 </div>
 @push('after-scripts')
 <script src="{{ asset('assets/js/jquery.priceformat.min.js') }}"></script>
+<link rel="stylesheet" href="{{ asset('assets/vendor/select2/css/select2.min.css') }}"/>
+<script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
+<style>
+    .select2-container .select2-selection--single {height:36px;padding-left:10px;}
+    .select2-container .select2-selection--single .select2-selection__rendered{padding-top:3px;}
+    .select2-container--default .select2-selection--single .select2-selection__arrow{top:4px;right:10px;}
+    .select2-container {width: 100% !important;}
+</style>
 @endpush
 @section('page-script')
-Livewire.on('changeForm', () =>{
+$(document).ready(function() {
     setTimeout(function(){
-        init_form();
-    },500);
+        init_form()
+    })
 });
+var select__2;
 function init_form(){
     $('.format_number').priceFormat({
         prefix: '',
@@ -408,8 +455,21 @@ function init_form(){
         thousandsSeparator: '.',
         centsLimit: 0
     });
+    
+    select__2 = $('.from_bank_account').select2();
+    $('.from_bank_account').on('change', function (e) {
+        let elementName = $(this).attr('id');
+        var data = $(this).select2("val");
+        @this.set(elementName, data);
+    });
+    var selected__ = $('.from_bank_account').find(':selected').val();
+    if(selected__ !="") select__2.val(selected__);
 }
-setTimeout(function(){
-    init_form()
+Livewire.on('init-form',()=>{
+    init_form();
+});
+Livewire.on('emit-add-bank',id=>{
+    $("#modal_add_bank").modal('hide');
+    select__2.val(id);
 })
 @endsection

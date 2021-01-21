@@ -100,13 +100,16 @@
                                     <a href="{{route('expense.reinsurance-premium')}}"> Reinsurance Premium</a>
                                 </li>
                                 <li class="{{ Request::segment(1) === 'expense-commision-payable' ? 'active' : null }}"><a href="{{route('expense.commision-payable')}}"> Commision Payable</a></li>
-                                <li class="{{ Request::segment(1) === 'expense-endorsement' ? 'active' : null }}"><a href="{{route('expense-endorsement')}}"> Endorsement</a></li>
+                                {{-- <li class="{{ Request::segment(1) === 'expense-endorsement' ? 'active' : null }}"><a href="{{route('expense-endorsement')}}"> Endorsement</a></li> --}}
                                 <li class="{{ Request::segment(1) === 'expense-cancelation' ? 'active' : null }}"><a href="{{route('expense-cancelation')}}"> Cancelation</a></li>
                                 <li class="{{ Request::segment(1) === 'expense-refund' ? 'active' : null }}"><a href="{{route('expense-refund')}}"> Refund</a></li>
                                 <li class="{{ Request::segment(1) === 'expense-claim' ? 'active' : null }}"><a href="{{route('expense.claim')}}"> Claim Payable</a></li>
                                 <li class="{{ Request::segment(1) === 'expense-others' ? 'active' : null }}"><a href="{{route('expense.others')}}"> Others Expense</a></li>        
                                 <li class="{{ Request::segment(1) === 'expense-handling-fee' ? 'active' : null }}"><a href="{{route('expense-handling-fee')}}"> Handling Fee</a></li>        
                             </ul>
+                        </li>
+                        <li class="{{ Request::segment(1) === 'endorsement' ? 'active' : null }}">
+                            <a href="{{route('endorsement.index')}}"><i class="fa fa-database"></i> <span>Endorsement</span></a>
                         </li>
                         @endif
                         @if(\Auth::user()->user_access_id==3)<!--Accounting-->     

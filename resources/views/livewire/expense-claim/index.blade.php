@@ -25,13 +25,13 @@
                                 <th>Status</th>                                    
                                 <th>No Voucher</th>                                    
                                 <th>Payment Date</th>                                    
-                                <th>Voucher Date</th>                                    
-                                <th>Reference Date</th>
+                                <th>Voucher Date</th>         
                                 <th>Debit Note / Kwitansi</th>
                                 <th>Policy Number / Policy Holder</th>                    
                                 <th>Total</th>                                               
-                                <th>No Rekening</th>
-                                <th>Outstanding Balance</th>
+                                <th>From Bank Account</th>
+                                <th>To Bank Account</th>
+                                <th>Bank Charges</th>
                                 <th>Payment Amount</th>
                             </tr>
                         </thead>
@@ -43,12 +43,12 @@
                                 <td><a href="{{route('expense.claim.detail',['id'=>$item->id])}}">{{$item->no_voucher}}</a></td>
                                 <td>{{date('d M Y', strtotime($item->created_at))}}</td>
                                 <td>{{date('d M Y', strtotime($item->payment_date))}}</td>
-                                <td>{{date('d M Y', strtotime($item->reference_date))}}</td>
                                 <td>{{$item->reference_no ? $item->reference_no : '-'}}</td>
                                 <td>{{$item->recipient ? $item->recipient : '-'}}</td>
                                 <td>{{isset($item->nominal) ? format_idr($item->nominal) : '-'}}</td>
-                                <td>{{isset($item->bank_account->no_rekening) ? $item->bank_account->no_rekening .'('.$item->bank_account->bank.')' : '-'}}</td>
-                                <td>{{isset($item->outstanding_balance) ? format_idr($item->outstanding_balance) : '-'}}</td>
+                                <td>{{isset($item->from_bank_account->no_rekening) ? $item->from_bank_account->no_rekening .' - '.$item->from_bank_account->bank.' an '.$item->from_bank_account->owner : '-'}}</td>
+                                <td>{{isset($item->bank_account->no_rekening) ? $item->bank_account->no_rekening .' - '.$item->bank_account->bank.' an '.$item->bank_account->owner : '-'}}</td>
+                                <td>{{isset($item->bank_charges) ? format_idr($item->bank_charges) : '-'}}</td>
                                 <td>{{isset($item->payment_amount) ? format_idr($item->payment_amount) : '-'}}</td>
                             </tr>
                         @endforeach

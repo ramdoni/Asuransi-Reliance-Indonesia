@@ -81,6 +81,28 @@
             </div>
         </div>
     </div>
+    <div class="col-md-5 px-0">
+        <div class="card mt-0">
+            <div wire:loading style="position:absolute;right:0;">
+                <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                <span class="sr-only">Loading...</span>
+            </div>
+            <div class="body" style="max-height:700px;overflow-y:scroll">
+                <h6 class="text-success">{{$data->reference_no}}</h6>
+                <hr />
+                <table class="table pl-0 mb-0 table-striped table-nowrap"> 
+                    @foreach(\Illuminate\Support\Facades\Schema::getColumnListing('konven_claim') as $column)
+                    @if($column=='id' || $column=='created_at'||$column=='updated_at') @continue @endif
+                    @if(!isset($data->claim->$column))@continue @endif
+                    <tr>
+                        <th style="width:40%;">{{ ucfirst($column) }}</th>
+                        <td style="width:60%;">{{ in_array($column,['up_peserta_pending','premi_peserta_pending','up','premi_gross','extra_premi','jumlah_discount','handling_fee','jumlah_fee','jumlah_pph','jumlah_ppn','biaya_polis','biaya_sertifikat','extsertifikat','premi_netto','total_gross_kwitansi']) ? format_idr($data->claim->$column) : $data->claim->$column }}</td>
+                    </tr>
+                    @endforeach
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 @push('after-scripts')
 <script src="{{ asset('assets/js/jquery.priceformat.min.js') }}"></script>

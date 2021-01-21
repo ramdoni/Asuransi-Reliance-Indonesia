@@ -46,28 +46,21 @@
                                 <tr>
                                     <th>{{ __('From Bank Account')}}</th>
                                     <td>
-                                        <select class="form-control" wire:model="bank_account_id" {{$is_readonly?'disabled':''}}>
+                                        <select class="form-control" wire:model="from_bank_account_id" {{$is_readonly?'disabled':''}}>
                                             <option value=""> --- {{__('Select')}} --- </option>
                                             @foreach (\App\Models\BankAccount::where('is_client',0)->orderBy('owner','ASC')->get() as $bank)
                                                 <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
                                             @endforeach
                                         </select>
+                                        @error('from_bank_account_id')
+                                        <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                                        @enderror
                                     </td>
                                 </tr>
                                 <tr>
                                     <th>{{ __('Bank Account')}}</th>
                                     <td>{{ isset($data->bank_account->no_rekening) ? $data->bank_account->no_rekening .' - '.$data->bank_account->bank.' an '.$data->bank_account->owner :'' }}</td>
                                 </tr>
-                                <tr>
-                                    <th>{{ __('Payment Amount')}}</th>
-                                    <td>
-                                        <input type="text" class="form-control col-md-6 format_number" {{$is_readonly?'disabled':''}} wire:model="payment_amount" />
-                                    </td>
-                                </tr>
-                                {{-- <tr>
-                                    <th>{{ __('Outstanding Balance')}}</th>
-                                    <td>{{$outstanding_balance}}</td>
-                                </tr> --}}
                                 <tr>
                                     <th>{{__('Payment Date')}}*<small>{{__('Default today')}}</small></th>
                                     <td>
@@ -80,6 +73,10 @@
                                 <tr>
                                     <th>{{__('Bank Charges')}}</th>
                                     <td><input type="text" {{$is_readonly?'disabled':''}} class="form-control format_number col-md-6" wire:model="bank_charges" /></td>
+                                </tr>
+                                <tr>
+                                    <th>{{ __('Payment Amount')}}</th>
+                                    <td>{{format_idr($payment_amount)}}</td>
                                 </tr>
                             </table>
                         </div>

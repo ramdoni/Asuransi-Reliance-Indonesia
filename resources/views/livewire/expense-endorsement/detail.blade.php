@@ -40,17 +40,21 @@
                                     <td>{{$data->reference_date}}</td>
                                 </tr>
                                 <tr>
+                                    <th>{{ __('Payment Amount')}}</th>
+                                    <td>{{format_idr($data->nominal)}}</td>
+                                </tr>
+                                <tr>
                                     <th>{{__('Bank Charges')}}</th>
                                     <td><input type="text" {{$is_readonly?'disabled':''}} class="form-control format_number col-md-6" wire:model="bank_charges" /></td>
                                 </tr>
                                 <tr>
                                     <th>{{ __('Total Payment Amount')}}</th>
-                                    <td>{{format_idr($data->nominal)}}</td>
+                                    <td>{{format_idr($payment_amount)}}</td>
                                 </tr>
                                 <tr>
                                     <th>{{ __('From Bank Account')}}</th>
                                     <td>
-                                        <select class="form-control" wire:model="bank_account_id" {{$is_readonly?'disabled':''}}>
+                                        <select class="form-control" wire:model="from_bank_account_id" {{$is_readonly?'disabled':''}}>
                                             <option value=""> --- {{__('Select')}} --- </option>
                                             @foreach (\App\Models\BankAccount::where('is_client',0)->orderBy('owner','ASC')->get() as $bank)
                                                 <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
@@ -61,12 +65,6 @@
                                 <tr>
                                     <th>{{ __('To Bank Account')}}</th>
                                     <td>{{ isset($data->bank_account->no_rekening) ? $data->bank_account->no_rekening .' - '.$data->bank_account->bank.' an '.$data->bank_account->owner :'' }}</td>
-                                </tr>
-                                <tr>
-                                    <th>{{ __('Payment Amount')}}</th>
-                                    <td>
-                                        <input type="text" class="form-control col-md-6 format_number" {{$is_readonly?'disabled':''}} wire:model="payment_amount" />
-                                    </td>
                                 </tr>
                                 <tr>
                                     <th>{{__('Payment Date')}}*<small>{{__('Default today')}}</small></th>
@@ -82,7 +80,9 @@
                     </div>
                     <hr />
                     <a href="javascript:void0()" onclick="history.back()"><i class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
+                    @if(!$is_readonly)
                     <button type="submit" class="ml-3 btn btn-primary"><i class="fa fa-save"></i> {{ __('Submit') }}</button>
+                    @endif
                 </form>
             </div>
         </div>
@@ -98,11 +98,13 @@
                 <hr />
                 <table class="table pl-0 mb-0 table-striped table-nowrap"> 
                     @foreach(\Illuminate\Support\Facades\Schema::getColumnListing('konven_memo_pos') as $column)
-                    @if($column=='id' || $column=='created_at'||$column=='updated_at') @continue @endif
-                    <tr>
-                        <th style="width:40%;">{{ ucfirst($column) }}</th>
-                        <td style="width:60%;">{{ in_array($column,['total_gross_kwitansi','up_cancel','premi_gross_cancel','jml_diskon','net_sblm_endors','up_stlh_endors','premi_gross_endors','net_stlh_endors','refund']) ? format_idr($data->memo->$column) : $data->memo->$column }}</td>
-                    </tr>
+                        @if($column=='id' || $column=='created_at'||$column=='updated_at') @continue @endif
+                        @if(isset($data->memo->$column))
+                            <tr>
+                                <th style="width:40%;">{{ ucfirst($column) }}</th>
+                                <td style="width:60%;">{{ in_array($column,['total_gross_kwitansi','up_cancel','premi_gross_cancel','jml_diskon','net_sblm_endors','up_stlh_endors','premi_gross_endors','net_stlh_endors','refund']) ? format_idr($data->memo->$column) : $data->memo->$column }}</td>
+                            </tr>
+                        @endif
                     @endforeach
                 </table>
             </div>
