@@ -9,6 +9,7 @@ class Detail extends Component
     public $data,$no_voucher,$client,$recipient,$reference_type,$reference_no,$reference_date,$description,$outstanding_balance,$tax_id,$payment_amount=0,$bank_account_id;
     public $payment_date,$tax_amount,$total_payment_amount,$is_readonly=false,$is_finish=false,$paid_premi=1,$paid_premi_id;
     public $bank_charges,$from_bank_account_id;
+    protected $listeners = ['emit-add-bank'=>'emitAddBank'];
     protected $rules = [
                             'bank_account_id'=>'required',
                             'payment_amount'=>'required',
@@ -17,7 +18,7 @@ class Detail extends Component
     public function render()
     {
         return view('livewire.expense-endorsement.detail');
-    }
+    } 
     public function mount($id)
     {
         $this->data = \App\Models\Expenses::find($id);
@@ -38,6 +39,12 @@ class Detail extends Component
     public function updated($propertiName)
     {
         if($this->bank_charges) $this->payment_amount = $this->data->nominal + replace_idr($this->bank_charges);
+        $this->emit('init-form');
+    }
+    public function emitAddBank($id)
+    {
+        $this->bank_account_id = $id;
+        $this->emit('init-form');
     }
     public function save()
     {

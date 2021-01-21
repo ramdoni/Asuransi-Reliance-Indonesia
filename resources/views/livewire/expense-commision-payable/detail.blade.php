@@ -84,7 +84,6 @@
                                         </div>
                                     </td>
                                 </tr>
-
                                 <tr>
                                     <th>{{__('Bank Charges')}}</th>
                                     <td><input type="text" {{$is_readonly?'disabled':''}} class="form-control format_number col-md-6" wire:model="bank_charges" /></td>
