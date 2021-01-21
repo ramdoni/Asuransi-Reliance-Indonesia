@@ -6,7 +6,7 @@ use Livewire\Component;
 
 class KomisiSync extends Component
 {
-    public $total_sync,$is_sync_komisi,$total_finish=0,$data;
+    public $total_sync,$is_sync_komisi,$total_finish=0,$data,$total_success=0,$total_failed=0;
     protected $listeners = ['is_sync_komisi'=>'komisi_sync'];
     public function render()
     {
@@ -32,19 +32,13 @@ class KomisiSync extends Component
                 if($uw->status==1) continue; // jika data UW belum di sinkron
                 $item->status=1; //sync
                 $item->konven_underwriting_id = $uw->id;
+                $this->total_success++;
             }else{
+                $this->total_failed++;
                 $item->status=2;//Invalid
             }
             $item->save();
-            // find bank_accounts
-            // $bank = \App\Models\BankAccount::where('no_rekening',$item->no_rekening)->first();
-            // if(!$bank){
-            //     $bank = new \App\models\BankAccount();
-            //     $bank->bank = $item->bank;
-            //     $bank->no_rekening = $item->no_rekening;
-            //     $bank->owner = $item->tujuan_pembayaran;
-            //     $bank->save();
-            // }
+            
             $expense = new \App\Models\Expenses();
             $expense->user_id = \Auth::user()->id;
             $expense->no_voucher = generate_no_voucher_income();
@@ -55,14 +49,13 @@ class KomisiSync extends Component
             $expense->reference_type = 'Komisi';
             $expense->transaction_id = $item->id;
             $expense->transaction_table = 'konven_komisi';
-            // $expense->rekening_bank_id = $bank->id;
             $expense->save();
 
             $this->data .=$item->no_kwitansi.'<br />'.$item->no_polis.' / '.$item->pemegang_polis;
             $this->total_finish++;
         }
         if(\App\Models\KonvenKomisi::where('status',0)->count()==0){
-            session()->flash('message-success','Synchronize success !');   
+            session()->flash('message-success','Synchronize success, Total Success <strong>'.$this->total_success.'</strong>, Total Failed <strong>'.$this->total_failed.'</strong>');   
             return redirect()->route('konven.underwriting');
         }
     }

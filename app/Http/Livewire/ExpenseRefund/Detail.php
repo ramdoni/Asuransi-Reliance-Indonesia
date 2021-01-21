@@ -21,7 +21,7 @@ class Detail extends Component
         $this->bank_account_id = $this->data->rekening_bank_id;
         $this->payment_amount = format_idr($this->data->payment_amount);
         $this->total_payment_amount = $this->data->total_payment_amount;
-        if($this->data->uw->id){
+        if(isset($this->data->uw->id)){
             $premi = \App\Models\Income::where('transaction_id',$this->data->uw->id)->where('transaction_table','konven_underwriting')->first();
             if($premi){
                 $this->paid_premi = $premi->status;

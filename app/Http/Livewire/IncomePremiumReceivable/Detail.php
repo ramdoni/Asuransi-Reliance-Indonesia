@@ -7,7 +7,7 @@ use Livewire\Component;
 class Detail extends Component
 {
     public $data,$no_voucher,$client,$recipient,$reference_type,$reference_no,$reference_date,$description,$outstanding_balance,$tax_id,$payment_amount=0,$bank_account_id,$from_bank_account_id;
-    public $payment_date,$tax_amount,$total_payment_amount,$is_readonly=false,$is_finish=false;
+    public $payment_date,$tax_amount,$total_payment_amount,$is_readonly=false;
     public $bank_charges,$showDetail='underwriting',$cancelation;
     protected $listeners = ['emit-add-bank'=>'emitAddBank'];
     protected $rules = 
@@ -22,6 +22,7 @@ class Detail extends Component
     }
     public function updated($propertyName)
     {
+        $this->outstanding_balance = abs(replace_idr($this->payment_amount) - $this->data->nominal);
         $this->emit('init-form');
     }
     public function emitAddBank($id)
@@ -37,31 +38,22 @@ class Detail extends Component
         $this->bank_account_id = $this->data->rekening_bank_id;
         $this->from_bank_account_id = $this->data->from_bank_account_id;
         $this->payment_amount = $this->data->payment_amount;
-        $this->total_payment_amount = $this->data->total_payment_amount;
+        $this->outstanding_balance = $this->data->outstanding_balance;
         $this->description = $this->data->description;
-        if($this->data->status==1){
-            $this->description = 'Premi ab '. (isset($this->data->uw->pemegang_polis) ? ($this->data->uw->pemegang_polis .' bulan '. $this->data->uw->bulan .' dengan No Invoice :'.$this->data->uw->no_kwitansi_debit_note) : ''); 
-        }
-
-        if($this->payment_amount =="") $this->payment_amount=format_idr($this->data->nominal);
-        if($this->data->status==2){
-            $this->is_finish = true;
-            $this->is_readonly = true;
-        }
-        if($this->data->status==4){
-            $this->is_finish = true;
-            $this->is_readonly = true;
-        } 
-        $total_cancel = 0;
+        $this->bank_charges = $this->bank_charges;
+        
+        if($this->data->status==1) $this->description = 'Premi ab '. (isset($this->data->uw->pemegang_polis) ? ($this->data->uw->pemegang_polis .' bulan '. $this->data->uw->bulan .' dengan No Invoice :'.$this->data->uw->no_kwitansi_debit_note) : ''); 
+        if($this->payment_amount =="") $this->payment_amount=$this->data->nominal;
+        if($this->data->status==2 || $this->data->status==4){ $this->is_readonly = true;}
+        
         foreach($this->data->cancelation as $cancel){
-            $total_cancel += $cancel->nominal;
+            $this->payment_amount -= $cancel->nominal;
         }
-        $end_cn=0;$end_dn=0;
         foreach($this->data->endorsement as $end){
-            if($end->type=='CN') $end_cn += $end->nominal;
-            if($end->type=='DN') $end_dn += $end->nominal;
+            if($end->type=='CN') $this->payment_amount -= $end->nominal;
+            if($end->type=='DN') $this->payment_amount += $end->nominal;
         }
-        $this->payment_amount = $this->data->nominal-$end_cn+$end_dn-$total_cancel;
+        $this->payment_amount = format_idr($this->payment_amount);
     }
     public function showDetailCancelation($id)
     {
@@ -70,18 +62,20 @@ class Detail extends Component
         $this->emit('init-form');
     }
     public function save()
-    {
-        dd($this->payment_amount);
+    {   
+        $this->emit('init-form');
         $this->validate();
+        $this->payment_amount = replace_idr($this->payment_amount);
+        $this->bank_charges = replace_idr($this->bank_charges);
         if($this->payment_amount==$this->data->nominal || $this->payment_amount > $this->data->nominal) $this->data->status=2;//paid
         if($this->payment_amount<$this->data->nominal) $this->data->status=3;//outstanding
-        $this->data->status = 2;
-        //$this->data->outstanding_balance = replace_idr($this->outstanding_balance);
+        $this->data->outstanding_balance = replace_idr($this->outstanding_balance);
         $this->data->payment_amount = $this->payment_amount;
         $this->data->rekening_bank_id = $this->bank_account_id;
         $this->data->payment_date = $this->payment_date;
         $this->data->description = $this->description;
         $this->data->from_bank_account_id = $this->from_bank_account_id;
+        $this->data->bank_charges = $this->bank_charges;
         $this->data->save();
         if($this->data->status==2){
             $coa_premium_receivable = 0;

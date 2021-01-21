@@ -28,10 +28,19 @@ class MemoPosUpload extends Component
         
         if(count($sheetData) > 0){
             $countLimit = 1;
+            $total_success = 0;
+            $total_double = 0;
             foreach($sheetData as $key => $i){
                 if($key<2) continue; // skip header
                 
                 foreach($i as $k=>$a){$i[$k] = trim($a);}
+                // find data exitst 
+                $find = \App\Models\KonvenMemo::where(['no_dn_cn'=>$i[9],'status_sync'=>1])->first();
+                if($find){
+                    $total_double++;
+                    continue;
+                }
+                $total_success++;
 
                 $bulan = $i[1];
                 $user = $i[2];
@@ -149,7 +158,11 @@ class MemoPosUpload extends Component
                 $tgl_output_email = (int)$i[115]?\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[115]):'';
                 $no_berkas2 = $i[116];
 
-                $data = new \App\Models\KonvenMemo();
+                $data = \App\Models\KonvenMemo::where(['no_dn_cn'=>$i[9]])->first();
+                if(!$data) 
+                    $data = new \App\Models\KonvenMemo();
+
+                $data->status_sync = 0;
                 $data->bulan = $bulan;
                 $data->user = $user;
                 $data->user_akseptasi = $user_akseptasi;
@@ -278,7 +291,7 @@ class MemoPosUpload extends Component
                 $data->save();
             }
         }
-        session()->flash('message-success','Upload success !');   
+        session()->flash('message-success','Upload success, Total Succes <strong>'.$total_success.'</strong>, Total Double <strong>'.$total_double.'</strong> !');   
         return redirect()->route('konven.underwriting');
     }
 }

@@ -29,7 +29,6 @@ class Detail extends Component
         if($premi){
             $this->paid_premi = $premi->status;
             $this->paid_premi_id =$premi->id;
-            if($premi->status!=2) $this->is_readonly = true;
         }
         if($this->data->status==2) $this->is_readonly = true;
     }

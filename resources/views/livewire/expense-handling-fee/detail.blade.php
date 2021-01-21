@@ -7,9 +7,6 @@
                 <form id="basic-form" method="post" wire:submit.prevent="save">
                     <div class="row">
                         <div class="col-md-12">
-                            <div class="alert alert-warning alert-dismissible" role="alert">
-                                <i class="fa fa-warning"></i> Handling Fee tidak dapat dilakukan sebelum pembayaran premi diterima
-                            </div>
                             <table class="table pl-0 mb-0 table-striped">
                                 <tr>
                                     <th>{{ __('Voucher Number')}}</th>

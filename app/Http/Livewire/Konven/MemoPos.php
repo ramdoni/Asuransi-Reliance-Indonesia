@@ -11,7 +11,7 @@ class MemoPos extends Component
     public $keyword,$total_sync=0;
     public function render()
     {
-        $data = \App\Models\KonvenMemo::orderBy('id','DESC');
+        $data = \App\Models\KonvenMemo::orderBy('updated_at','DESC');
         if($this->keyword) $data = $data->where('bulan','LIKE', "%{$this->keyword}%")
                                         ->orWhere('user','LIKE', "%{$this->keyword}%")
                                         ->orWhere('user_akseptasi','LIKE', "%{$this->keyword}%")

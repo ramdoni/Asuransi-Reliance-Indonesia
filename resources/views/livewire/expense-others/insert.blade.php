@@ -62,7 +62,7 @@
                                 <select class="form-control" wire:model="payment_type">
                                     <option value=""> --- Cash / Transfer --- </option>
                                     @foreach (\App\Models\BankAccount::orderBy('bank','ASC')->get() as $bank)
-                                        <option value="{{ $bank->id}}">{{ $bank->no_rekening}} ({{ $bank->bank}})</option>
+                                        <option value="{{ $bank->id}}">{{ $bank->no_rekening}} {{ $bank->bank}} an {{$bank->owner}}</option>
                                     @endforeach
                                 </select>
                                 @error('payment_type')

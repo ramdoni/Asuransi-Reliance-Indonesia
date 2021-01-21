@@ -6,7 +6,7 @@ use Livewire\Component;
 
 class UnderwritingSync extends Component
 {
-    public $total_sync,$is_sync,$total_finish=0,$data;
+    public $total_sync,$is_sync,$total_finish=0,$data,$total_success=0,$total_failed=0;
     protected $listeners = ['is_sync'=>'uw_sync'];
     public function render()
     {
@@ -163,10 +163,11 @@ class UnderwritingSync extends Component
                 $new->saldo = replace_idr($coa->debit!=0 ? $coa->debit : ($coa->kredit!=0?$coa->kredit : 0));
                 $new->save();
             }
+            $this->total_success++;
             $this->total_finish++;
         }
         if(\App\Models\KonvenUnderwriting::where('status',1)->count()==0){
-            session()->flash('message-success','Synchronize success !');   
+            session()->flash('message-success','Synchronize success, Total Success <strong>'.$this->total_success.'</strong>, Total Failed <strong>'.$this->total_failed.'</strong> !');   
             return redirect()->route('konven.underwriting');
         }
     }

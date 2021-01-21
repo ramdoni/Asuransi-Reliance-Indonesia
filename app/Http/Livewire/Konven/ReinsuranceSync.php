@@ -6,7 +6,7 @@ use Livewire\Component;
 
 class ReinsuranceSync extends Component
 {
-    public $total_sync,$is_sync,$total_finish=0,$data;
+    public $total_sync,$is_sync,$total_finish=0,$data,$total_success,$total_failed;
     protected $listeners = ['is_sync'=>'reas_sync'];
     public function render()
     {
@@ -30,6 +30,11 @@ class ReinsuranceSync extends Component
             $item->konven_underwriting_id = $uw?$uw->id : null;
             $item->status = $uw?2 : 3; // jika ditemukan maka sync jika tidak failed
             $item->save();
+            if(!$uw) {
+                $this->total_failed++;
+                continue;
+            }
+            $this->total_success++;
             if($uw){ 
                 $this->data = $uw->no_polis.' / '.$uw->pemegang_polis;
                 if($item->ekawarsa_jangkawarsa=='JANGKAWARSA'){
@@ -132,7 +137,7 @@ class ReinsuranceSync extends Component
             $this->total_finish++;
         }
         if(\App\Models\KonvenReinsurance::where('status',1)->count()==0){
-            session()->flash('message-success','Synchronize success !');   
+            session()->flash('message-success','Synchronize success , Total Success <strong>'.$this->total_success.'</strong>, Total Failed <strong>'.$this->total_failed.'</strong>');   
             return redirect()->route('konven.reinsurance');
         }
     }

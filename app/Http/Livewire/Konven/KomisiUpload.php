@@ -28,11 +28,19 @@ class KomisiUpload extends Component
         
         if(count($sheetData) > 0){
             $countLimit = 1;
+            $total_success = 0;
+            $total_double = 0;
             foreach($sheetData as $key => $i){
                 if($key<2) continue; // skip header
                 
                 foreach($i as $k=>$a){$i[$k] = trim($a);}
-                
+                // find data exist
+                $find = \App\Models\KonvenKomisi::where(['no_kwitansi'=>$i[9],'status'=>1])->first();
+                if($find){
+                    $total_double++;
+                    continue;
+                }
+                $total_success++;
                 $user = $i[1];
                 //$tgl_memo = (int)$i[2]?\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[2]):'';
                 $tgl_memo = $i[2];
@@ -79,8 +87,9 @@ class KomisiUpload extends Component
                 $no_rekening = $i[42];
                 //$tgl_lunas = (int)$i[43]?\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[43]):'';
                 $tgl_lunas = $i[43];
-
-                $data = new \App\Models\KonvenKomisi();
+                $data = \App\Models\KonvenKomisi::where(['no_kwitansi'=>$i[9]])->first();
+                if(!$data) $data = new \App\Models\KonvenKomisi();
+                $data->status = 0;
                 $data->user = $user;
                 if($tgl_memo) $data->tgl_memo = date('Y-m-d',strtotime($tgl_memo));
                 $data->no_reg = $no_reg; 
@@ -128,7 +137,7 @@ class KomisiUpload extends Component
                 $data->save();
             }
         }
-        session()->flash('message-success','Upload success !');   
+        session()->flash('message-success','Upload success, Total Success <strong>'.$total_success.'</strong>, Total Double <strong>'.$total_double.'</strong> !');   
         return redirect()->route('konven.underwriting');
     }
 }

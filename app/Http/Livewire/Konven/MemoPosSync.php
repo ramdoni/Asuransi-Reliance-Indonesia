@@ -6,7 +6,7 @@ use Livewire\Component;
 
 class MemoPosSync extends Component
 {
-    public $total_sync,$is_sync_memo,$total_finish=0,$data;
+    public $total_sync,$is_sync_memo,$total_finish=0,$data,$total_success=0,$total_failed=0;
     protected $listeners = ['is_sync_memo'=>'memo_sync'];
     public function render()
     {
@@ -32,7 +32,9 @@ class MemoPosSync extends Component
                 if($uw->status==1) continue; // jika data UW belum di sinkron
                 $item->status_sync=1; //sync
                 $item->konven_underwriting_id = $uw->id;
+                $this->total_success++;
             }else{
+                $this->total_failed++;
                 $item->status_sync=2;//Invalid
             }
             $item->save();
@@ -140,7 +142,7 @@ class MemoPosSync extends Component
             $this->data .=$item->no_dn_cn.'<br />'.$item->no_polis.' / '.$item->pemegang_polis;
         }
         if(\App\Models\KonvenMemo::where('status_sync',0)->count()==0){
-            session()->flash('message-success','Synchronize success !');   
+            session()->flash('message-success','Synchronize success, Total Success <strong>'.$this->total_success.'</strong>, Total Failed <strong>'.$this->total_failed.'</strong>');   
             return redirect()->route('konven.underwriting');
         }
     }

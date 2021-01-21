@@ -56,7 +56,7 @@ class ClaimSync extends Component
             $this->total_finish++;
         }
         if(\App\Models\KonvenClaim::where('status_claim',1)->count()==0){
-            session()->flash('message-success','Synchronize success !');   
+            session()->flash('message-success','Synchronize success, Total Success '.$this->total_success.', Total Failed <strong>'.$this->total_failed.'</strong> !');   
             return redirect()->route('konven.claim');
         }
     }

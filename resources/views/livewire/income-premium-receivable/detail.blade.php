@@ -84,12 +84,17 @@
                                         </td>
                                     </tr>
                                     @endif
-                                @else
+                                @endif
                                 <tr>
                                     <th>{{ __('Payment Amount')}}</th>
-                                    <td>{{format_idr($payment_amount)}}</td>
+                                    <td>
+                                        <input type="text" class="form-control format_number col-md-6" wire:model="payment_amount" />
+                                    </td>
                                 </tr>
-                                @endif
+                                <tr>
+                                    <th>{{ __('Outstanding')}}</th>
+                                    <td>{{format_idr($outstanding_balance)}}</td>
+                                </tr>
                                 <tr>
                                     <th>{{__('Payment Date')}}*<small>{{__('Default today')}}</small></th>
                                     <td>
@@ -154,7 +159,6 @@
                     <a href="javascript:void0()" onclick="history.back()"><i class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
                     @if(!$is_readonly)
                     <button type="submit" class="ml-3 btn btn-primary btn-sm"><i class="fa fa-save"></i> {{ __('Receive') }}</button>
-                    <button type="button" class="ml-3 btn btn-danger btn-sm float-right" wire:click="$emit('emit-cancel',{{$data->id}})" data-target="#modal_cancel" data-toggle="modal""><i class="fa fa-times"></i> {{ __('Cancel Premi') }}</button>
                     @endif
                 </form>
             </div>
@@ -424,11 +428,6 @@
             <livewire:income-premium-receivable.add-bank />
         </div>
     </div>
-    <div wire:ignore.self class="modal fade" id="modal_cancel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <livewire:income-premium-receivable.cancel />
-        </div>
-    </div>
 </div>
 @push('after-scripts')
 <script src="{{ asset('assets/js/jquery.priceformat.min.js') }}"></script>
@@ -442,6 +441,9 @@
 </style>
 @endpush
 @section('page-script')
+document.addEventListener("livewire:load", () => {
+    init_form();
+});
 $(document).ready(function() {
     setTimeout(function(){
         init_form()
@@ -455,7 +457,6 @@ function init_form(){
         thousandsSeparator: '.',
         centsLimit: 0
     });
-    
     select__2 = $('.from_bank_account').select2();
     $('.from_bank_account').on('change', function (e) {
         let elementName = $(this).attr('id');

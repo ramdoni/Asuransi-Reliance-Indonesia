@@ -30,6 +30,8 @@ class UploadUnderwriting extends Component
         
         if(count($sheetData) > 0){
             $countLimit = 1;
+            $total_double = 0;
+            $total_success = 0;
             foreach($sheetData as $key => $i){
                 if($key<3) continue; // skip header
                 
@@ -107,7 +109,11 @@ class UploadUnderwriting extends Component
                 }
                 // find debit note
                 $find = \App\Models\KonvenUnderwriting::where('status',2)->where('no_kwitansi_debit_note',$no_kwitansi_debit_note)->first();
-                if($find) continue; // skip jika data sudah pernah di upload
+                if($find){
+                    $total_double++;
+                    continue; // skip jika data sudah pernah di upload
+                }
+                $total_success++;
 
                 $data = \App\Models\KonvenUnderwriting::where('no_kwitansi_debit_note',$no_kwitansi_debit_note)->first();
                 if(!$data) $data = new \App\Models\KonvenUnderwriting();
@@ -174,7 +180,7 @@ class UploadUnderwriting extends Component
                 $data->save(); 
             }
         }
-        session()->flash('message-success','Upload success !');   
+        session()->flash('message-success','Upload success, Success Upload <strong>'. $total_success.'</strong>, Double Data :<strong>'. $total_double.'</strong>');   
         return redirect()->route('konven.underwriting');
     }
 }
