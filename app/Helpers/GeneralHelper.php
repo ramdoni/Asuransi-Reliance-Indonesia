@@ -1,4 +1,17 @@
 <?php
+function calculate_aging($date)
+{
+    $start_date = new \DateTime($date);
+    $today = new \DateTime("today");
+    if ($start_date > $today) { 
+        return 0;
+    }
+    $tahun = $today->diff($start_date)->y;
+    $bulan = $today->diff($start_date)->m;
+    $hari = $today->diff($start_date)->d;
+
+    return ($tahun? $tahun.' Tahun ' : '').($bulan? $bulan.' Bulan ' : ''). ($hari? $hari.' Hari ' : '');
+}
 
 function sum_journal_cashflow_by_group($month,$year,$group)
 {

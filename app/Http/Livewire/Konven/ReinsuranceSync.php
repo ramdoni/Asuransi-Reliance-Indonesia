@@ -78,6 +78,7 @@ class ReinsuranceSync extends Component
                     $income->reference_type = 'Reinsurance Commision';
                     $income->transaction_id = $item->id;
                     $income->transaction_table = 'konven_reinsurance';
+                    $income->type = 1;
                     $income->save();
                 }
                 if($item->premi_reas_netto){
@@ -131,6 +132,7 @@ class ReinsuranceSync extends Component
                     $expense->reference_type = 'Reinsurance Premium';
                     $expense->transaction_id = $item->id;
                     $expense->transaction_table = 'konven_reinsurance';
+                    $expense->type = 1;
                     $expense->save();
                 }
             }

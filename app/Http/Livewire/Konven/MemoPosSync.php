@@ -74,6 +74,7 @@ class MemoPosSync extends Component
                         $income->transaction_table = 'konven_memo_pos';
                         $income->description = $item->ket_perubahan1;
                         $income->rekening_bank_id = $bank->id;
+                        $income->type = 1;
                         $income->save();
                     }else{
                         $expense = new \App\Models\Expenses();
@@ -88,6 +89,7 @@ class MemoPosSync extends Component
                         $expense->transaction_table = 'konven_memo_pos';
                         $expense->description = $item->ket_perubahan1;
                         $expense->rekening_bank_id = $bank->id;
+                        $expense->type = 1;
                         $expense->save();
                     }
                 }
@@ -106,6 +108,7 @@ class MemoPosSync extends Component
                 $expense->transaction_table = 'konven_memo_pos';
                 $expense->description = $item->ket_perubahan1;
                 $expense->rekening_bank_id = $bank->id;
+                $expense->type = 1;
                 $expense->save();
             }
             if($item->jenis_po =='CNCL'){ // Cancel
@@ -136,6 +139,7 @@ class MemoPosSync extends Component
                     $expense->transaction_table = 'konven_memo_pos';
                     $expense->description = $item->ket_perubahan1;
                     $expense->rekening_bank_id = $bank->id;
+                    $expense->type = 1;
                     $expense->save();
                 }
             }

@@ -9,6 +9,13 @@
                     <div class="col-md-2">
                         <input type="text" class="form-control" wire:model="keyword" placeholder="Searching..." />
                     </div>
+                    <div class="col-md-1 pl-0">
+                        <select class="form-control" wire:model="unit">
+                            <option value=""> --- Unit --- </option>
+                            <option value="1"> Konven </option>
+                            <option value="2"> Syariah</option>
+                        </select>
+                    </div>
                     <div class="px-0 col-md-1">
                         <select class="form-control" wire:model="status">
                             <option value=""> --- Status --- </option>
@@ -16,6 +23,12 @@
                             <option value="2"> Paid</option>
                             <option value="3"> Outstanding</option>
                         </select>
+                    </div>
+                    <div class="col-md-2 pr-0">
+                        <input type="text" class="form-control" wire:model="payment_date" placeholder="Payment Date" onfocus="(this.type='date')" />
+                    </div>
+                    <div class="col-md-2">
+                        <input type="text" class="form-control" wire:model="voucher_date" placeholder="Voucher Date" onfocus="(this.type='date')" />
                     </div>
                 </div>
                 <div class="table-responsive">
@@ -28,6 +41,7 @@
                                 <th>Payment Date</th>                                    
                                 <th>Voucher Date</th>                                    
                                 <th>Reference Date</th>
+                                <th>Aging</th>
                                 <th>Debit Note / Kwitansi</th>
                                 <th>Policy Number / Policy Holder</th> 
                                 <th>Cancelation</th>                   
@@ -45,11 +59,18 @@
                             <tr>
                                 <td style="width: 50px;">{{$k+1}}</td>
                                 <td><a href="{{route('income.premium-receivable.detail',['id'=>$item->id])}}">{!!status_income($item->status)!!}</a></td>
-                                <td><a href="{{route('income.premium-receivable.detail',['id'=>$item->id])}}">{{$item->no_voucher}}</a></td>
+                                <td>
+                                    <a href="{{route('income.premium-receivable.detail',['id'=>$item->id])}}">{{$item->no_voucher}}</a>
+                                    @if($item->type==1)
+                                    <span class="badge badge-danger" title="Konven">K</span>
+                                    @else
+                                    <span class="badge badge-info" title="Syariah">S</span>
+                                    @endif
+                                </td>
                                 <td>{{$item->payment_date?date('d M Y', strtotime($item->payment_date)):'-'}}</td>
                                 <td>{{date('d M Y', strtotime($item->created_at))}}</td>
                                 <td>{{date('d M Y', strtotime($item->reference_date))}}</td>
-                                {{-- <td>{{$item->description}}</td> --}}
+                                <td>{{calculate_aging($item->reference_date)}}</td>
                                 <td>{{$item->reference_no ? $item->reference_no : '-'}}</td>
                                 <td>{{$item->client ? $item->client : '-'}}</td>
                                 <td>{{ isset($item->cancelation)?format_idr($item->total_cancelation->sum('nominal')):0 }}</td>

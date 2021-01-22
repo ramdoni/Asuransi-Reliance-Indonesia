@@ -141,21 +141,22 @@ class Detail extends Component
                 $journal->transaction_number = isset($this->data->uw->no_kwitansi_debit_note)?$this->data->uw->no_kwitansi_debit_note:'';
                 $journal->save();
             }
-            
             // Bank
             $coa_bank_account = \App\Models\BankAccount::find($this->bank_account_id);
-            $journal = new \App\Models\Journal();
-            $journal->coa_id = $coa_bank_account->coa_id;
-            $journal->no_voucher = generate_no_voucher($coa_bank_account->coa_id,$this->data->id);
-            $journal->date_journal = date('Y-m-d');
-            $journal->debit = $this->bank_charges + $this->payment_amount;
-            $journal->kredit = 0;
-            $journal->saldo = $this->bank_charges + $this->payment_amount;
-            $journal->description = $this->description;
-            $journal->transaction_id = $this->data->id;
-            $journal->transaction_table = 'expenses';
-            $journal->transaction_number = isset($this->data->uw->no_kwitansi_debit_note)?$this->data->uw->no_kwitansi_debit_note:'';
-            $journal->save();
+            if($coa_bank_account and !empty($coa_bank_account->coa_id)){
+                $journal = new \App\Models\Journal();
+                $journal->coa_id = $coa_bank_account->coa_id;
+                $journal->no_voucher = generate_no_voucher($coa_bank_account->coa_id,$this->data->id);
+                $journal->date_journal = date('Y-m-d');
+                $journal->debit = $this->bank_charges + $this->payment_amount;
+                $journal->kredit = 0;
+                $journal->saldo = $this->bank_charges + $this->payment_amount;
+                $journal->description = $this->description;
+                $journal->transaction_id = $this->data->id;
+                $journal->transaction_table = 'expenses';
+                $journal->transaction_number = isset($this->data->uw->no_kwitansi_debit_note)?$this->data->uw->no_kwitansi_debit_note:'';
+                $journal->save();
+            }
         }
         session()->flash('message-success',__('Data saved successfully'));
         return redirect()->route('income.premium-receivable');

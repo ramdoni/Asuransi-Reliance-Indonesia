@@ -77,6 +77,7 @@ class UnderwritingSync extends Component
                 $income->reference_type = 'Premium Receivable';
                 $income->transaction_table = 'konven_underwriting';
                 $income->transaction_id = $item->id;
+                $income->type = 1;
                 $income->save();
 
                 $this->data .= '<br /> Premium Receivable : <strong>'.format_idr($item->premi_netto).'</strong>';
@@ -101,6 +102,7 @@ class UnderwritingSync extends Component
                 $expense->reference_type = 'Handling Fee';
                 $expense->transaction_id = $item->id;
                 $expense->transaction_table = 'konven_underwriting';
+                $expense->type = 1;
                 $expense->save();
                 $ordering++;
                 $this->data .= '<br /> Handling Fee : <strong>'.format_idr($item->jumlah_discount + $item->jumlah_ppn).'</strong>';

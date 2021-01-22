@@ -49,6 +49,7 @@ class KomisiSync extends Component
             $expense->reference_type = 'Komisi';
             $expense->transaction_id = $item->id;
             $expense->transaction_table = 'konven_komisi';
+            $expense->type = 1;
             $expense->save();
 
             $this->data .=$item->no_kwitansi.'<br />'.$item->no_polis.' / '.$item->pemegang_polis;
