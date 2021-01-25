@@ -13,6 +13,7 @@
             @error('file')
             <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
             @enderror
+            <a href="{{asset('template/reinsurance.xlsx')}}"><i class="fa fa-download"></i> Download Template</a>
         </div>
     </div>
     <div class="modal-footer">

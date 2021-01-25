@@ -29,18 +29,18 @@ class ClaimUpload extends Component
         if(count($sheetData) > 0){
             $countLimit = 1;
             foreach($sheetData as $key => $i){
-                if($key<7) continue; // skip header
+                if($key<1) continue; // skip header
                 
                 foreach($i as $k=>$a){$i[$k] = trim($a);}
 
-                $nomor_polis = $i[1];
-                $nama_pemegang = $i[2];
-                $nomor_partisipan = $i[3];
-                $nama_partisipan = $i[4];
-                $nilai_klaim = $i[5];
-                $or = $i[6];
-                $reas = $i[7];
-                $status = $i[8];
+                $nomor_polis = $i[0];
+                $nama_pemegang = $i[1];
+                $nomor_partisipan = $i[2];
+                $nama_partisipan = $i[3];
+                $nilai_klaim = $i[4];
+                $or = $i[5];
+                $reas = $i[6];
+                $status = $i[7];
 
                 $data = new \App\Models\KonvenClaim();
                 $data->nomor_polis = $nomor_polis;

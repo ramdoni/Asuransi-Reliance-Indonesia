@@ -39,6 +39,10 @@
                                     </td>
                                 </tr>
                                 <tr>
+                                    <th>{{ __('Due Date')}}</th>
+                                    <td><input type="date" class="form-control col-md-6" wire:model="due_date" /></td>
+                                </tr>
+                                <tr>
                                     <th>{{ __('Reference Date')}}</th>
                                     <td>{{$data->reference_date}}</td>
                                 </tr>

@@ -6,9 +6,15 @@ function calculate_aging($date)
     if ($start_date > $today) { 
         return 0;
     }
-    $tahun = $today->diff($start_date)->y;
-    $bulan = $today->diff($start_date)->m;
-    $hari = $today->diff($start_date)->d;
+
+    $date1=date_create($date);
+    $date2=date_create();
+    $diff=date_diff($date1,$date2);
+    return $diff->format("%R%a days");
+
+    // $tahun = $today->diff($start_date)->y;
+    // $bulan = $today->diff($start_date)->m;
+    // $hari = $today->diff($start_date)->d;
 
     return ($tahun? $tahun.' Tahun ' : '').($bulan? $bulan.' Bulan ' : ''). ($hari? $hari.' Hari ' : '');
 }

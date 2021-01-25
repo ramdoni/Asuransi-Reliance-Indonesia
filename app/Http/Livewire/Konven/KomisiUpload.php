@@ -31,7 +31,7 @@ class KomisiUpload extends Component
             $total_success = 0;
             $total_double = 0;
             foreach($sheetData as $key => $i){
-                if($key<2) continue; // skip header
+                if($key<1) continue; // skip header
                 
                 foreach($i as $k=>$a){$i[$k] = trim($a);}
                 // find data exist

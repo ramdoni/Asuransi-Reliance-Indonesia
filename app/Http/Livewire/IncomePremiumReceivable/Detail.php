@@ -7,7 +7,7 @@ use Livewire\Component;
 class Detail extends Component
 {
     public $data,$no_voucher,$client,$recipient,$reference_type,$reference_no,$reference_date,$description,$outstanding_balance,$tax_id,$payment_amount=0,$bank_account_id,$from_bank_account_id;
-    public $payment_date,$tax_amount,$total_payment_amount,$is_readonly=false;
+    public $payment_date,$tax_amount,$total_payment_amount,$is_readonly=false,$due_date;
     public $bank_charges,$showDetail='underwriting',$cancelation;
     protected $listeners = ['emit-add-bank'=>'emitAddBank'];
     protected $rules = 
@@ -40,6 +40,7 @@ class Detail extends Component
         $this->payment_amount = $this->data->payment_amount;
         $this->outstanding_balance = $this->data->outstanding_balance;
         $this->description = $this->data->description;
+        $this->due_date = $this->data->due_date;
         $this->bank_charges = $this->bank_charges;
         
         if($this->data->status==1) $this->description = 'Premi ab '. (isset($this->data->uw->pemegang_polis) ? ($this->data->uw->pemegang_polis .' bulan '. $this->data->uw->bulan .' dengan No Invoice :'.$this->data->uw->no_kwitansi_debit_note) : ''); 

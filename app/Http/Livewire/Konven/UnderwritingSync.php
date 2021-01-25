@@ -77,20 +77,13 @@ class UnderwritingSync extends Component
                 $income->reference_type = 'Premium Receivable';
                 $income->transaction_table = 'konven_underwriting';
                 $income->transaction_id = $item->id;
+                $income->due_date = $item->tgl_jatuh_tempo;
                 $income->type = 1;
                 $income->save();
 
                 $this->data .= '<br /> Premium Receivable : <strong>'.format_idr($item->premi_netto).'</strong>';
             }
             if(!empty($item->ppn) and !empty($item->jumlah_discount)){
-                // $new = new \App\Models\KonvenUnderwritingCoa();
-                // $new->coa_id = $commision_paid; 
-                // $new->konven_underwriting_id = $item->id;
-                // $new->debit = $item->jumlah_discount + $item->jumlah_ppn;
-                // $new->kredit = 0;
-                // $new->ordering = $ordering;
-                // $new->description = $item->pemegang_polis;
-                // $new->save();
                 // Expense -  Commision Payable
                 $expense = new \App\Models\Expenses();
                 $expense->user_id = \Auth::user()->id;

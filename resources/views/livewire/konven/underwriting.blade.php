@@ -194,10 +194,27 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="modal fade" id="modal_check_data" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg" style="max-width:90%;" role="document">
+                        <div class="modal-content">
+                            <livewire:konven.underwriting-check-data>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
     @section('page-script')
+    Livewire.on('emit-check-data',()=>{
+        $("#modal_upload_teknis_conven").modal("hide");
+        $("#modal_check_data").modal("show");
+    });
+
+    {{-- setTimeout(function(){
+        $("#modal_check_data").modal("show");
+    },2000); --}}
     {{-- var prevCode = 0;
     $( "body" ).keydown(function( event ) {
         if(event.keyCode==prevCode) return false;

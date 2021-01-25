@@ -23,4 +23,8 @@ class KonvenUnderwriting extends Model
     {
         return $this->hasMany('\App\Models\KonvenUnderwritingCancelation','konven_underwriting_id','id');
     }
+    public function parent()
+    {
+        return $this->hasOne(\App\Models\KonvenUnderwriting::class,'id','parent_id');
+    }
 }

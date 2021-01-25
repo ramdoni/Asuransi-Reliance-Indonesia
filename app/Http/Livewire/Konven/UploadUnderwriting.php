@@ -32,8 +32,9 @@ class UploadUnderwriting extends Component
             $countLimit = 1;
             $total_double = 0;
             $total_success = 0;
+            \App\Models\KonvenUnderwriting::where('is_temp',1)->delete(); // delete data temp
             foreach($sheetData as $key => $i){
-                if($key<3) continue; // skip header
+                if($key<1) continue; // skip header
                 
                 foreach($i as $k=>$a){ $i[$k] = trim($a); }
                 
@@ -108,15 +109,24 @@ class UploadUnderwriting extends Component
                     $polis->save();
                 }
                 // find debit note
-                $find = \App\Models\KonvenUnderwriting::where('status',2)->where('no_kwitansi_debit_note',$no_kwitansi_debit_note)->first();
-                if($find){
-                    $total_double++;
-                    continue; // skip jika data sudah pernah di upload
-                }
+                // $find = \App\Models\KonvenUnderwriting::where('status',2)->where('no_kwitansi_debit_note',$no_kwitansi_debit_note)->first();
+                // if($find){
+                //     $total_double++;
+                //     continue; // skip jika data sudah pernah di upload
+                // }
                 $total_success++;
 
-                $data = \App\Models\KonvenUnderwriting::where('no_kwitansi_debit_note',$no_kwitansi_debit_note)->first();
-                if(!$data) $data = new \App\Models\KonvenUnderwriting();
+                $check = \App\Models\KonvenUnderwriting::where('no_kwitansi_debit_note',$no_kwitansi_debit_note)->first();
+                if(!$check)
+                    $data = new \App\Models\KonvenUnderwriting();
+                else{
+                    if($check->status==1){
+                        $data = new \App\Models\KonvenUnderwriting();
+                        $data->is_temp = 1;
+                        $data->parent_id = $check->id;
+                        $total_double++;
+                    }else continue;
+                }
 
                 $data->user_id = \Auth::user()->id;
                 $data->bulan = $bulan;
@@ -174,13 +184,17 @@ class UploadUnderwriting extends Component
                 if($extend_tgl_jatuh_tempo) $data->extend_tgl_jatuh_tempo = date('Y-m-d',$extend_tgl_jatuh_tempo);
                 if($tgl_lunas) $data->tgl_lunas = date('Y-m-d',$tgl_lunas);
                 $data->ket_lampiran = $ket_lampiran;
-                //$data->no_voucher =  generate_no_voucher_konven_underwriting(58);
                 $data->status = 1;
                 $data->line_bussines = $line_bussines;
                 $data->save(); 
             }
         }
-        session()->flash('message-success','Upload success, Success Upload <strong>'. $total_success.'</strong>, Double Data :<strong>'. $total_double.'</strong>');   
-        return redirect()->route('konven.underwriting');
+
+        if($total_double>=0)
+            $this->emit('emit-check-data');
+        else{
+            session()->flash('message-success','Upload success, Success Upload <strong>'. $total_success.'</strong>, Double Data :<strong>'. $total_double.'</strong>');   
+            return redirect()->route('konven.underwriting');
+        }
     }
 }

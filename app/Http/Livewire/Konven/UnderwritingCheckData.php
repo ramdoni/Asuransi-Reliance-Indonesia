@@ -5,14 +5,15 @@ namespace App\Http\Livewire\Konven;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class Underwriting extends Component
+class UnderwritingCheckData extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
-    public $keyword,$status,$total_sync;
+    public $keyword;
+    protected $listeners = ['delete'];
     public function render()
     {
-        $data = \App\Models\KonvenUnderwriting::orderBy('id','DESC')->where('is_temp',0);
+        $data = \App\Models\KonvenUnderwriting::orderBy('id','DESC')->where('is_temp',1);
         if($this->keyword) $data = $data->where('bulan', 'LIKE',"%{$this->keyword}%")
                                     ->orWhere('no_reg', 'LIKE',"%{$this->keyword}%")
                                     ->orWhere('user_memo', 'LIKE',"%{$this->keyword}%")
@@ -68,14 +69,11 @@ class Underwriting extends Component
                                     ->orWhere('tgl_lunas', 'LIKE',"%{$this->keyword}%")
                                     ->orWhere('ket_lampiran', 'LIKE',"%{$this->keyword}%")
                                     ->orWhere('line_bussines', 'LIKE',"%{$this->keyword}%"); 
-        
-        if($this->status) $data = $data->where('status', $this->status);
-
-        return view('livewire.konven.underwriting')->with(['data'=>$data->paginate(100)]);
+        return view('livewire.konven.underwriting-check-data')->with(['data'=>$data->paginate(100)]);
     }
 
-    public function mount()
+    public function delete($id)
     {
-        $this->total_sync = \App\Models\KonvenUnderwriting::where('status',1)->where('is_temp',0)->count();
+        \App\Models\KonvenUnderwriting::find($id)->delete();
     }
 }
