@@ -14,4 +14,8 @@ class KonvenReinsurance extends Model
     {
         return $this->hasOne('\App\Models\KonvenUnderwriting','id','transaction_id');
     }
+    public function parent()
+    {
+        return $this->hasOne(\App\Models\KonvenReinsurance::class,'id','parent_id');
+    }
 }

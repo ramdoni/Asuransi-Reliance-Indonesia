@@ -6,8 +6,9 @@
         <div class="px-0 col-md-1">
             <select class="form-control" wire:model="status">
                 <option value=""> --- Status --- </option>
-                <option value="1">Draft</option>
-                <option value="2">Sync</option>
+                <option value="0">Draft</option>
+                <option value="1">Sync</option>
+                <option value="2">Invalid</option>
             </select>
         </div>
         <div class="col-md-4">
@@ -15,6 +16,9 @@
             @if($total_sync>0)
             <a href="javascript:void(0)" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal_confirm_sync_komisi" class="mb-2 btn btn-warning btn-sm"><i class="fa fa-refresh"></i> Sync {{$total_sync?"(".$total_sync.")" : "(0)"}}</a>
             @endif
+        </div>
+        <div class="col-md-4 text-right">
+            <h6>Sync : <span class="text-info">{{format_idr(\App\Models\KonvenKomisi::where('status',1)->count())}}</span>, Draft : <span class="text-warning">{{format_idr(\App\Models\KonvenKomisi::where('status',0)->count())}}</span>, Invalid : <span class="text-danger">{{format_idr(\App\Models\KonvenKomisi::where('status',2)->count())}}</span>, Total : <span class="text-success">{{format_idr($data->total())}}</span></h6>
         </div>
     </div>
     <div class="table-responsive">
@@ -108,4 +112,25 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="modal_check_data_komisi" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="max-width:90%;" role="document">
+            <div class="modal-content">
+                <livewire:konven.komisi-check-data>
+            </div>
+        </div>
+    </div>
 </div>
+@push('after-scripts')
+<script>
+    Livewire.on('emit-check-data-komisi',()=>{
+        $("#modal_upload_komisi").modal("hide");
+        setTimeout(function(){
+            $("#modal_check_data_komisi").modal(
+                {
+                    backdrop: 'static',
+                    keyboard: false
+                });
+        },1000);
+    });
+</script>
+@endpush

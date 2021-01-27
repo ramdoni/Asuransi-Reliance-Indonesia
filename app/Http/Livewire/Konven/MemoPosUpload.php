@@ -30,18 +30,13 @@ class MemoPosUpload extends Component
             $countLimit = 1;
             $total_success = 0;
             $total_double = 0;
+            // Delete data temporary
+            \App\Models\KonvenMemo::where('is_temp',1)->delete();
             foreach($sheetData as $key => $i){
                 if($key<1) continue; // skip header
                 
                 foreach($i as $k=>$a){$i[$k] = trim($a);}
-                // find data exitst 
-                $find = \App\Models\KonvenMemo::where(['no_dn_cn'=>$i[9],'status_sync'=>1])->first();
-                if($find){
-                    $total_double++;
-                    continue;
-                }
-                $total_success++;
-
+                
                 $bulan = $i[1];
                 $user = $i[2];
                 $user_akseptasi = $i[3];
@@ -158,10 +153,23 @@ class MemoPosUpload extends Component
                 $tgl_output_email = (int)$i[115]?\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[115]):'';
                 $no_berkas2 = $i[116];
 
-                $data = \App\Models\KonvenMemo::where(['no_dn_cn'=>$i[9]])->first();
-                if(!$data) 
-                    $data = new \App\Models\KonvenMemo();
-
+                // find data exitst 
+                $find = \App\Models\KonvenMemo::where(['no_dn_cn'=>$i[9]])->first();
+                $data = new \App\Models\KonvenMemo();
+                if($find){
+                    if($find->status_sync==1) {
+                        // Check Income
+                        $income = \App\Models\Income::where(['transaction_table'=>'konven_memo_pos','transaction_id'=>$find->id])->first();
+                        if($income and $icome->status==2) continue; // jika income sudah di proses maka di skip
+                        // Check Expense
+                        $expense = \App\Models\Expenses::where(['transaction_table'=>'konven_memo_pos','transaction_id'=>$find->id])->first();
+                        if($expense and $expense->status==2) continue; // jika expense sudah di proses maka di skip
+                    }                    
+                    $data->is_temp = 1;
+                    $data->parent_id = $find->id;
+                    $total_double++;
+                }else $total_double++;
+                
                 $data->status_sync = 0;
                 $data->bulan = $bulan;
                 $data->user = $user;
@@ -207,7 +215,6 @@ class MemoPosUpload extends Component
                     $data->tgl_invoice = date('Y-m-d',$tgl_invoice);
                 if($tgl_invoice2)
                     $data->tgl_invoice2 = date('Y-m-d',$tgl_invoice2);
-                
                 $data->no_kwitansi_finance = $no_kwitansi_finance;
                 $data->no_kwitansi_finance2 = $no_kwitansi_finance2;
                 $data->total_gross_kwitansi = $total_gross_kwitansi;
@@ -291,7 +298,11 @@ class MemoPosUpload extends Component
                 $data->save();
             }
         }
-        session()->flash('message-success','Upload success, Total Succes <strong>'.$total_success.'</strong>, Total Double <strong>'.$total_double.'</strong> !');   
-        return redirect()->route('konven.underwriting');
+        if($total_double>0)
+            $this->emit('emit-check-data-memo-pos');
+        else{
+            session()->flash('message-success','Upload success, Total Succes <strong>'.$total_success.'</strong>, Total Double <strong>'.$total_double.'</strong> !');   
+            return redirect()->route('konven.underwriting');
+        }
     }
 }

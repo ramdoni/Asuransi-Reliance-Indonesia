@@ -4,14 +4,16 @@ namespace App\Http\Livewire\Konven;
 
 use Livewire\Component;
 use Livewire\WithPagination;
-class MemoPos extends Component
+
+class MemoPosCheckData extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
-    public $keyword,$total_sync=0,$status;
+    public $keyword,$total_sync=0;
+    protected $listeners = ['emit-check-data-memo-pos'=>'$refresh','replace-memo-pos'=>'replaceNew','delete-memo-pos'=>'deleteNew','replace-all-memo-pos'=>'replaceAll','delete-old-memo-pos'=>'deleteOld','keep-memo-pos'=>'keepNew'];
     public function render()
     {
-        $data = \App\Models\KonvenMemo::orderBy('updated_at','DESC')->where('is_temp',0);
+        $data = \App\Models\KonvenMemo::orderBy('updated_at','DESC')->where('is_temp',1);
         if($this->keyword) $data = $data->where('bulan','LIKE', "%{$this->keyword}%")
                                         ->orWhere('user','LIKE', "%{$this->keyword}%")
                                         ->orWhere('user_akseptasi','LIKE', "%{$this->keyword}%")
@@ -122,12 +124,78 @@ class MemoPos extends Component
                                         ->orWhere('no_debit_note_finance','LIKE', "%{$this->keyword}%")
                                         ->orWhere('tgl_bayar','LIKE', "%{$this->keyword}%")
                                         ->orWhere('tgl_output_email','LIKE', "%{$this->keyword}%")
-                                        ->orWhere('no_berkas2','LIKE', "%{$this->keyword}%");      
-        if($this->status) $data = $data->where('status_sync',$this->status);  
-        return view('livewire.konven.memo-pos')->with(['data'=>$data->paginate(100)]);
+                                        ->orWhere('no_berkas2','LIKE', "%{$this->keyword}%");        
+        return view('livewire.konven.memo-pos-check-data')->with(['data'=>$data->paginate(100)]);
     }
-    public function mount()
+    public function keepNew($id)
     {
-        $this->total_sync = \App\Models\KonvenMemo::where(['status_sync'=>0,'is_temp'=>0])->count();
+        \App\Models\KonvenMemo::where('id',$id)->update(['is_temp'=>0]);
+        if(\App\Models\KonvenMemo::where('is_temp',1)->count()==0){
+            session()->flash('message-success',__('Data saved successfully'));
+            return redirect()->route('konven.underwriting');
+        }
+    }
+    public function deleteAll()
+    {
+        \App\Models\KonvenMemo::where('is_temp',1)->delete();
+        session()->flash('message-success',__('Data saved successfully'));
+        return redirect()->route('konven.underwriting');
+    }
+    public function keepAll()
+    {
+        \App\Models\KonvenMemo::where('is_temp',1)->update(['is_temp'=>0]);
+        session()->flash('message-success',__('Data saved successfully'));
+        return redirect()->route('konven.underwriting');
+    }
+    public function replaceAll()
+    {
+        $data = \App\Models\KonvenMemo::where('is_temp',1)->get();
+        foreach($data as $child){
+            // Check Income
+            $income = \App\Models\Income::where(['transaction_table'=>'konven_memo_pos','transaction_id'=>$child->parent_id])->first();
+            if($income and $icome->status==2) 
+                continue;
+            else $income->delete(); // delete income
+            // Check Expense
+            $expense = \App\Models\Expenses::where(['transaction_table'=>'konven_memo_pos','transaction_id'=>$child->parent_id])->first();
+            if($expense and $expense->status==2) 
+                continue;
+            else $expense->delete(); // delete expense
+            // delete parent
+            \App\Models\KonvenMemo::find($child->parent_id)->delete();
+        }
+        \App\Models\KonvenMemo::where('is_temp',1)->update(['is_temp'=>0,'parent_id'=>0]);
+        session()->flash('message-success',__('Data saved successfully'));
+        return redirect()->route('konven.underwriting');
+    }
+    public function deleteNew($id)
+    {   
+        \App\Models\KonvenMemo::find($id)->delete();
+        if(\App\Models\KonvenMemo::where('is_temp',1)->count()==0){
+            session()->flash('message-success',__('Data saved successfully'));
+            return redirect()->route('konven.underwriting');
+        }
+    }
+    public function replaceNew($id)
+    {
+        $child = \App\Models\KonvenMemo::where('id',$id)->first();
+        if($child){
+            // delete parent
+            \App\Models\KonvenMemo::find($child->parent_id)->delete();
+            // Check Income
+            $income = \App\Models\Income::where(['transaction_table'=>'konven_memo_pos','transaction_id'=>$child->parent_id])->first();
+            if($income and $icome->status==1) $income->delete(); // delete income
+            // Check Expense
+            $expense = \App\Models\Expenses::where(['transaction_table'=>'konven_memo_pos','transaction_id'=>$child->parent_id])->first();
+            if($expense and $expense->status==1) $expense->delete(); // delete expense
+            $child->is_temp = 0;
+            $child->parent_id = 0;
+            $child->status = 1;
+            $child->save();
+        }
+        if(\App\Models\KonvenMemo::where('is_temp',1)->count()==0){
+            session()->flash('message-success',__('Data saved successfully'));
+            return redirect()->route('konven.underwriting');
+        }
     }
 }

@@ -27,6 +27,10 @@ class ReinsuranceUpload extends Component
         
         if(count($sheetData) > 0){
             $countLimit = 1;
+            $total_double = 0;
+            $total_success = 0;
+            // Delete Data Temporary
+            \App\Models\KonvenReinsurance::where('is_temp',1)->delete();
             foreach($sheetData as $key => $i){
                 if($key<1) continue; // skip header
                 
@@ -50,7 +54,14 @@ class ReinsuranceUpload extends Component
                 $produk = $i[15];
 
                 $data = new \App\Models\KonvenReinsurance();
-                $data->no_polis = $no_polis;
+                $find = \App\Models\KonvenReinsurance::where('no_polis',$no_polis)->first();
+                if($find){
+                    $data->is_temp = 1;
+                    $data->parent_id = $find->id;
+                    $total_double++;
+                }else $total_success++;
+
+                $data->no_polis = $no_polis; 
                 $data->pemegang_polis = $pemegang_polis;
                 $data->peserta = $peserta;
                 $data->uang_pertanggungan = $uang_pertanggungan;
@@ -70,7 +81,11 @@ class ReinsuranceUpload extends Component
                 $data->save();
             }
         }
-        session()->flash('message-success','Upload success !');   
-        return redirect()->route('konven.reinsurance');
+        if($total_double>0)
+            $this->emit('emit-check-data');
+        else{
+            session()->flash('message-success','Upload success !');   
+            return redirect()->route('konven.reinsurance');
+        }
     }
 }

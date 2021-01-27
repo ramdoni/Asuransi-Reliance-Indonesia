@@ -1,16 +1,21 @@
 <div class="body">
     <div class="row">
-        <div class="col-md-2">
-            <h6>Double : {{$data->total()}}</h6>
+        <div class="px-2 pt-2">
+            <h6>Double Data : {{format_idr($data->total())}}</h6>
         </div>
-        <div class="col-md-2">
+        <div class="px-2 col-md-3">
             <div class="form-group">
                 <input type="text" class="form-control" wire:model="keyword" placeholder="Searching..." />
             </div>
         </div>
-        <div class="col-md-7">
-            <a href="" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Keep All</a>
-            <a href="" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> Delete All</a>
+        <div class="px-2">
+            <a href="javascript:void(0)" class="btn btn-info btn-sm" wire:click="$emit('confirm-replace-all')"><i class="fa fa-check"></i> Replace All</a>
+            <a href="javascript:void(0)" class="btn btn-success btn-sm" wire:click="$emit('confirm-keep-all')"><i class="fa fa-check"></i> Keep All</a>
+            <a href="javascript:void(0)" class="btn btn-danger btn-sm" wire:click="$emit('confirm-delete-all')"><i class="fa fa-trash"></i> Delete All</a>
+            <div wire:loading>
+                <i class="fa fa-spinner fa-pulse fa-1x fa-fw"></i>
+                <span class="sr-only">Loading...</span>
+            </div>
         </div>
     </div>
     <div class="table-responsive pt-0">
@@ -84,7 +89,9 @@
                     <tr>
                         <td rowspan="2">{{$num}}</td>
                         <td>
-                            <a href="javascript:;" wire:click="$emit('delete-confirm',{{$item->id}})" class="text-danger"><i class="fa fa-trash"></i></a>
+                            <a href="javascript:;" wire:click="$emit('replace-confirm',{{$item->id}})" class="text-info"><i class="fa fa-refresh"></i></a>
+                            <a href="javascript:;" wire:click="$emit('delete-confirm',{{$item->id}})" class="text-danger ml-1"><i class="fa fa-trash"></i></a>
+                            <a href="javascript:;" wire:click="$emit('keep-confirm',{{$item->id}})" class="text-info ml-1" title="Keep Data"><i class="fa fa-check"></i></a>
                         </td>
                         <td>
                             <span class="badge badge-success">*New</span>
@@ -148,9 +155,7 @@
                     </tr>
                     @if($item->parent)
                     <tr>
-                        <td>
-                            <a href="javascript:;" wire:click="$emit('delete-confirm',{{$item->parent_id}})" class="text-danger"><i class="fa fa-trash"></i></a>
-                        </td>
+                        <td></td>
                         <td><span class="badge badge-warning">*Old</span></td>
                         <td>{{$item->parent->bulan}}</td>
                         <td>{{$item->parent->user_memo}}</td>
@@ -210,9 +215,8 @@
                         <td>{{$item->parent->line_bussines}}</td>
                     </tr>
                     @endif
-
                     <tr>
-                        <td colspan="59"></td>
+                        <td colspan="59" style="background:#eee;padding:0;"></td>
                     </tr>
                     @php($num++)
                 @endforeach
@@ -224,9 +228,34 @@
 </div>
 @push('after-scripts')
 <script>
+Livewire.on('confirm-replace-all',()=>{
+    if(confirm('Replace all data ?')){
+        Livewire.emit('replace-all');
+    }
+});
+Livewire.on('confirm-delete-all',()=>{
+    if(confirm('Delete all data ?')){
+        Livewire.emit('delete-all');
+    }
+});
+Livewire.on('confirm-keep-all',()=>{
+    if(confirm('Keep all data ?')){
+        Livewire.emit('keep-all');
+    }
+});
+Livewire.on('keep-confirm',(id)=>{
+    if(confirm('Keep this data ?')){
+        Livewire.emit('keep-new',id);
+    }
+});
 Livewire.on('delete-confirm',(id)=>{
     if(confirm('Delete this data ?')){
-        Livewire.emit('delete',id);
+        Livewire.emit('delete-new',id);
+    }
+});
+Livewire.on('replace-confirm',(id)=>{
+    if(confirm('Replace this data ?')){
+        Livewire.emit('replace-old',id);
     }
 });
 </script>

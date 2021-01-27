@@ -8,8 +8,8 @@ class Detail extends Component
 {
     public $data,$no_voucher,$client,$recipient,$reference_type,$reference_no,$reference_date,$description,$outstanding_balance,$tax_id,$payment_amount=0,$bank_account_id,$from_bank_account_id;
     public $payment_date,$tax_amount,$total_payment_amount,$is_readonly=false,$due_date;
-    public $bank_charges,$showDetail='underwriting',$cancelation;
-    protected $listeners = ['emit-add-bank'=>'emitAddBank'];
+    public $bank_charges,$showDetail='underwriting',$cancelation,$titipan_premi,$is_titipan_premi;
+    protected $listeners = ['emit-add-bank'=>'emitAddBank','set-titipan-premi'=>'setTitipanPremi'];
     protected $rules = 
         [
             'bank_account_id'=>'required',
@@ -20,9 +20,29 @@ class Detail extends Component
     {
         return view('livewire.income-premium-receivable.detail');
     }
+    public function clearTitipanPremi()
+    {
+        $this->reset('titipan_premi','from_bank_account_id');
+        $this->emit('init-form');
+    }
     public function updated($propertyName)
     {
         $this->outstanding_balance = abs(replace_idr($this->payment_amount) - $this->data->nominal);
+        $this->emit('init-form');
+    }
+    public function setTitipanPremi($id)
+    {
+        $this->titipan_premi = \App\Models\Income::find($id);
+        $this->from_bank_account_id = $this->titipan_premi->from_bank_account_id;
+        $this->bank_account_id = $this->titipan_premi->rekening_bank_id;
+
+        if($this->titipan_premi->nominal < $this->data->nominal){
+            $this->payment_amount = $this->titipan_premi->nominal;
+            $this->outstanding_balance = abs(replace_idr($this->payment_amount) - $this->data->nominal);
+        }elseif($this->titipan_premi->nominal>$this->data->nominal){
+            $this->payment_amount = $this->data->nominal;
+        }
+
         $this->emit('init-form');
     }
     public function emitAddBank($id)
@@ -42,7 +62,11 @@ class Detail extends Component
         $this->description = $this->data->description;
         $this->due_date = $this->data->due_date;
         $this->bank_charges = $this->bank_charges;
-        
+        // cek titipan premi
+        $this->titipan_premi = \App\Models\IncomeTitipanPremi::where('income_premium_id',$this->data->id)->first() ? \App\Models\IncomeTitipanPremi::where('income_premium_id',$this->data->id)->first() : '';      
+        if($this->titipan_premi){
+            if($this->titipan_premi->titipan) $this->titipan_premi = $this->titipan_premi->titipan;
+        }
         if($this->data->status==1) $this->description = 'Premi ab '. (isset($this->data->uw->pemegang_polis) ? ($this->data->uw->pemegang_polis .' bulan '. $this->data->uw->bulan .' dengan No Invoice :'.$this->data->uw->no_kwitansi_debit_note) : ''); 
         if($this->payment_amount =="") $this->payment_amount=$this->data->nominal;
         if($this->data->status==2 || $this->data->status==4){ $this->is_readonly = true;}
@@ -78,6 +102,13 @@ class Detail extends Component
         $this->data->from_bank_account_id = $this->from_bank_account_id;
         $this->data->bank_charges = $this->bank_charges;
         $this->data->save();
+        if($this->titipan_premi){
+            \App\Models\IncomeTitipanPremi::create([
+                'income_premium_id' => $this->data->id,
+                'income_titipan_id' => $this->titipan_premi->id,
+                'nominal' => $this->payment_amount,
+            ]);
+        }
         if($this->data->status==2){
             $coa_premium_receivable = 0;
             switch($this->data->uw->line_bussines){

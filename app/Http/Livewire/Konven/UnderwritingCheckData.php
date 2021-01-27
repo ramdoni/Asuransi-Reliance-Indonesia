@@ -10,7 +10,12 @@ class UnderwritingCheckData extends Component
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
     public $keyword;
-    protected $listeners = ['delete'];
+    protected $listeners = ['emit-check-data'=>'$refresh',
+                            'keep-all'=>'keepAll',
+                            'replace-all'=>'replaceAll',
+                            'replace-old'=>'replaceOld',
+                            'delete-new'=>'deleteNew',
+                            'keep-new'=>'keepNew'];
     public function render()
     {
         $data = \App\Models\KonvenUnderwriting::orderBy('id','DESC')->where('is_temp',1);
@@ -71,9 +76,59 @@ class UnderwritingCheckData extends Component
                                     ->orWhere('line_bussines', 'LIKE',"%{$this->keyword}%"); 
         return view('livewire.konven.underwriting-check-data')->with(['data'=>$data->paginate(100)]);
     }
-
-    public function delete($id)
+    public function replaceOld($id)
+    {
+        $child = \App\Models\KonvenUnderwriting::where('id',$id)->first();
+        if($child){
+            $income = \App\Models\Income::where(['transaction_table'=>'konven_underwriting','transaction_id'=>$child->parent_id])->first();
+            if($income) $income->delete();
+            \App\Models\KonvenUnderwriting::find($child->parent_id)->delete();
+            \App\Models\KonvenUnderwriting::where('id',$id)->update(['is_temp'=>0,'parent_id'=>null,'status'=>1]);
+        }
+        if(\App\Models\KonvenUnderwriting::where('is_temp',1)->count()==0){
+            session()->flash('message-success',__('Data saved successfully'));
+            return redirect()->route('konven.underwriting');
+        }
+    }
+    public function keepNew()
+    {
+        \App\Models\KonvenUnderwriting::find($id)->update(['is_temp'=>0]);
+        if(\App\Models\KonvenUnderwriting::where('is_temp',1)->count()==0){
+            session()->flash('message-success',__('Data saved successfully'));
+            return redirect()->route('konven.underwriting');
+        }
+    }
+    public function deleteNew($id)
     {
         \App\Models\KonvenUnderwriting::find($id)->delete();
+        if(\App\Models\KonvenUnderwriting::where('is_temp',1)->count()==0){
+            session()->flash('message-success',__('Data saved successfully'));
+            return redirect()->route('konven.underwriting');
+        }
+    }
+    public function deleteAll()
+    {
+        \App\Models\KonvenUnderwriting::where('is_temp',1)->delete();
+        session()->flash('message-success',__('Data saved successfully'));
+        return redirect()->route('konven.underwriting');
+    }
+    public function keepAll()
+    {
+        \App\Models\KonvenUnderwriting::where('is_temp',1)->update(['is_temp'=>0]);
+        session()->flash('message-success',__('Data saved successfully'));
+        return redirect()->route('konven.underwriting');
+    }
+    public function replaceAll()
+    {
+        $data = \App\Models\KonvenUnderwriting::where('is_temp',1)->get();
+        foreach($data as $child){
+            \App\Models\KonvenUnderwriting::where(['parent_id'=>$child->id])->update(['is_temp'=>0,'parent_id'=>null,'status'=>0]);
+            $income = \App\Models\Income::where(['transaction_table'=>'konven_underwriting','transaction_id'=>$child->parent_id])->first();
+            if($income) $income->delete();
+            $parent =\App\Models\KonvenUnderwriting::find($child->parent_id);
+            if($parent) $parent->delete();
+        }
+        session()->flash('message-success',__('Data saved successfully'));
+        return redirect()->route('konven.underwriting');
     }
 }

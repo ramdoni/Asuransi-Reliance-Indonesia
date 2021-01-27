@@ -116,6 +116,9 @@ Route::group(['middleware' => ['auth','access:2']], function(){
     Route::get('endorsement',App\Http\Livewire\Endorsement\Index::class)->name('endorsement.index');
     Route::get('endorsement/dn-detail/{id}',App\Http\Livewire\Endorsement\DnDetail::class)->name('endorsement.dn-detail');
     Route::get('endorsement/cn-detail/{id}',App\Http\Livewire\Endorsement\CnDetail::class)->name('endorsement.cn-detail');
+    Route::get('income-titipan-premi',App\Http\Livewire\IncomeTitipanPremi\Index::class)->name('income.titipan-premi');
+    Route::get('income-titipan-premi/insert',App\Http\Livewire\IncomeTitipanPremi\Insert::class)->name('income.titipan-premi.insert');
+    Route::get('income-titipan-premi/detail/{id}',App\Http\Livewire\IncomeTitipanPremi\Detail::class)->name('income.titipan-premi.detail');
 });
 // Treasury
 Route::group(['middleware' => ['auth','access:4']], function(){ 

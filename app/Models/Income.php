@@ -50,4 +50,8 @@ class Income extends Model
     {
         return $this->belongsTo(\App\Models\BankAccount::class,'from_bank_account_id');
     }
+    public function titipan_premi()
+    {
+        return $this->hasMany(\App\Models\IncomeTitipanPremi::class,'income_titipan_id');
+    }
 }

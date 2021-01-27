@@ -23,7 +23,7 @@ class MemoPosSync extends Component
     {
         if($this->is_sync_memo==false) return false;
         $this->emit('is_sync_memo');
-        foreach(\App\Models\KonvenMemo::where('status_sync',0)->get() as $key => $item){
+        foreach(\App\Models\KonvenMemo::where(['status_sync'=>0,'is_temp'=>0])->get() as $key => $item){
             if($key > 1) continue;
             $this->data = $item->no_kwitansi_finance .'/'. $item->no_kwitansi_finance2."<br />";
             // find data UW

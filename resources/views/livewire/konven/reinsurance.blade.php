@@ -18,10 +18,13 @@
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <a href="javascript:void(0)" data-toggle="modal" data-target="#modal_upload_reinsurance" class="mb-2 btn btn-info btn-sm" style="width:150px;"><i class="fa fa-upload"></i> Upload</a>
+                            <a href="javascript:void(0)" data-toggle="modal" data-backdrop="static" data-keyboard="false"  data-target="#modal_upload_reinsurance" class="mb-2 btn btn-info btn-sm" style="width:150px;"><i class="fa fa-upload"></i> Upload</a>
                             @if($total_sync>0)
                             <a href="javascript:void(0)" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal_confirm_sync" class="mb-2 btn btn-warning btn-sm"><i class="fa fa-refresh"></i> Sync {{$total_sync?"(".$total_sync.")" : "(0)"}}</a>
                             @endif
+                        </div>
+                        <div class="col-md-5 text-right">
+                            <h6>Sync : <span class="text-info">{{format_idr(\App\Models\KonvenReinsurance::where('status',1)->count())}}</span>, Draft : <span class="text-warning">{{format_idr(\App\Models\KonvenReinsurance::where('status',0)->count())}}</span>, Invalid : <span class="text-danger">{{format_idr(\App\Models\KonvenReinsurance::where('status',2)->count())}}</span>, Total : <span class="text-success">{{format_idr($data->total())}}</span></h6>
                         </div>
                     </div>
                     <div class="table-responsive">
@@ -100,8 +103,30 @@
                             </div>
                         </div>
                     </div>
+                    <div class="modal fade" id="modal_check_data" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg" style="max-width:90%;" role="document">
+                            <div class="modal-content">
+                                <livewire:konven.reinsurance-check-data>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+@push('after-scripts')
+    <script>
+    Livewire.on('emit-check-data',()=>{
+        $("#modal_upload_reinsurance").modal("hide");
+        setTimeout(function(){
+            $("#modal_check_data").modal(
+                {
+                    backdrop: 'static',
+                    keyboard: false
+                });
+        },1000);
+    });
+    </script>
+    @endpush

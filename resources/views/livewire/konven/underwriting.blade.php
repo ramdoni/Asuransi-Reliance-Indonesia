@@ -29,6 +29,9 @@
                                     <a href="javascript:void(0)" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal_confirm_sync" class="mb-2 btn btn-warning btn-sm"><i class="fa fa-refresh"></i> Sync {{$total_sync?"(".$total_sync.")" : "(0)"}}</a>
                                     @endif
                                 </div>
+                                <div class="col-md-4 text-right">
+                                    <h6>Sync : <span class="text-info">{{format_idr(\App\Models\KonvenUnderwriting::where('status',2)->count())}}</span>, Draft : <span class="text-warning">{{format_idr(\App\Models\KonvenUnderwriting::where('status',1)->count())}}</span>, Total : <span class="text-success">{{format_idr($data->total())}}</span></h6>
+                                </div>
                             </div>
                             <div class="table-responsive">
                                 <table class="table table-striped m-b-0 table-hover c_list">
@@ -206,25 +209,18 @@
             </div>
         </div>
     </div>
-    @section('page-script')
+    @push('after-scripts')
+    <script>
     Livewire.on('emit-check-data',()=>{
         $("#modal_upload_teknis_conven").modal("hide");
-        $("#modal_check_data").modal("show");
+        setTimeout(function(){
+            $("#modal_check_data").modal(
+                {
+                    backdrop: 'static',
+                    keyboard: false
+                });
+        },1000);
     });
-
-    {{-- setTimeout(function(){
-        $("#modal_check_data").modal("show");
-    },2000); --}}
-    {{-- var prevCode = 0;
-    $( "body" ).keydown(function( event ) {
-        if(event.keyCode==prevCode) return false;
-        if(prevCode==17 && event.keyCode==39){
-            @this.nextPage();
-        }
-        if(prevCode==17 && event.keyCode==37){
-            @this.previousPage();
-        }
-        prevCode=event.keyCode;
-    }); --}}
-    @endsection
+    </script>
+    @endpush
 </div>

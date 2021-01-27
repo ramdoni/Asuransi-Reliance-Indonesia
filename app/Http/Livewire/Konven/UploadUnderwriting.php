@@ -108,24 +108,20 @@ class UploadUnderwriting extends Component
                     $polis->produk = $produk;
                     $polis->save();
                 }
-                // find debit note
-                // $find = \App\Models\KonvenUnderwriting::where('status',2)->where('no_kwitansi_debit_note',$no_kwitansi_debit_note)->first();
-                // if($find){
-                //     $total_double++;
-                //     continue; // skip jika data sudah pernah di upload
-                // }
+
                 $total_success++;
 
                 $check = \App\Models\KonvenUnderwriting::where('no_kwitansi_debit_note',$no_kwitansi_debit_note)->first();
                 if(!$check)
                     $data = new \App\Models\KonvenUnderwriting();
                 else{
-                    if($check->status==1){
-                        $data = new \App\Models\KonvenUnderwriting();
-                        $data->is_temp = 1;
-                        $data->parent_id = $check->id;
-                        $total_double++;
-                    }else continue;
+                    $income = \App\Models\Income::where(['transaction_table'=>'konven_underwriting','transaction_id'=>$check->id])->first();
+                    if(isset($income) and $income->status==2) continue; // skip jika data sudah di receive
+                    
+                    $data = new \App\Models\KonvenUnderwriting();
+                    $data->is_temp = 1;
+                    $data->parent_id = $check->id;
+                    $total_double++;
                 }
 
                 $data->user_id = \Auth::user()->id;
@@ -190,7 +186,7 @@ class UploadUnderwriting extends Component
             }
         }
 
-        if($total_double>=0)
+        if($total_double>0)
             $this->emit('emit-check-data');
         else{
             session()->flash('message-success','Upload success, Success Upload <strong>'. $total_success.'</strong>, Double Data :<strong>'. $total_double.'</strong>');   

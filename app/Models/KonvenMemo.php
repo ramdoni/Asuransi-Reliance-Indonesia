@@ -13,4 +13,8 @@ class KonvenMemo extends Model
     {
         return $this->belongsTo(\App\Models\KonvenUnderwriting::class,'konven_underwriting_id');
     }
+    public function parent()
+    {
+        return $this->hasOne(\App\Models\KonvenMemo::class,'id','parent_id');
+    }
 }

@@ -7,7 +7,7 @@
                 <form id="basic-form" method="post" wire:submit.prevent="save">
                     <div class="row">
                         <div class="col-md-12">
-                            <table class="table pl-0 mb-0 table-striped">
+                            <table class="table pl-0 mb-0 table-striped table-nowrap">
                                 <tr>
                                     <th>{{ __('Voucher Number')}}</th>
                                     <td>{{$data->no_voucher}}</td>
@@ -40,7 +40,7 @@
                                 </tr>
                                 <tr>
                                     <th>{{ __('Due Date')}}</th>
-                                    <td><input type="date" class="form-control col-md-6" wire:model="due_date" /></td>
+                                    <td><input type="date" class="form-control col-md-6" wire:model="due_date" {{$is_readonly?'disabled':''}} /></td>
                                 </tr>
                                 <tr>
                                     <th>{{ __('Reference Date')}}</th>
@@ -92,7 +92,7 @@
                                 <tr>
                                     <th>{{ __('Payment Amount')}}</th>
                                     <td>
-                                        <input type="text" class="form-control format_number col-md-6" wire:model="payment_amount" />
+                                        <input type="text" class="form-control format_number col-md-6" {{$is_readonly?'disabled':''}} wire:model="payment_amount" />
                                     </td>
                                 </tr>
                                 <tr>
@@ -109,10 +109,29 @@
                                     </td>
                                 </tr>
                                 <tr>
+                                    <th>Titipan Premi</th>
+                                    <td>
+                                        @if($titipan_premi)
+                                            <p>
+                                                No Voucher : <a href="{{route('income.titipan-premi.detail',$titipan_premi->id)}}" target="_blank">{{$titipan_premi->no_voucher}}</a> <br />
+                                                {{isset($titipan_premi->from_bank_account->no_rekening) ? $titipan_premi->from_bank_account->no_rekening .'- '.$titipan_premi->from_bank_account->bank.' an '. $titipan_premi->from_bank_account->owner : '-'}} <br />
+                                                 <strong>{{format_idr($titipan_premi->nominal)}}</strong>
+                                                @if(!$is_readonly)
+                                                 <a href="javascript:void(0)" wire:click="clearTitipanPremi" class="text-danger"><i class="fa fa-times"></i></a>
+                                                @endif
+                                            </p>
+                                        @else
+                                            @if(!$is_readonly)
+                                            <a href="javascript:void(0)" data-target="#modal_add_titipan_premi" data-toggle="modal"><i class="fa fa-plus"></i> Titipan Premi</a>
+                                            @endif
+                                        @endif
+                                    </td>
+                                </tr>
+                                <tr>
                                     <th>{{__('From Bank Account')}}</th>
                                     <td>
                                         <div class="row">
-                                            <div class="col-md-10">
+                                            <div class="col-md-9">
                                                 <select class="form-control from_bank_account" id="from_bank_account_id" wire:model="from_bank_account_id" {{$is_readonly?'disabled':''}}>
                                                     <option value=""> --- {{__('Select')}} --- </option>
                                                     @foreach (\App\Models\BankAccount::where('is_client',1)->orderBy('owner','ASC')->get() as $bank)
@@ -123,7 +142,7 @@
                                                 <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                                                 @enderror
                                             </div>
-                                            <div class="col-md-2 px-0 pt-2">
+                                            <div class="col-md-3 px-0 pt-2">
                                                 @if(!$is_readonly)
                                                 <a href="#" data-toggle="modal" data-target="#modal_add_bank"><i class="fa fa-plus"></i> Add Bank</a>
                                                 @endif
@@ -443,8 +462,10 @@
     .select2-container--default .select2-selection--single .select2-selection__arrow{top:4px;right:10px;}
     .select2-container {width: 100% !important;}
 </style>
-@endpush
-@section('page-script')
+<script>
+Livewire.on('set-titipan-premi',(id)=>{
+    $("#modal_add_titipan_premi").modal("hide");
+});
 document.addEventListener("livewire:load", () => {
     init_form();
 });
@@ -477,4 +498,10 @@ Livewire.on('emit-add-bank',id=>{
     $("#modal_add_bank").modal('hide');
     select__2.val(id);
 })
-@endsection
+</script>
+@endpush
+<div wire:ignore.self class="modal fade" id="modal_add_titipan_premi" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" style="min-width:90%; role="document">
+        <livewire:income-premium-receivable.add-titipan-premi />
+    </div>
+</div>

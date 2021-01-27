@@ -14,4 +14,8 @@ class KonvenKomisi extends Model
     {
         return $this->belongsTo(\App\Models\KonvenUnderwriting::class,'konven_underwriting_id');
     }
+    public function parent()
+    {
+        return $this->hasOne(\App\Models\KonvenKomisi::class,'id','parent_id');
+    }
 }

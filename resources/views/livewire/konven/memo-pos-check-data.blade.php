@@ -1,37 +1,35 @@
-<div class="mt-2" id="keydown">
+<div class="body">
     <div class="row">
+        <div class="px-2 pt-2">
+            <h6>Double Data {{format_idr($data->total())}}</h6>
+        </div>
         <div class="col-md-3">
-            <input type="text" class="form-control" wire:model="keyword" placeholder="Searching..."/>
+            <div class="form-group">
+                <input type="text" class="form-control" wire:model="keyword" placeholder="Searching..." />
+            </div>
         </div>
-        <div class="px-0 col-md-1">
-            <select class="form-control" wire:model="status">
-                <option value=""> --- Status --- </option>
-                <option value="0">Draft</option>
-                <option value="1">Sync</option>
-                <option value="2">Invalid</option>
-            </select>
-        </div>
-        <div class="col-md-4">
-            <a href="javascript:void(0)" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal_upload_memo_pos" class="mb-2 btn btn-info btn-sm" style="width:150px;"><i class="fa fa-upload"></i> Upload</a>
-            @if($total_sync>0)
-            <a href="javascript:void(0)" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal_confirm_sync_memo_pos" class="mb-2 btn btn-warning btn-sm"><i class="fa fa-refresh"></i> Sync {{$total_sync?"(".$total_sync.")" : "(0)"}}</a>
-            @endif
-        </div>
-        <div class="col-md-4 text-right">
-            <h6>Sync : <span class="text-info">{{format_idr(\App\Models\KonvenMemo::where('status_sync',1)->count())}}</span>, Draft : <span class="text-warning">{{format_idr(\App\Models\KonvenMemo::where('status_sync',0)->count())}}</span>, Invalid : <span class="text-danger">{{format_idr(\App\Models\KonvenMemo::where('status_sync',2)->count())}}</span>, Total : <span class="text-success">{{format_idr($data->total())}}</span></h6>
+        <div>
+            <a href="javascript:void(0)" class="btn btn-info btn-sm" wire:click="replaceAll"><i class="fa fa-refresh"></i> Replace All</a>
+            <a href="javascript:void(0)" class="btn btn-success btn-sm" wire:click="keepAll"><i class="fa fa-check"></i> Keep All</a>
+            <a href="javascript:void(0)" class="btn btn-danger btn-sm" wire:click="deleteAll"><i class="fa fa-trash"></i> Delete All</a>
+            <div wire:loading>
+                <i class="fa fa-spinner fa-pulse fa-1x fa-fw"></i>
+                <span class="sr-only">Loading...</span>
+            </div>
         </div>
     </div>
-    <div class="table-responsive">
-        <table class="table table-striped m-b-0 table-hover c_list">
+    <div class="table-responsive pt-0">
+        <table class="table m-b-0 table-hover c_list">
             <thead>
                 <tr>
                     <th>No</th>
-                    <th>Status</th>
+                    <th></th>
+                    <th></th>
                     <th>Bulan</th>
                     <th>User</th>
                     <th>User Akseptasi</th>
                     <th>Berkas Akseptasi</th>
-                    <th>Tgl Pengajuan Email</th>
+                    <th>Tgl_Pengajuan_Email</th>
                     <th>Tgl Produksi</th>
                     <th>No Reg</th>
                     <th>No Reg Sistem</th>
@@ -41,28 +39,28 @@
                     <th>Status</th>
                     <th>Posting</th>
                     <th></th>
-                    <th>Ket Perubahan 1</th>
-                    <th>Ket Perubahan 2</th>
+                    <th>Ket_Perubahan_1</th>
+                    <th>Ket_Perubahan_2</th>
                     <th>No Polis</th>
                     <th>Pemegang Polis</th>
                     <th>Cabang</th>
                     <th>Produk</th>
                     <th>Alamat</th>
-                    <th>UP Tujuan Surat</th>
-                    <th>Tujuan Pembayaran</th>
+                    <th>UP_Tujuan_Surat</th>
+                    <th>Tujuan_Pembayaran</th>
                     <th>Bank</th>
                     <th>No Rekening</th>
-                    <th>Jumlah Peserta Pending</th>
-                    <th>Up Peserta Pending</th>
-                    <th>Premi Peserta Pending</th>
+                    <th>Jumlah_Peserta Pending</th>
+                    <th>Up_Peserta_Pending</th>
+                    <th>Premi_Peserta_Pending</th>
                     <th>Peserta</th>
                     <th>No Peserta Awal</th>
                     <th>sd</th>
-                    <th>No Peserta Akhir</th>
-                    <th>No Sertifikat Awal</th>
-                    <th>No Sertifikat Akhir</th>
-                    <th>Periode Awal</th>
-                    <th>Periode Akhir</th>
+                    <th>No_Peserta_Akhir</th>
+                    <th>No_Sertifikat_Awal</th>
+                    <th>No_Sertifikat_Akhir</th>
+                    <th>Periode_Awal</th>
+                    <th>Periode_Akhir</th>
                     <th>Tgl Proses</th>
                     <th>Movement</th>
                     <th>Tgl Invoice</th>
@@ -99,8 +97,8 @@
                     <th>RpBiayaSertifikat</th>
                     <th>extPstSertifikat</th>
                     <th>Net Sblm Endors</th>
-                    <th>Data Stlh Endors</th>
-                    <th>UP Stlh Endors</th>
+                    <th>Data_Stlh_Endors</th>
+                    <th>UP_Stlh_Endors</th>
                     <th>Premi Gross Endors</th>
                     <th>Extra Premi</th>
                     <th>extEM</th>
@@ -148,15 +146,14 @@
                 @php($num=$data->firstItem())
                 @foreach($data as $item)
                 <tr>
-                    <td>{{$num}}</td>
+                    <td rowspan="2">{{$num}}</td>
                     <td>
-                        @if($item->status_sync==0)
-                            <span class="badge badge-warning">Draft</span>
-                        @elseif($item->status_sync==1)
-                            <span class="badge badge-success">Sync</span>
-                        @elseif($item->status_sync==2)
-                            <span class="badge badge-danger">Invalid</span>
-                        @endif
+                        <a href="javascript:;" wire:click="$emit('replace-confirm-memo-pos',{{$item->id}})" class="text-info"><i class="fa fa-refresh"></i></a>
+                        <a href="javascript:;" wire:click="$emit('delete-confirm-memo-pos',{{$item->id}})" class="text-danger ml-1"><i class="fa fa-trash"></i></a>
+                        <a href="javascript:;" wire:click="$emit('keep-confirm-memo-pos',{{$item->id}})" class="text-info ml-1" title="Keep Data"><i class="fa fa-check"></i></a>
+                    </td>
+                    <td>
+                        <span class="badge badge-success">*New</span>
                     </td>
                     <td>{{$item->bulan}}</td>
                     <td>{{$item->user}}</td>
@@ -274,6 +271,130 @@
                     <td>{{$item->tgl_output_email}}</td>
                     <td>{{$item->no_berkas2}}</td>
                 </tr>
+                @if($item->parent)
+                <tr>
+                    <td></td>
+                    <td>
+                        <span class="badge badge-warning">*Old</span>
+                    </td>
+                    <td>{{$item->parent->bulan}}</td>
+                    <td>{{$item->parent->user}}</td>
+                    <td>{{$item->parent->user_akseptasi}}</td>
+                    <td>{{$item->parent->berkas_akseptasi}}</td>
+                    <td>{{$item->parent->tgl_pengajuan_email}}</td>
+                    <td>{{$item->parent->tgl_produksi}}</td>
+                    <td>{{$item->parent->no_reg}}</td>
+                    <td>{{$item->parent->no_reg_sistem}}</td>
+                    <td>{{$item->parent->no_dn_cn}}</td>
+                    <td>{{$item->parent->no_dn_cn_sistem}}</td>
+                    <td>{{$item->parent->jenis_po}}</td>
+                    <td>{{$item->parent->status}}</td>
+                    <td>{{$item->parent->posting}}</td>
+                    <td>{{$item->parent->jenis_po_2}}</td>
+                    <td>{{$item->parent->ket_perubahan1}}</td>
+                    <td>{{$item->parent->ket_perubahan2}}</td>
+                    <td>{{$item->parent->no_polis}}</td>
+                    <td>{{$item->parent->pemegang_polis}}</td>
+                    <td>{{$item->parent->cabang}}</td>
+                    <td>{{$item->parent->produk}}</td>
+                    <td>{{$item->parent->alamat}}</td>
+                    <td>{{$item->parent->up_tujuan_surat}}</td>
+                    <td>{{$item->parent->tujuan_pembayaran}}</td>
+                    <td>{{$item->parent->bank}}</td>
+                    <td>{{$item->parent->no_rekening}}</td>
+                    <td>{{$item->parent->jumlah_peserta_pending}}</td>
+                    <td>{{format_idr($item->parent->up_peserta_pending)}}</td>
+                    <td>{{format_idr($item->parent->premi_peserta_pending)}}</td>
+                    <td>{{$item->parent->peserta}}</td>
+                    <td>{{$item->parent->no_peserta_awal}}</td>
+                    <td>s/d</td>
+                    <td>{{$item->parent->no_peserta_akhir}}</td>
+                    <td>{{$item->parent->no_sertifikat_awal}}</td>
+                    <td>{{$item->parent->no_sertifikat_akhir}}</td>
+                    <td>{{$item->parent->periode_awal}}</td>
+                    <td>{{$item->parent->periode_akhir}}</td>
+                    <td>{{$item->parent->tgl_proses}}</td>
+                    <td>{{$item->parent->movement}}</td>
+                    <td>{{$item->parent->tgl_invoice}}</td>
+                    <td>{{$item->parent->tgl_invoice2}}</td>
+                    <td>{{$item->parent->no_kwitansi_finance}}</td>
+                    <td>{{$item->parent->no_kwitansi_finance2}}</td>
+                    <td>{{format_idr($item->parent->total_gross_kwitansi)}}</td>
+                    <td>{{format_idr($item->parent->total_gross_kwitansi2)}}</td>
+                    <td>{{$item->parent->jumlah_peserta_update}}</td>
+                    <td>{{format_idr($item->parent->up_cancel)}}</td>
+                    <td>{{format_idr($item->parent->premi_gross_cancel)}}</td>
+                    <td>{{format_idr($item->parent->extra_premi)}}</td>
+                    <td>{{$item->parent->extextra}}</td>
+                    <td>{{$item->parent->rpextra}}</td>
+                    <td>{{format_idr($item->parent->diskon_premi)}}</td>
+                    <td>{{format_idr(abs($item->parent->jml_diskon))}}</td>
+                    <td>{{$item->parent->rp_diskon}}</td>
+                    <td>{{$item->parent->extdiskon}}</td>
+                    <td>{{format_idr($item->parent->fee)}}</td>
+                    <td>{{$item->parent->handling_fee}}</td>
+                    <td>{{format_idr($item->parent->ext_fee)}}</td>
+                    <td>{{$item->parent->rp_fee}}</td>
+                    <td>{{$item->parent->tampilan_fee}}</td>
+                    <td>{{$item->parent->pph}}</td>
+                    <td>{{($item->parent->jml_pph)}}</td>
+                    <td>{{($item->parent->extpph)}}</td>
+                    <td>{{($item->parent->rppph)}}</td>
+                    <td>{{($item->parent->ppn)}}</td>
+                    <td>{{($item->parent->jml_ppn)}}</td>
+                    <td>{{($item->parent->extppn)}}</td>
+                    <td>{{($item->parent->rpppn)}}</td>
+                    <td>{{format_idr($item->parent->biaya_sertifikat)}}</td>
+                    <td>{{format_idr($item->parent->extbiayasertifikat)}}</td>
+                    <td>{{format_idr($item->parent->rpbiayasertifikat)}}</td>
+                    <td>{{format_idr($item->parent->extpstsertifikat)}}</td>
+                    <td>{{format_idr($item->parent->net_sblm_endors)}}</td>
+                    <td>{{format_idr($item->parent->data_stlh_endors)}}</td>
+                    <td>{{format_idr($item->parent->up_stlh_endors)}}</td>
+                    <td>{{format_idr($item->parent->premi_gross_endors)}}</td>
+                    <td>{{format_idr($item->parent->extra_premi2)}}</td>
+                    <td>{{format_idr($item->parent->extem)}}</td>
+                    <td>{{format_idr($item->parent->rpxtra)}}</td>
+                    <td>{{format_idr($item->parent->discount)}}</td>
+                    <td>{{format_idr($item->parent->jml_discount)}}</td>
+                    <td>{{$item->parent->ext_discount}}</td>
+                    <td>{{$item->parent->rpdiscount}}</td>
+                    <td>{{$item->parent->handling_fee}}</td>
+                    <td>{{$item->parent->jml_fee}}</td>
+                    <td>{{$item->parent->extfee}}</td>
+                    <td>{{format_idr($item->parent->rpfee)}}</td>
+                    <td>{{$item->parent->tampilanfee}}</td>
+                    <td>{{$item->parent->pph2}}</td>
+                    <td>{{$item->parent->jml_pph2}}</td>
+                    <td>{{$item->parent->extpph2}}</td>
+                    <td>{{$item->parent->rppph2}}</td>
+                    <td>{{$item->parent->ppn2}}</td>
+                    <td>{{$item->parent->jml_ppn2}}</td>
+                    <td>{{$item->parent->extppn2}}</td>
+                    <td>{{$item->parent->rpppn2}}</td>
+                    <td>{{$item->parent->biaya_sertifikat2}}</td>
+                    <td>{{$item->parent->extbiayasertifikat2}}</td>
+                    <td>{{$item->parent->rpbiayasertifikat2}}</td>
+                    <td>{{$item->parent->extpstsertifikat2}}</td>
+                    <td>{{format_idr($item->parent->net_stlh_endors)}}</td>
+                    <td>{{format_idr($item->parent->refund)}}</td>
+                    <td>{{$item->parent->terbilang}}</td>
+                    <td>{{$item->parent->ket_lampiran}}</td>
+                    <td>{{$item->parent->grace_periode}}</td>
+                    <td>{{$item->parent->grace_periode_nominal}}</td>
+                    <td>{{$item->parent->tgl_jatuh_tempo}}</td>
+                    <td>{{$item->parent->tgl_update_database}}</td>
+                    <td>{{$item->parent->tgl_update_sistem}}</td>
+                    <td>{{$item->parent->no_berkas_sistem}}</td>
+                    <td>{{$item->parent->tgl_posting_sistem}}</td>
+                    <td>{{$item->parent->no_debit_note_finance}}</td>
+                    <td>{{$item->parent->tgl_bayar}}</td>
+                    <td>{{$item->parent->ket}}</td>
+                    <td>{{$item->parent->tgl_output_email}}</td>
+                    <td>{{$item->parent->no_berkas2}}</td>
+                </tr>
+                @endif
+                <tr><td colspan="126" style="background: #eee;padding:0;"></td></tr>
                 @php($num++)
                 @endforeach
             </tbody>
@@ -281,39 +402,23 @@
         <br />
         {{$data->links()}}
     </div>
-    <div wire:ignore.self class="modal fade" id="modal_upload_memo_pos" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <livewire:konven.memo-pos-upload>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="modal_confirm_sync_memo_pos" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <livewire:konven.memo-pos-sync>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="modal_check_data_memo_pos" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" style="max-width:90%;" role="document">
-            <div class="modal-content">
-                <livewire:konven.memo-pos-check-data>
-            </div>
-        </div>
-    </div>
 </div>
 @push('after-scripts')
 <script>
-    Livewire.on('emit-check-data-memo-pos',()=>{
-        $("#modal_upload_memo_pos").modal("hide");
-        setTimeout(function(){
-            $("#modal_check_data_memo_pos").modal(
-                {
-                    backdrop: 'static',
-                    keyboard: false
-                });
-        },1000);
-    });
+Livewire.on('keep-confirm-memo-pos',(id)=>{ 
+    if(confirm('Keep this data ?')){
+        Livewire.emit('keep-memo-pos',id);
+    }
+});
+Livewire.on('replace-confirm-memo-pos',(id)=>{
+    if(confirm('Replace this data ?')){
+        Livewire.emit('replace-memo-pos',id);
+    }
+});
+Livewire.on('delete-confirm-memo-pos',(id)=>{
+    if(confirm('Delete this data ?')){
+        Livewire.emit('delete-memo-pos',id);
+    }
+});
 </script>
 @endpush
