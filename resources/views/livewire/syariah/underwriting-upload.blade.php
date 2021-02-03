@@ -7,7 +7,6 @@
     </div>
     <div class="modal-body">
         <div class="form-group">
-            <label>File</label>
             <input type="file" class="form-control" wire:model="file" />
             @error('file')
             <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>

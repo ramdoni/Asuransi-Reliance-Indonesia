@@ -32,8 +32,7 @@
                             <th>Reference No</th>                                      
                             <th>From Bank Account</th>
                             <th>To Bank Account</th>
-                            <th>Payment Amount</th>
-                            <th>Outstanding Balance</th>
+                            <th>Balance</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -48,8 +47,7 @@
                             <td>{{$item->reference_no ? $item->reference_no : '-'}}</td>
                             <td>{{isset($item->from_bank_account->no_rekening) ? $item->from_bank_account->no_rekening .'- '.$item->from_bank_account->bank.' an '. $item->from_bank_account->owner : '-'}}</td>
                             <td>{{isset($item->bank_account->no_rekening) ? $item->bank_account->no_rekening .' - '.$item->bank_account->bank.' an '. $item->bank_account->owner : '-'}}</td>
-                            <td>{{isset($item->nominal) ? format_idr($item->nominal) : '-'}}</td>
-                            <td>{{isset($item->outstanding_balance) ? format_idr($item->outstanding_balance) : '-'}}</td>
+                            <td>{{format_idr($item->nominal - $item->titipan_premi->sum('nominal'))}}</td>
                         </tr>
                     @endforeach
                     </tbody>

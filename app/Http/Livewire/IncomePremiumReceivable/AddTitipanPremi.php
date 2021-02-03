@@ -12,7 +12,7 @@ class AddTitipanPremi extends Component
     protected $paginationTheme = 'bootstrap';
     public function render()
     {
-        $data = \App\Models\Income::orderBy('id','desc')->where('reference_type','Titipan Premi');
+        $data = \App\Models\Income::orderBy('id','desc')->where(['reference_type' => 'Titipan Premi','status'=>1]);
         if($this->keyword) $data = $data->where(function($table){
                                             $table->where('description','LIKE', "%{$this->keyword}%")
                                             ->orWhere('no_voucher','LIKE',"%{$this->keyword}%")

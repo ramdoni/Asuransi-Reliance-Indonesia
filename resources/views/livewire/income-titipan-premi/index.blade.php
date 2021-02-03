@@ -8,29 +8,15 @@
                     <div class="col-md-2">
                         <input type="text" class="form-control" wire:model="keyword" placeholder="Searching..." />
                     </div>
-                    <div class="col-md-1 pl-0">
-                        <select class="form-control" wire:model="unit">
-                            <option value=""> --- Unit --- </option>
-                            <option value="1"> Konven </option>
-                            <option value="2"> Syariah</option>
-                        </select>
-                    </div>
                     <div class="px-0 col-md-1">
                         <select class="form-control" wire:model="status">
                             <option value=""> --- Status --- </option>
-                            <option value="1"> Unpaid </option>
-                            <option value="2"> Paid</option>
-                            <option value="3"> Outstanding</option>
+                            <option value="1"> Outstanding </option>
+                            <option value="2"> Complete</option>
                         </select>
                     </div>
-                    <div class="col-md-2 pr-0">
-                        <input type="text" class="form-control" wire:model="payment_date" placeholder="Payment Date" onfocus="(this.type='date')" />
-                    </div>
                     <div class="col-md-2">
-                        <input type="text" class="form-control" wire:model="voucher_date" placeholder="Voucher Date" onfocus="(this.type='date')" />
-                    </div>
-                    <div class="col-md-2 px-0">
-                        <a href="{{route('income.titipan-premi.insert')}}" class="btn btn-info btn-sm"><i class="fa fa-plus"></i> Titipan Premi</a>
+                        <a href="{{route('income.titipan-premi.insert')}}" class="btn btn-info"><i class="fa fa-plus"></i> Titipan Premi</a>
                     </div>
                 </div>
                 <div class="table-responsive">
@@ -48,7 +34,7 @@
                                 <th>To Bank Account</th>
                                 <th>Payment Amount</th>
                                 <th>Premium Receive</th>
-                                <th>Outstanding Balance</th>
+                                <th>Balance</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -73,8 +59,8 @@
                                 <td>{{isset($item->from_bank_account->no_rekening) ? $item->from_bank_account->no_rekening .'- '.$item->from_bank_account->bank.' an '. $item->from_bank_account->owner : '-'}}</td>
                                 <td>{{isset($item->bank_account->no_rekening) ? $item->bank_account->no_rekening .' - '.$item->bank_account->bank.' an '. $item->bank_account->owner : '-'}}</td>
                                 <td>{{isset($item->nominal) ? format_idr($item->nominal) : '-'}}</td>
-                                <td>{{isset($item->titipan_premi) ? format_idr($item->titipan_premi->sum('nominal')) : '-'}}</td>
-                                <td>{{format_idr($item->nominal - $item->titipan_premi->sum('nominal'))}}</td>
+                                <td>{{format_idr($item->payment_amount)}}</td>
+                                <td>{{format_idr($item->outstanding_balance)}}</td>
                             </tr>
                         @endforeach
                         </tbody>

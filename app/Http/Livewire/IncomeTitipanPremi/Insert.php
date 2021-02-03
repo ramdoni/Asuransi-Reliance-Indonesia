@@ -26,6 +26,7 @@ class Insert extends Component
                 'nominal' => 'required',
                 'from_bank_account_id' => 'required',
                 'to_bank_account_id' => 'required',
+                'payment_date' => 'required'
             ]);
         $data = new \App\Models\Income();
         $data->no_voucher = $this->no_voucher;
@@ -33,10 +34,10 @@ class Insert extends Component
         $data->reference_no = $this->reference_no;
         $data->reference_type = 'Titipan Premi';
         $data->nominal = replace_idr($this->nominal);
+        $data->outstanding_balance = $data->nominal;
         $data->description = $this->description;
         $data->rekening_bank_id = $this->to_bank_account_id;
         $data->from_bank_account_id = $this->from_bank_account_id;
-        $data->payment_amount = replace_idr($this->payment_amount);
         $data->user_id = \Auth::user()->id;
         $data->type = $this->type;
         $data->save();

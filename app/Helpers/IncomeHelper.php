@@ -12,7 +12,7 @@ function status_income($status) {
             return "<label class=\"badge text-info\">Outstanding</label>";
         break;
         case 4:
-            return "<label class=\"badge text-danger\">Cancel</label>";
+            return "<label class=\"badge text-danger\">Premi tidak tertagih</label>";
         break;
     }
 }

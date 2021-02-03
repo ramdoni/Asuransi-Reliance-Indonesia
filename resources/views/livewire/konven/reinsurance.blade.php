@@ -18,7 +18,7 @@
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <a href="javascript:void(0)" data-toggle="modal" data-backdrop="static" data-keyboard="false"  data-target="#modal_upload_reinsurance" class="mb-2 btn btn-info btn-sm" style="width:150px;"><i class="fa fa-upload"></i> Upload</a>
+                            <a href="javascript:void(0)" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal_upload_reinsurance" class="mb-2 btn btn-info btn-sm" style="width:150px;"><i class="fa fa-upload"></i> Upload</a>
                             @if($total_sync>0)
                             <a href="javascript:void(0)" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal_confirm_sync" class="mb-2 btn btn-warning btn-sm"><i class="fa fa-refresh"></i> Sync {{$total_sync?"(".$total_sync.")" : "(0)"}}</a>
                             @endif

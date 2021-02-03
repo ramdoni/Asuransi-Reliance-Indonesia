@@ -22,13 +22,14 @@
                             <option value="1"> Unpaid </option>
                             <option value="2"> Paid</option>
                             <option value="3"> Outstanding</option>
+                            <option value="4"> Premi tidak tertagih</option>
                         </select>
                     </div>
                     <div class="col-md-2 pr-0">
                         <input type="text" class="form-control" wire:model="payment_date" placeholder="Payment Date" onfocus="(this.type='date')" />
                     </div>
-                    <div class="col-md-2">
-                        <input type="text" class="form-control" wire:model="voucher_date" placeholder="Voucher Date" onfocus="(this.type='date')" />
+                    <div class="col-md-6 text-right">
+                        <p class="mt-2">Received : <strong class="text-info cursor-pointer" wire:click="$set('status',2)">Rp. {{format_idr($received)}}</strong>, Outstanding : <strong class="text-danger">Rp. {{format_idr($outstanding)}}</strong>, Total : <strong class="text-success">Rp. {{format_idr($received+$outstanding)}}</strong></p>
                     </div>
                 </div>
                 <div class="table-responsive">

@@ -52,7 +52,7 @@
                         <li class="{{ (Request::segment(1) === 'syariah-underwriting') ? 'active' : null }}">
                             <a href="#App" class="has-arrow"><i class="fa fa-database"></i> <span>Syariah</span></a>
                             <ul>
-                                <li class="{{ Request::segment(1) === 'coa' ? 'active' : null }}"><a href="{{route('coa')}}">Underwriting</a></li>
+                                <li class="{{ Request::segment(1) === 'syariah-underwriting' ? 'active' : null }}"><a href="{{route('syariah.underwriting')}}">Underwriting</a></li>
                                 <li class="{{ Request::segment(1) === 'coa-group' ? 'active' : null }}"><a href="{{route('coa-group')}}">Reinsurance</a></li>
                                 <li class="{{ Request::segment(1) === 'coa-group' ? 'active' : null }}"><a href="">Claim</a></li>
                             </ul>
@@ -101,7 +101,6 @@
                                     <a href="{{route('expense.reinsurance-premium')}}"> Reinsurance Premium</a>
                                 </li>
                                 <li class="{{ Request::segment(1) === 'expense-commision-payable' ? 'active' : null }}"><a href="{{route('expense.commision-payable')}}"> Commision Payable</a></li>
-                                {{-- <li class="{{ Request::segment(1) === 'expense-endorsement' ? 'active' : null }}"><a href="{{route('expense-endorsement')}}"> Endorsement</a></li> --}}
                                 <li class="{{ Request::segment(1) === 'expense-cancelation' ? 'active' : null }}"><a href="{{route('expense-cancelation')}}"> Cancelation</a></li>
                                 <li class="{{ Request::segment(1) === 'expense-refund' ? 'active' : null }}"><a href="{{route('expense-refund')}}"> Refund</a></li>
                                 <li class="{{ Request::segment(1) === 'expense-claim' ? 'active' : null }}"><a href="{{route('expense.claim')}}"> Claim Payable</a></li>
@@ -131,8 +130,8 @@
                         </li>
                         @endif
                         @if(\Auth::user()->user_access_id==4)<!--Treasury-->     
-                        <li class="{{ Request::segment(1) === 'dashboard' ? 'active' : null }}">
-                            <a href="{{route('treasury.index')}}"><i class="fa fa-home"></i> <span>Dashboard</span></a>
+                        <li class="{{ Request::segment(1) === 'inhouser-transfer' ? 'active' : null }}">
+                            <a href="{{route('inhouse-transfer.index')}}"><i class="fa fa-home"></i> <span>Inhouse Transfer</span></a>
                         </li>
                         @endif
                     </ul>

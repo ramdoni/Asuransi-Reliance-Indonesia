@@ -38,11 +38,11 @@
                                 </tr>
                                 <tr>
                                     <th>{{ __('Premium Receivable')}}</th>
-                                    <td class="text-danger">{{format_idr($data->titipan_premi->sum('nominal'))}}</td>
+                                    <td class="text-danger">{{format_idr($data->payment_amount)}}</td>
                                 </tr>
                                 <tr>
-                                    <th>{{ __('Outstanding Balance')}}</th>
-                                    <td class="text-info">{{format_idr($data->nominal - $data->titipan_premi->sum('nominal'))}}</td>
+                                    <th>{{ __('Balance')}}</th>
+                                    <td class="text-info">{{format_idr($data->outstanding_balance)}}</td>
                                 </tr>
                                 <tr>
                                     <th>{{__('Description')}}</th>
@@ -73,7 +73,7 @@
                 @foreach($data->titipan_premi as $item)
                     @if($item->premi)
                     <p>No Voucher : <a href="{{route('income.premium-receivable.detail',$item->premi->id)}}" target="_blank">{{$item->premi->no_voucher}}</a><br />
-                        {{$item->premi->reference_no}} / {{$item->premi->client}} <br /><strong>Rp. {{format_idr($item->premi->payment_amount)}}</strong>
+                        {{$item->premi->reference_no}} / {{$item->premi->client}} <br /><strong class="text-danger">Rp. {{format_idr($item->nominal)}}</strong>
                     </p>
                     <hr />
                     @endif

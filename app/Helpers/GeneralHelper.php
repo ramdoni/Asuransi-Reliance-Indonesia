@@ -1,4 +1,20 @@
 <?php
+
+function status_account_balance($status)
+{
+    switch($status){
+        case 1:
+            return 'Inhouse Transfer';
+        break;
+        case 2:
+            return "Open Balance";
+        break;
+        case 3:
+            return "Investasi";
+        break;
+    }
+}
+
 function calculate_aging($date)
 {
     $start_date = new \DateTime($date);
@@ -11,12 +27,6 @@ function calculate_aging($date)
     $date2=date_create();
     $diff=date_diff($date1,$date2);
     return $diff->format("%R%a days");
-
-    // $tahun = $today->diff($start_date)->y;
-    // $bulan = $today->diff($start_date)->m;
-    // $hari = $today->diff($start_date)->d;
-
-    return ($tahun? $tahun.' Tahun ' : '').($bulan? $bulan.' Bulan ' : ''). ($hari? $hari.' Hari ' : '');
 }
 
 function sum_journal_cashflow_by_group($month,$year,$group)

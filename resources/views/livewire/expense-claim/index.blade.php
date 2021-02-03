@@ -16,6 +16,9 @@
                             <option value="3"> Outstanding</option>
                         </select>
                     </div>
+                    <div class="col-md-2">
+                        <a href="{{route('expense.claim.insert')}}" class="btn btn-info"><i class="fa fa-plus"></i> Claim</a>
+                    </div>  
                 </div>
                 <div class="table-responsive">
                     <table class="table table-striped table-hover m-b-0 c_list">

@@ -8,7 +8,8 @@ class Detail extends Component
 {
     public $data,$no_voucher,$client,$recipient,$reference_type,$reference_no,$reference_date,$description,$outstanding_balance,$tax_id,$payment_amount=0,$bank_account_id,$from_bank_account_id;
     public $payment_date,$tax_amount,$total_payment_amount,$is_readonly=false,$due_date;
-    public $bank_charges,$showDetail='underwriting',$cancelation,$titipan_premi,$is_titipan_premi;
+    public $bank_charges,$showDetail='underwriting',$cancelation;
+    public $titipan_premi,$temp_titipan_premi=[],$temp_arr_titipan_id=[],$total_titipan_premi=0;
     protected $listeners = ['emit-add-bank'=>'emitAddBank','set-titipan-premi'=>'setTitipanPremi'];
     protected $rules = 
         [
@@ -22,7 +23,7 @@ class Detail extends Component
     }
     public function clearTitipanPremi()
     {
-        $this->reset('titipan_premi','from_bank_account_id');
+        $this->reset('temp_titipan_premi','temp_arr_titipan_id','total_titipan_premi','from_bank_account_id','bank_account_id');
         $this->emit('init-form');
     }
     public function updated($propertyName)
@@ -32,15 +33,18 @@ class Detail extends Component
     }
     public function setTitipanPremi($id)
     {
-        $this->titipan_premi = \App\Models\Income::find($id);
-        $this->from_bank_account_id = $this->titipan_premi->from_bank_account_id;
-        $this->bank_account_id = $this->titipan_premi->rekening_bank_id;
-
-        if($this->titipan_premi->nominal < $this->data->nominal){
-            $this->payment_amount = $this->titipan_premi->nominal;
+        $this->temp_arr_titipan_id[] = $id;
+        $this->temp_titipan_premi = \App\Models\Income::whereIn('id',$this->temp_arr_titipan_id)->get();
+        $this->total_titipan_premi = 0;
+        foreach($this->temp_titipan_premi as $titipan){
+            $this->total_titipan_premi += $titipan->outstanding_balance;
+        }
+        if($this->total_titipan_premi < $this->data->nominal){
+            $this->payment_amount = $this->total_titipan_premi;
             $this->outstanding_balance = abs(replace_idr($this->payment_amount) - $this->data->nominal);
-        }elseif($this->titipan_premi->nominal>$this->data->nominal){
+        }elseif($this->total_titipan_premi>$this->data->nominal){
             $this->payment_amount = $this->data->nominal;
+            $this->outstanding_balance = 0;
         }
 
         $this->emit('init-form');
@@ -63,10 +67,7 @@ class Detail extends Component
         $this->due_date = $this->data->due_date;
         $this->bank_charges = $this->bank_charges;
         // cek titipan premi
-        $this->titipan_premi = \App\Models\IncomeTitipanPremi::where('income_premium_id',$this->data->id)->first() ? \App\Models\IncomeTitipanPremi::where('income_premium_id',$this->data->id)->first() : '';      
-        if($this->titipan_premi){
-            if($this->titipan_premi->titipan) $this->titipan_premi = $this->titipan_premi->titipan;
-        }
+        $this->titipan_premi = \App\Models\IncomeTitipanPremi::where('income_premium_id',$this->data->id)->get();      
         if($this->data->status==1) $this->description = 'Premi ab '. (isset($this->data->uw->pemegang_polis) ? ($this->data->uw->pemegang_polis .' bulan '. $this->data->uw->bulan .' dengan No Invoice :'.$this->data->uw->no_kwitansi_debit_note) : ''); 
         if($this->payment_amount =="") $this->payment_amount=$this->data->nominal;
         if($this->data->status==2 || $this->data->status==4){ $this->is_readonly = true;}
@@ -101,13 +102,45 @@ class Detail extends Component
         $this->data->description = $this->description;
         $this->data->from_bank_account_id = $this->from_bank_account_id;
         $this->data->bank_charges = $this->bank_charges;
+        $this->data->user_id = \Auth::user()->id;
+        $this->data->due_date = $this->due_date;
         $this->data->save();
-        if($this->titipan_premi){
-            \App\Models\IncomeTitipanPremi::create([
-                'income_premium_id' => $this->data->id,
-                'income_titipan_id' => $this->titipan_premi->id,
-                'nominal' => $this->payment_amount,
-            ]);
+
+        // cek due date
+        $uw = isset($this->data->uw->tgl_jatuh_tempo) ? $this->data->uw : '';
+        if($uw){
+            if($this->due_date != $uw->tgl_jatuh_tempo){
+                \App\Models\KonvenUnderwriting::where('id',$this->data->transaction_id)->update(['extend_tgl_jatuh_tempo'=>$this->due_date]);
+            }
+        }
+
+        if($this->temp_titipan_premi){
+            $total_titipan_premi = 0;
+            $nominal_titipan = 0;
+            foreach($this->temp_arr_titipan_id as $k => $val){
+                $item = \App\Models\Income::find($val);
+                $total_titipan_premi += $item->outstanding_balance;            
+                if($total_titipan_premi < $this->data->nominal){
+                    \App\Models\IncomeTitipanPremi::create([
+                        'income_premium_id' => $this->data->id,
+                        'income_titipan_id' => $item->id,
+                        'nominal' => $item->nominal
+                    ]);
+                    $item->payment_amount = $item->nominal;
+                    $item->outstanding_balance = $item->outstanding_balance - $item->nominal;
+                    $item->status = 2;
+                }elseif($total_titipan_premi > $this->data->nominal){ // jika sudah melebihi nominal premi, maka status titipan premi jadi completed
+                    $total_titipan_premi -= $item->outstanding_balance;
+                    \App\Models\IncomeTitipanPremi::create([
+                        'income_premium_id' => $this->data->id,
+                        'income_titipan_id' => $item->id,
+                        'nominal' => ($this->data->nominal - $total_titipan_premi)
+                    ]);
+                    $item->outstanding_balance = $item->outstanding_balance - ($this->data->nominal - $total_titipan_premi);
+                    $item->payment_amount = $item->payment_amount + ($this->data->nominal - $total_titipan_premi);
+                }
+                $item->save();
+            }
         }
         if($this->data->status==2){
             $coa_premium_receivable = 0;
