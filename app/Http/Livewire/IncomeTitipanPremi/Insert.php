@@ -7,6 +7,7 @@ use Livewire\Component;
 class Insert extends Component
 {
     public $no_voucher,$reference_no,$type,$payment_amount,$payment_date,$reference_type,$description,$data,$nominal,$from_bank_account_id,$to_bank_account_id,$is_readonly=false;
+    protected $listeners = ['emit-add-bank'=>'emitAddBank'];
     public function render()
     {
         return view('livewire.income-titipan-premi.insert');
@@ -17,6 +18,11 @@ class Insert extends Component
     }
     public function updated()
     {
+        $this->emit('init-form');
+    }
+    public function emitAddBank($id)
+    {
+        $this->from_bank_account_id = $id;
         $this->emit('init-form');
     }
     public function save()

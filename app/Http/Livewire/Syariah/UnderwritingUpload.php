@@ -163,6 +163,7 @@ class UnderwritingUpload extends Component
                 $data->ket_lampiran = $ket_lampiran;
                 $data->pengeluaran_ujroh = $pengeluaran_ujroh;
                 $data->status = 1;
+                $data->user_id = \Auth::user()->id;
                 $data->save();
                 $total_success++;
             }

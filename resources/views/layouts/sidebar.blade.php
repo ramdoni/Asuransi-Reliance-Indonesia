@@ -91,7 +91,7 @@
                                 <li class="{{ Request::segment(1) === 'income-reinsurance' ? 'active' : null }}"><a href="{{route('income.reinsurance')}}"> Reinsurance Commision</a></li>        
                                 <li class="{{ Request::segment(1) === 'income-recovery-claim' ? 'active' : null }}"><a href="#"> Recovery Claim</a></li>        
                                 <li class="{{ Request::segment(1) === 'income-investment' ? 'active' : null }}"><a href="{{route('income.investment')}}"> Invesment</a></li>        
-                                <li class="{{ Request::segment(1) === 'income-titipan-premi' ? 'active' : null }}"><a href="{{route('income.titipan-premi')}}"> Titipan Premi</a></li>        
+                                <li class="{{ Request::segment(1) === 'income-titipan-premi' ? 'active' : null }}"><a href="{{route('income.titipan-premi')}}"> Premium Deposit</a></li>        
                             </ul>
                         </li>
                         <li class="{{ (Request::segment(1) === 'expense-refund' || Request::segment(1) === 'expense-handling-fee' || Request::segment(1) === 'expense-cancelation' || Request::segment(1) === 'expense-endorsement' || Request::segment(1) === 'expense-claim' || Request::segment(1) === 'expense-others' || Request::segment(1) === 'expense-reinsurance-premium' || Request::segment(1) === 'expense-commision-payable') ? 'active' : null }}">

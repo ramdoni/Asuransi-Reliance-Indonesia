@@ -3,7 +3,7 @@
         <div class="col-md-3">
             <input type="text" class="form-control" wire:model="keyword" placeholder="Searching..."/>
         </div>
-        <div class="px-0 col-md-1">
+        <div class="col-md-2">
             <select class="form-control" wire:model="status">
                 <option value=""> --- Status --- </option>
                 <option value="1">Draft</option>
@@ -11,12 +11,12 @@
             </select>
         </div>
         <div class="col-md-3">
-            <a href="javascript:void(0)"  data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal_upload_teknis_conven" class="mb-2 btn btn-info btn-sm" style="width:150px;"><i class="fa fa-upload"></i> Upload</a>
+            <a href="javascript:void(0)"  data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal_upload_teknis_conven" class="mb-2 btn btn-info" style="width:150px;"><i class="fa fa-upload"></i> Upload</a>
             @if($total_sync>0)
-            <a href="javascript:void(0)" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal_confirm_sync" class="mb-2 btn btn-warning btn-sm"><i class="fa fa-refresh"></i> Sync {{$total_sync?"(".$total_sync.")" : "(0)"}}</a>
+            <a href="javascript:void(0)" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal_confirm_sync" class="mb-2 btn btn-warning"><i class="fa fa-refresh"></i> Sync {{$total_sync?"(".$total_sync.")" : "(0)"}}</a>
             @endif
         </div>
-        <div class="col-md-5 text-right">
+        <div class="col-md-4 text-right">
             <h6>Sync : <span class="text-info">{{format_idr(\App\Models\SyariahUnderwriting::where('status',2)->count())}}</span>, Draft : <span class="text-warning">{{format_idr(\App\Models\SyariahUnderwriting::where('status',1)->count())}}</span>, Total : <span class="text-success">{{format_idr($data->total())}}</span></h6>
         </div>
     </div>
