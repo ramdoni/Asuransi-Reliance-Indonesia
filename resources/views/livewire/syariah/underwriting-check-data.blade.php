@@ -9,9 +9,9 @@
             </div>
         </div>
         <div>
-            <a href="javascript:void(0)" class="btn btn-info btn-sm" wire:click="emit('confirm-replace-all-endorsement')"><i class="fa fa-refresh"></i> Replace All</a>
-            <a href="javascript:void(0)" class="btn btn-success btn-sm" wire:click="emit('confirm-keep-all-endorsement')"><i class="fa fa-check"></i> Keep All</a>
-            <a href="javascript:void(0)" class="btn btn-danger btn-sm" wire:click="$emit('confirm-delete-all-endorsement')"><i class="fa fa-trash"></i> Delete All</a>
+            <a href="javascript:void(0)" class="btn btn-info btn-sm" wire:click="emit('confirm-replace-all-underwriting')"><i class="fa fa-refresh"></i> Replace All</a>
+            <a href="javascript:void(0)" class="btn btn-success btn-sm" wire:click="emit('confirm-keep-all-underwriting')"><i class="fa fa-check"></i> Keep All</a>
+            <a href="javascript:void(0)" class="btn btn-danger btn-sm" wire:click="$emit('confirm-delete-all-underwriting')"><i class="fa fa-trash"></i> Delete All</a>
         </div>
         <div wire:loading>
             <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
@@ -25,7 +25,7 @@
                     <th>No</th>
                     <th></th>
                     <th></th>
-                    @foreach(\Illuminate\Support\Facades\Schema::getColumnListing('syariah_endorsement') as $column)
+                    @foreach(\Illuminate\Support\Facades\Schema::getColumnListing('syariah_underwritings') as $column)
                     @if(in_array($column,['created_at','updated_at','id','status','is_temp','parent_id','user_id']))@continue @endif
                     <th>{{ucfirst($column)}}</th>
                     @endforeach
@@ -37,14 +37,14 @@
                 <tr>
                     <td rowspan="2">{{$num}}</td>
                     <td>
-                        <a href="javascript:;" wire:click="$emit('replace-confirm-memo-pos',{{$item->id}})" class="text-info"><i class="fa fa-refresh"></i></a>
-                        <a href="javascript:;" wire:click="$emit('delete-confirm-memo-pos',{{$item->id}})" class="text-danger ml-1"><i class="fa fa-trash"></i></a>
-                        <a href="javascript:;" wire:click="$emit('keep-confirm-memo-pos',{{$item->id}})" class="text-info ml-1" title="Keep Data"><i class="fa fa-check"></i></a>
+                        <a href="javascript:;" wire:click="$emit('replace-confirm-underwriting',{{$item->id}})" class="text-info"><i class="fa fa-refresh"></i></a>
+                        <a href="javascript:;" wire:click="$emit('delete-confirm-underwriting',{{$item->id}})" class="text-danger ml-1"><i class="fa fa-trash"></i></a>
+                        <a href="javascript:;" wire:click="$emit('keep-confirm-underwriting',{{$item->id}})" class="text-info ml-1" title="Keep Data"><i class="fa fa-check"></i></a>
                     </td>
                     <td>
                         <span class="badge badge-success">*New</span>
                     </td>
-                    @foreach(\Illuminate\Support\Facades\Schema::getColumnListing('syariah_endorsement') as $column)
+                    @foreach(\Illuminate\Support\Facades\Schema::getColumnListing('syariah_underwritings') as $column)
                     @if(in_array($column,['created_at','updated_at','id','status','is_temp','parent_id','user_id','type_transaksi']))@continue @endif
                     <td>{{ in_array($column,['manfaat_sebelum_endors','dana_tab_baru_sebelum_endors','dana_ujrah_sebelum_endors','kontribusi_cancel','extra_kontribusi','jumlah_discount','handling_fee','jumlah_fee','jumlah_pph','jumlah_ppn','biaya_polis','biaya_sertifikat','ext_biaya_sertifikat','rp_biaya_sertifikat','ext_pst_sertifikat','net_sebelum_endors','net_sebelum_endors','net_sebelum_endors','net_sebelum_endors','net_sebelum_endors','extra_kontribusi_2','jumlah_discount_2','handling_fee_2','jumlah_fee_2','jumlah_pph_2','jumlah_pph_2','biaya_polis_2','biaya_sertifikat_2','net_setelah_endors','dengan_tagihan_atau_refund_premi']) ? format_idr($item->$column) : $item->$column }}</td>
                     @endforeach
@@ -55,9 +55,9 @@
                     <td>
                         <span class="badge badge-warning">*Old</span>
                     </td>
-                    @foreach(\Illuminate\Support\Facades\Schema::getColumnListing('syariah_endorsement') as $column)
+                    @foreach(\Illuminate\Support\Facades\Schema::getColumnListing('syariah_underwriting') as $column)
                     @if(in_array($column,['created_at','updated_at','id','status','is_temp','parent_id','user_id','type_transaksi']))@continue @endif
-                    <td>{{ in_array($column,['manfaat_sebelum_endors','dana_tab_baru_sebelum_endors','dana_ujrah_sebelum_endors','kontribusi_cancel','extra_kontribusi','jumlah_discount','handling_fee','jumlah_fee','jumlah_pph','jumlah_ppn','biaya_polis','biaya_sertifikat','ext_biaya_sertifikat','rp_biaya_sertifikat','ext_pst_sertifikat','net_sebelum_endors','net_sebelum_endors','net_sebelum_endors','net_sebelum_endors','net_sebelum_endors','extra_kontribusi_2','jumlah_discount_2','handling_fee_2','jumlah_fee_2','jumlah_pph_2','jumlah_pph_2','biaya_polis_2','biaya_sertifikat_2','net_setelah_endors','dengan_tagihan_atau_refund_premi']) ? format_idr($item->parent->$column) : $item->parent->$column }}</td>
+                    <td>{{ in_array($column,['manfaat_sebelum_endors','dana_tab_baru_sebelum_endors','dana_ujrah_sebelum_endors','kontribusi_cancel','extra_kontribusi','jumlah_discount','handling_fee','jumlah_fee','jumlah_pph','jumlah_ppn','biaya_polis','biaya_sertifikat','ext_biaya_sertifikat','rp_biaya_sertifikat','ext_pst_sertifikat','net_sebelum_endors','net_sebelum_endors','net_sebelum_endors','net_sebelum_endors','net_sebelum_endors','extra_kontribusi_2','jumlah_discount_2','handling_fee_2','jumlah_fee_2','jumlah_pph_2','jumlah_pph_2','biaya_polis_2','biaya_sertifikat_2','net_setelah_endors','dengan_tagihan_atau_refund_premi']) ? format_idr($item->$column) : $item->$column }}</td>
                     @endforeach
                 </tr>
                 @endif
@@ -72,34 +72,34 @@
 </div>
 @push('after-scripts')
 <script>
-Livewire.on('confirm-replace-all-endorsement',()=>{
+Livewire.on('confirm-replace-all-underwriting',()=>{
     if(confirm('Replace all data ?')){
-        Livewire.emit('replace-all-endorsement');
+        Livewire.emit('replace-all-underwriting');
     }
 });
-Livewire.on('confirm-delete-all-endorsement',()=>{
+Livewire.on('confirm-delete-all-underwriting',()=>{
     if(confirm('Delete all data ?')){
-        Livewire.emit('delete-all-endorsement');
+        Livewire.emit('delete-all-underwriting');
     }
 });
-Livewire.on('confirm-keep-all-endorsement',()=>{
+Livewire.on('confirm-keep-all-underwriting',()=>{
     if(confirm('Keep all data ?')){
-        Livewire.emit('keep-all-endorsement');
+        Livewire.emit('keep-all-underwriting');
     }
 });
-Livewire.on('keep-confirm-endorsement',(id)=>{
+Livewire.on('keep-confirm-underwriting',(id)=>{
     if(confirm('Keep this data ?')){
-        Livewire.emit('keep-endorsement',id);
+        Livewire.emit('keep-underwriting',id);
     }
 });
-Livewire.on('delete-confirm-endorsement',(id)=>{
+Livewire.on('delete-confirm-underwriting',(id)=>{
     if(confirm('Delete this data ?')){
-        Livewire.emit('delete-endorsement',id);
+        Livewire.emit('delete-underwriting',id);
     }
 });
-Livewire.on('replace-confirm-endorsement',(id)=>{
+Livewire.on('replace-confirm-underwriting',(id)=>{
     if(confirm('Replace this data ?')){
-        Livewire.emit('replace-endorsement',id);
+        Livewire.emit('replace-underwriting',id);
     }
 });
 </script>

@@ -10,14 +10,18 @@
                 <option value="2">Sync</option>
             </select>
         </div>
-        <div class="col-md-3">
-            <a href="javascript:void(0)"  data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal_upload_teknis_conven" class="mb-2 btn btn-info" style="width:150px;"><i class="fa fa-upload"></i> Upload</a>
+        <div class="col-md-4">
+            <a href="javascript:void(0)"  data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal_upload_underwriting" class="mb-2 btn btn-info" style="width:150px;"><i class="fa fa-upload"></i> Upload</a>
             @if($total_sync>0)
-            <a href="javascript:void(0)" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal_confirm_sync" class="mb-2 btn btn-warning"><i class="fa fa-refresh"></i> Sync {{$total_sync?"(".$total_sync.")" : "(0)"}}</a>
+            <a href="javascript:void(0)" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal_confirm_sync_underwriting" class="mb-2 btn btn-warning"><i class="fa fa-refresh"></i> Sync {{$total_sync?"(".$total_sync.")" : "(0)"}}</a>
             @endif
+            <span wire:loading>
+                <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                <span class="sr-only">{{ __('Loading...') }}</span>
+            </span>
         </div>
-        <div class="col-md-4 text-right">
-            <h6>Sync : <span class="text-info">{{format_idr(\App\Models\SyariahUnderwriting::where('status',2)->count())}}</span>, Draft : <span class="text-warning">{{format_idr(\App\Models\SyariahUnderwriting::where('status',1)->count())}}</span>, Total : <span class="text-success">{{format_idr($data->total())}}</span></h6>
+        <div class="col-md-3 text-right">
+            <h6>Sync : <span class="text-info">{{format_idr(\App\Models\SyariahUnderwriting::where(['is_temp'=>0,'status'=>2])->count())}}</span>, Draft : <span class="text-warning">{{format_idr(\App\Models\SyariahUnderwriting::where(['is_temp'=>0,'status'=>1])->count())}}</span>, Total : <span class="text-success">{{format_idr($data->total())}}</span></h6>
         </div>
     </div>
     <div class="table-responsive">
@@ -58,17 +62,43 @@
     <br />
     {{$data->links()}}
 </div>
-<div class="modal fade" id="modal_confirm_sync" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modal_confirm_sync_underwriting" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <livewire:syariah.underwriting-sync>
         </div>
     </div>
 </div>
-<div wire:ignore.self class="modal fade" id="modal_upload_teknis_conven" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div wire:ignore.self class="modal fade" id="modal_upload_underwriting" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <livewire:syariah.underwriting-upload>
         </div>
     </div>
 </div>
+<div class="modal fade" id="modal_check_data_underwriting" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="max-width:90%;" role="document">
+        <div class="modal-content">
+            <livewire:syariah.underwriting-check-data>
+        </div>
+    </div>
+</div>
+
+@push('after-scripts')
+<script>
+    Livewire.on('refresh-page',()=>{
+        $("#modal_upload_underwriting").modal('hide');
+        $("#modal_check_data_underwriting").modal('hide');
+    });
+    Livewire.on('emit-check-data-underwriting',()=>{
+        $("#modal_upload_underwriting").modal("hide");
+        setTimeout(function(){
+            $("#modal_check_data_underwriting").modal(
+                {
+                    backdrop: 'static',
+                    keyboard: false
+                });
+        },1000);
+    });
+</script>
+@endpush

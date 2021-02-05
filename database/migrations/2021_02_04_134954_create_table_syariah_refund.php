@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTableCancel extends Migration
+class CreateTableSyariahRefund extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateTableCancel extends Migration
      */
     public function up()
     {
-        Schema::create('syariah_cancel', function (Blueprint $table) {
+        Schema::create('syariah_refund', function (Blueprint $table) {
             $table->id();
             $table->integer('user_id')->nullable();
             $table->boolean('status')->nullable();
@@ -22,9 +22,9 @@ class CreateTableCancel extends Migration
             $table->string('bulan',20)->nullable();
             $table->string('user_memo',50)->nullable();
             $table->string('user_akseptasi',50)->nullable();
-            $table->string('no_berkas',5)->nullable();
+            $table->string('berkas_akseptasi',5)->nullable();
             $table->date('tgl_pengajuan_email')->nullable();
-            $table->date('tgl_cancel')->nullable();
+            $table->date('tgl_refund')->nullable();
             $table->string('no_memo',100)->nullable();
             $table->string('no_credit_note',100)->nullable();
             $table->string('no_polis',50)->nullable();
@@ -36,35 +36,30 @@ class CreateTableCancel extends Migration
             $table->string('bank',100)->nullable();
             $table->string('no_rekening',50)->nullable();
             $table->string('jml_kepesertaan_tertunda',10)->nullable();
-            $table->string('jml_manfaat_kepesertaan_tertunda',10)->nullable();
-            $table->string('jml_kontribusi_kepesertaan_tertunda',10)->nullable();
+            $table->integer('manfaat_kepesertaan_tertunda')->nullable();
+            $table->integer('kontribusi_kepesertaan_tertunda')->nullable();
             $table->string('jumlah_kepesertaan',10)->nullable();
             $table->string('no_kepesertaan_awal',50)->nullable();
             $table->string('no_kepesertaan_akhir',50)->nullable();
             $table->date('masa_awal')->nullable();
             $table->date('masa_akhir')->nullable();
-            $table->bigInteger('manfaat_cancel')->nullable();
-            $table->bigInteger('kontribusi_gross_cancel')->nullable();
-            $table->bigInteger('ektra_kontribusi_cancel')->nullable();
-            $table->string('diskon_kontribusi',10)->nullable();
-            $table->integer('jumlah_diskon')->nullable();
-            $table->string('ppn',10)->nullable();
-            $table->integer('jumlah_ppn')->nullable();
-            $table->integer('fee')->nullable();
-            $table->integer('jumlah_handling_fee')->nullable();
-            $table->string('pph',10)->nullable();
-            $table->integer('jumlah_pph')->nullable();
-            $table->bigInteger('refund')->nullable();
+            $table->date('tgl_produksi')->nullable();
+            $table->string('no_debit_note_terakseptasi',100)->nullable();
+            $table->bigInteger('kontribusi_dn')->nullable();
+            $table->bigInteger('manfaat_asuransi')->nullable();
+            $table->bigInteger('kontribusi')->nullable();
+            $table->bigInteger('refund_kontribusi')->nullable();
             $table->text('terbilang')->nullable();
+            $table->text('ket_lampiran')->nullable();
             $table->string('grace_periode',25)->nullable();
             $table->string('grace_periode_num',10)->nullable();
             $table->date('tgl_jatoh_tempo')->nullable();
             $table->date('tgl_update_database')->nullable();
-            $table->string('no_debit_note',100)->nullable();
-            $table->date('tgl_debit_note')->nullable();
-            $table->bigInteger('kontribusi_debit_note')->nullable();
-            $table->date('tgl_bayar_refund')->nullable();
+            $table->date('tgl_bayar')->nullable();
             $table->text('ket')->nullable();
+            $table->text('ket_2')->nullable();
+            $table->text('ket_reas')->nullable();
+            $table->date('tgl_bayar_reas')->nullable();
             $table->timestamps();
         });
     }
@@ -76,6 +71,6 @@ class CreateTableCancel extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('syariah_cancel');
+        Schema::dropIfExists('syariah_refund');
     }
 }

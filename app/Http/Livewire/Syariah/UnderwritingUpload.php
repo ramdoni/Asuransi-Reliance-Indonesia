@@ -169,10 +169,10 @@ class UnderwritingUpload extends Component
             }
         }
         if($total_double>0)
-            $this->emit('emit-check-data');
+            $this->emit('emit-check-data-underwriting');
         else{
-            session()->flash('message-success','Upload success, Success Upload <strong>'. $total_success.'</strong>, Double Data :<strong>'. $total_double.'</strong>');   
-            return redirect()->route('syariah.underwriting');
+            $this->emit('message-success','Upload success, Success Upload <strong>'. $total_success.'</strong>, Double Data :<strong>'. $total_double.'</strong>');   
+            $this->emit('refresh-page');
         }
     }
 }

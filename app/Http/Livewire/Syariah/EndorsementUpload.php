@@ -102,7 +102,7 @@ class EndorsementUpload extends Component
                     $data->is_temp = 1;
                     $data->parent_id = $find->id;
                     $total_double++;
-                }
+                }else $data->is_temp = 0;
                 $data->bulan = $bulan;
                 $data->user_memo = $user_memo;
                 $data->berkas_akseptasi = $berkas_akseptasi;

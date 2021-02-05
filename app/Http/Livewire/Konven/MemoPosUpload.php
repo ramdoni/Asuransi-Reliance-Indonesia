@@ -71,12 +71,12 @@ class MemoPosUpload extends Component
                 $no_peserta_akhir = $i[33];
                 $no_sertifikat_awal = $i[34];
                 $no_sertifikat_akhir = $i[35];
-                $periode_awal = (int)$i[36] ? @\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[36]):'';
-                $periode_akhir = (int)$i[37] ? \PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[37]):'';
-                $tgl_proses = (int)$i[38]?\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[38]):'';
+                $periode_awal = $i[36];
+                $periode_akhir = $i[37];// ? \PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[37]):'';
+                $tgl_proses = $i[38];//(int)$i[38]?\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[38]):'';
                 $movement = $i[39];
-                $tgl_invoice = (int)$i[40]?\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[40]):'';
-                $tgl_invoice2 = (int)$i[41]?\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[41]):'';
+                $tgl_invoice = $i[40];//(int)$i[40]?\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[40]):'';
+                $tgl_invoice2 = $i[41];//(int)$i[41]?\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[41]):'';
                 $no_kwitansi_finance = $i[42];
                 $no_kwitansi_finance2 = $i[43];
                 $total_gross_kwitansi = $i[44];
@@ -142,15 +142,15 @@ class MemoPosUpload extends Component
                 $ket_lampiran = $i[104];
                 $grace_periode = $i[105];
                 $grace_periode_nominal = $i[106];
-                $tgl_jatuh_tempo = (int)$i[107]?\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[107]):'';
-                $tgl_update_database = (int)$i[108]?\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[108]):'';
-                $tgl_update_sistem = (int)$i[109]?\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[109]):'';
+                $tgl_jatuh_tempo = $i[107];//(int)$i[107]?\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[107]):'';
+                $tgl_update_database = $i[108]; //(int)$i[108]?\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[108]):'';
+                $tgl_update_sistem = $i[109];//(int)$i[109]?\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[109]):'';
                 $no_berkas_sistem = $i[110];
-                $tgl_posting_sistem = (int)$i[111]?\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[111]):'';
+                $tgl_posting_sistem = $i[111];//(int)$i[111]?\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[111]):'';
                 $no_debit_note_finance = $i[112];
-                $tgl_bayar = (int)$i[113]?\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[113]):'';
+                $tgl_bayar = $i[113];//(int)$i[113]?\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[113]):'';
                 $ket = $i[114];
-                $tgl_output_email = (int)$i[115]?\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[115]):'';
+                $tgl_output_email = $i[115];//(int)$i[115]?\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[115]):'';
                 $no_berkas2 = $i[116];
 
                 // find data exitst 
@@ -175,8 +175,8 @@ class MemoPosUpload extends Component
                 $data->user = $user;
                 $data->user_akseptasi = $user_akseptasi;
                 $data->berkas_akseptasi = $berkas_akseptasi;
-                if($tgl_pengajuan_email) $data->tgl_pengajuan_email = date('Y-m-d',$tgl_pengajuan_email);
-                if($tgl_produksi) $data->tgl_produksi = date('Y-m-d',$tgl_produksi);
+                if($tgl_pengajuan_email) $data->tgl_pengajuan_email = date('Y-m-d',strtotime($tgl_pengajuan_email));
+                if($tgl_produksi) $data->tgl_produksi = date('Y-m-d',strtotime($tgl_produksi));
                 $data->no_reg = $no_reg;
                 $data->no_reg_sistem = $no_reg_sistem;
                 $data->no_dn_cn = $no_dn_cn;
@@ -205,16 +205,16 @@ class MemoPosUpload extends Component
                 $data->no_sertifikat_awal = $no_sertifikat_awal;
                 $data->no_sertifikat_akhir = $no_sertifikat_akhir;
                 if($periode_awal)
-                    $data->periode_awal = date('Y-m-d',$periode_awal);    
+                    $data->periode_awal = date('Y-m-d',strtotime($periode_awal));    
                 if($periode_akhir)
-                    $data->periode_akhir = date('Y-m-d',$periode_akhir);
+                    $data->periode_akhir = date('Y-m-d',strtotime($periode_akhir));
                 if($tgl_proses)
-                    $data->tgl_proses = date('Y-m-d',$tgl_proses);
+                    $data->tgl_proses = date('Y-m-d',strtotime($tgl_proses));
                 $data->movement = $movement;
                 if($tgl_invoice)
-                    $data->tgl_invoice = date('Y-m-d',$tgl_invoice);
+                    $data->tgl_invoice = date('Y-m-d',strtotime($tgl_invoice));
                 if($tgl_invoice2)
-                    $data->tgl_invoice2 = date('Y-m-d',$tgl_invoice2);
+                    $data->tgl_invoice2 = date('Y-m-d',strtotime($tgl_invoice2));
                 $data->no_kwitansi_finance = $no_kwitansi_finance;
                 $data->no_kwitansi_finance2 = $no_kwitansi_finance2;
                 $data->total_gross_kwitansi = $total_gross_kwitansi;
@@ -281,19 +281,19 @@ class MemoPosUpload extends Component
                 $data->grace_periode = $grace_periode;
                 $data->grace_periode_nominal = $grace_periode_nominal;
                 if($tgl_jatuh_tempo)
-                    $data->tgl_jatuh_tempo = date('Y-m-d',$tgl_jatuh_tempo);
+                    $data->tgl_jatuh_tempo = date('Y-m-d',strtotime($tgl_jatuh_tempo));
                 if($tgl_update_database)
-                    $data->tgl_update_database = date('Y-m-d',$tgl_update_database);
+                    $data->tgl_update_database = date('Y-m-d',strtotime($tgl_update_database));
                 if($tgl_update_sistem)
-                    $data->tgl_update_sistem = date('Y-m-d',$tgl_update_sistem);
+                    $data->tgl_update_sistem = date('Y-m-d',strtotime($tgl_update_sistem));
                 $data->no_berkas_sistem = $no_berkas_sistem;
-                if($tgl_posting_sistem) $data->tgl_posting_sistem = $tgl_posting_sistem;
+                if($tgl_posting_sistem) $data->tgl_posting_sistem = date('Y-m-d',strtotime($tgl_posting_sistem));
                 $data->no_debit_note_finance = $no_debit_note_finance;
                 if($tgl_bayar)
-                    $data->tgl_bayar = date('Y-m-d',$tgl_bayar);
+                    $data->tgl_bayar = date('Y-m-d',strtotime($tgl_bayar));
                 $data->ket = $ket;
                 if($tgl_output_email)
-                    $data->tgl_output_email = date('Y-m-d',$tgl_output_email);
+                    $data->tgl_output_email = date('Y-m-d',strtotime($tgl_output_email));
                 $data->no_berkas2 = $no_berkas2;
                 $data->save();
             }

@@ -6,13 +6,16 @@ use Livewire\Component;
 
 class Cancel extends Component
 {
-    public $total_sync=0;
+    public $total_sync=0,$perpage=100;
+    protected $listeners = ['refresh-page'=>'$refresh'];
     public function render()
     {
-        return view('livewire.syariah.cancel');
+        $data = \App\Models\SyariahCancel::orderBy('id','DESC')->where('is_temp',0);
+        
+        return view('livewire.syariah.cancel')->with(['data'=>$data->paginate($this->perpage)]);
     }
     public function mount()
     {
-       // $this->total_sync = \App\Models\Syariah
+        $this->total_sync = \App\Models\SyariahCancel::where('is_temp',0)->count();
     }
 }

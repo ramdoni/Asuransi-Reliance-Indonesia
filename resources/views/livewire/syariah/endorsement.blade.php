@@ -69,7 +69,7 @@
     <div class="modal fade" id="modal_confirm_sync_endorsement" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <livewire:konven.memo-pos-sync>
+                <livewire:syariah.endorsement-sync>
             </div>
         </div>
     </div>
@@ -86,6 +86,7 @@
     Livewire.on('refresh-page',()=>{
         $("#modal_upload_endorsement").modal('hide');
         $("#modal_check_data_endorsement").modal('hide');
+        $("#modal_confirm_sync_endorsement").modal('hide');
     });
     Livewire.on('emit-check-data-endorsement',()=>{
         $("#modal_upload_endorsement").modal("hide");

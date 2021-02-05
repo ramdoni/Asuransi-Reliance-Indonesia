@@ -17,7 +17,7 @@ class CreateTableSyariahEndorsement extends Migration
             $table->id();
             $table->integer('user_id')->nullable();
             $table->boolean('status')->nullable();
-            $table->boolean('is_temp')->nullable();
+            $table->boolean('is_temp')->default(0)->nullable();
             $table->integer('parent_id')->nullable();
             $table->string('bulan',20)->nullable();
             $table->string('user_memo',50)->nullable();
