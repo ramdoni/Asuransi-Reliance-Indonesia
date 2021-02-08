@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class KonvenUnderwriting extends Model
 {
     use HasFactory;
+    protected $guarded = [];
 
     protected $table = 'konven_underwriting';
 
