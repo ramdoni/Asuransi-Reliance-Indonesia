@@ -40,7 +40,7 @@
                                 </tr>
                                 <tr>
                                     <th>{{ __('Due Date')}}</th>
-                                    <td><input type="date" class="form-control col-md-6" wire:model="due_date" {{$is_readonly?'disabled':''}} /></td>
+                                    <td>{{date('d M Y', strtotime($data->due_date))}} <a href="javascript:;" data-toggle="modal" data-target="#modal_extend_due_date"><i class="fa fa-plus"></i> Extend due date</a></td>
                                 </tr>
                                 <tr>
                                     <th>{{ __('Reference Date')}}</th>
@@ -236,7 +236,18 @@
             <div class="body" style="max-height:700px;overflow-y:scroll">
                 <h6 style="color:#007bff">{{$data->reference_no}}</h6>
                 <hr />
-                @if($data->uw)
+                @if($data->type==2 and $data->uw_syariah)
+                <table class="table pl-0 mb-0 table-striped table-nowrap"> 
+                    @foreach(\Illuminate\Support\Facades\Schema::getColumnListing('syariah_underwritings') as $column)
+                    @if(in_array($column,['created_at','updated_at','id','status','is_temp','parent_id','user_id','type_transaksi']))@continue @endif
+                    <tr>
+                        <th>{{ucfirst($column)}}</th>
+                        <td>{{ in_array($column,['manfaat_Kepesertaan_tertunda','kontribusi_kepesertaan_tertunda','jml_kepesertaan','nilai_manfaat','dana_tabbaru','dana_ujrah','kontribusi','ektra_kontribusi','total_kontribusi','pot_langsung','jumlah_diskon','handling_fee','jumlah_fee','jumlah_pph','jumlah_ppn','biaya_polis','biaya_sertifikat','extpst','net_kontribusi','pembayaran','piutang','pengeluaran_ujroh']) ? format_idr($data->uw_syariah->$column) : $data->uw_syariah->$column }}</td>
+                    </tr>
+                    @endforeach
+                </table>    
+                @endif
+                @if($data->type==1 and $data->uw)
                 <table class="table pl-0 mb-0 table-striped table-nowrap"> 
                     <tr>
                         <th style="width:40%;">Bulan</th>
@@ -469,6 +480,11 @@
             <livewire:income-premium-receivable.add-bank />
         </div>
     </div>
+    <div wire:ignore.self class="modal fade" id="modal_extend_due_date" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <livewire:income-premium-receivable.extend-due-date :data="$data"/>
+        </div>
+    </div>
 </div>
 @push('after-scripts')
 <script src="{{ asset('assets/js/jquery.priceformat.min.js') }}"></script>
@@ -483,6 +499,13 @@
 <script>
 Livewire.on('set-titipan-premi',(id)=>{
     $("#modal_add_titipan_premi").modal("hide");
+});
+Livewire.on('refresh-page',()=>{
+    $("#modal_add_bank").modal("hide");
+    $("#modal_extend_due_date").modal("hide");
+    setTimeout(function(){
+        init_form();
+    },500);
 });
 document.addEventListener("livewire:load", () => {
     init_form();

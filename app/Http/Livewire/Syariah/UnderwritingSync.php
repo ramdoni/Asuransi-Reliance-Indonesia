@@ -6,26 +6,33 @@ use Livewire\Component;
 
 class UnderwritingSync extends Component
 {
-    public $total_sync,$is_sync,$total_finish=0,$data,$total_success=0,$total_failed=0;
-    protected $listeners = ['is_sync'=>'uw_sync'];
+    public $total_sync,$is_sync_underwriting,$total_finish=0,$data='Preparing to synchronize, please wait...!',$total_success=0,$total_failed=0;
+    protected $listeners = ['emit_sync_underwriting'=>'sync_syariah_uw'];
     public function render()
     {
         return view('livewire.syariah.underwriting-sync');
     }
     public function mount()
     {
-        $this->total_sync = \App\Models\SyariahUnderwriting::where('status',1)->count();
+        $this->total_sync = \App\Models\SyariahUnderwriting::where(['status'=>1,'is_temp'=>0])->count();
     }
     public function cancel_sync(){
-        $this->is_sync=false;
+        $this->is_sync_underwriting=false;
+        $this->emit('refresh-page');
     }
-    public function uw_sync()
+    public function start_sync(){
+        $this->is_sync_underwriting=true;
+        $this->sync_syariah_uw();
+    }
+    public function sync_syariah_uw()
     {
-        if($this->is_sync==false) return false;
-        $this->emit('is_sync');
-        foreach(\App\Models\SyariahUnderwriting::where('status',1)->get() as $key => $item){
+        if($this->is_sync_underwriting==false) return false;
+        $this->emit('emit_sync_underwriting');
+        foreach(\App\Models\SyariahUnderwriting::where(['status'=>1,'is_temp'=>0])->get() as $key => $item){
+            if($key>1) continue;
             $item->status=2;
             $item->save();
+            $this->data = $item->no_polis .' - '. $item->pemegang_polis;
             // Insert Transaksi
             if(!empty($item->net_kontribusi)){
                 // insert income premium receivable
@@ -42,13 +49,13 @@ class UnderwritingSync extends Component
                 $income->due_date = $item->tgl_jatuh_tempo;
                 $income->type = 2; // Syariah
                 $income->save();
-                $this->data .= '<br /> Premium Receivable : <strong>'.format_idr($item->premi_netto).'</strong>';
+                $this->data .= '<br /> Premium Receivable : <strong>'.format_idr($item->net_kontribusi).'</strong>';
             }
 
             $this->total_success++;
             $this->total_finish++;
         }
-        if(\App\Models\SyariahUnderwriting::where('status',1)->count()==0){
+        if(\App\Models\SyariahUnderwriting::where(['status'=>1,'is_temp'=>0])->count()==0){
             session()->flash('message-success','Synchronize success, Total Success <strong>'.$this->total_success.'</strong>, Total Failed <strong>'.$this->total_failed.'</strong> !');   
             return redirect()->route('syariah.underwriting');
         }

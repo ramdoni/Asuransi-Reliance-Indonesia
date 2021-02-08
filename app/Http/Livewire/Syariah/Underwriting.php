@@ -10,6 +10,7 @@ class Underwriting extends Component
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
     public $total_sync=0,$keyword,$status;
+    protected $listeners = ['refresh-page'=>'$refresh'];
     public function render()
     {
         $data = \App\Models\SyariahUnderwriting::orderBy('id','DESC')->where('is_temp',0);
@@ -19,10 +20,7 @@ class Underwriting extends Component
                         }
                     });
         if($this->status) $data = $data->where('status',$this->status);
-        return view('livewire.syariah.underwriting')->with(['data'=>$data->paginate(100)]);
-    }
-    public function mount()
-    {
         $this->total_sync = \App\Models\SyariahUnderwriting::where(['is_temp'=>0,'status'=>1])->count();
+        return view('livewire.syariah.underwriting')->with(['data'=>$data->paginate(100)]);
     }
 }

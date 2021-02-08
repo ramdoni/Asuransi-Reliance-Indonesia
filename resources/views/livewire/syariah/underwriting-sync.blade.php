@@ -1,17 +1,17 @@
-<form wire:submit.prevent="uw_sync">
+<form>
     <div class="modal-header">
-        <div wire:loading.remove>
-            <h5 class="modal-title" id="exampleModalLabel"><i class="fa fa-refresh"></i> Sync Data</h5>
-        </div>
-        <div wire:loading>
+        @if(!$is_sync_underwriting)
+            <h5 class="modal-title" id="exampleModalLabel"><i class="fa fa-refresh"></i> Sync Data </h5>
+        @endif
+        @if($is_sync_underwriting)
             <h5 class="modal-title" id="exampleModalLabel">
                 <i class="fa fa-refresh fa-spin fa-1x fa-fw"></i>
                 <span class="sr-only">Loading...</span>  Sync Data {{$total_finish}} / {{$total_sync}}</h5>
-        </div>
+        @endif
     </div>
     <div class="modal-body">
         <div class="form-group" wire:loading.remove>
-            <label>Synchronize Underwriting ?</label>
+            <label>Synchronize Underwriting Data?</label>
         </div>
         <div wire:loading class="form-group">
             <p>{!!$data!!}</p>
@@ -19,6 +19,6 @@
     </div>
     <div class="modal-footer">
         <a href="javascript:void(0)" wire:click="cancel_sync" data-dismiss="modal" aria-label="Close" class="btn btn-danger btn-sm">Cancel</a>
-        <button type="submit" {{$is_sync?'disabled':''}} wire:click="$set('is_sync',true)" class="btn btn-info btn-sm"><i class="fa fa-refresh"></i> Sync</button>
+        <button type="button" {{$is_sync_underwriting?'disabled':''}} wire:click="start_sync" class="btn btn-info btn-sm"><i class="fa fa-refresh"></i> Sync</button>
     </div>
 </form>

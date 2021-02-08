@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Income extends Model
 {
     use HasFactory;
+    protected $guarded = [];
 
     protected $table="income";
 
@@ -33,6 +34,10 @@ class Income extends Model
     public function uw()
     {
         return $this->hasOne('\App\Models\KonvenUnderwriting','id','transaction_id');
+    }
+    public function uw_syariah()
+    {
+        return $this->hasOne('\App\Models\SyariahUnderwriting','id','transaction_id');
     }
     public function cancelation()
     {

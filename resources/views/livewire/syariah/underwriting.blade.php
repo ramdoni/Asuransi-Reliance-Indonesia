@@ -83,10 +83,10 @@
         </div>
     </div>
 </div>
-
 @push('after-scripts')
 <script>
     Livewire.on('refresh-page',()=>{
+        $("#modal_confirm_sync_underwriting").modal('hide');
         $("#modal_upload_underwriting").modal('hide');
         $("#modal_check_data_underwriting").modal('hide');
     });

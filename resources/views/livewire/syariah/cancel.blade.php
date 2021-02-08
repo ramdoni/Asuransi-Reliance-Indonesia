@@ -16,9 +16,13 @@
             @if($total_sync>0)
             <a href="javascript:void(0)" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal_confirm_sync_cancel" class="mb-2 btn btn-warning"><i class="fa fa-refresh"></i> Sync {{$total_sync?"(".$total_sync.")" : "(0)"}}</a>
             @endif
+            <span wire:loading>
+                <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                <span class="sr-only">{{ __('Loading...') }}</span>
+            </span>
         </div>
         <div class="col-md-4 text-right">
-            <h6>Sync : <span class="text-info">{{format_idr(\App\Models\KonvenMemo::where('status_sync',1)->count())}}</span>, Draft : <span class="text-warning">{{format_idr(\App\Models\KonvenMemo::where('status_sync',0)->count())}}</span>, Invalid : <span class="text-danger">{{format_idr(\App\Models\KonvenMemo::where('status_sync',2)->count())}}</span>, Total : <span class="text-success">{{format_idr($data->total())}}</span></h6>
+            <h6>Sync : <span class="text-info">{{format_idr(\App\Models\SyariahCancel::where('status',1)->count())}}</span>, Draft : <span class="text-warning">{{format_idr(\App\Models\SyariahCancel::where('status',0)->count())}}</span>, Invalid : <span class="text-danger">{{format_idr(\App\Models\SyariahCancel::where('status',2)->count())}}</span>, Total : <span class="text-success">{{format_idr($data->total())}}</span></h6>
         </div>
     </div>
     <div class="table-responsive">
@@ -39,11 +43,11 @@
                 <tr>
                     <td>{{$num}}</td>
                     <td>
-                        @if($item->status_sync==0)
+                        @if($item->status==0)
                             <span class="badge badge-warning">Draft</span>
-                        @elseif($item->status_sync==1)
+                        @elseif($item->status==1)
                             <span class="badge badge-success">Sync</span>
-                        @elseif($item->status_sync==2)
+                        @elseif($item->status==2)
                             <span class="badge badge-danger">Invalid</span>
                         @endif
                     </td>

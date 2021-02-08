@@ -43,6 +43,7 @@
                                 <th>Voucher Date</th>                                    
                                 <th>Reference Date</th>
                                 <th>Aging</th>
+                                <th>Due Date</th>
                                 <th>Debit Note / Kwitansi</th>
                                 <th>Policy Number / Policy Holder</th> 
                                 <th>Cancelation</th>                   
@@ -72,6 +73,7 @@
                                 <td>{{date('d M Y', strtotime($item->created_at))}}</td>
                                 <td>{{date('d M Y', strtotime($item->reference_date))}}</td>
                                 <td>{{calculate_aging($item->reference_date)}}</td>
+                                <td>{{$item->due_date?date('d M Y',strtotime($item->due_date))}}</td>
                                 <td>{{$item->reference_no ? $item->reference_no : '-'}}</td>
                                 <td>{{$item->client ? $item->client : '-'}}</td>
                                 <td>{{ isset($item->cancelation)?format_idr($item->total_cancelation->sum('nominal')):0 }}</td>

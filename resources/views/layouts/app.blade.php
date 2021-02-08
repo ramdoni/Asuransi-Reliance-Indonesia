@@ -121,11 +121,11 @@
         <script>
             Livewire.on('message-success',(msg)=>{
                 $('.alert-success').show();
-                $('.alert-success .msg').html(msg);
+                $('.alert-success .message').html(msg);
             });
             Livewire.on('message-error',(msg)=>{
                 $('.alert-error').show();
-                $('.alert-error .msg').html(msg);
+                $('.alert-error .message').html(msg);
             });
         </script>
         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">

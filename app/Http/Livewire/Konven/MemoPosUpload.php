@@ -41,8 +41,8 @@ class MemoPosUpload extends Component
                 $user = $i[2];
                 $user_akseptasi = $i[3];
                 $berkas_akseptasi = $i[4];
-                $tgl_pengajuan_email = (int)$i[5] ? \PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[5]) : '';
-                $tgl_produksi= (int)$i[6] ? \PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[6]) :'';
+                $tgl_pengajuan_email = $i[5];//(int)$i[5] ? \PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[5]) : '';
+                $tgl_produksi= $i[6];//(int)$i[6] ? \PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[6]) :'';
                 $no_reg = $i[7];
                 $no_reg_sistem = $i[8];
                 $no_dn_cn = $i[9];

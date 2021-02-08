@@ -98,6 +98,9 @@ class UnderwritingUpload extends Component
                 $find = \App\Models\SyariahUnderwriting::where('no_debit_note',$no_debit_note)->first();
                 $data = new \App\Models\SyariahUnderwriting();
                 if($find){
+                    $income = \App\Models\Income::where(['transaction_table'=>'syariah_underwriting','transaction_id'=>$find->id])->first();
+                    if(isset($income) and $income->status==2) continue; // skip jika data sudah di receive
+
                     $data->is_temp = 1;
                     $data->parent_id = $find->id;
                     $total_double++;
@@ -171,8 +174,8 @@ class UnderwritingUpload extends Component
         if($total_double>0)
             $this->emit('emit-check-data-underwriting');
         else{
-            $this->emit('message-success','Upload success, Success Upload <strong>'. $total_success.'</strong>, Double Data :<strong>'. $total_double.'</strong>');   
-            $this->emit('refresh-page');
+            session()->flash('message-success','Upload success, Success Upload <strong>'. $total_success.'</strong>, Double Data :<strong>'. $total_double.'</strong>');   
+            return redirect()->route('syariah.underwriting');
         }
     }
 }

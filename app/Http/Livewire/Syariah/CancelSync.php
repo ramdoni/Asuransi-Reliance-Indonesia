@@ -6,8 +6,8 @@ use Livewire\Component;
 
 class CancelSync extends Component
 {
-    public $total_sync,$is_sync,$total_finish=0,$data,$total_success=0,$total_failed=0;
-    protected $listeners = ['is_sync_memo'=>'memo_sync'];
+    public $total_sync,$is_sync_cancel,$total_finish=0,$data,$total_success=0,$total_failed=0;
+    protected $listeners = ['emit_sync_cancel'=>'sync_cancel'];
     public function render()
     {
         return view('livewire.syariah.cancel-sync');
@@ -17,12 +17,12 @@ class CancelSync extends Component
         $this->total_sync = \App\Models\KonvenMemo::where('status_sync',0)->count();
     }
     public function cancel_sync(){
-        $this->is_sync_memo=false;
+        $this->is_sync_cancel=false;
     }
-    public function memo_sync()
+    public function sync_cancel()
     {
-        if($this->is_sync_memo==false) return false;
-        $this->emit('is_sync_memo');
+        if($this->is_sync_cancel==false) return false;
+        $this->emit('emit_sync_cancel');
         foreach(\App\Models\KonvenMemo::where(['status_sync'=>0,'is_temp'=>0])->get() as $key => $item){
             if($key > 1) continue;
             $this->data = $item->no_kwitansi_finance .'/'. $item->no_kwitansi_finance2."<br />";

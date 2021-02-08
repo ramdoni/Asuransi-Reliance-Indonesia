@@ -9,8 +9,8 @@
             </div>
         </div>
         <div>
-            <a href="javascript:void(0)" class="btn btn-info btn-sm" wire:click="emit('confirm-replace-all-underwriting')"><i class="fa fa-refresh"></i> Replace All</a>
-            <a href="javascript:void(0)" class="btn btn-success btn-sm" wire:click="emit('confirm-keep-all-underwriting')"><i class="fa fa-check"></i> Keep All</a>
+            <a href="javascript:void(0)" class="btn btn-info btn-sm" wire:click="$emit('confirm-replace-all-underwriting')"><i class="fa fa-refresh"></i> Replace All</a>
+            <a href="javascript:void(0)" class="btn btn-success btn-sm" wire:click="$emit('confirm-keep-all-underwriting')"><i class="fa fa-check"></i> Keep All</a>
             <a href="javascript:void(0)" class="btn btn-danger btn-sm" wire:click="$emit('confirm-delete-all-underwriting')"><i class="fa fa-trash"></i> Delete All</a>
         </div>
         <div wire:loading>
@@ -22,11 +22,24 @@
         <table class="table m-b-0 table-hover c_list">
             <thead>
                 <tr>
-                    <th>No</th>
+                    <th rowspan="2">
+                        <select style="width: 50px; padding-left:2px;padding-right:2px;" class="form-control" wire:model="perpage">
+                            <option>100</option>
+                            <option>200</option>
+                            <option>300</option>
+                            <option>400</option>
+                            <option>500</option>
+                            <option>600</option>
+                            <option>700</option>
+                            <option>800</option>
+                            <option>900</option>
+                            <option>1000</option>
+                        </select>
+                    </th>
                     <th></th>
                     <th></th>
                     @foreach(\Illuminate\Support\Facades\Schema::getColumnListing('syariah_underwritings') as $column)
-                    @if(in_array($column,['created_at','updated_at','id','status','is_temp','parent_id','user_id']))@continue @endif
+                    @if(in_array($column,['type_transaksi','created_at','updated_at','id','status','is_temp','parent_id','user_id']))@continue @endif
                     <th>{{ucfirst($column)}}</th>
                     @endforeach
                 </tr>
@@ -45,8 +58,8 @@
                         <span class="badge badge-success">*New</span>
                     </td>
                     @foreach(\Illuminate\Support\Facades\Schema::getColumnListing('syariah_underwritings') as $column)
-                    @if(in_array($column,['created_at','updated_at','id','status','is_temp','parent_id','user_id','type_transaksi']))@continue @endif
-                    <td>{{ in_array($column,['manfaat_sebelum_endors','dana_tab_baru_sebelum_endors','dana_ujrah_sebelum_endors','kontribusi_cancel','extra_kontribusi','jumlah_discount','handling_fee','jumlah_fee','jumlah_pph','jumlah_ppn','biaya_polis','biaya_sertifikat','ext_biaya_sertifikat','rp_biaya_sertifikat','ext_pst_sertifikat','net_sebelum_endors','net_sebelum_endors','net_sebelum_endors','net_sebelum_endors','net_sebelum_endors','extra_kontribusi_2','jumlah_discount_2','handling_fee_2','jumlah_fee_2','jumlah_pph_2','jumlah_pph_2','biaya_polis_2','biaya_sertifikat_2','net_setelah_endors','dengan_tagihan_atau_refund_premi']) ? format_idr($item->$column) : $item->$column }}</td>
+                    @if(in_array($column,['type_transaksi','created_at','updated_at','id','status','is_temp','parent_id','user_id','type_transaksi']))@continue @endif
+                    <td>{{ in_array($column,['manfaat_Kepesertaan_tertunda','kontribusi_kepesertaan_tertunda','jml_kepesertaan','nilai_manfaat','dana_tabbaru','dana_ujrah','kontribusi','ektra_kontribusi','total_kontribusi','pot_langsung','jumlah_diskon','handling_fee','jumlah_fee','jumlah_pph','jumlah_ppn','biaya_polis','biaya_sertifikat','extpst','net_kontribusi','pembayaran','piutang','pengeluaran_ujroh']) ? format_idr($item->$column) : $item->$column }}</td>
                     @endforeach
                 </tr>
                 @if($item->parent)
@@ -55,9 +68,9 @@
                     <td>
                         <span class="badge badge-warning">*Old</span>
                     </td>
-                    @foreach(\Illuminate\Support\Facades\Schema::getColumnListing('syariah_underwriting') as $column)
+                    @foreach(\Illuminate\Support\Facades\Schema::getColumnListing('syariah_underwritings') as $column)
                     @if(in_array($column,['created_at','updated_at','id','status','is_temp','parent_id','user_id','type_transaksi']))@continue @endif
-                    <td>{{ in_array($column,['manfaat_sebelum_endors','dana_tab_baru_sebelum_endors','dana_ujrah_sebelum_endors','kontribusi_cancel','extra_kontribusi','jumlah_discount','handling_fee','jumlah_fee','jumlah_pph','jumlah_ppn','biaya_polis','biaya_sertifikat','ext_biaya_sertifikat','rp_biaya_sertifikat','ext_pst_sertifikat','net_sebelum_endors','net_sebelum_endors','net_sebelum_endors','net_sebelum_endors','net_sebelum_endors','extra_kontribusi_2','jumlah_discount_2','handling_fee_2','jumlah_fee_2','jumlah_pph_2','jumlah_pph_2','biaya_polis_2','biaya_sertifikat_2','net_setelah_endors','dengan_tagihan_atau_refund_premi']) ? format_idr($item->$column) : $item->$column }}</td>
+                    <td>{{ in_array($column,['manfaat_Kepesertaan_tertunda','kontribusi_kepesertaan_tertunda','jml_kepesertaan','nilai_manfaat','dana_tabbaru','dana_ujrah','kontribusi','ektra_kontribusi','total_kontribusi','pot_langsung','jumlah_diskon','handling_fee','jumlah_fee','jumlah_pph','jumlah_ppn','biaya_polis','biaya_sertifikat','extpst','net_kontribusi','pembayaran','piutang','pengeluaran_ujroh']) ? format_idr($item->parent->$column) : $item->parent->$column }}</td>
                     @endforeach
                 </tr>
                 @endif

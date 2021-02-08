@@ -48,6 +48,21 @@ class RefundSync extends Component
                 $bank->owner = $item->tujuan_pembayaran;
                 $bank->save();
             }
+
+            $expense = new \App\Models\Expenses();
+            $expense->user_id = \Auth::user()->id;
+            $expense->no_voucher = generate_no_voucher_income();
+            $expense->reference_no = $item->no_dn_cn;
+            $expense->reference_date = $item->tgl_refund;
+            $expense->nominal = $item->refund_kontribusi;
+            $expense->recipient = $item->no_polis.' / '.$item->pemegang_polis;
+            $expense->reference_type = 'Refund';
+            $expense->transaction_id = $item->id;
+            $expense->transaction_table = 'syariah_refund';
+            $expense->description = $item->ket;
+            $expense->rekening_bank_id = $bank->id;
+            $expense->type = 2;
+            $expense->save();
             
             $this->data .=$item->no_polis.' / '.$item->pemegang_polis;
         }

@@ -24,7 +24,7 @@ class EndorsementCheckData extends Component
                                                     $table->orWhere($column,'LIKE',"%{$this->keyword}%");
                                                 }
                                             });
-        return view('livewire.syariah.underwriting-check-data')->with(['data'=>$data->paginate($this->perpage)]);
+        return view('livewire.syariah.endorsement-check-data')->with(['data'=>$data->paginate($this->perpage)]);
     }
     public function replaceAll()
     {

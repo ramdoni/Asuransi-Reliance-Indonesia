@@ -10,7 +10,7 @@ class Detail extends Component
     public $payment_date,$tax_amount,$total_payment_amount,$is_readonly=false,$due_date;
     public $bank_charges,$showDetail='underwriting',$cancelation;
     public $titipan_premi,$temp_titipan_premi=[],$temp_arr_titipan_id=[],$total_titipan_premi=0;
-    protected $listeners = ['emit-add-bank'=>'emitAddBank','set-titipan-premi'=>'setTitipanPremi'];
+    protected $listeners = ['emit-add-bank'=>'emitAddBank','set-titipan-premi'=>'setTitipanPremi','refresh-page'=>'$refresh'];
     protected $rules = 
         [
             'bank_account_id'=>'required',
