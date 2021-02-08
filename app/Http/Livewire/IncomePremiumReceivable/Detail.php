@@ -103,16 +103,7 @@ class Detail extends Component
         $this->data->from_bank_account_id = $this->from_bank_account_id;
         $this->data->bank_charges = $this->bank_charges;
         $this->data->user_id = \Auth::user()->id;
-        $this->data->due_date = $this->due_date;
         $this->data->save();
-
-        // cek due date
-        $uw = isset($this->data->uw->tgl_jatuh_tempo) ? $this->data->uw : '';
-        if($uw){
-            if($this->due_date != $uw->tgl_jatuh_tempo){
-                \App\Models\KonvenUnderwriting::where('id',$this->data->transaction_id)->update(['extend_tgl_jatuh_tempo'=>$this->due_date]);
-            }
-        }
 
         if($this->temp_titipan_premi){
             $total_titipan_premi = 0;
