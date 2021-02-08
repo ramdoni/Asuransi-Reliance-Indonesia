@@ -30,10 +30,13 @@ class ExtendDueDate extends Component
         $this->validate([
             'date'=>'required'
         ]);
-        \App\Models\Income::find($this->data->id)->update(['due_date'=>$this->date]);
-        // update data uploader
-        if($this->data->type==1) \App\Models\KonvenUnderwriting::find($this->data->transaction_id)->update(['extend_tgl_jatuh_tempo'=>$this->date]);
-        if($this->data->type==2) \App\Models\SyariahUnderwriting::find($this->data->transaction_id)->update(['extend_tgl_jatuh_tempo'=>$this->date]);
+        if($this->date != $this->data->due_date){
+            \App\Models\Income::find($this->data->id)->update(['due_date'=>$this->date]);
+            // update data uploader
+            if($this->data->type==1) \App\Models\KonvenUnderwriting::find($this->data->transaction_id)->update(['extend_tgl_jatuh_tempo'=>$this->date]);
+            if($this->data->type==2) \App\Models\SyariahUnderwriting::find($this->data->transaction_id)->update(['extend_tgl_jatuh_tempo'=>$this->date]);
+        }
+        
         $this->emit('message-success','Due date has been changed successfully');
         $this->emit('refresh-page');
     }
