@@ -59,13 +59,13 @@
                                 <tr>
                                     <th>{{__('To Bank Account')}}</th>
                                     <td>
-                                        <select class="form-control" wire:model="to_bank_account_id" {{$is_readonly?'disabled':''}}>
+                                        <select class="form-control" wire:model="bank_account_id" {{$is_readonly?'disabled':''}}>
                                             <option value=""> --- {{__('Select')}} --- </option>
                                             @foreach (\App\Models\BankAccount::where('is_client',0)->orderBy('bank','ASC')->get() as $bank)
                                                 <option value="{{ $bank->id}}">{{ $bank->no_rekening}} ({{ $bank->bank}})</option>
                                             @endforeach
                                         </select>
-                                        @error('to_bank_account_id')
+                                        @error('bank_account_id')
                                         <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                                         @enderror
                                     </td>
@@ -129,6 +129,14 @@
 </div>
 @push('after-scripts')
 <script src="{{ asset('assets/js/jquery.priceformat.min.js') }}"></script>
+<link rel="stylesheet" href="{{ asset('assets/vendor/select2/css/select2.min.css') }}"/>
+<script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
+<style>
+    .select2-container .select2-selection--single {height:36px;padding-left:10px;}
+    .select2-container .select2-selection--single .select2-selection__rendered{padding-top:3px;}
+    .select2-container--default .select2-selection--single .select2-selection__arrow{top:4px;right:10px;}
+    .select2-container {width: 100% !important;}
+</style>
 @endpush
 @section('page-script')
     Livewire.on('changeForm', () =>{
@@ -143,6 +151,15 @@
             thousandsSeparator: '.',
             centsLimit: 0
         });
+
+        select__2 = $('.select_no_polis').select2();
+        $('.select_no_polis').on('change', function (e) {
+            let elementName = $(this).attr('id');
+            var data = $(this).select2("val");
+            @this.set(elementName, data);
+        });
+        var selected__ = $('.select_no_polis').find(':selected').val();
+        if(selected__ !="") select__2.val(selected__);
     }
     setTimeout(function(){
         init_form()

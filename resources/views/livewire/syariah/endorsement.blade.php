@@ -39,11 +39,11 @@
                 <tr>
                     <td>{{$num}}</td>
                     <td>
-                        @if($item->status_sync==0)
+                        @if($item->status==0)
                             <span class="badge badge-warning">Draft</span>
-                        @elseif($item->status_sync==1)
+                        @elseif($item->status==1)
                             <span class="badge badge-success">Sync</span>
-                        @elseif($item->status_sync==2)
+                        @elseif($item->status==2)
                             <span class="badge badge-danger">Invalid</span>
                         @endif
                     </td>

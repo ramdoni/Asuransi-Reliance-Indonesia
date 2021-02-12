@@ -17,10 +17,7 @@ class Refund extends Component
             }
         });
         if($this->status) $data = $data->where('status',$this->status);
-        return view('livewire.syariah.refund')->with(['data'=>$data->paginate($this->perpage)]);
-    }
-    public function mount()
-    {
         $this->total_sync = \App\Models\SyariahRefund::where('status',0)->count();
+        return view('livewire.syariah.refund')->with(['data'=>$data->paginate($this->perpage)]);
     }
 }

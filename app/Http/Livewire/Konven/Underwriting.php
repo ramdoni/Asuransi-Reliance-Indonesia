@@ -76,6 +76,8 @@ class Underwriting extends Component
 
     public function mount()
     {
+        \LogActivity::add('Konven Underwriting');
+
         $this->total_sync = \App\Models\KonvenUnderwriting::where('status',1)->where('is_temp',0)->count();
     }
 }

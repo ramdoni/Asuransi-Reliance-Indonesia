@@ -33,7 +33,7 @@ class CancelUpload extends Component
                 if($key<1) continue; // skip header
                 foreach($i as $k=>$a){ $i[$k] = trim($a); }
                 
-                $find = \App\Models\SyariahCancel::where('no_credit_note',$i[7])->first();
+                $find = \App\Models\SyariahCancel::where('no_credit_note',$i[8])->first();
                 $data = new \App\Models\SyariahCancel();
                 if($find){
                     $data->is_temp = 1;
@@ -64,18 +64,18 @@ class CancelUpload extends Component
                 $data->no_kepesertaan_akhir = $i[23];
                 if($i[24]) $data->masa_awal = date('Y-m-d',strtotime($i[24]));
                 if($i[25]) $data->masa_akhir = date('Y-m-d',strtotime($i[25]));
-                $data->manfaat_cancel = (int)$i[26];
-                $data->kontribusi_gross_cancel = (int)$i[27];
-                $data->ektra_kontribusi_cancel = (int)$i[28];
+                $data->manfaat_cancel = replace_idr($i[26]);
+                $data->kontribusi_gross_cancel = replace_idr($i[27]);
+                $data->ektra_kontribusi_cancel = replace_idr($i[28]);
                 $data->diskon_kontribusi = $i[29];
-                $data->jumlah_diskon = (int)$i[30];
+                $data->jumlah_diskon = replace_idr($i[30]);
                 $data->ppn = $i[31];
-                $data->jumlah_ppn = (int)$i[32];
-                $data->fee = (int)$i[33];
-                $data->jumlah_handling_fee = (int)$i[34];
+                $data->jumlah_ppn = replace_idr($i[32]);
+                $data->fee = replace_idr($i[33]);
+                $data->jumlah_handling_fee = replace_idr($i[34]);
                 $data->pph = $i[35];
-                $data->jumlah_pph = (int)$i[36];
-                $data->refund = (int)$i[37];
+                $data->jumlah_pph = replace_idr($i[36]);
+                $data->refund = replace_idr($i[37]);
                 $data->terbilang = $i[38];
                 $data->grace_periode = $i[39];
                 $data->grace_periode_num = $i[40];

@@ -1,6 +1,11 @@
 @section('title', 'Premium Receivable')
 @section('parentPageTitle', 'Home')
-
+@section('title-right')
+<h6 class="mt-2">
+    <small>Received </small>  <strong class="text-info cursor-pointer" wire:click="$set('status',2)">Rp. {{format_idr($received)}}</strong>
+    <small>Outstanding</small> <strong class="text-danger">Rp. {{format_idr($outstanding)}}</strong>
+    <small>Total </small><strong class="text-success">Rp. {{format_idr($received+$outstanding)}}</strong></h6>
+@endsection
 <div class="clearfix row">
     <div class="col-lg-12">
         <div class="card">
@@ -28,8 +33,11 @@
                     <div class="col-md-2 pr-0">
                         <input type="text" class="form-control" wire:model="payment_date" placeholder="Payment Date" onfocus="(this.type='date')" />
                     </div>
-                    <div class="col-md-6 text-right">
-                        <p class="mt-2">Received : <strong class="text-info cursor-pointer" wire:click="$set('status',2)">Rp. {{format_idr($received)}}</strong>, Outstanding : <strong class="text-danger">Rp. {{format_idr($outstanding)}}</strong>, Total : <strong class="text-success">Rp. {{format_idr($received+$outstanding)}}</strong></p>
+                    <div class="col-md-1">
+                        <span wire:loading>
+                            <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                            <span class="sr-only">{{ __('Loading...') }}</span>
+                        </span>
                     </div>
                 </div>
                 <div class="table-responsive">
@@ -57,9 +65,10 @@
                             </tr>
                         </thead>
                         <tbody>
+                        @php($num=$data->firstItem())
                         @foreach($data as $k => $item)
                             <tr>
-                                <td style="width: 50px;">{{$k+1}}</td>
+                                <td style="width: 50px;">{{$num}}</td>
                                 <td><a href="{{route('income.premium-receivable.detail',['id'=>$item->id])}}">{!!status_income($item->status)!!}</a></td>
                                 <td>
                                     <a href="{{route('income.premium-receivable.detail',['id'=>$item->id])}}">{{$item->no_voucher}}</a>
@@ -76,8 +85,20 @@
                                 <td>{{$item->due_date?date('d M Y',strtotime($item->due_date)):''}}</td>
                                 <td>{{$item->reference_no ? $item->reference_no : '-'}}</td>
                                 <td>{{$item->client ? $item->client : '-'}}</td>
-                                <td>{{ isset($item->cancelation)?format_idr($item->total_cancelation->sum('nominal')):0 }}</td>
-                                <td>{{ isset($item->endorsemement)?format_idr($item->endorsement->sum('nominal')):0 }}</td>
+                                <td>
+                                    @if($item->type ==1)
+                                        {{ isset($item->cancelation_konven)?format_idr($item->cancelation_konven->sum('nominal')):0 }}
+                                    @else
+                                        {{ isset($item->cancelation_syariah)?format_idr($item->cancelation_syariah->sum('nominal')):0 }}
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($item->type ==1)
+                                        {{ isset($item->endorsemement_konven)?format_idr($item->endorsement_konven->sum('nominal')):0 }}
+                                    @else
+                                        {{ isset($item->endorsemement_syariah)?format_idr($item->endorsement_syariah->sum('nominal')):0 }}
+                                    @endif
+                                </td>
                                 <td>{{isset($item->nominal) ? format_idr($item->nominal) : '-'}}</td>
                                 <td>{{isset($item->from_bank_account->no_rekening) ? $item->from_bank_account->no_rekening .'- '.$item->from_bank_account->bank.' an '. $item->from_bank_account->owner : '-'}}</td>
                                 <td>{{isset($item->bank_account->no_rekening) ? $item->bank_account->no_rekening .' - '.$item->bank_account->bank.' an '. $item->bank_account->owner : '-'}}</td>
@@ -85,6 +106,7 @@
                                 <td>{{isset($item->bank_charges) ? format_idr($item->bank_charges) : '-'}}</td>
                                 <td>{{isset($item->payment_amount) ? format_idr($item->payment_amount) : '-'}}</td>
                             </tr>
+                        @php($num++)
                         @endforeach
                         </tbody>
                     </table>

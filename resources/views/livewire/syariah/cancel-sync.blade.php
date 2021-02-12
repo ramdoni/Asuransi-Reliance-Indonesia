@@ -1,13 +1,16 @@
-<form wire:submit.prevent="sync_cancel">
+<form wire:submit.prevent="sync">
     <div class="modal-header">
-        <div wire:loading.remove>
-            <h5 class="modal-title" id="exampleModalLabel"><i class="fa fa-refresh"></i> Sync Data</h5>
-        </div>
-        <div wire:loading>
+        @if($is_sync_cancel)
+        <div>
             <h5 class="modal-title" id="exampleModalLabel">
                 <i class="fa fa-refresh fa-spin fa-1x fa-fw"></i>
                 <span class="sr-only">Loading...</span>  Sync Data {{$total_finish}} / {{$total_sync}}</h5>
         </div>
+        @else
+        <div wire:loading.remove>
+            <h5 class="modal-title" id="exampleModalLabel"><i class="fa fa-refresh"></i> Sync Data</h5>
+        </div>
+        @endif
     </div>
     <div class="modal-body">
         <div class="form-group" wire:loading.remove>

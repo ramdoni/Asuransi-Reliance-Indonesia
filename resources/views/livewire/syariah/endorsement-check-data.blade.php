@@ -9,8 +9,8 @@
             </div>
         </div>
         <div>
-            <a href="javascript:void(0)" class="btn btn-info btn-sm" wire:click="emit('confirm-replace-all-endorsement')"><i class="fa fa-refresh"></i> Replace All</a>
-            <a href="javascript:void(0)" class="btn btn-success btn-sm" wire:click="emit('confirm-keep-all-endorsement')"><i class="fa fa-check"></i> Keep All</a>
+            <a href="javascript:void(0)" class="btn btn-info btn-sm" wire:click="$emit('confirm-replace-all-endorsement')"><i class="fa fa-refresh"></i> Replace All</a>
+            <a href="javascript:void(0)" class="btn btn-success btn-sm" wire:click="$emit('confirm-keep-all-endorsement')"><i class="fa fa-check"></i> Keep All</a>
             <a href="javascript:void(0)" class="btn btn-danger btn-sm" wire:click="$emit('confirm-delete-all-endorsement')"><i class="fa fa-trash"></i> Delete All</a>
         </div>
         <div wire:loading>

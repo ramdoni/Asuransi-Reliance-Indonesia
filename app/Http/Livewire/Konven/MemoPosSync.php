@@ -53,13 +53,20 @@ class MemoPosSync extends Component
                 // cek income Status Unpaid
                 $income = \App\Models\Income::where(['transaction_table'=>'konven_underwriting','transaction_id'=>$uw->id,'status'=>1])->first();
                 if($income){
-                    $income_end = new \App\Models\KonvenUnderwritingEndorsement();
-                    $income_end->konven_underwriting_id = $uw->id;
-                    $income_end->konven_memo_pos_id = $item->id;
-                    $income_end->income_id = $income->id;
-                    $income_end->nominal = abs($item->refund);
-                    $income_end->type = $item->ket_perubahan2;
-                    $income_end->save();
+                    // $income_end = new \App\Models\KonvenUnderwritingEndorsement();
+                    // $income_end->konven_underwriting_id = $uw->id;
+                    // $income_end->konven_memo_pos_id = $item->id;
+                    // $income_end->income_id = $income->id;
+                    // $income_end->nominal = abs($item->refund);
+                    // $income_end->type = $item->ket_perubahan2;
+                    // $income_end->save();
+                    $endors = new \App\Models\IncomeEndorsement();
+                    $endors->income_id = $income->id;
+                    $endors->nominal =  abs($item->refund);
+                    $endors->transaction_table = 'konven_memo_pos';
+                    $endors->transaction_id = $item->id;
+                    $endors->type = $item->ket_perubahan2 =="DN" ? 2 : 1;
+                    $endors->save();
                 }else{
                     if($item->ket_perubahan2 =='DN'){
                         $income = new \App\Models\Income();
@@ -119,11 +126,11 @@ class MemoPosSync extends Component
                     if($in and $in->status==1){  
                         //jika statusnya belum paid maka embed cancelation ke form income premium receivable 
                         //dan mengurangi nominal dari premi yang diterima
-                        $cancel = new \App\Models\KonvenUnderwritingCancelation();
-                        $cancel->konven_underwriting_id = $uw->id;
-                        $cancel->konven_memo_pos_id = $item->id;
+                        $cancel = new \App\Models\IncomeCancel();
                         $cancel->income_id = $in->id;
-                        $cancel->nominal = abs($item->refund);
+                        $cancel->nominal = $item->refund;
+                        $cancel->transaction_id = $item->id;
+                        $cancel->transaction_table= "konven_memo_pos";
                         $cancel->save();
                     }
                 }else{

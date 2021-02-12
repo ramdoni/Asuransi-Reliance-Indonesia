@@ -39,8 +39,8 @@ class Index extends Component
     public function autologin($id)
     {
         $data = User::where('id', $id)->first();
-
         if($data){
+            \LogActivity::add("Autologin {$data->name}");
             \Session::put('is_id', \Auth::user()->id);
             \Auth::loginUsingId($data->id);
             \Session::put('is_login_administrator', true);
@@ -51,6 +51,8 @@ class Index extends Component
 
     public function delete($id)
     {
+        $data = User::find($id);
+        \LogActivity::add("Delete {$data->name}");
         User::find($id)->delete();
     }
 }

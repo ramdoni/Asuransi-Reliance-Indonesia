@@ -1,5 +1,5 @@
-@section('title', 'Claim')
-@section('parentPageTitle', 'Home')
+@section('title', 'Claim Payable')
+@section('parentPageTitle', 'Expense')
 <div class="clearfix row">
     <div class="col-lg-12">
         <div class="card">
@@ -30,8 +30,7 @@
                                 <th>Payment Date</th>                                    
                                 <th>Voucher Date</th>         
                                 <th>Debit Note / Kwitansi</th>
-                                <th>Policy Number / Policy Holder</th>                    
-                                <th>Total</th>                                               
+                                <th>Policy Number / Policy Holder</th>                       
                                 <th>From Bank Account</th>
                                 <th>To Bank Account</th>
                                 <th>Bank Charges</th>
@@ -48,7 +47,6 @@
                                 <td>{{date('d M Y', strtotime($item->payment_date))}}</td>
                                 <td>{{$item->reference_no ? $item->reference_no : '-'}}</td>
                                 <td>{{$item->recipient ? $item->recipient : '-'}}</td>
-                                <td>{{isset($item->nominal) ? format_idr($item->nominal) : '-'}}</td>
                                 <td>{{isset($item->from_bank_account->no_rekening) ? $item->from_bank_account->no_rekening .' - '.$item->from_bank_account->bank.' an '.$item->from_bank_account->owner : '-'}}</td>
                                 <td>{{isset($item->bank_account->no_rekening) ? $item->bank_account->no_rekening .' - '.$item->bank_account->bank.' an '.$item->bank_account->owner : '-'}}</td>
                                 <td>{{isset($item->bank_charges) ? format_idr($item->bank_charges) : '-'}}</td>

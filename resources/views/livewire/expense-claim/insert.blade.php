@@ -1,7 +1,7 @@
-@section('title', 'Claim')
+@section('title', 'Claim Payable')
 @section('parentPageTitle', 'Expense')
 <div class="clearfix row">
-    <div class="col-md-4">
+    <div class="col-md-5">
         <div class="card">
             <div class="body">
                 <form wire:submit.prevent="save">
@@ -9,8 +9,8 @@
                         <p>{{ __('Voucher Number') }} : <strong class="text-success">{{$no_voucher}}</strong></p>
                         <hr />
                     </div>
-                    <div class="form-group">
-                        <label>{{ __('No Polis') }} {{$no_polis}}</label>
+                    <div class="form-group" wire:ignore>
+                        <label>{{ __('No Polis') }}</label>
                         <select class="form-control select_no_polis" wire:model="no_polis" id="no_polis">
                             <option value=""> --- Select --- </option>
                             @foreach(\App\Models\Policy::orderBy('pemegang_polis','ASC')->get() as $item)
@@ -22,14 +22,68 @@
                         @enderror
                     </div>
                     <div class="form-group">
-                        <label>{{ __('Nilai Klaim') }}</label>
-                        <input type="text" class="form-control format_number" wire:model="nilai_klaim">
-                        @error('nilai_klaim')
+                        <label>{{ __('Reference No') }}</label>
+                        <input type="text" class="form-control" wire:model="reference_no" />
+                        @error('reference_no')
                         <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                         @enderror
                     </div>
+                    <div class="form-group">
+                        <label>{{ __('From Bank Account') }}</label>
+                        <select class="form-control" wire:model="from_bank_account_id">
+                            <option value=""> --- Select --- </option>
+                            @foreach (\App\Models\BankAccount::where('is_client',0)->orderBy('owner','ASC')->get() as $bank)
+                                <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
+                            @endforeach
+                        </select>
+                        @error('from_bank_account_id')
+                        <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                        @enderror
+                    </div>
+                    <div class="form-group" wire:ignore>
+                        <label>{{ __('To Bank Account') }}</label>
+                        <select class="form-control select_to_bank" id="to_bank_account_id" wire:model="to_bank_account_id">
+                            <option value=""> --- Select --- </option>
+                            @foreach (\App\Models\BankAccount::where('is_client',1)->orderBy('owner','ASC')->get() as $bank)
+                                <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
+                            @endforeach
+                        </select>
+                        @error('to_bank_account_id')
+                        <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                        @enderror
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label>{{ __('Bank Charges') }}</label>
+                            <input type="text" class="form-control format_number" wire:model="bank_charges">
+                            @error('bank_charges')
+                            <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                            @enderror
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>{{ __('Nilai Klaim') }}</label>
+                            <input type="text" class="form-control format_number" wire:model="nilai_klaim">
+                            @error('nilai_klaim')
+                            <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>{{ __('Payment Date') }}</label>
+                        <input type="date" class="form-control" wire:model="payment_date">
+                        @error('payment_date')
+                        <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                        @enderror
+                    </div>
+                    <tr>
+                        <th>{{__('Description')}}</th>
+                        <td>
+                            <textarea style="height:100px;" class="form-control" wire:model="description"></textarea>
+                        </td>
+                    </tr>
+                    <hr />
                     <a href="javascript:void0()" onclick="history.back()"><i class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
-                    <button type="submit" class="ml-3 btn btn-primary"><i class="fa fa-save"></i> {{ __('Submit') }}</button>
+                    <button type="submit" class="ml-3 btn btn-primary" {{!$is_submit?'disabled':''}}><i class="fa fa-save"></i> {{ __('Submit') }}</button>
                     <div wire:loading>
                         <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
                         <span class="sr-only">Loading...</span>
@@ -38,14 +92,22 @@
             </div>
         </div>
     </div>
-    <div class="col-md-8">
+    <div class="col-md-7">
         <div class="card">
             <div class="body">
                 <table class="table table-striped table-hover m-b-0 c_list table-nowrap">
                     <tr>
                         <th>No Polis</th>
                         <td> :</td>
-                        <td>{{isset($data->no_polis) ? $data->no_polis : ''}}</td>
+                        <td>{{isset($data->no_polis) ? $data->no_polis : ''}} 
+                            @if($data)
+                                @if($data->type==1)
+                                    <span class="badge badge-info">Konven</span>
+                                @else
+                                    <span class="badge badge-warning">Syariah</span>
+                                @endif
+                            @endif
+                        </td>
                     </tr>
                     <tr>
                         <th>Pemegang Polis</th>
@@ -163,6 +225,15 @@
         });
         var selected__ = $('.select_no_polis').find(':selected').val();
         if(selected__ !="") select__2.val(selected__);
+
+        select_to_bank = $('.select_to_bank').select2();
+        $('.select_to_bank').on('change', function (e) {
+            let elementName = $(this).attr('id');
+            var data = $(this).select2("val");
+            @this.set(elementName, data);
+        });
+        var selected_to_bank = $('.select_to_bank').find(':selected').val();
+        if(selected_to_bank !="") select_to_bank.val(selected_to_bank);
     }
     setTimeout(function(){
         init_form()

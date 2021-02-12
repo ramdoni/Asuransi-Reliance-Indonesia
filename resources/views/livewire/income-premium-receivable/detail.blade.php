@@ -9,8 +9,8 @@
                         <div class="col-md-12">
                             <table class="table pl-0 mb-0 table-striped table-nowrap">
                                 <tr>
-                                    <th>{{ __('Voucher Number')}}</th>
-                                    <td>{{$data->no_voucher}}</td>
+                                    <th style="width: 40%;">{{ __('Voucher Number')}}</th>
+                                    <td style="width: 60%;">{{$data->no_voucher}}</td>
                                 </tr>
                                 <tr>
                                     <th>{{ __('Voucher Date')}}</th>
@@ -50,7 +50,67 @@
                                     <th>{{ __('Premium Receivable')}}</th>
                                     <td>{{format_idr($data->nominal)}}</td>
                                 </tr>
-                                @if($data->endorsement->count() || $data->cancelation->count())
+
+                                @if($data->type==1)
+                                    @if($data->cancelation_konven->count())
+                                    <tr>
+                                        <th>{{ __('Cancelation')}}</th>
+                                        <td>
+                                            @foreach($data->cancelation_konven as $cancel)
+                                            <p>{!!format_idr($cancel->nominal).' - <a href="javascript:void(0);" class="text-danger" title="Klik Detail" wire:click="showDetailCancelation('.$cancel->id.')">'.$cancel->konven->no_credit_note.'</a>'!!}</p> 
+                                            @endforeach
+                                        </td>
+                                    </tr> 
+                                    {{-- <tr>
+                                        <th>{{ __('Total After Cancelation')}}</th>
+                                        <td>
+                                            {{format_idr($data->nominal-$data->cancelation->sum('nominal'))}}
+                                        </td>
+                                    </tr> --}}
+                                    @endif
+                                    @if($data->endorsement_konven->count())
+                                    <tr>
+                                        <th>{{ __('Endorsement')}}</th>
+                                        <td>
+                                            @foreach($data->endorsement_konven as $cancel)
+                                            <p>{!!format_idr($cancel->nominal).' - <a href="javascript:void(0);" class="text-danger" title="Klik Detail" wire:click="showDetailCancelation('.$cancel->id.')">'.$cancel->konven->no_credit_note.'</a>'!!}</p> 
+                                            @endforeach
+                                        </td>
+                                    </tr> 
+                                    {{-- <tr>
+                                        <th>{{ __('Total After Cancelation')}}</th>
+                                        <td>
+                                            {{format_idr($data->nominal-$data->cancelation->sum('nominal'))}}
+                                        </td>
+                                    </tr> --}}
+                                    @endif
+                                @endif
+
+                                @if($data->type==2)
+                                    @if($data->cancelation_syariah->count())
+                                    <tr>
+                                        <th>{{ __('Cancelation')}}</th>
+                                        <td>
+                                            @foreach($data->cancelation_syariah as $cancel)
+                                            <p>{!!format_idr($cancel->nominal).' - <a href="javascript:void(0);" class="text-danger" title="Klik Detail" wire:click="showDetailCancelation('.$cancel->transaction_id.')">'.$cancel->syariah->no_credit_note.'</a>'!!}</p> 
+                                            @endforeach
+                                        </td>
+                                    </tr> 
+                                    @endif
+                                    @if($data->endorsement_syariah->count())
+                                    <tr>
+                                        <th>{{ __('Endorsement')}}</th>
+                                        <td>
+                                            @foreach($data->endorsement_syariah as $endors)
+                                            <p>{!!format_idr($endors->nominal).' - <a href="javascript:void(0);" class="text-danger" title="Klik Detail" wire:click="showDetailCancelation('.$endors->transaction_id.')">'.$endors->syariah->no_dn_cn.'</a>'!!}</p> 
+                                            @endforeach
+                                        </td>
+                                    </tr> 
+                                    @endif
+                                @endif
+
+
+                                {{-- @if($data->endorsement->count() || $data->cancelation->count())
                                     @if($data->cancelation->count())
                                     <tr>
                                         <th>{{ __('Cancelation')}}</th>
@@ -88,7 +148,10 @@
                                         </td>
                                     </tr>
                                     @endif
-                                @endif
+                                @endif --}}
+
+
+
                                 <tr>
                                     <th>{{ __('Payment Amount')}}</th>
                                     <td>
@@ -138,7 +201,6 @@
                                             <hr />
                                             @endforeach
                                         @endif
-                                        
                                         @if($total_titipan_premi <= $data->nominal and !$is_readonly)
                                         <a href="javascript:void(0)" data-target="#modal_add_titipan_premi" data-toggle="modal"><i class="fa fa-plus"></i> Titipan Premi</a>
                                         @endif
@@ -213,6 +275,7 @@
                 <span class="sr-only">Loading...</span>
             </div>
             <div class="body" style="max-height:700px;overflow-y:scroll">
+                @if($data->type==1)
                 <h6 class="text-danger">{{$cancelation->konven_memo_pos->no_dn_cn}}</h6>
                 <hr />
                 <table class="table pl-0 mb-0 table-striped table-nowrap"> 
@@ -224,9 +287,24 @@
                     </tr>
                     @endforeach
                 </table>
+                @endif
+                @if($data->type==2)
+                <h6 class="text-danger">{{$cancelation->no_credit_note}}</h6>
+                <hr />
+                <table class="table pl-0 mb-0 table-striped table-nowrap"> 
+                    @foreach(\Illuminate\Support\Facades\Schema::getColumnListing('syariah_cancel') as $column)
+                    @if($column=='id' || $column=='created_at'||$column=='updated_at') @continue @endif
+                    <tr>
+                        <th style="width:40%;">{{ ucfirst($column) }}</th>
+                        <td style="width:60%;">{{$cancelation->$column }}</td>
+                    </tr>
+                    @endforeach
+                </table>
+                @endif
             </div>
         </div>
         @endif
+
         @if($showDetail=='underwriting')
         <div class="card mt-0">
             <div wire:loading style="position:absolute;right:0;">

@@ -33,6 +33,18 @@ class UnderwritingSync extends Component
             $item->status=2;
             $item->save();
             $this->data = $item->no_polis .' - '. $item->pemegang_polis;
+            // cek no polis
+            $polis = \App\Models\Policy::where('no_polis',$item->no_polis)->first();
+            if(!$polis){
+                $polis = new \App\Models\Policy();
+                $polis->no_polis = $item->no_polis;
+                $polis->pemegang_polis = $item->pemegang_polis;
+                $polis->cabang = $item->cabang;
+                $polis->alamat = $item->alamat;
+                $polis->produk = $item->jenis_produk;
+                $polis->type = 2; // syariah
+                $polis->save();
+            }
             // Insert Transaksi
             if(!empty($item->net_kontribusi)){
                 // insert income premium receivable
@@ -51,7 +63,6 @@ class UnderwritingSync extends Component
                 $income->save();
                 $this->data .= '<br /> Premium Receivable : <strong>'.format_idr($item->net_kontribusi).'</strong>';
             }
-
             $this->total_success++;
             $this->total_finish++;
         }

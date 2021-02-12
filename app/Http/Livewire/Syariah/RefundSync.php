@@ -52,7 +52,7 @@ class RefundSync extends Component
             $expense = new \App\Models\Expenses();
             $expense->user_id = \Auth::user()->id;
             $expense->no_voucher = generate_no_voucher_income();
-            $expense->reference_no = $item->no_dn_cn;
+            $expense->reference_no = $item->no_credit_note;
             $expense->reference_date = $item->tgl_refund;
             $expense->nominal = $item->refund_kontribusi;
             $expense->recipient = $item->no_polis.' / '.$item->pemegang_polis;

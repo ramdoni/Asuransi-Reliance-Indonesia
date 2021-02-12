@@ -22,20 +22,7 @@
         <table class="table m-b-0 table-hover c_list">
             <thead>
                 <tr>
-                    <th rowspan="2">
-                        <select style="width: 50px; padding-left:2px;padding-right:2px;" class="form-control" wire:model="perpage">
-                            <option>100</option>
-                            <option>200</option>
-                            <option>300</option>
-                            <option>400</option>
-                            <option>500</option>
-                            <option>600</option>
-                            <option>700</option>
-                            <option>800</option>
-                            <option>900</option>
-                            <option>1000</option>
-                        </select>
-                    </th>
+                    <th>No</th>
                     <th></th>
                     <th></th>
                     @foreach(\Illuminate\Support\Facades\Schema::getColumnListing('syariah_underwritings') as $column)

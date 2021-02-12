@@ -25,79 +25,26 @@
                                     <td>{{$data->reference_no}}</td>
                                 </tr>
                                 <tr>
-                                    <th>{{ __('Reference Date')}}</th>
-                                    <td>{{$data->reference_date}}</td>
-                                </tr>
-                                <tr>
-                                    <th>{{ __('Total')}}</th>
-                                    <td>{{format_idr($data->nominal)}}</td>
-                                </tr>
-                                <tr>
-                                    <th>{{__('Bank Charges')}}</th>
-                                    <td><input type="text" {{$is_readonly?'disabled':''}} class="form-control format_number col-md-6" wire:model="bank_charges" /></td>
+                                    <th>{{ __('Bank Charges')}}</th>
+                                    <td>{{format_idr($data->bank_charges)}}</td>
                                 </tr>
                                 <tr>
                                     <th>{{ __('Payment Amount')}}</th>
                                     <td>{{format_idr($payment_amount)}}</td>
                                 </tr>
                                 <tr>
-                                    <th>{{__('Payment Date')}}*<small>{{__('Default today')}}</small></th>
-                                    <td>
-                                        <input type="date" class="form-control col-md-6" {{$is_readonly?'disabled':''}} wire:model="payment_date" />
-                                        @error('payment_date')
-                                        <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                                        @enderror
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>{{ __('From Bank Account')}}</th>
-                                    <td>
-                                        <select class="form-control" wire:model="from_bank_account_id" {{$is_readonly?'disabled':''}}>
-                                            <option value=""> --- {{__('Select')}} --- </option>
-                                            @foreach (\App\Models\BankAccount::where('is_client',0)->orderBy('owner','ASC')->get() as $bank)
-                                                <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('from_bank_account_id')
-                                        <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                                        @enderror
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>{{__('To Bank Account')}}</th>
-                                    <td>
-                                        <div class="row">
-                                            <div class="col-md-10">
-                                                <select class="form-control bank_account" id="bank_account_id" wire:model="bank_account_id" {{$is_readonly?'disabled':''}}>
-                                                    <option value=""> --- {{__('Select')}} --- </option>
-                                                    @foreach (\App\Models\BankAccount::where('is_client',1)->orderBy('owner','ASC')->get() as $bank)
-                                                        <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
-                                                    @endforeach
-                                                </select>
-                                                @error('bank_account_id')
-                                                <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                                                @enderror
-                                            </div>
-                                            <div class="col-md-2 px-0 pt-2">
-                                                @if(!$is_readonly)
-                                                <a href="#" data-toggle="modal" data-target="#modal_add_bank"><i class="fa fa-plus"></i> Add Bank</a>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    </td>
+                                    <th>{{__('Payment Date')}}</th>
+                                    <td>{{$data->payment_date}}</td>
                                 </tr>
                                 <tr>
                                     <th>{{__('Description')}}</th>
-                                    <td>
-                                        <textarea style="height:100px;" class="form-control" wire:model="description"></textarea>
-                                    </td>
+                                    <td>{{$data->description}}</td>
                                 </tr>
                             </table>
                         </div>
                     </div>
                     <hr />
                     <a href="javascript:void0()" onclick="history.back()"><i class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
-                    <button type="submit" class="ml-3 btn btn-primary"><i class="fa fa-save"></i> {{ __('Submit') }}</button>
                 </form>
             </div>
         </div>

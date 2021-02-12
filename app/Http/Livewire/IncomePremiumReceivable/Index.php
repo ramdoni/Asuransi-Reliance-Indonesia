@@ -28,4 +28,8 @@ class Index extends Component
 
         return view('livewire.income-premium-receivable.index')->with(['data'=>$data->paginate(100),'received'=>$received->where('status',2)->sum('payment_amount'),'outstanding'=>$outstanding->where('status',3)->sum('outstanding_balance'),]);
     }
+    public function mount()
+    {
+        \LogActivity::add('Income - Premium Receivable');
+    }
 }

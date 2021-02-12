@@ -11,6 +11,8 @@ class IndexController extends Controller
         if(\Session::get('is_login_administrator'))
         {
             \Auth::loginUsingId(\Session::get('is_id'));
+            
+            \LogActivity::addToLog('Back to Admin');
 
             return redirect('/')->with('message-success', 'Welcome Back Administrator');
         }

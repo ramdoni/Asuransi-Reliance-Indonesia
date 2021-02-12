@@ -89,7 +89,7 @@ class RefundUpload extends Component
         if($total_double>0)
             $this->emit('emit-check-data-refund');
         else{
-            session()->flash('message-success','Upload success, Success Upload <strong>'. $total_success.'</strong>, Double Data :<strong>'. $total_double.'</strong>');   
+            $this->emit('message-success','Upload success, Success Upload <strong>'. $total_success.'</strong>, Double Data :<strong>'. $total_double.'</strong>');   
             $this->emit('refresh-page');
         }
     }

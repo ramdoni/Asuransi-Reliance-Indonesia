@@ -17,10 +17,7 @@ class Cancel extends Component
             }
         });
         if($this->status) $data = $data->where('status',$this->status);
+        $this->total_sync = \App\Models\SyariahCancel::where('status',0)->count();
         return view('livewire.syariah.cancel')->with(['data'=>$data->paginate($this->perpage)]);
-    }
-    public function mount()
-    {
-        $this->total_sync = \App\Models\SyariahCancel::where('is_temp',0)->count();
     }
 }

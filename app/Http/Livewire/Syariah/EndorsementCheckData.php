@@ -26,6 +26,13 @@ class EndorsementCheckData extends Component
                                             });
         return view('livewire.syariah.endorsement-check-data')->with(['data'=>$data->paginate($this->perpage)]);
     }
+    public function updated()
+    {
+        if(\App\Models\SyariahEndorsement::where('is_temp',1)->count()==0){
+            session()->flash('message-success',__('Data saved successfully'));
+            return redirect()->route('syariah.underwriting');
+        }
+    }
     public function replaceAll()
     {
         foreach(\App\Models\SyariahEndorsement::where('is_temp')->get() as $child){
@@ -34,24 +41,27 @@ class EndorsementCheckData extends Component
             $child->parent_id=0;
             $child->save();
         }
-        $this->emit('refresh-page');
+        $this->updated();
     }
     public function deleteAll()
     {
         \App\Models\SyariahEndorsement::where('is_temp',1)->delete();
-        $this->emit('refresh-page');
+        $this->updated();
     }
     public function keepAll()
     {
         \App\Models\SyariahEndorsement::where('is_temp',1)->update(['is_temp'=>0,'parent_id'=>0]);
+        $this->updated();
     }
     public function delete($id)
     {
         \App\Models\SyariahEndorsement::find($id)->delete();
+        $this->updated();
     }
     public function keep($id)
     {
         \App\Models\SyariahEndorsement::find($id)->update(['is_temp'=>0,'parent_id'=>0]);
+        $this->updated();
     }
     public function replace($id)
     {
@@ -62,5 +72,6 @@ class EndorsementCheckData extends Component
             $child->parent_id=0;
             $child->save();   
         }
+        $this->updated();
     }
 }

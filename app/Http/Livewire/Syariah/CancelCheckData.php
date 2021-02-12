@@ -26,6 +26,13 @@ class CancelCheckData extends Component
                                             });
         return view('livewire.syariah.cancel-check-data')->with(['data'=>$data->paginate($this->perpage)]);
     }
+    public function updated()
+    {
+        if(\App\Models\SyariahCancel::where('is_temp',1)->count()==0){
+            session()->flash('message-success',__('All data was processed successfully'));
+            return redirect()->route('syariah.underwriting');
+        }
+    }
     public function replaceAll()
     {
         foreach(\App\Models\SyariahCancel::where('is_temp')->get() as $child){
@@ -34,24 +41,27 @@ class CancelCheckData extends Component
             $child->parent_id=0;
             $child->save();
         }
-        $this->emit('refresh-page');
+        $this->updated();
     }
     public function deleteAll()
     {
         \App\Models\SyariahCancel::where('is_temp',1)->delete();
-        $this->emit('refresh-page');
+        $this->updated();
     }
     public function keepAll()
     {
         \App\Models\SyariahCancel::where('is_temp',1)->update(['is_temp'=>0,'parent_id'=>0]);
+        $this->updated();
     }
     public function delete($id)
     {
         \App\Models\SyariahCancel::find($id)->delete();
+        $this->updated();
     }
     public function keep($id)
     {
         \App\Models\SyariahCancel::find($id)->update(['is_temp'=>0,'parent_id'=>0]);
+        $this->updated();
     }
     public function replace($id)
     {
@@ -62,5 +72,6 @@ class CancelCheckData extends Component
             $child->parent_id=0;
             $child->save();   
         }
+        $this->updated();
     }
 }

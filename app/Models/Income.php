@@ -39,13 +39,21 @@ class Income extends Model
     {
         return $this->hasOne('\App\Models\SyariahUnderwriting','id','transaction_id');
     }
-    public function cancelation()
+    public function cancelation_syariah()
     {
-        return $this->hasMany('\App\Models\KonvenUnderwritingCancelation','income_id','id');
+        return $this->hasMany(\App\Models\IncomeCancel::class,'income_id')->where('transaction_table','syariah_cancel');
     }
-    public function endorsement()
+    public function cancelation_konven()
     {
-        return $this->hasMany(\App\Models\KonvenUnderwritingEndorsement::class,'income_id');
+        return $this->hasMany(\App\Models\IncomeCancel::class,'income_id')->where('transaction_table','konven_memo_pos');
+    }
+    public function endorsement_syariah()
+    {
+        return $this->hasMany(\App\Models\IncomeEndorsement::class,'income_id')->where('transaction_table','syariah_cancel');
+    }
+    public function endorsement_konven()
+    {
+        return $this->hasMany(\App\Models\IncomeEndorsement::class,'income_id')->where('transaction_table','konven_memo_pos');
     }
     public function total_cancelation()
     {

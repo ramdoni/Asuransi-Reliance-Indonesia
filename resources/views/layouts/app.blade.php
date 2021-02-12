@@ -74,27 +74,11 @@
                         <div class="row">
                             <div class="col-lg-5 col-md-8 col-sm-12">                        
                                 <h2><a href="javascript:void(0);" class="btn btn-xs btn-link btn-toggle-fullwidth"><i class="fa fa-arrow-left"></i></a> @yield('title')</h2>
-                                <ul class="breadcrumb">
-                                    <li class="breadcrumb-item"><a href="/"><i class="icon-home"></i></a></li>
-                                    @if (trim($__env->yieldContent('parentPageTitle')))
-                                       <li class="breadcrumb-item">@yield('parentPageTitle')</li>
-                                    @endif
-                                    @if (trim($__env->yieldContent('title')))
-                                        <li class="breadcrumb-item active">@yield('title')</li>
-                                    @endif
-                                </ul>
                             </div>     
                             <div class="text-right col-lg-7 col-md-4 col-sm-12">
-                                <div class="text-center inlineblock m-r-15 m-l-15 hidden-sm">
-                                    <div class="text-left sparkline" data-type="line" data-width="8em" data-height="20px" data-line-Width="1" data-line-Color="#00c5dc"
-                                        data-fill-Color="transparent">3,5,1,6,5,4,8,3</div>
-                                    <span>Premium</span>
-                                </div>
-                                <div class="text-center inlineblock m-r-15 m-l-15 hidden-sm">
-                                    <div class="text-left sparkline" data-type="line" data-width="8em" data-height="20px" data-line-Width="1" data-line-Color="#f4516c"
-                                        data-fill-Color="transparent">4,6,3,2,5,6,5,4</div>
-                                    <span>Claim</span>
-                                </div>
+                                @if (trim($__env->yieldContent('title-right')))
+                                    @yield('title-right')
+                                @endif
                             </div> 
                         </div>
                     </div>

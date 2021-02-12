@@ -11,12 +11,6 @@ class Detail extends Component
     public $bank_charges,$showDetail='underwriting',$cancelation;
     public $titipan_premi,$temp_titipan_premi=[],$temp_arr_titipan_id=[],$total_titipan_premi=0;
     protected $listeners = ['emit-add-bank'=>'emitAddBank','set-titipan-premi'=>'setTitipanPremi','refresh-page'=>'$refresh'];
-    protected $rules = 
-        [
-            'bank_account_id'=>'required',
-            'from_bank_account_id'=>'required',
-            'payment_amount'=>'required',
-        ];
     public function render()
     {
         return view('livewire.income-premium-receivable.detail');
@@ -46,7 +40,6 @@ class Detail extends Component
             $this->payment_amount = $this->data->nominal;
             $this->outstanding_balance = 0;
         }
-
         $this->emit('init-form');
     }
     public function emitAddBank($id)
@@ -56,6 +49,7 @@ class Detail extends Component
     }
     public function mount($id)
     {
+        \LogActivity::add("Income - Premium Receivable Edit {$id}");
         $this->data = \App\Models\Income::find($id);
         $this->no_voucher = $this->data->no_voucher;
         $this->payment_date = $this->data->payment_date?$this->data->payment_date : date('Y-m-d');
@@ -71,26 +65,32 @@ class Detail extends Component
         if($this->data->status==1) $this->description = 'Premi ab '. (isset($this->data->uw->pemegang_polis) ? ($this->data->uw->pemegang_polis .' bulan '. $this->data->uw->bulan .' dengan No Invoice :'.$this->data->uw->no_kwitansi_debit_note) : ''); 
         if($this->payment_amount =="") $this->payment_amount=$this->data->nominal;
         if($this->data->status==2 || $this->data->status==4){ $this->is_readonly = true;}
-        
-        foreach($this->data->cancelation as $cancel){
-            $this->payment_amount -= $cancel->nominal;
+        if($this->data->type==1){ // Konven
+            foreach($this->data->cancelation_konven as $cancel) $this->payment_amount -= $cancel->nominal;
+            foreach($this->data->endorsement_konven as $endors) $this->payment_amount -= $endors->nominal;
         }
-        foreach($this->data->endorsement as $end){
-            if($end->type=='CN') $this->payment_amount -= $end->nominal;
-            if($end->type=='DN') $this->payment_amount += $end->nominal;
-        }
+        if($this->data->type==2){ // Syariah
+            foreach($this->data->cancelation_syariah as $cancel) $this->payment_amount -= $cancel->nominal;
+            foreach($this->data->endorsement_syariah as $endors) $this->payment_amount -= $endors->nominal;
+        }    
         $this->payment_amount = format_idr($this->payment_amount);
     }
     public function showDetailCancelation($id)
     {
-        $this->cancelation = \App\Models\KonvenUnderwritingCancelation::find($id);
+        if($this->data->type==1) $this->cancelation = \App\Models\KonvenMemo::find($id);
+        if($this->data->type==2) $this->cancelation = \App\Models\SyariahCancel::find($id);
         $this->showDetail='cancelation';
         $this->emit('init-form');
     }
     public function save()
     {   
         $this->emit('init-form');
-        $this->validate();
+        $validate = ['payment_amount'=>'required'];
+        if(!$this->temp_titipan_premi){
+            $validate['bank_account_id']='required';
+            $validate['from_bank_account_id']='required';
+        }
+        $this->validate($validate);
         $this->payment_amount = replace_idr($this->payment_amount);
         $this->bank_charges = replace_idr($this->bank_charges);
         if($this->payment_amount==$this->data->nominal || $this->payment_amount > $this->data->nominal) $this->data->status=2;//paid
@@ -214,6 +214,8 @@ class Detail extends Component
                 $journal->save();
             }
         }
+        \LogActivity::add("Income - Premium Receivable Save {$this->data->id}");
+
         session()->flash('message-success',__('Data saved successfully'));
         return redirect()->route('income.premium-receivable');
     }

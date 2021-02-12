@@ -29,6 +29,7 @@ class Login extends Component
         $credentials = ['email'=>$this->email,'password'=>$this->password];
 
         if (Auth::attempt($credentials)) {
+            \LogActivity::add('Login');
             // Authentication passed...
             return redirect('/');
         }
