@@ -8,7 +8,8 @@ class Insert extends Component
 {
     public $data,$no_voucher,$no_polis,$nilai_klaim,$premium_receivable,$is_submit=true;
     public $reference_no,$payment_date,$bank_charges,$description,$type=1;
-    public $to_bank_account_id=[],$from_bank_account_id=[],$transaction_type=[],$payments=[],$payment_amount;
+    public $to_bank_account_id=[],$from_bank_account_id=[],$transaction_type=[],$payments=[],$payment_amount=[];
+    protected $listeners = ['init-form'=>'$refresh'];
     public function render()
     {
         return view('livewire.expense-commision-payable.insert');
@@ -38,23 +39,35 @@ class Insert extends Component
     public function add_payment()
     {
         array_push($this->payments,count($this->payments)+1);
+        foreach($this->payments as $k => $v){
+            $this->transaction_type[$k] = '';
+            $this->payment_amount[$k] = 0;
+            $this->from_bank_account_id[$k] = '';
+            $this->to_bank_account_id[$k] = '';
+        }
         $this->emit('init-form');
     }
-    public function save()
+    public function submit()
     {
-        $this->validate([
+        $this->save('Submit');
+    }
+    public function save($type)
+    {
+        $validate = [
             'no_polis' => 'required',
-            'reference_no' => 'required'
-        ]);
-        
+            'reference_no' => 'required',
+            'payments' => 'required'
+        ];
+        $this->validate($validate);
         $data = new \App\Models\Expenses();
         $data->recipient = $this->data->no_polis .' / '. $this->data->pemegang_polis;
         $data->no_voucher = $this->no_voucher;
         $data->reference_no = $this->reference_no;
         $data->type = $this->type;
-        $data->status = 2;
+        $data->status = $type=='Draft' ? 4 : 2;
         $data->reference_type = 'Komisi';
         $data->user_id = \Auth::user()->id;
+        $data->policy_id = $this->data->id;
         $data->save();
 
         if($this->payments){
@@ -65,10 +78,16 @@ class Insert extends Component
                 $payment->from_bank_account_id = $this->from_bank_account_id[$k];
                 $payment->to_bank_account_id = $this->to_bank_account_id[$k];
                 $payment->transaction_type = $this->transaction_type[$k];
+                $payment->payment_date = $this->payment_date[$k];
                 $payment->save();
             }
         }
+        \LogActivity::add("Expense - Commision Payable {$type} {$data->id}");
         session()->flash('message-success',__('Data saved successfully'));
         return redirect()->route('expense.commision-payable');
+    }
+    public function saveAsDraft()
+    {
+        $this->save('Draft');
     }
 }

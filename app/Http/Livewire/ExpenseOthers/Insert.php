@@ -118,6 +118,7 @@ class Insert extends Component
                 $new->save();
             }
         }
+        \LogActivity::add("Expense Others Submit {$data->id}");
         session()->flash('message-success',__('Data saved successfully'));
         return redirect()->route('expense.others');
     }

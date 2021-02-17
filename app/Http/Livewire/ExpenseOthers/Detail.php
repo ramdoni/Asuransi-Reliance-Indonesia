@@ -30,6 +30,7 @@ class Detail extends Component
             $this->add_payment_description[$k]=$item->payment_date;
             $this->add_payment_transaction_type[$k]=$item->bank_account_id;
         } 
+        \LogActivity::add("Expense Others Detail {$this->data->id}");
     }
     public function calculate()
     {
@@ -131,6 +132,7 @@ class Detail extends Component
                 $new->save();
             }
         }
+        \LogActivity::add("Expense Others Submit {$data->id}");
         session()->flash('message-success',__('Data saved successfully'));
         return redirect()->to('expense.others');
     }

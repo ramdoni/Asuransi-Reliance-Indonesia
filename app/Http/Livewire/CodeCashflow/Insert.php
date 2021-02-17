@@ -11,7 +11,10 @@ class Insert extends Component
     {
         return view('livewire.code-cashflow.insert');
     }
-
+    public function mount()
+    {
+        \LogActivity::add("Code Cash Flow Insert");
+    }
     public function save()
     {
         $this->validate([
@@ -27,7 +30,7 @@ class Insert extends Component
         $data->save();
         
         session()->flash('message-success',__('Data saved successfully'));
-
+        \LogActivity::add("Code Cash Flow Submit {$data->id}");
         return redirect()->to('code-cashflow');
     }
 }

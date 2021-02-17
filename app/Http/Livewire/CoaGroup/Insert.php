@@ -11,7 +11,10 @@ class Insert extends Component
     {
         return view('livewire.coa-group.insert');
     }
-
+    public function mount()
+    {
+        \LogActivity::add("COA Group Insert");
+    }
     public function save()
     {
         $this->validate([
@@ -26,7 +29,7 @@ class Insert extends Component
         $data->save();
         
         session()->flash('message-success',__('Data saved successfully'));
-
+        \LogActivity::add("COA Group Submit {$data->id}");
         return redirect()->to('coa-group');
     }
 }

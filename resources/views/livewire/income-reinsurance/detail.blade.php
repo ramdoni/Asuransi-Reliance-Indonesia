@@ -29,8 +29,16 @@
                                     <td>{{$data->reference_date}}</td>
                                 </tr>
                                 <tr>
+                                    <th>{{ __('Amount')}}</th>
+                                    <td>{{format_idr($data->nominal)}}</td>
+                                </tr>
+                                <tr>
                                     <th>{{ __('Payment Amount')}}</th>
-                                    <td>{{format_idr($payment_amount)}}</td>
+                                    <td><input type="text" class="form-control format_number" wire:model="payment_amount" /></td>
+                                </tr>
+                                <tr>
+                                    <th>{{ __('Outstanding Balance')}}</th>
+                                    <td>{{format_idr($this->outstanding_balance)}}</td>
                                 </tr>
                                 <tr>
                                     <th>{{__('From Bank Account')}}</th>
@@ -62,7 +70,7 @@
                                         <select class="form-control" wire:model="bank_account_id" {{$is_readonly?'disabled':''}}>
                                             <option value=""> --- {{__('Select')}} --- </option>
                                             @foreach (\App\Models\BankAccount::where('is_client',0)->orderBy('bank','ASC')->get() as $bank)
-                                                <option value="{{ $bank->id}}">{{ $bank->no_rekening}} ({{ $bank->bank}})</option>
+                                                <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
                                             @endforeach
                                         </select>
                                         @error('bank_account_id')

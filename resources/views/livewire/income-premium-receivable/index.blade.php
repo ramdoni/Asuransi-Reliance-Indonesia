@@ -11,17 +11,17 @@
         <div class="card">
             <div class="body">
                 <div class="mb-2 row">
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <input type="text" class="form-control" wire:model="keyword" placeholder="Searching..." />
                     </div>
-                    <div class="col-md-1 pl-0">
+                    <div class="col-md-2">
                         <select class="form-control" wire:model="unit">
                             <option value=""> --- Unit --- </option>
-                            <option value="1"> Konven </option>
-                            <option value="2"> Syariah</option>
+                            <option value="1">[K] Konven </option>
+                            <option value="2">[S] Syariah</option>
                         </select>
                     </div>
-                    <div class="px-0 col-md-1">
+                    <div class="col-md-2">
                         <select class="form-control" wire:model="status">
                             <option value=""> --- Status --- </option>
                             <option value="1"> Unpaid </option>
@@ -30,7 +30,7 @@
                             <option value="4"> Premi tidak tertagih</option>
                         </select>
                     </div>
-                    <div class="col-md-2 pr-0">
+                    <div class="col-md-2">
                         <input type="text" class="form-control" wire:model="payment_date" placeholder="Payment Date" onfocus="(this.type='date')" />
                     </div>
                     <div class="col-md-1">

@@ -36,6 +36,7 @@ class DnDetail extends Component
         }
         if($this->payment_amount =="") $this->payment_amount=$this->data->nominal;
         if($this->data->status==2) $this->is_readonly = true;
+        \LogActivity::add("Endorsement Credit Note Edit {$this->data->id}");
     }
     public function updated($propertiName)
     {
@@ -51,6 +52,7 @@ class DnDetail extends Component
         $this->data->save();
 
         session()->flash('message-success',__('Data saved successfully'));
+        \LogActivity::add("Endorsement Credit Note Submit {$this->data->id}");
         return redirect()->route('endorsement.index');
     }
 }

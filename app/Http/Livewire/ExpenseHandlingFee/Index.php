@@ -21,4 +21,8 @@ class Index extends Component
 
         return view('livewire.expense-handling-fee.index')->with(['data'=>$data->paginate(100)]);
     }
+    public function mount()
+    {
+        \LogActivity::add("Expense Handling Fee");
+    }
 }

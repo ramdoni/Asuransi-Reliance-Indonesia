@@ -25,4 +25,8 @@ class Index extends Component
 
         return view('livewire.income-titipan-premi.index')->with(['data'=>$data->paginate(100)]);
     }
+    public function mount()
+    {
+        \LogActivity::add("Income Titipan Premi");
+    }
 }

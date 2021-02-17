@@ -25,6 +25,8 @@ class AddBank extends Component
         $data->bank = $this->bank;
         $data->no_rekening = $this->account_number;
         $data->save();
+        \LogActivity::add("Bank Account Insert {$data->id}");
+
         $this->reset();
         $this->emit('emit-add-bank', $data->id);
     }

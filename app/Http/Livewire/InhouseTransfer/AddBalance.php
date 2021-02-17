@@ -38,6 +38,8 @@ class AddBalance extends Component
             $bank->open_balance = $bank->open_balance + $this->nominal;
             $bank->save();
         }
+        \LogActivity::add("Inhouse Transfer Add Balance {$balance->id}");
+
         $this->emit('emit-add-balance-hide');
     }
 }

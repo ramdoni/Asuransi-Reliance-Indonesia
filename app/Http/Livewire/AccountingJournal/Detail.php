@@ -20,6 +20,8 @@ class Detail extends Component
         if($this->data->transaction_table=='konven_underwriting'){
             $this->uw = \App\Models\KonvenUnderwriting::find($this->data->transaction_id);
         }
+
+        \LogActivity::add("Accounting - Journal Detail {$id}");
     }
     public function cancel_reclass()
     {

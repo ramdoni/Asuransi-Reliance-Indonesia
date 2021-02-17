@@ -29,6 +29,7 @@ class Detail extends Component
 
         if($this->payment_amount =="") $this->payment_amount=$this->data->nominal;
         if($this->data->status==2) $this->is_readonly = true;
+        \LogActivity::add("Expense Claim Detail {$this->data->id}");
     }
     public function updated($propertyName)
     {
@@ -144,6 +145,7 @@ class Detail extends Component
             $journal->transaction_number = isset($this->data->uw->no_kwitansi_debit_note)?$this->data->uw->no_kwitansi_debit_note:'';
             $journal->save();
         }
+        \LogActivity::add("Expense Claim Submit {$this->data->id}");
         session()->flash('message-success',__('Data saved successfully'));
         return redirect()->route('expense.claim');
     }

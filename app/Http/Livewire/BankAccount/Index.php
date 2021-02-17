@@ -21,8 +21,14 @@ class Index extends Component
 
         return view('livewire.bank-account.index')->with(['data'=>$data->paginate(50)]);
     }
+    public function mount()
+    {
+        \LogActivity::add("Bank Account");
+    }
     public function delete($id)
     {
+        \LogActivity::add("Bank Account Delete {$id}");
+
         \App\Models\BankAccount::find($id)->delete();
     }
 }

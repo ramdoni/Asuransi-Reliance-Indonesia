@@ -20,7 +20,10 @@ class Index extends Component
 
         return view('livewire.coa.index')->with(['data'=>$data->paginate(50)]);
     }
-
+    public function mount()
+    {
+        \LogActivity::add("COA");
+    }
     // public function delete($id)
     // {
     //     \App\Models\Coa::find($id)->delete();

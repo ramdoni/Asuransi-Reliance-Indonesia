@@ -22,25 +22,24 @@
                         <thead>
                             <tr>
                                 <th>No</th>
+                                <th>User</th>
                                 <th>Subject</th>
                                 <th>URL</th>
                                 <th>Method</th>
                                 <th>IP</th>
                                 <th>Agent</th>
-                                <th>User</th>
-                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($data as $k => $item)
                             <tr>
                                 <td style="width: 50px;">{{$k+1}}</td>
+                                <td>{{isset($item->user->name) ? $item->user->name : ''}}</td> 
                                 <td>{{$item->subject}}</td> 
                                 <td>{{$item->url}}</td> 
                                 <td>{{$item->method}}</td> 
                                 <td>{{$item->ip}}</td> 
                                 <td>{{$item->agent}}</td> 
-                                <td>{{isset($item->user->name) ? $item->user->name : ''}}</td> 
                             </tr>
                             @endforeach
                         </tbody>

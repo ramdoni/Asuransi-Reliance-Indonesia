@@ -15,5 +15,6 @@ class Detail extends Component
     { 
         $this->data = \App\Models\Income::find($id);
         $this->no_voucher = generate_no_voucher_income();
+        \LogActivity::add("Income Titipan Premi Detail {$id}");
     }
 }

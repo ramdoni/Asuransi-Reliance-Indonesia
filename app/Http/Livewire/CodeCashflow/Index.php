@@ -15,4 +15,8 @@ class Index extends Component
         
         return view('livewire.code-cashflow.index')->with(['data'=>$data->get()]);
     }
+    public function mount()
+    {
+        \LogActivity::add("Code Cash Flow");
+    }
 }

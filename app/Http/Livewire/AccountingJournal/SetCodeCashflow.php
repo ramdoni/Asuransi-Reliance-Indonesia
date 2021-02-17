@@ -12,9 +12,9 @@ class SetCodeCashflow extends Component
     {
         return view('livewire.accounting-journal.set-code-cashflow');
     }
-
     public function mount()
     {
+        \LogActivity::add("Accounting - Journal Set Code Cahs Flow {$this->active_id}");
     }
     public function modalEdit($id)
     {

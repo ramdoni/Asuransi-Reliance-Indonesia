@@ -11,20 +11,23 @@
                     <div class="col-md-2">
                         <select class="form-control" wire:model="unit">
                             <option value=""> --- Unit --- </option>
-                            <option value="1"> Konven </option>
-                            <option value="2"> Syariah</option>
+                            <option value="1">[K] Konven </option>
+                            <option value="2">[S] Syariah</option>
                         </select>
                     </div>
                     <div class="col-md-2">
                         <select class="form-control" wire:model="status">
                             <option value=""> --- Status --- </option>
-                            <option value="1"> Unpaid </option>
                             <option value="2"> Paid</option>
-                            <option value="3"> Outstanding</option>
+                            <option value="4"> Draft</option>
                         </select>
                     </div>
                     <div class="col-md-5">
                         <a href="{{route('expense.commision-payable.insert')}}" class="btn btn-info"><i class="fa fa-plus"></i> Commision Payable</a>
+                        <div wire:loading>
+                            <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                            <span class="sr-only">Loading...</span>
+                        </div>
                     </div>
                 </div>
                 <div class="table-responsive">
@@ -80,7 +83,12 @@
                         @foreach($data as $k => $item)
                             <tr>
                                 <td style="width: 50px;">{{$data->firstItem()+$k}}</td>
-                                <td><a href="{{route('expense.commision-payable.detail',['id'=>$item->id])}}">{!!status_income($item->status)!!}</a></td>
+                                <td>
+                                    <a href="{{route('expense.commision-payable.detail',['id'=>$item->id])}}">{!!status_expense($item->status)!!}</a>
+                                    @if($item->status==4)
+                                    <a href="javascript:;" class="text-danger" wire:click="delete({{$item->id}})"><i class="fa fa-trash"></i></a>
+                                    @endif
+                                </td>
                                 <td><a href="{{route('expense.commision-payable.detail',['id'=>$item->id])}}">{!!no_voucher($item)!!}</a></td>
                                 <td>{{date('d M Y', strtotime($item->created_at))}}</td>
                                 <td>{{$item->reference_no ? $item->reference_no : '-'}}</td>

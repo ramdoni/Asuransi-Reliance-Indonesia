@@ -11,7 +11,6 @@ class Edit extends Component
     {
         return view('livewire.bank-account.edit');
     }
-
     public function mount($id)
     {
         $this->data = \App\Models\BankAccount::find($id);
@@ -22,8 +21,8 @@ class Edit extends Component
         $this->open_balance = $this->data->open_balance;
         $this->code = $this->data->code;
         $this->coa_id = $this->data->coa_id;
+        \LogActivity::add("Bank Account Edit {$this->data->id}");
     }
-
     public function save()
     {
         $this->validate([
@@ -44,6 +43,7 @@ class Edit extends Component
         $this->data->coa_id = $this->coa_id;
         $this->data->save();
         session()->flash('message-success',__('Data saved successfully'));
+        \LogActivity::add("Bank Account Submit {$this->data->id}");
         return redirect()->to('bank-account');
     }
 }

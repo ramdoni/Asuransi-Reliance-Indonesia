@@ -11,7 +11,10 @@ class Insert extends Component
     {
         return view('livewire.account-payable.insert');
     }
-
+    public function mount()
+    {
+        \LogActivity::add("Account Payable Insert");
+    }
     public function save()
     {
         $this->validate([
@@ -30,7 +33,8 @@ class Insert extends Component
         $data->save();
         
         session()->flash('message-success',__('Data saved successfully'));
-
+        \LogActivity::add("Account Payable Save {$data->id}");
+        
         return redirect()->to('account-payable');
     }
 

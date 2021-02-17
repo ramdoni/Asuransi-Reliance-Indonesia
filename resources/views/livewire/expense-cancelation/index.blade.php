@@ -5,10 +5,17 @@
         <div class="card">
             <div class="body">
                 <div class="mb-2 row">
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <input type="text" class="form-control" wire:model="keyword" placeholder="Searching..." />
                     </div>
-                    <div class="px-0 col-md-1">
+                    <div class="col-md-2">
+                        <select class="form-control" wire:model="type">
+                            <option value=""> --- Unit --- </option>
+                            <option value="1">[K] Konven </option>
+                            <option value="2">[S] Syariah</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
                         <select class="form-control" wire:model="status">
                             <option value=""> --- Status --- </option>
                             <option value="1"> Unpaid </option>

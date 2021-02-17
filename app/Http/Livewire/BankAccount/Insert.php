@@ -11,7 +11,10 @@ class Insert extends Component
     {
         return view('livewire.bank-account.insert');
     }
-
+    public function mount()
+    {
+        \LogActivity::add("Bank Account Insert");
+    }
     public function save()
     {
         $this->validate([
@@ -33,6 +36,7 @@ class Insert extends Component
         $data->coa_id = $this->coa_id;
         $data->save();
         session()->flash('message-success',__('Data saved successfully'));
+        \LogActivity::add("Bank Account Submit {$data->id}");
         return redirect()->to('bank-account');
     }
 }

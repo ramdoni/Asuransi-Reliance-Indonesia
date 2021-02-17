@@ -58,6 +58,7 @@ class Insert extends Component
         $data->save();
 
         session()->flash('message-success',__('Claim data has been successfully saved'));
+        \LogActivity::add("Expense Claim Insert {$data->id}");
         return redirect()->route('expense.claim');
     }
 }

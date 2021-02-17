@@ -42,13 +42,17 @@ class Detail extends Component
 
         if($this->payment_amount =="") $this->payment_amount=$this->data->nominal;
         if($this->data->status==2) $this->is_readonly = true;
+        
+        \LogActivity::add("Expense - Reinsurance Premium Detail {$this->data->id}");
     }
-    public function save()
+    public function save($type)
     {
         $this->validate();
         $this->payment_amount = replace_idr($this->payment_amount);
         if($this->payment_amount==$this->data->nominal) $this->data->status=2;//paid
         if($this->payment_amount!=$this->data->nominal) $this->data->status=3;//outstanding
+        if($type=='Draft') $this->data->status =4; // Draft
+
         $this->data->outstanding_balance = replace_idr($this->outstanding_balance);
         $this->data->payment_amount = $this->payment_amount;
         $this->data->rekening_bank_id = $this->bank_account_id;
@@ -142,9 +146,17 @@ class Detail extends Component
             $journal->transaction_number = isset($reas->uw->no_kwitansi_debit_note)?$reas->uw->no_kwitansi_debit_note:'';
             $journal->save();
         }
-        \LogActivity::add("Expense - Reinsurance Premium Save {$this->data->id}");
+        \LogActivity::add("Expense - Reinsurance Premium {$type} {$this->data->id}");
 
         session()->flash('message-success',__('Data saved successfully'));
         return redirect()->route('expense.reinsurance-premium');
+    }
+    public function submit()
+    {
+        $this->save('Submit');
+    }
+    public function saveAsDraft()
+    {
+        $this->save('Draft');
     }
 }

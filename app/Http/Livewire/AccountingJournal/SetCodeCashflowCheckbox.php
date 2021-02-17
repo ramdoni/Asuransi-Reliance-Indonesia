@@ -14,6 +14,7 @@ class SetCodeCashflowCheckbox extends Component
     }
     public function mount()
     {
+        \LogActivity::add("Accounting - Journal Set Code Cahs Flow Multiple");
     }
     public function modalSetCodeCashflowCheckbox($value_multiple_cashflow)
     {

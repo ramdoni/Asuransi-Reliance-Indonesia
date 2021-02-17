@@ -35,6 +35,7 @@ class Detail extends Component
         }
         if($this->payment_amount =="") $this->payment_amount=$this->data->nominal;
         if($this->data->status==2) $this->is_finish = true;
+        \LogActivity::add("Expense Endorsement Detail {$this->data->id}");
     }
     public function updated($propertiName)
     {
@@ -55,7 +56,7 @@ class Detail extends Component
         $this->data->payment_date = $this->payment_date;
         $this->data->status = 2;
         $this->data->save();
-
+        \LogActivity::add("Expense Endorsement Submit {$this->data->id}");
         session()->flash('message-success',__('Data saved successfully'));
         return redirect()->route('expense.endorsement');
     }

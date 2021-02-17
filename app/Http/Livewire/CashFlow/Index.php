@@ -15,5 +15,6 @@ class Index extends Component
     public function mount()
     {
         $this->data = \App\Models\Journal::groupBy('coa_id')->get();
+        \LogActivity::add("Cash Flow");
     }
 }

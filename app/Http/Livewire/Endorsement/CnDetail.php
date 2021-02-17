@@ -37,6 +37,7 @@ class CnDetail extends Component
         }
         if($this->payment_amount =="") $this->payment_amount=$this->data->nominal;
         if($this->data->status==2) $this->is_readonly = true;
+        \LogActivity::add("Endorsement Credit Note Edit {$this->data->id}");
     }
     public function updated($propertiName)
     {
@@ -51,6 +52,7 @@ class CnDetail extends Component
         $this->data->bank_charges = replace_idr($this->bank_charges);
         $this->data->status = 2;
         $this->data->save();
+        \LogActivity::add("Endorsement Credit Note Submit {$this->data->id}");
 
         session()->flash('message-success',__('Data saved successfully'));
         return redirect()->route('endorsement.index');

@@ -22,6 +22,7 @@ class Detail extends Component
         $this->from_bank_account_id = $this->data->from_bank_account_id;
         $this->payment_amount = format_idr($this->data->payment_amount);
         $this->total_payment_amount = $this->data->total_payment_amount;
+        $this->outstanding_balance = $this->data->outstanding_balance;
         
         if($this->data->status==1){
             $this->description = 'Pembayaran Komisi ab '. (isset($this->data->uw->pemegang_polis) ? $this->data->uw->pemegang_polis : ''); 
@@ -29,8 +30,15 @@ class Detail extends Component
 
         if($this->payment_amount =="") $this->payment_amount=format_idr($this->data->nominal);
         if($this->data->status==2) $this->is_finish = true;
+     
+        \LogActivity::add("Income - Reinsurance Commision Detail {$this->data->id}");
     }
-    
+    public function updated($propertyName)
+    {
+        if($propertyName=='payment_amount') $this->outstanding_balance = $this->data->nominal - replace_idr($this->payment_amount);
+        
+        $this->emit('init-form');
+    }
     public function save()
     {
         $this->validate(
@@ -132,6 +140,9 @@ class Detail extends Component
             $journal->transaction_number = isset($this->data->uw->no_kwitansi_debit_note)?$this->data->uw->no_kwitansi_debit_note:'';
             $journal->save();
         }
+
+        \LogActivity::add("Income - Reinsurance Commision Submit {$this->data->id}");
+
         session()->flash('message-success',__('Data saved successfully'));
         return redirect()->route('income.reinsurance');
     }

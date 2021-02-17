@@ -47,6 +47,7 @@ class Insert extends Component
         $data->user_id = \Auth::user()->id;
         $data->type = $this->type;
         $data->save();
+        \LogActivity::add("Income Titipan Premi Insert {$data->id}");
         session()->flash('message-success',__('Data saved successfully'));
         return redirect()->route('income.titipan-premi');
     }

@@ -10,6 +10,9 @@ function status_expense($status) {
         case 3:
             return "<label class=\"badge text-danger\">Outstanding</label>";
         break;
+        case 4:
+            return "<label class=\"badge text-warning\">Draft</label>";
+        break;
     }
 }
 function generate_no_voucher_expense(){

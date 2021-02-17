@@ -20,4 +20,8 @@ class Dn extends Component
 
         return view('livewire.endorsement.dn')->with(['data'=>$data->paginate(100)]);
     }
+    public function mount()
+    {
+        \LogActivity::add("Endorsement Debit Note");
+    }
 }

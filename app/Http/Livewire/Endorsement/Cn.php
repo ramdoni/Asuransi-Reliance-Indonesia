@@ -20,4 +20,8 @@ class Cn extends Component
 
         return view('livewire.endorsement.cn')->with(['data'=>$data->paginate(100)]);
     }
+    public function mount()
+    {
+        \LogActivity::add("Endorsement Credit Note");
+    }
 }

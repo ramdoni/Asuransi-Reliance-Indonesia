@@ -25,4 +25,8 @@ class Index extends Component
 
         return view('livewire.account-payable.index')->with(['data'=>$data->paginate(50)]);
     }
+    public function mount()
+    {
+        \LogActivity::add("Account Payable Index");
+    }
 }

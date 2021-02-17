@@ -29,6 +29,7 @@ class Detail extends Component
         }
         if($this->payment_amount =="") $this->payment_amount=$this->data->nominal;
         if($this->data->status==2) $this->is_finish = true;
+        \LogActivity::add("Expense Cancelation Detail {$this->data->id}");
     }
     public function updated($propertyName)
     {
@@ -52,6 +53,7 @@ class Detail extends Component
         $this->data->bank_charges = replace_idr($this->bank_charges);
         $this->data->save();
         session()->flash('message-success',__('Data saved successfully'));
+        \LogActivity::add("Expense Cancelation Submit {$this->data->id}");
         return redirect()->route('expense-cancelation');
     }
 }

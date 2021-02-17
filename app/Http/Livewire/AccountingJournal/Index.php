@@ -29,7 +29,9 @@ class Index extends Component
         
         return view('livewire.accounting-journal.index')->with(['data'=>$data->paginate(100)]);
     }
-    public function mount(){}
+    public function mount(){
+        \LogActivity::add("Accounting - Journal");
+    }
     public function modalEditHide(){}
     public function modalSetCodeCashflowCheckboxHide(){
         $this->value_multiple_cashflow = []; // Clear data

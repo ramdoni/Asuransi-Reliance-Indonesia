@@ -58,6 +58,8 @@ class Add extends Component
             $balance->transaction_date = $this->date;
             $balance->save();
         }
+        \LogActivity::add("Inhouse Transfer Add {$data->id}");
+
         $this->reset('from_bank_account_id','to_bank_account_id','nominal');
         $this->emit('emit-add-form-hide');
     }

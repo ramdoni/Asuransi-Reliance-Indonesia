@@ -22,6 +22,7 @@ class Edit extends Component
         $this->coa_type_id = $this->data->coa_type_id;
         $this->description = $this->data->description;
         $this->code_voucher = $this->data->code_voucher;
+        \LogActivity::add("COA Edit {$id}");
     }
 
     public function save()
@@ -43,7 +44,7 @@ class Edit extends Component
         $this->data->save();
         
         session()->flash('message-success',__('Data saved successfully'));
-
+        \LogActivity::add("COA Submit {$this->data->id}");
         return redirect()->to('coa');
     }
 }

@@ -12,7 +12,7 @@ class LogActivity
     	$log['url'] = Request::fullUrl();
     	$log['method'] = Request::method();
     	$log['ip'] = Request::ip();
-		$log['var'] = $_POST;
+		$log['var'] = Request::method()=='POST' ? json_encode(Request::post()) : '';
     	$log['agent'] = Request::header('user-agent');
     	$log['user_id'] = auth()->check() ? auth()->user()->id : 1;
     	LogActivityModel::create($log);

@@ -6,10 +6,17 @@
         <div class="card">
             <div class="body">
                 <div class="mb-2 row">
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <input type="text" class="form-control" wire:model="keyword" placeholder="Searching..." />
                     </div>
-                    <div class="px-0 col-md-1">
+                    <div class="col-md-2">
+                        <select class="form-control" wire:model="type">
+                            <option value=""> --- Unit --- </option>
+                            <option value="1">[K] Konven </option>
+                            <option value="2">[S] Syariah</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
                         <select class="form-control" wire:model="status">
                             <option value=""> --- Status --- </option>
                             <option value="1"> Unpaid </option>
@@ -41,7 +48,7 @@
                             <tr>
                                 <td style="width: 50px;">{{$k+1}}</td>
                                 <td><a href="{{route('income.reinsurance.detail',['id'=>$item->id])}}">{!!status_income($item->status)!!}</a></td>
-                                <td><a href="{{route('income.reinsurance.detail',['id'=>$item->id])}}">{{$item->no_voucher}}</a></td>
+                                <td><a href="{{route('income.reinsurance.detail',['id'=>$item->id])}}">{!!no_voucher($item)!!}</a></td>
                                 <td>{{date('d M Y', strtotime($item->created_at))}}</td>
                                 <td>{{$item->payment_date?date('d M Y', strtotime($item->payment_date)):'-'}}</td>
                                 <td>{{$item->reference_date?date('d M Y', strtotime($item->reference_date)):'-'}}</td>

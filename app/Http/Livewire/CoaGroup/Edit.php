@@ -18,6 +18,7 @@ class Edit extends Component
         $this->code = $this->data->code;
         $this->name = $this->data->name;
         $this->description = $this->data->description;
+        \LogActivity::add("COA Group Edit {$this->data->id}");
     }
 
     public function save()
@@ -33,7 +34,7 @@ class Edit extends Component
         $this->data->save();
         
         session()->flash('message-success',__('Data saved successfully'));
-
+        \LogActivity::add("COA Group Submit {$this->data->id}");
         return redirect()->to('coa-group');
     }
 }

@@ -17,6 +17,7 @@ class InternalReport extends Component
     public function mount()
     {
         $this->year = date('Y');
+        \LogActivity::add("Cash Flow Internal Report");
     }
 
     public function downloadExcel()

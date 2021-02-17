@@ -40,6 +40,7 @@ class Edit extends Component
             $this->is_readonly=true;
             $this->total_debit = $this->data->payment_amount;
         } 
+        \LogActivity::add("Account Payable Edit {$id}");
     }
 
     public function addAccountForm()

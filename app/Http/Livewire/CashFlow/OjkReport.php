@@ -15,5 +15,6 @@ class OjkReport extends Component
     public function mount()
     {
         $this->year = date('Y');
+        \LogActivity::add("Cash Flow Ojk Report");
     }
 }

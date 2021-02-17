@@ -27,6 +27,7 @@
                             <option value="1"> Unpaid </option>
                             <option value="2"> Paid</option>
                             <option value="3"> Outstanding</option>
+                            <option value="4"> Draft</option>
                         </select>
                     </div>
                     <div class="col-md-5">
@@ -58,7 +59,7 @@
                         @foreach($data as $k => $item)
                             <tr>
                                 <td style="width: 50px;">{{$data->firstItem()+$k}}</td>
-                                <td><a href="{{route('expense.reinsurance-premium.detail',['id'=>$item->id])}}">{!!status_income($item->status)!!}</a></td>
+                                <td><a href="{{route('expense.reinsurance-premium.detail',['id'=>$item->id])}}">{!!status_expense($item->status)!!}</a></td>
                                 <td>
                                     <a href="{{route('expense.reinsurance-premium.detail',['id'=>$item->id])}}">{{$item->no_voucher}}</a>
                                     @if($item->type==1)

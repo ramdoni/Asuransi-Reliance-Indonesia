@@ -11,7 +11,10 @@ class Insert extends Component
     {
         return view('livewire.coa.insert');
     }
-
+    public function mount()
+    {
+        \LogActivity::add("COA Insert");
+    }
     public function save()
     {
         $this->validate([
@@ -31,7 +34,7 @@ class Insert extends Component
         $data->save();
         
         session()->flash('message-success',__('Data saved successfully'));
-
+        \LogActivity::add("COA Submit {$data->id}");
         return redirect()->to('coa');
     }
 }

@@ -12,4 +12,8 @@ class Index extends Component
         $data = \App\Models\InhouseTransfer::orderBy('id','DESC');
         return view('livewire.inhouse-transfer.index')->with(['data'=>$data->paginate(100)]);
     }
+    public function mount()
+    {
+        \LogActivity::add("Inhouse Transfer");
+    }
 }

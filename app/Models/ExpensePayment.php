@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class ExpensePayment extends Model
 {
     use HasFactory;
-
+    protected $guarded = [];
     public function from_bank_account()
     {
         return $this->belongsTo(\App\Models\BankAccount::class,'from_bank_account_id');

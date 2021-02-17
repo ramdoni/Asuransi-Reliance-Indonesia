@@ -31,6 +31,8 @@ class Detail extends Component
             $this->paid_premi_id =$premi->id;
         }
         if($this->data->status==2) $this->is_readonly = true;
+        
+        \LogActivity::add("Expense Handling Fee Detail {$this->data->id}");
     }
     public function calculate_()
     {
@@ -50,6 +52,7 @@ class Detail extends Component
         $this->data->payment_date = $this->payment_date;
         $this->data->bank_charges = replace_idr($this->bank_charges);
         $this->data->save();
+        \LogActivity::add("Expense Handling Fee Submit {$this->data->id}");
         session()->flash('message-success',__('Data saved successfully'));
         return redirect()->route('expense-handling-fee');
     }

@@ -25,13 +25,14 @@ class Detail extends Component
             $premi = \App\Models\Income::where('transaction_id',$this->data->uw->id)->where('transaction_table','konven_underwriting')->first();
             if($premi){
                 $this->paid_premi = $premi->status;
-                $this->paid_premi_id =$premi->id;
+        $this->paid_premi_id =$premi->id;
                 if($premi->status!=2) $this->is_readonly = true;
             }
         }
         
         if($this->payment_amount =="") $this->payment_amount=$this->data->nominal;
         if($this->data->status==2) $this->is_finish = true;
+        \LogActivity::add("Expense Refund Detail {$this->data->id}");
     }
     public function updated($propertyName)
     {
@@ -53,6 +54,7 @@ class Detail extends Component
         $this->data->payment_date = $this->payment_date;
         $this->data->bank_charges = replace_idr($this->bank_charges);
         $this->data->save();    
+        \LogActivity::add("Expense Refund Submit {$this->data->id}");
         session()->flash('message-success',__('Data saved successfully'));
         return redirect()->route('expense-refund');
     }

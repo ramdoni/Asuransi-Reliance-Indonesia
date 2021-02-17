@@ -17,6 +17,7 @@ class BankAccount extends Component
     public function mount()
     {
         $this->total_balance = \App\Models\BankAccount::where('is_client',0)->sum('open_balance');
+        \LogActivity::add("Inhouse Transfer - Bank Account");
     }
     public function updated($name)
     {

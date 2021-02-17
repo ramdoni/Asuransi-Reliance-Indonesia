@@ -4,7 +4,7 @@
     <div class="col-md-7">
         <div class="card">
             <div class="body">
-                <form id="basic-form" method="post" wire:submit.prevent="save">
+                <form id="basic-form" method="post" wire:submit.prevent="submit">
                     <div class="row">
                         <div class="col-md-12">
                             <table class="table pl-0 mb-0 table-striped  table-nowrap">
@@ -99,6 +99,7 @@
                     <a href="javascript:void0()" onclick="history.back()"><i class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
                     @if(!$is_readonly)
                     <button type="submit" class="ml-3 btn btn-primary"><i class="fa fa-save"></i> {{ __('Submit') }}</button>
+                    <button type="button" class="ml-3 btn btn-info float-right" wire:click="saveAsDraft"><i class="fa fa-save"></i> {{ __('Save as Draft') }}</button>
                     @endif
                 </form>
             </div>
