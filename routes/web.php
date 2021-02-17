@@ -64,6 +64,7 @@ Route::group(['middleware' => ['auth','access:1']], function(){
     Route::get('konven-reinsurance',App\Http\Livewire\Konven\Reinsurance::class)->name('konven.reinsurance');
     Route::get('konven-claim',App\Http\Livewire\Konven\Claim::class)->name('konven.claim');
     Route::get('syariah-underwriting',App\Http\Livewire\Syariah\Index::class)->name('syariah.underwriting');
+    Route::get('log-activity',App\Http\Livewire\LogActivity\Index::class)->name('log-activity');
 });
 // Accounting
 Route::group(['middleware' => ['auth','access:3']], function(){ 
@@ -109,6 +110,7 @@ Route::group(['middleware' => ['auth','access:2']], function(){
     Route::get('expense-others/detail/{id}',App\Http\Livewire\ExpenseOthers\Detail::class)->name('expense.others.detail');
     Route::get('expense-others/insert',App\Http\Livewire\ExpenseOthers\Insert::class)->name('expense.others.insert');
     Route::get('expense-commision-payable',App\Http\Livewire\ExpenseCommisionPayable\Index::class)->name('expense.commision-payable');
+    Route::get('expense-commision-payable/insert',App\Http\Livewire\ExpenseCommisionPayable\Insert::class)->name('expense.commision-payable.insert');
     Route::get('expense-commision-payable/detail/{id}',App\Http\Livewire\ExpenseCommisionPayable\Detail::class)->name('expense.commision-payable.detail');
     Route::get('expense-endorsement',App\Http\Livewire\ExpenseEndorsement\Index::class)->name('expense-endorsement');
     Route::get('expense-endorsement/detail/{id}',App\Http\Livewire\ExpenseEndorsement\Detail::class)->name('expense-endorsement.detail');

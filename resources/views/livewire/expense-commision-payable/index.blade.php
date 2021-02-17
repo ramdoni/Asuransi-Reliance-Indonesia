@@ -1,15 +1,21 @@
 @section('title', 'Commision Payable')
 @section('parentPageTitle', 'Expense')
-
 <div class="clearfix row">
     <div class="col-lg-12">
         <div class="card">
             <div class="body">
                 <div class="mb-2 row">
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <input type="text" class="form-control" wire:model="keyword" placeholder="Searching..." />
                     </div>
-                    <div class="px-0 col-md-1">
+                    <div class="col-md-2">
+                        <select class="form-control" wire:model="unit">
+                            <option value=""> --- Unit --- </option>
+                            <option value="1"> Konven </option>
+                            <option value="2"> Syariah</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
                         <select class="form-control" wire:model="status">
                             <option value=""> --- Status --- </option>
                             <option value="1"> Unpaid </option>
@@ -17,40 +23,103 @@
                             <option value="3"> Outstanding</option>
                         </select>
                     </div>
+                    <div class="col-md-5">
+                        <a href="{{route('expense.commision-payable.insert')}}" class="btn btn-info"><i class="fa fa-plus"></i> Commision Payable</a>
+                    </div>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-striped table-hover m-b-0 c_list">
                         <thead>
                             <tr>
-                                <th>No</th>                                    
-                                <th>Status</th>                                    
-                                <th>No Voucher</th>                                    
-                                <th>Payment Date</th>                                    
-                                <th>Voucher Date</th>  
-                                <th>Debit Note / Kwitansi</th>
-                                <th>Policy Number / Policy Holder</th>                    
-                                <th>Total</th>      
-                                <th>From Bank Account</th>
-                                <th>To Bank Account</th>
-                                <th>Payment Amount</th>
-                                <th>Bank Charges</th>
+                                <th rowspan="2">No</th>                                    
+                                <th rowspan="2">Status</th>                                    
+                                <th rowspan="2">No Voucher</th>                                      
+                                <th rowspan="2">Voucher Date</th>  
+                                <th rowspan="2">Debit Note / Kwitansi</th>
+                                <th rowspan="2">Policy Number / Policy Holder</th>      
+                                <th colspan="4" class="text-center">Fee Base</th>
+                                <th colspan="4" class="text-center">Maintenance</th>
+                                <th colspan="4" class="text-center">Admin Agency</th>
+                                <th colspan="4" class="text-center">Agen Penutup</th>
+                                <th colspan="4" class="text-center">Operasional Agency</th>
+                                <th colspan="4" class="text-center">Handling Fee Broker</th>
+                                <th colspan="4" class="text-center">Referal Fee</th>
+                            </tr>
+                            <tr>
+                                <th>Biaya</th>
+                                <th>Nama Penerima</th>
+                                <th>Bank Penerima</th>
+                                <th>Rekening Penerima</th>
+                                <th>Biaya</th>
+                                <th>Nama Penerima</th>
+                                <th>Bank Penerima</th>
+                                <th>Rekening Penerima</th>
+                                <th>Biaya</th>
+                                <th>Nama Penerima</th>
+                                <th>Bank Penerima</th>
+                                <th>Rekening Penerima</th>
+                                <th>Biaya</th>
+                                <th>Nama Penerima</th>
+                                <th>Bank Penerima</th>
+                                <th>Rekening Penerima</th>
+                                <th>Biaya</th>
+                                <th>Nama Penerima</th>
+                                <th>Bank Penerima</th>
+                                <th>Rekening Penerima</th>
+                                <th>Biaya</th>
+                                <th>Nama Penerima</th>
+                                <th>Bank Penerima</th>
+                                <th>Rekening Penerima</th>
+                                <th>Biaya</th>
+                                <th>Nama Penerima</th>
+                                <th>Bank Penerima</th>
+                                <th>Rekening Penerima</th>
                             </tr>
                         </thead>
                         <tbody>
                         @foreach($data as $k => $item)
                             <tr>
-                                <td style="width: 50px;">{{$k+1}}</td>
+                                <td style="width: 50px;">{{$data->firstItem()+$k}}</td>
                                 <td><a href="{{route('expense.commision-payable.detail',['id'=>$item->id])}}">{!!status_income($item->status)!!}</a></td>
-                                <td><a href="{{route('expense.commision-payable.detail',['id'=>$item->id])}}">{{$item->no_voucher}}</a></td>
-                                <td>{{$item->payment_date?date('d M Y', strtotime($item->payment_date)):'-'}}</td>
+                                <td><a href="{{route('expense.commision-payable.detail',['id'=>$item->id])}}">{!!no_voucher($item)!!}</a></td>
                                 <td>{{date('d M Y', strtotime($item->created_at))}}</td>
                                 <td>{{$item->reference_no ? $item->reference_no : '-'}}</td>
                                 <td>{{$item->recipient ? $item->recipient : '-'}}</td>
-                                <td>{{isset($item->nominal) ? format_idr($item->nominal) : '-'}}</td>
-                                <td>{{isset($item->from_bank_account->no_rekening) ? $item->from_bank_account->no_rekening .' - '.$item->from_bank_account->bank.' an '.$item->from_bank_account->owner : '-'}}</td>
-                                <td>{{isset($item->bank_account->no_rekening) ? $item->bank_account->no_rekening .' - '.$item->bank_account->bank.' an '.$item->bank_account->owner : '-'}}</td>
-                                <td>{{isset($item->payment_amount) ? format_idr($item->payment_amount) : '-'}}</td>
-                                <td>{{isset($item->bank_charges) ? format_idr($item->bank_charges) : '-'}}</td>
+                                
+                                <td>{{isset($item->payment_fee_base->payment_amount) ? format_idr($item->payment_fee_base->payment_amount) : '-'}}</td>
+                                <td>{{isset($item->payment_fee_base->to_bank_account->owner) ? $item->payment_fee_base->to_bank_account->owner : '-'}}</td>
+                                <td>{{isset($item->payment_fee_base->to_bank_account->bank) ? $item->payment_fee_base->to_bank_account->bank : '-'}}</td>
+                                <td>{{isset($item->payment_fee_base->to_bank_account->no_rekening) ? $item->payment_fee_base->to_bank_account->no_rekening : '-'}}</td>
+
+                                <td>{{isset($item->payment_maintenance->payment_amount) ? format_idr($item->payment_maintenance->payment_amount) : '-'}}</td>
+                                <td>{{isset($item->payment_maintenance->to_bank_account->owner) ? $item->payment_maintenance->to_bank_account->owner : '-'}}</td>
+                                <td>{{isset($item->payment_maintenance->to_bank_account->bank) ? $item->payment_maintenance->to_bank_account->bank : '-'}}</td>
+                                <td>{{isset($item->payment_maintenance->to_bank_account->no_rekening) ? $item->payment_maintenance->to_bank_account->no_rekening : '-'}}</td>
+                                
+                                <td>{{isset($item->payment_admin_agency->payment_amount) ? format_idr($item->payment_admin_agency->payment_amount) : '-'}}</td>
+                                <td>{{isset($item->payment_admin_agency->to_bank_account->owner) ? $item->payment_admin_agency->to_bank_account->owner : '-'}}</td>
+                                <td>{{isset($item->payment_admin_agency->to_bank_account->bank) ? $item->payment_admin_agency->to_bank_account->bank : '-'}}</td>
+                                <td>{{isset($item->payment_admin_agency->to_bank_account->no_rekening) ? $item->payment_admin_agency->to_bank_account->no_rekening : '-'}}</td>
+
+                                <td>{{isset($item->payment_agen_penutup->payment_amount) ? format_idr($item->payment_agen_penutup->payment_amount) : '-'}}</td>
+                                <td>{{isset($item->payment_agen_penutup->to_bank_account->owner) ? $item->payment_agen_penutup->to_bank_account->owner : '-'}}</td>
+                                <td>{{isset($item->payment_agen_penutup->to_bank_account->bank) ? $item->payment_agen_penutup->to_bank_account->bank : '-'}}</td>
+                                <td>{{isset($item->payment_agen_penutup->to_bank_account->no_rekening) ? $item->payment_agen_penutup->to_bank_account->no_rekening : '-'}}</td>
+
+                                <td>{{isset($item->payment_operasional_agency->payment_amount) ? format_idr($item->payment_operasional_agency->payment_amount) : '-'}}</td>
+                                <td>{{isset($item->payment_operasional_agency->to_bank_account->owner) ? $item->payment_operasional_agency->to_bank_account->owner : '-'}}</td>
+                                <td>{{isset($item->payment_operasional_agency->to_bank_account->bank) ? $item->payment_operasional_agency->to_bank_account->bank : '-'}}</td>
+                                <td>{{isset($item->payment_operasional_agency->to_bank_account->no_rekening) ? $item->payment_operasional_agency->to_bank_account->no_rekening : '-'}}</td>
+
+                                <td>{{isset($item->payment_handling_fee_broker->payment_amount) ? format_idr($item->payment_handling_fee_broker->payment_amount) : '-'}}</td>
+                                <td>{{isset($item->payment_handling_fee_broker->to_bank_account->owner) ? $item->payment_handling_fee_broker->to_bank_account->owner : '-'}}</td>
+                                <td>{{isset($item->payment_handling_fee_broker->to_bank_account->bank) ? $item->payment_handling_fee_broker->to_bank_account->bank : '-'}}</td>
+                                <td>{{isset($item->payment_handling_fee_broker->to_bank_account->no_rekening) ? $item->payment_handling_fee_broker->to_bank_account->no_rekening : '-'}}</td>
+
+                                <td>{{isset($item->payment_referal_fee->payment_amount) ? format_idr($item->payment_referal_fee->payment_amount) : '-'}}</td>
+                                <td>{{isset($item->payment_referal_fee->to_bank_account->owner) ? $item->payment_referal_fee->to_bank_account->owner : '-'}}</td>
+                                <td>{{isset($item->payment_referal_fee->to_bank_account->bank) ? $item->payment_referal_fee->to_bank_account->bank : '-'}}</td>
+                                <td>{{isset($item->payment_referal_fee->to_bank_account->no_rekening) ? $item->payment_referal_fee->to_bank_account->no_rekening : '-'}}</td>
                             </tr>
                         @endforeach
                         </tbody>

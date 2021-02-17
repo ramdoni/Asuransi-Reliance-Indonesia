@@ -4,20 +4,18 @@ namespace App\Http\Livewire\ExpenseCommisionPayable;
 
 use Livewire\Component;
 
-class Detail extends Component
+class Insert extends Component
 {
-    public $expense,$data,$no_voucher,$no_polis,$nilai_klaim,$premium_receivable,$is_submit=true;
+    public $data,$no_voucher,$no_polis,$nilai_klaim,$premium_receivable,$is_submit=true;
     public $reference_no,$payment_date,$bank_charges,$description,$type=1;
     public $to_bank_account_id=[],$from_bank_account_id=[],$transaction_type=[],$payments=[],$payment_amount;
     public function render()
     {
-        return view('livewire.expense-commision-payable.detail');
+        return view('livewire.expense-commision-payable.insert');
     }
-    public function mount($id)
+    public function mount()
     {
-        $this->expense  = \App\Models\Expenses::find($id);
-        $this->data = \App\Models\Policy::find($this->expense->policy_id);
-        $this->no_voucher = $this->expense->no_voucher;
+        $this->no_voucher = generate_no_voucher_expense();
     }
     public function updated($propertyName)
     {
@@ -50,7 +48,6 @@ class Detail extends Component
         ]);
         
         $data = new \App\Models\Expenses();
-        $data->policy_id = $this->data->id;
         $data->recipient = $this->data->no_polis .' / '. $this->data->pemegang_polis;
         $data->no_voucher = $this->no_voucher;
         $data->reference_no = $this->reference_no;

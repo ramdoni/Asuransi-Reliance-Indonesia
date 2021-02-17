@@ -134,6 +134,21 @@ class Detail extends Component
             }
         }
         if($this->data->status==2){
+            // set balance
+            $bank_balance = \App\Models\BankAccount::find($this->data->rekening_bank_id);
+            if($bank_balance){
+                $bank_balance->open_balance = $bank_balance->open_balance + $this->payment_amount;
+                $bank_balance->save();
+
+                $balance = new \App\Models\BankAccountBalance();
+                $balance->kredit = $this->payment_amount;
+                $balance->bank_account_id = $bank_balance->id;
+                $balance->status = 1;
+                $balance->type = 4; // Inhouse transfer
+                $balance->nominal = $bank_balance->open_balance;
+                $balance->transaction_date = $this->payment_date;
+                $balance->save();
+            }
             $coa_premium_receivable = 0;
             switch($this->data->uw->line_bussines){
                 case "JANGKAWARSA":

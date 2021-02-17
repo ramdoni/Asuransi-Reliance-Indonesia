@@ -8,7 +8,7 @@ use Livewire\WithPagination;
 class Index extends Component
 {
     use WithPagination;
-    public $keyword,$coa_id,$status;
+    public $keyword,$unit,$status;
     protected $paginationTheme = 'bootstrap';
     public function render()
     {
@@ -17,6 +17,7 @@ class Index extends Component
                                         ->orWhere('no_voucher','LIKE',"%{$this->keyword}%")
                                         ->orWhere('reference_no','LIKE',"%{$this->keyword}%");
         if($this->status) $data = $data->where('status',$this->status);
+        if($this->unit) $data = $data->where('unit',$this->unit);
 
         return view('livewire.income-reinsurance.index')->with(['data'=>$data->paginate(100)]);
     }

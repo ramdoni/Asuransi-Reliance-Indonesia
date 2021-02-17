@@ -12,7 +12,7 @@ class IndexController extends Controller
         {
             \Auth::loginUsingId(\Session::get('is_id'));
             
-            \LogActivity::addToLog('Back to Admin');
+            \LogActivity::add('Back to Admin');
 
             return redirect('/')->with('message-success', 'Welcome Back Administrator');
         }

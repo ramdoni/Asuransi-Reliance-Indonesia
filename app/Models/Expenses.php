@@ -8,7 +8,34 @@ use Illuminate\Database\Eloquent\Model;
 class Expenses extends Model
 {
     use HasFactory;
-
+    public function payment_fee_base()
+    {
+        return $this->hasOne(\App\Models\ExpensePayment::class,'expense_id')->where('transaction_type','Fee Base');
+    }
+    public function payment_maintenance()
+    {
+        return $this->hasOne(\App\Models\ExpensePayment::class,'expense_id')->where('transaction_type','Maintenance');
+    }
+    public function payment_admin_agency()
+    {
+        return $this->hasOne(\App\Models\ExpensePayment::class,'expense_id')->where('transaction_type','Admin Agency');
+    }
+    public function payment_agen_penutup()
+    {
+        return $this->hasOne(\App\Models\ExpensePayment::class,'expense_id')->where('transaction_type','Agen Penutup');
+    }
+    public function payment_operasional_agency()
+    {
+        return $this->hasOne(\App\Models\ExpensePayment::class,'expense_id')->where('transaction_type','Operasional Agency');
+    }
+    public function payment_handling_fee_broker()
+    {
+        return $this->hasOne(\App\Models\ExpensePayment::class,'expense_id')->where('transaction_type','Handling Fee Broker');
+    }
+    public function payment_referal_fee()
+    {
+        return $this->hasOne(\App\Models\ExpensePayment::class,'expense_id')->where('transaction_type','Referal Fee');
+    }
     public function bank_account()
     {
         return $this->hasOne('\App\Models\BankAccount','id','rekening_bank_id');

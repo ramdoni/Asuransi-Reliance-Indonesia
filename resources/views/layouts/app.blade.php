@@ -74,6 +74,15 @@
                         <div class="row">
                             <div class="col-lg-5 col-md-8 col-sm-12">                        
                                 <h2><a href="javascript:void(0);" class="btn btn-xs btn-link btn-toggle-fullwidth"><i class="fa fa-arrow-left"></i></a> @yield('title')</h2>
+                                <ul class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="/"><i class="icon-home"></i></a></li>
+                                    @if (trim($__env->yieldContent('parentPageTitle')))
+                                       <li class="breadcrumb-item">@yield('parentPageTitle')</li>
+                                    @endif
+                                    @if (trim($__env->yieldContent('title')))
+                                        <li class="breadcrumb-item active">@yield('title')</li>
+                                    @endif
+                                </ul>
                             </div>     
                             <div class="text-right col-lg-7 col-md-4 col-sm-12">
                                 @if (trim($__env->yieldContent('title-right')))

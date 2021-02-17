@@ -1,5 +1,12 @@
 <?php
 
+function no_voucher($item)
+{
+    $flag = " <span class=\"badge badge-info\" title=\"".($item->type==1?'Konven':'Syariah').".\">".($item->type==1?'K':'S')."</span>";
+
+    return $item->no_voucher.$flag;
+}
+
 function status_account_balance($status)
 {
     switch($status){
@@ -11,6 +18,12 @@ function status_account_balance($status)
         break;
         case 3:
             return "Investasi";
+        break;
+        case 4:
+            return "Premium Receivable";
+        break;
+        case 5:
+            return "Reinsurance Premium";
         break;
     }
 }

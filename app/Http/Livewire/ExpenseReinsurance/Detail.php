@@ -25,6 +25,9 @@ class Detail extends Component
     }
     public function updated($propertyName)
     {
+        if($propertyName=='payment_amount'){
+            $this->outstanding_balance = $this->data->nominal  - replace_idr($this->payment_amount);
+        }
         $this->emit('init-form');
     }
     public function mount($id)
@@ -33,15 +36,15 @@ class Detail extends Component
         $this->no_voucher = $this->data->no_voucher;
         $this->payment_date = $this->data->payment_date?$this->data->payment_date : date('Y-m-d');
         $this->bank_account_id = $this->data->rekening_bank_id;
+        $this->from_bank_account_id = $this->data->from_bank_account_id;
         $this->payment_amount = format_idr($this->data->payment_amount);
         $this->total_payment_amount = $this->data->total_payment_amount;
 
         if($this->payment_amount =="") $this->payment_amount=$this->data->nominal;
-        if($this->data->status==2) $this->is_finish = true;
+        if($this->data->status==2) $this->is_readonly = true;
     }
     public function save()
     {
-        // if($this->is_finish) return false;
         $this->validate();
         $this->payment_amount = replace_idr($this->payment_amount);
         if($this->payment_amount==$this->data->nominal) $this->data->status=2;//paid
@@ -53,6 +56,22 @@ class Detail extends Component
         $this->data->from_bank_account_id = $this->from_bank_account_id;
         $this->data->save();
         if($this->data->status==2){
+            // set balance
+            $bank_balance = \App\Models\BankAccount::find($this->data->rekening_bank_id);
+            if($bank_balance){
+                $bank_balance->open_balance = $bank_balance->open_balance + $this->payment_amount;
+                $bank_balance->save();
+
+                $balance = new \App\Models\BankAccountBalance();
+                $balance->kredit = $this->payment_amount;
+                $balance->bank_account_id = $bank_balance->id;
+                $balance->status = 1;
+                $balance->type = 5; // Reinsurance Premium
+                $balance->nominal = $bank_balance->open_balance;
+                $balance->transaction_date = $this->payment_date;
+                $balance->save();
+            }
+
             if($this->data->transaction_table=='konven_reinsurance'){
                 $reas = \App\Models\KonvenReinsurance::find($this->data->transaction_id);
                 $coa_reinsurance_premium_payable = 0;
@@ -123,6 +142,8 @@ class Detail extends Component
             $journal->transaction_number = isset($reas->uw->no_kwitansi_debit_note)?$reas->uw->no_kwitansi_debit_note:'';
             $journal->save();
         }
+        \LogActivity::add("Expense - Reinsurance Premium Save {$this->data->id}");
+
         session()->flash('message-success',__('Data saved successfully'));
         return redirect()->route('expense.reinsurance-premium');
     }

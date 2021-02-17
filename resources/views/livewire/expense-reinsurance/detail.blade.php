@@ -7,10 +7,10 @@
                 <form id="basic-form" method="post" wire:submit.prevent="save">
                     <div class="row">
                         <div class="col-md-12">
-                            <table class="table pl-0 mb-0 table-striped">
+                            <table class="table pl-0 mb-0 table-striped  table-nowrap">
                                 <tr>
                                     <th>{{ __('Voucher Number')}}</th>
-                                    <td>{{$data->no_voucher}}</td>
+                                    <td>{!! no_voucher($data) !!}</td>
                                 </tr>
                                 <tr>
                                     <th>{{ __('Voucher Date')}}</th>
@@ -26,11 +26,21 @@
                                 </tr>
                                 <tr>
                                     <th>{{ __('Reference Date')}}</th>
-                                    <td>{{$data->reference_date}}</td>
+                                    <td>{{date('d-M-Y', strtotime($data->reference_date))}}</td>
+                                </tr>
+                                <tr>
+                                    <th>{{ __('Amount')}}</th>
+                                    <td>{{format_idr($data->nominal)}}</td>
                                 </tr>
                                 <tr>
                                     <th>{{ __('Payment Amount')}}</th>
-                                    <td>{{format_idr($payment_amount)}}</td>
+                                    <td>
+                                        <input type="text" class="form-control col-md-6 format_number" {{$is_readonly?'disabled':''}}  wire:model="payment_amount" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>{{__('Outstanding')}}</th>
+                                    <td>{{format_idr($outstanding_balance)}}</td>
                                 </tr>
                                 <tr>
                                     <th>{{__('From Bank Account')}}</th>
@@ -38,7 +48,7 @@
                                         <select class="form-control" wire:model="from_bank_account_id" {{$is_readonly?'disabled':''}}>
                                             <option value=""> --- {{__('Select')}} --- </option>
                                             @foreach (\App\Models\BankAccount::where('is_client',0)->orderBy('bank','ASC')->get() as $bank)
-                                                <option value="{{ $bank->id}}">{{ $bank->no_rekening}} ({{ $bank->bank}})</option>
+                                                <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
                                             @endforeach
                                         </select>
                                         @error('from_bank_account_id')
@@ -87,7 +97,9 @@
                     </div>
                     <hr />
                     <a href="javascript:void0()" onclick="history.back()"><i class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
+                    @if(!$is_readonly)
                     <button type="submit" class="ml-3 btn btn-primary"><i class="fa fa-save"></i> {{ __('Submit') }}</button>
+                    @endif
                 </form>
             </div>
         </div>
@@ -122,6 +134,7 @@
 @push('after-scripts')
 <link rel="stylesheet" href="{{ asset('assets/vendor/select2/css/select2.min.css') }}"/>
 <script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
+<script src="{{ asset('assets/js/jquery.priceformat.min.js') }}"></script>
 <style>
     .select2-container .select2-selection--single {height:36px;padding-left:10px;}
     .select2-container .select2-selection--single .select2-selection__rendered{padding-top:3px;}
@@ -140,6 +153,12 @@
     })
     var select__2;
     function init_form(){
+        $('.format_number').priceFormat({
+            prefix: '',
+            centsSeparator: '.',
+            thousandsSeparator: '.',
+            centsLimit: 0
+        });
         select__2 = $('.bank_account_id').select2();
         $('.bank_account_id').on('change', function (e) {
             let elementName = $(this).attr('id');

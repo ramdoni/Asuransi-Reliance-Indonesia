@@ -78,6 +78,9 @@
                                 <li class="{{ Request::segment(1) === 'coa-group' ? 'active' : null }}"><a href="{{route('coa-group')}}">COA Groups</a></li>
                             </ul>
                         </li>
+                        <li class="{{ Request::segment(1) === 'users' ? 'active' : null }}">
+                            <a href="{{route('log-activity')}}"><i class="fa fa-history"></i> <span>Log Activity</span></a>
+                        </li>
                         @endif
                         @if(\Auth::user()->user_access_id==2)<!--Finance-->     
                         <li class="{{ Request::segment(1) === 'dashboard' ? 'active' : null }}">

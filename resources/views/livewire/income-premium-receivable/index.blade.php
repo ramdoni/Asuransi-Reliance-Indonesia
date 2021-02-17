@@ -1,5 +1,5 @@
 @section('title', 'Premium Receivable')
-@section('parentPageTitle', 'Home')
+@section('parentPageTitle', 'Income')
 @section('title-right')
 <h6 class="mt-2">
     <small>Received </small>  <strong class="text-info cursor-pointer" wire:click="$set('status',2)">Rp. {{format_idr($received)}}</strong>
@@ -71,12 +71,7 @@
                                 <td style="width: 50px;">{{$num}}</td>
                                 <td><a href="{{route('income.premium-receivable.detail',['id'=>$item->id])}}">{!!status_income($item->status)!!}</a></td>
                                 <td>
-                                    <a href="{{route('income.premium-receivable.detail',['id'=>$item->id])}}">{{$item->no_voucher}}</a>
-                                    @if($item->type==1)
-                                    <span class="badge badge-danger" title="Konven">K</span>
-                                    @else
-                                    <span class="badge badge-info" title="Syariah">S</span>
-                                    @endif
+                                    <a href="{{route('income.premium-receivable.detail',['id'=>$item->id])}}">{!!no_voucher($item)!!}</a>
                                 </td>
                                 <td>{{$item->payment_date?date('d M Y', strtotime($item->payment_date)):'-'}}</td>
                                 <td>{{date('d M Y', strtotime($item->created_at))}}</td>
