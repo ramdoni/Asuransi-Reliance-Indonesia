@@ -14,7 +14,7 @@
                             <table class="table pl-0 mb-0 table-striped">
                                 <tr>
                                     <th>{{ __('Voucher Number')}}</th>
-                                    <td>{{$data->no_voucher}}</td>
+                                    <td>{!!no_voucher($data)!!}</td>
                                 </tr>
                                 <tr>
                                     <th>{{ __('Voucher Date')}}</th>

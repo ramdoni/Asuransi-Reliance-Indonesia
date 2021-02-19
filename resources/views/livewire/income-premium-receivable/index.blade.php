@@ -33,7 +33,8 @@
                     <div class="col-md-2">
                         <input type="text" class="form-control" wire:model="payment_date" placeholder="Payment Date" onfocus="(this.type='date')" />
                     </div>
-                    <div class="col-md-1">
+                    <div class="col-md-2">
+                        <a href="javascript:;" wire:click="downloadExcel" class="btn btn-info"><i class="fa fa-download"></i> Download</a>
                         <span wire:loading>
                             <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
                             <span class="sr-only">{{ __('Loading...') }}</span>

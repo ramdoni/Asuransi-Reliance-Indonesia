@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Expenses extends Model
 {
     use HasFactory;
+    public function policy()
+    {
+        return $this->belongsTo(\App\Models\Policy::class,'policy_id');
+    }
     public function payment_fee_base()
     {
         return $this->hasOne(\App\Models\ExpensePayment::class,'expense_id')->where('transaction_type','Fee Base');

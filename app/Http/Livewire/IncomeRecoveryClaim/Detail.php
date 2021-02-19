@@ -4,13 +4,13 @@ namespace App\Http\Livewire\IncomeRecoveryClaim;
 
 use Livewire\Component;
 
-class Insert extends Component
+class Detail extends Component
 {
     public $type=1,$no_voucher,$is_submit=true,$data,$premium_receivable,$expense_id,$outstanding_balance,$reference_no,$payment_amount,$from_bank_account_id,$to_bank_account_id;
     public $is_readonly=false,$payment_date,$bank_charges,$description,$reference_date;
     public function render()
     {
-        return view('livewire.income-recovery-claim.insert');
+        return view('livewire.income-recovery-claim.detail');
     }
     public function mount()
     {

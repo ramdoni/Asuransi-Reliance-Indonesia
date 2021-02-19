@@ -7,7 +7,7 @@ use Livewire\Component;
 class Insert extends Component
 {
     public $data,$no_voucher,$no_polis,$nilai_klaim,$premium_receivable,$is_submit=false;
-    public $reference_no,$to_bank_account_id,$from_bank_account_id,$payment_date,$bank_charges,$description;
+    public $reference_no,$to_bank_account_id,$from_bank_account_id,$payment_date,$bank_charges,$description,$type=1;
     public function render()
     {
         return view('livewire.expense-claim.insert');
@@ -31,8 +31,10 @@ class Insert extends Component
         }
         $this->emit('init-form');
     }
-    public function save()
+    public function save($type)
     {
+        $this->bank_charges = replace_idr($this->bank_charges);
+        $this->nilai_klaim = replace_idr($this->nilai_klaim);
         $this->validate(
             [
                 'no_polis' => 'required',
@@ -52,13 +54,32 @@ class Insert extends Component
         $data->payment_amount = $this->nilai_klaim;
         $data->payment_date = $this->payment_date;
         $data->bank_charges = $this->bank_charges;
-        $data->status = 2;
+        $data->status = $type=='Draft' ? 4 : 2;
         $data->user_id = \Auth::user()->id;
         $data->description = $this->description;
+        $data->type = $this->type;
         $data->save();
 
+        if($type=='Submit'){
+            // set balance
+            $bank_balance = \App\Models\BankAccount::find($data->from_bank_account_id);
+            if($bank_balance){
+                $bank_balance->open_balance = $bank_balance->open_balance - $this->nilai_klaim;
+                $bank_balance->save();
+
+                $balance = new \App\Models\BankAccountBalance();
+                $balance->debit = $this->nilai_klaim;
+                $balance->bank_account_id = $bank_balance->id;
+                $balance->status = 1;
+                $balance->type = 6; // Claim Payable
+                $balance->nominal = $bank_balance->open_balance;
+                $balance->transaction_date = $this->payment_date;
+                $balance->save();
+            }
+        }
+
         session()->flash('message-success',__('Claim data has been successfully saved'));
-        \LogActivity::add("Expense Claim Insert {$data->id}");
+        \LogActivity::add("Expense Claim {$type} {$data->id}");
         return redirect()->route('expense.claim');
     }
 }

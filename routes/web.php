@@ -100,6 +100,7 @@ Route::group(['middleware' => ['auth','access:2']], function(){
     Route::get('income-investment',App\Http\Livewire\IncomeInvesment\Index::class)->name('income.investment');
     Route::get('income-recovery-claim',App\Http\Livewire\IncomeRecoveryClaim\Index::class)->name('income.recovery-claim');
     Route::get('income-recovery-claim/insert',App\Http\Livewire\IncomeRecoveryClaim\Insert::class)->name('income.recovery-claim.insert');
+    Route::get('income-recovery-claim/detail/{id}',App\Http\Livewire\IncomeRecoveryClaim\Detail::class)->name('income.recovery-claim.detail');
 
     Route::get('expense-reinsurance-premium',App\Http\Livewire\ExpenseReinsurance\Index::class)->name('expense.reinsurance-premium');
     Route::get('expense-reinsurance-premium/detail/{id}',App\Http\Livewire\ExpenseReinsurance\Detail::class)->name('expense.reinsurance-premium.detail');

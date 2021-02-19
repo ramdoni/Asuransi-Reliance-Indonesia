@@ -4,9 +4,19 @@
     <div class="col-md-5">
         <div class="card">
             <div class="body">
-                <form wire:submit.prevent="save">
+                <form wire:submit.prevent="save('Submit')">
                     <div class="form-group">
-                        <p>{{ __('Voucher Number') }} : <strong class="text-success">{{$no_voucher}}</strong></p>
+                        <span>{{ __('Voucher Number') }} : <strong class="text-success">{{$no_voucher}}</strong></span>
+                        <div class="float-right">
+                            <label class="fancy-radio">
+                                <input type="radio" value="1" wire:model="type" /> 
+                                <span><i></i>Konven</span>
+                            </label> 
+                            <label class="fancy-radio">
+                                <input type="radio" value="2" wire:model="type" />
+                                <span><i></i>Syariah</span>
+                            </label> 
+                        </div>
                         <hr />
                     </div>
                     <div class="form-group" wire:ignore>
@@ -70,20 +80,19 @@
                     </div>
                     <div class="form-group">
                         <label>{{ __('Payment Date') }}</label>
-                        <input type="date" class="form-control" wire:model="payment_date">
+                        <input type="date" class="form-control col-md-6" wire:model="payment_date">
                         @error('payment_date')
                         <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                         @enderror
                     </div>
-                    <tr>
-                        <th>{{__('Description')}}</th>
-                        <td>
-                            <textarea style="height:100px;" class="form-control" wire:model="description"></textarea>
-                        </td>
-                    </tr>
+                    <div class="form-group">
+                        <label>{{__('Description')}}</label>
+                        <textarea style="height:100px;" class="form-control" wire:model="description"></textarea>
+                    </div>
                     <hr />
                     <a href="javascript:void0()" onclick="history.back()"><i class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
                     <button type="submit" class="ml-3 btn btn-primary" {{!$is_submit?'disabled':''}}><i class="fa fa-save"></i> {{ __('Submit') }}</button>
+                    <button type="button" class="ml-3 btn btn-info float-right" wire:click="save('Draft')"><i class="fa fa-save"></i> {{ __('Save as Draft') }}</button>
                     <div wire:loading>
                         <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
                         <span class="sr-only">Loading...</span>
@@ -127,15 +136,13 @@
                 </table>
             </div>
         </div>
-    </div>
-    <div class="col-md-12">
         <div class="card">
             <div class="body">
                 <div class="row">
                     <div class="col-md-12">
                         <h6>Premium Receivable</h6>
                         <hr />
-                        <div class="table-responsive">
+                        <div class="table-responsive" style="max-height: 400px;">
                             <table class="table table-striped table-hover m-b-0 c_list table-nowrap">
                                 <tr>
                                     <th>No</th>                                    

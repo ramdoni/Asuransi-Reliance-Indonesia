@@ -25,6 +25,9 @@ function status_account_balance($status)
         case 5:
             return "Reinsurance Premium";
         break;
+        case 6:
+            return "Claim Payable";
+        break;
     }
 }
 

@@ -5,19 +5,29 @@
         <div class="card">
             <div class="body">
                 <div class="mb-2 row">
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <input type="text" class="form-control" wire:model="keyword" placeholder="Searching..." />
                     </div>
-                    <div class="px-0 col-md-1">
+                    <div class="col-md-2">
                         <select class="form-control" wire:model="status">
                             <option value=""> --- Status --- </option>
-                            <option value="1"> Unpaid </option>
                             <option value="2"> Paid</option>
-                            <option value="3"> Outstanding</option>
+                            <option value="4"> Draft</option>
                         </select>
                     </div>
                     <div class="col-md-2">
+                        <select class="form-control" wire:model="type">
+                            <option value=""> --- Unit --- </option>
+                            <option value="1">[K] Konven </option>
+                            <option value="2">[S] Syariah</option>
+                        </select>
+                    </div>
+                    <div class="col-md-5">
                         <a href="{{route('expense.claim.insert')}}" class="btn btn-info"><i class="fa fa-plus"></i> Claim</a>
+                        <span wire:loading>
+                            <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                            <span class="sr-only">{{ __('Loading...') }}</span>
+                        </span>
                     </div>  
                 </div>
                 <div class="table-responsive">
@@ -41,8 +51,13 @@
                         @foreach($data as $k => $item)
                             <tr>
                                 <td style="width: 50px;">{{$k+1}}</td>
-                                <td><a href="{{route('expense.claim.detail',['id'=>$item->id])}}">{!!status_expense($item->status)!!}</a></td>
-                                <td><a href="{{route('expense.claim.detail',['id'=>$item->id])}}">{{$item->no_voucher}}</a></td>
+                                <td>
+                                    <a href="{{route('expense.claim.detail',['id'=>$item->id])}}">{!!status_expense($item->status)!!}</a>
+                                    @if($item->status==4)
+                                    <a href="javascript:;" title="Delete Claim" class="text-danger" wire:click="delete({{$item->id}})"><i class="fa fa-trash"></i></a>
+                                    @endif
+                                </td>
+                                <td><a href="{{route('expense.claim.detail',['id'=>$item->id])}}">{!!no_voucher($item)!!}</a></td>
                                 <td>{{date('d M Y', strtotime($item->created_at))}}</td>
                                 <td>{{date('d M Y', strtotime($item->payment_date))}}</td>
                                 <td>{{$item->reference_no ? $item->reference_no : '-'}}</td>

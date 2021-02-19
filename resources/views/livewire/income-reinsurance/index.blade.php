@@ -24,6 +24,13 @@
                             <option value="3"> Outstanding</option>
                         </select>
                     </div>
+                    <div class="col-md-5">
+                        <a href="javascript:;" wire:click="downloadExcel" class="btn btn-info"><i class="fa fa-download"></i> Download</a>
+                        <span wire:loading>
+                            <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                            <span class="sr-only">{{ __('Loading...') }}</span>
+                        </span>
+                    </div>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-striped table-hover m-b-0 c_list">
@@ -37,8 +44,10 @@
                                 <th>Reference Date</th>
                                 <th>Debit Note / Kwitansi</th>
                                 <th>Policy Number / Policy Holder</th>                    
-                                <th>Total</th>                                               
-                                <th>No Rekening</th>
+                                <th>Total</th>      
+                                <th>From Bank Account</th>
+                                <th>To Bank Account</th>
+                                <th>Bank Charges</th>
                                 <th>Outstanding Balance</th>
                                 <th>Payment Amount</th>
                             </tr>
@@ -55,7 +64,9 @@
                                 <td>{{$item->reference_no ? $item->reference_no : '-'}}</td>
                                 <td>{{$item->client ? $item->client : '-'}}</td>
                                 <td>{{isset($item->nominal) ? format_idr($item->nominal) : '-'}}</td>
-                                <td>{{isset($item->bank_account->no_rekening) ? $item->bank_account->no_rekening .'('.$item->bank_account->bank.')' : '-'}}</td>
+                                <td>{{isset($item->from_bank_account->no_rekening) ? $item->from_bank_account->no_rekening .'- '.$item->from_bank_account->bank.' an '. $item->from_bank_account->owner : '-'}}</td>
+                                <td>{{isset($item->bank_account->no_rekening) ? $item->bank_account->no_rekening .' - '.$item->bank_account->bank.' an '. $item->bank_account->owner : '-'}}</td>
+                                <td>{{isset($item->bank_charges) ? format_idr($item->bank_charges) : '-'}}</td>
                                 <td>{{isset($item->outstanding_balance) ? format_idr($item->outstanding_balance) : '-'}}</td>
                                 <td>{{isset($item->payment_amount) ? format_idr($item->payment_amount) : '-'}}</td>
                             </tr>

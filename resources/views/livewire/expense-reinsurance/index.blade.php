@@ -1,4 +1,4 @@
-@section('title', 'Reinsurance')
+@section('title', 'Reinsurance Premium')
 @section('parentPageTitle', 'Expense')
 @section('title-right')
 <h6 class="mt-2">
@@ -31,6 +31,7 @@
                         </select>
                     </div>
                     <div class="col-md-5">
+                        <a href="javascript:;" class="btn btn-info" wire:click="downloadExcel"><i class="fa fa-download"></i> Download</a>
                         <span wire:loading>
                             <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
                             <span class="sr-only">{{ __('Loading...') }}</span>
@@ -61,12 +62,7 @@
                                 <td style="width: 50px;">{{$data->firstItem()+$k}}</td>
                                 <td><a href="{{route('expense.reinsurance-premium.detail',['id'=>$item->id])}}">{!!status_expense($item->status)!!}</a></td>
                                 <td>
-                                    <a href="{{route('expense.reinsurance-premium.detail',['id'=>$item->id])}}">{{$item->no_voucher}}</a>
-                                    @if($item->type==1)
-                                    <span class="badge badge-danger" title="Konven">K</span>
-                                    @else
-                                    <span class="badge badge-info" title="Syariah">S</span>
-                                    @endif
+                                    <a href="{{route('expense.reinsurance-premium.detail',['id'=>$item->id])}}">{!!no_voucher($item)!!}</a>
                                 </td>
                                 <td>{{$item->payment_date?date('d M Y', strtotime($item->payment_date)):'-'}}</td>
                                 <td>{{date('d M Y', strtotime($item->created_at))}}</td>
