@@ -1,5 +1,5 @@
-@section('title', 'Claim Payable')
-@section('parentPageTitle', 'Expense')
+@section('title', 'CN Insert Reas')
+@section('parentPageTitle', 'Endorsement')
 <div class="clearfix row">
     <div class="col-md-5">
         <div class="card">
@@ -71,9 +71,9 @@
                             @enderror
                         </div>
                         <div class="form-group col-md-6">
-                            <label>{{ __('Nilai Klaim') }}</label>
-                            <input type="text" class="form-control format_number" wire:model="nilai_klaim">
-                            @error('nilai_klaim')
+                            <label>{{ __('Payment Amount') }}</label>
+                            <input type="text" class="form-control format_number" wire:model="payment_amount">
+                            @error('payment_amount')
                             <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                             @enderror
                         </div>

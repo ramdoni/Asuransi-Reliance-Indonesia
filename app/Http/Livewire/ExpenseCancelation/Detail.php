@@ -20,15 +20,18 @@ class Detail extends Component
         $this->payment_date = $this->data->payment_date?$this->data->payment_date : date('Y-m-d');
         $this->bank_account_id = $this->data->rekening_bank_id;
         $this->payment_amount = $this->data->payment_amount;
+        $this->from_bank_account_id = $this->data->from_bank_account_id;
         $this->total_payment_amount = $this->data->total_payment_amount;
-        $premi = \App\Models\Income::where('transaction_id',$this->data->uw->id)->where('transaction_table','konven_underwriting')->first();
-        if($premi){
-            $this->paid_premi = $premi->status;
-            $this->paid_premi_id =$premi->id;
-            if($premi->status!=2) $this->is_readonly = true;
+        if(isset($this->data->memo->id)){
+            $premi = \App\Models\Income::where('transaction_id',$this->data->memo->konven_underwriting_id)->where('transaction_table','konven_underwriting')->first();   
+            if($premi){
+                $this->paid_premi = $premi->status;
+                $this->paid_premi_id =$premi->id;
+                if($premi->status!=2) $this->is_readonly = true;
+            }
         }
         if($this->payment_amount =="") $this->payment_amount=$this->data->nominal;
-        if($this->data->status==2) $this->is_finish = true;
+        if($this->data->status==2) $this->is_readonly = true;
         \LogActivity::add("Expense Cancelation Detail {$this->data->id}");
     }
     public function updated($propertyName)
@@ -52,6 +55,21 @@ class Detail extends Component
         $this->data->payment_date = $this->payment_date;
         $this->data->bank_charges = replace_idr($this->bank_charges);
         $this->data->save();
+        // set balance
+        $bank_balance = \App\Models\BankAccount::find($this->data->from_bank_account_id);
+        if($bank_balance){
+            $bank_balance->open_balance = $bank_balance->open_balance - $this->payment_amount;
+            $bank_balance->save();
+
+            $balance = new \App\Models\BankAccountBalance();
+            $balance->debit = $this->payment_amount;
+            $balance->bank_account_id = $bank_balance->id;
+            $balance->status = 1;
+            $balance->type = 8; // Cancelation
+            $balance->nominal = $bank_balance->open_balance;
+            $balance->transaction_date = $this->payment_date;
+            $balance->save();
+        }
         session()->flash('message-success',__('Data saved successfully'));
         \LogActivity::add("Expense Cancelation Submit {$this->data->id}");
         return redirect()->route('expense-cancelation');

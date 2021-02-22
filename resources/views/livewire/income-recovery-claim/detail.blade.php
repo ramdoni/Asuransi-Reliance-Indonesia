@@ -1,131 +1,55 @@
 @section('title', 'Recovery Claim')
-@section('parentPageTitle', 'Expense')
+@section('parentPageTitle', 'Income')
 <div class="clearfix row">
     <div class="col-md-7">
         <div class="card">
             <div class="body">
                 <form wire:submit.prevent="save">
-                    <table class="table pl-0 mb-0 table-striped">
+                    <table class="table pl-0 mb-0 table-striped table-nowrap">
                         <tr>
-                            <th>{{ __('Voucher Number') }}</th>
-                            <td>
-                                {{$no_voucher}}
-                                <div class="float-right">
-                                    <label class="fancy-radio">
-                                        <input type="radio" value="1" wire:model="type" /> 
-                                        <span><i></i>Konven</span>
-                                    </label> 
-                                    <label class="fancy-radio">
-                                        <input type="radio" value="2" wire:model="type" />
-                                        <span><i></i>Syariah</span>
-                                    </label> 
-                                </div>
-                            </td>
+                            <th style="widht: 40%;">{{ __('Voucher Number') }}</th>
+                            <td>{!!no_voucher($data)!!}</td>
                         </tr>
                         <tr>
                             <th style="width:35%">{{ __('Claim Payable') }}</th>
-                            <td>
-                                <div wire:ignore>
-                                    <select class="form-control select_expense_id" wire:model="expense_id" id="expense_id">
-                                        <option value=""> --- Select --- </option>
-                                        @foreach(\App\Models\Expenses::where('reference_type','Claim')->get() as $item)
-                                        <option value="{{$item->id}}">{{$item->no_voucher}} / {{$item->recipient}}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                @error('no_polis')
-                                <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                                @enderror
-                            </td>
+                            <td>{{$data->no_voucher}}</td>
                         </tr>
                         <tr>
                             <th>{{ __('Reference Date') }}</th>
-                            <td>
-                                <input type="date" class="form-control col-md-6" wire:model="reference_date" />
-                                @error('reference_date')
-                                <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                                @enderror
-                            </td>
+                            <td>{{date('d F Y',strtotime($data->reference_date))}}</td>
                         </tr>
-                        
                         <tr>
                             <th>{{ __('Reference No') }}</th>
-                            <td>
-                                <input type="text" class="form-control" wire:model="reference_no" />
-                                @error('reference_no')
-                                <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                                @enderror
-                            </td>
+                            <td>{{$data->reference_no}}</td>
                         </tr>
                         <tr>
                             <th>{{ __('Payment Amount')}}</th>
-                            <td><input type="text" class="form-control format_number col-md-6" wire:model="payment_amount" /></td>
+                            <td>{{format_idr($data->payment_amount)}}</td>
                         </tr>
-                        {{-- <tr>
-                            <th>{{ __('Outstanding Balance')}}</th>
-                            <td>{{format_idr($this->outstanding_balance)}}</td>
-                        </tr> --}}
                         <tr>
                             <th>{{__('From Bank Account')}}</th>
-                            <td>
-                                <div class="row">
-                                    <div class="col-md-10">
-                                        <select class="form-control from_bank_account" id="from_bank_account_id" wire:model="from_bank_account_id" {{$is_readonly?'disabled':''}}>
-                                            <option value=""> --- {{__('Select')}} --- </option>
-                                            @foreach (\App\Models\BankAccount::where('is_client',1)->orderBy('owner','ASC')->get() as $bank)
-                                                <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('from_bank_account_id')
-                                        <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                                        @enderror
-                                    </div>
-                                    <div class="col-md-2 px-0 pt-2">
-                                        @if(!$is_readonly)
-                                        <a href="#" data-toggle="modal" data-target="#modal_add_bank"><i class="fa fa-plus"></i> Add Bank</a>
-                                        @endif
-                                    </div>
-                                </div>
-                            </td>
+                            <td>{!!isset($data->from_bank_account->no_rekening) ? $data->from_bank_account->no_rekening .' - '.$data->from_bank_account->bank.' an '.$data->from_bank_account->owner : ''!!}</td>
                         </tr>
                         <tr>
                             <th>{{__('To Bank Account')}}</th>
-                            <td>
-                                <select class="form-control" wire:model="to_bank_account_id" {{$is_readonly?'disabled':''}}>
-                                    <option value=""> --- {{__('Select')}} --- </option>
-                                    @foreach (\App\Models\BankAccount::where('is_client',0)->orderBy('bank','ASC')->get() as $bank)
-                                        <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
-                                    @endforeach
-                                </select>
-                                @error('bank_account_id')
-                                <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                                @enderror
-                            </td>
+                            <td>{{isset($data->bank_account->no_rekening) ? $data->bank_account->no_rekening .' - '.$data->bank_account->bank.' an '. $data->bank_account->owner : '-'}}</td>
                         </tr>
                         <tr>
                             <th>{{__('Payment Date')}}*<small>{{__('Default today')}}</small></th>
-                            <td>
-                                <input type="date" class="form-control col-md-6" {{$is_readonly?'disabled':''}} wire:model="payment_date" />
-                                @error('payment_date')
-                                <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                                @enderror
-                            </td>
+                            <td>{{date('d F Y',strtotime($data->payment_date))}}</td>
                         </tr>
                         
                         <tr>
                             <th>{{__('Bank Charges')}}</th>
-                            <td><input type="text" {{$is_readonly?'disabled':''}} class="form-control format_number col-md-6" wire:model="bank_charges" /></td>
+                            <td>{{ format_idr($data->bank_charges) }}</td>
                         </tr>
                         <tr>
                             <th>{{__('Description')}}</th>
-                            <td>
-                                <textarea style="height:100px;" class="form-control" wire:model="description"></textarea>
-                            </td>
+                            <td>{{$data->description}}</td>
                         </tr>
                     </table>
                     <hr />
                     <a href="javascript:void0()" onclick="history.back()"><i class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
-                    <button type="submit" class="ml-3 btn btn-primary" {{!$is_submit?'disabled':''}}><i class="fa fa-save"></i> {{ __('Submit') }}</button>
                     <div wire:loading>
                         <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
                         <span class="sr-only">Loading...</span>
@@ -141,47 +65,47 @@
                     <tr>
                         <th>No Voucher</th>
                         <td>:</td>
-                        <td>{!!isset($data->no_voucher) ? no_voucher($data) : ''!!}</td>
+                        <td>{!!isset($expense->no_voucher) ? no_voucher($expense) : ''!!}</td>
                     </tr>
                     <tr>
                         <th>Payment Date</th>
                         <td>:</td>
-                        <td>{!!isset($data->payment_date) ? date('d-M-Y',strtotime($data->payment_date)) : ''!!}</td>
+                        <td>{!!isset($expense->payment_date) ? date('d-M-Y',strtotime($expense->payment_date)) : ''!!}</td>
                     </tr>
                     <tr>
                         <th>Voucher Date</th>
                         <td>:</td>
-                        <td>{!!isset($data->created_at) ? date('d-M-Y',strtotime($data->created_at)) : ''!!}</td>
+                        <td>{!!isset($expense->created_at) ? date('d-M-Y',strtotime($expense->created_at)) : ''!!}</td>
                     </tr>
                     <tr>
                         <th>Debit Note / Kwitansi</th>
                         <td>:</td>
-                        <td>{!!isset($data->reference_no) ? $data->reference_no : ''!!}</td>
+                        <td>{!!isset($expense->reference_no) ? $expense->reference_no : ''!!}</td>
                     </tr>
                     <tr>
                         <th>Policy Number / Policy Holder</th>
                         <td>:</td>
-                        <td>{!!isset($data->recipient) ? $data->recipient : ''!!}</td>
+                        <td>{!!isset($expense->recipient) ? $expense->recipient : ''!!}</td>
                     </tr>
                     <tr>
                         <th>From Bank Account</th>
                         <td>:</td>
-                        <td>{!!isset($data->from_bank_account->no_rekening) ? $item->from_bank_account->no_rekening .' - '.$item->from_bank_account->bank.' an '.$item->from_bank_account->owner : ''!!}</td>
+                        <td>{!!isset($expense->from_bank_account->no_rekening) ? $expense->from_bank_account->no_rekening .' - '.$expense->from_bank_account->bank.' an '.$expense->from_bank_account->owner : ''!!}</td>
                     </tr>
                     <tr>
                         <th>To Bank Account</th>
                         <td>:</td>
-                        <td>{!!isset($data->bank_account->no_rekening) ? $item->bank_account->no_rekening .' - '.$item->bank_account->bank.' an '.$item->bank_account->owner : ''!!}</td>
+                        <td>{!!isset($expense->bank_account->no_rekening) ? $expense->bank_account->no_rekening .' - '.$expense->bank_account->bank.' an '.$expense->bank_account->owner : ''!!}</td>
                     </tr>
                     <tr>
                         <th>Bank Charges</th>
                         <td>:</td>
-                        <td>{!!isset($data->bank_charges) ? format_idr($data->bank_charges) : ''!!}</td>
+                        <td>{!!isset($expense->bank_charges) ? format_idr($expense->bank_charges) : ''!!}</td>
                     </tr>
                     <tr>
                         <th>Payment Amount</th>
                         <td>:</td>
-                        <td>{!!isset($data->payment_amount) ? format_idr($data->payment_amount) : ''!!}</td>
+                        <td>{!!isset($expense->payment_amount) ? format_idr($expense->payment_amount) : ''!!}</td>
                     </tr>
                 </table>
             </div>

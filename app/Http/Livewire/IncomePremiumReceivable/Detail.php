@@ -44,7 +44,7 @@ class Detail extends Component
     }
     public function emitAddBank($id)
     {
-        $this->from_bank_account_id = $id;
+        $this->to_bank_account_id = $id;
         $this->emit('init-form');
     }
     public function mount($id)

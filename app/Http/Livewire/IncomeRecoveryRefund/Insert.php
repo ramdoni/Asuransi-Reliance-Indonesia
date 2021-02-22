@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\IncomeRecoveryClaim;
+namespace App\Http\Livewire\IncomeRecoveryRefund;
 
 use Livewire\Component;
 
@@ -10,7 +10,7 @@ class Insert extends Component
     public $is_readonly=false,$payment_date,$bank_charges,$description,$reference_date;
     public function render()
     {
-        return view('livewire.income-recovery-claim.insert');
+        return view('livewire.income-recovery-refund.insert');
     }
     public function mount()
     {
@@ -36,7 +36,7 @@ class Insert extends Component
         $this->bank_charges = replace_idr($this->bank_charges);
         $data = new \App\Models\Income();
         $data->no_voucher = $this->no_voucher;
-        $data->reference_type = 'Recovery Claim';
+        $data->reference_type = 'Recovery Refund';
         $data->description = $this->description;
         $data->outstanding_balance = $this->outstanding_balance;
         $data->reference_no = $this->reference_no;
@@ -54,9 +54,9 @@ class Insert extends Component
         $data->transaction_table = 'expenses';
         $data->save();
 
-        \LogActivity::add("Income - Recovery Claim Submit {$this->data->id}");
+        \LogActivity::add("Income - Recovery Refund Submit {$this->data->id}");
 
         session()->flash('message-success',__('Data saved successfully'));
-        return redirect()->route('income.recovery-claim');
+        return redirect()->route('income.recovery-refund');
     }
 }

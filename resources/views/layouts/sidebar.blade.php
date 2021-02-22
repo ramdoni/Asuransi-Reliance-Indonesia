@@ -86,13 +86,13 @@
                         <li class="{{ Request::segment(1) === 'dashboard' ? 'active' : null }}">
                             <a href="/"><i class="fa fa-home"></i> <span>Dashboard</span></a>
                         </li>
-                        <li class="{{ (Request::segment(1) === 'income-recovery-claim' || Request::segment(1) === 'income-titipan-premi' || Request::segment(1) === 'income-premium-receivable' || Request::segment(1) === 'income-reinsurance' ||  Request::segment(1) ==='income-investment') ? 'active' : null }}">
+                        <li class="{{ (Request::segment(1) === 'income-recovery-refund' || Request::segment(1) === 'income-recovery-claim' || Request::segment(1) === 'income-titipan-premi' || Request::segment(1) === 'income-premium-receivable' || Request::segment(1) === 'income-reinsurance' ||  Request::segment(1) ==='income-investment') ? 'active' : null }}">
                             <a href="#" class="has-arrow"><i class="fa fa-database"></i> <span>Income</span></a>
                             <ul>
                                 <li class="{{ Request::segment(1) === 'income-premium-receivable' ? 'active' : null }}"><a href="{{route('income.premium-receivable')}}"> Premium Receivable</a></li>
                                 <li class="{{ Request::segment(1) === 'income-reinsurance' ? 'active' : null }}"><a href="{{route('income.reinsurance')}}"> Reinsurance Commision</a></li>        
                                 <li class="{{ Request::segment(1) === 'income-recovery-claim' ? 'active' : null }}"><a href="{{route('income.recovery-claim')}}"> Recovery Claim</a></li>        
-                                <li class="{{ Request::segment(1) === 'income-recovery-refund' ? 'active' : null }}"><a href="#"> Recovery Refund</a></li>        
+                                <li class="{{ Request::segment(1) === 'income-recovery-refund' ? 'active' : null }}"><a href="{{route('income.recovery-refund')}}"> Recovery Refund</a></li>        
                                 <li class="{{ Request::segment(1) === 'income-investment' ? 'active' : null }}"><a href="{{route('income.investment')}}"> Invesment</a></li>        
                                 <li class="{{ Request::segment(1) === 'income-titipan-premi' ? 'active' : null }}"><a href="{{route('income.titipan-premi')}}"> Premium Deposit</a></li>        
                             </ul>

@@ -27,7 +27,7 @@ class MemoPosSync extends Component
             if($key > 1) continue;
             $this->data = $item->no_kwitansi_finance .'/'. $item->no_kwitansi_finance2."<br />";
             // find data UW
-            $uw = \App\Models\KonvenUnderwriting::where('no_kwitansi_debit_note',$item->no_kwitansi_finance)->orWhere('no_kwitansi_debit_note',$item->no_kwitansi_finance2)->first();   
+            $uw = \App\Models\KonvenUnderwriting::where('no_kwitansi_debit_note',($item->no_kwitansi_finance ? $item->no_kwitansi_finance : $item->no_kwitansi_finance2))->first();   
             if($uw){
                 if($uw->status==1) continue; // jika data UW belum di sinkron
                 $item->status_sync=1; //sync
@@ -38,6 +38,20 @@ class MemoPosSync extends Component
                 $item->status_sync=2;//Invalid
             }
             $item->save();
+
+            // cek no polis
+            $polis = \App\Models\Policy::where('no_polis',$item->no_polis)->first();
+            if(!$polis){
+                $polis = new \App\Models\Policy();
+                $polis->no_polis = $item->no_polis;
+                $polis->pemegang_polis = $item->pemegang_polis;
+                $polis->alamat = $item->alamat;
+                $polis->cabang = $item->cabang;
+                $polis->produk = $item->produk;
+                $polis->type = 1; // konven
+                $polis->save();
+            }
+
             $this->total_finish++;
             if(!$uw) continue; // Skip jika tidak ditemukan data UW
             $bank = \App\Models\BankAccount::where('no_rekening',replace_idr($item->no_rekening))->first();
@@ -82,6 +96,7 @@ class MemoPosSync extends Component
                         $income->description = $item->ket_perubahan1;
                         $income->rekening_bank_id = $bank->id;
                         $income->type = 1;
+                        $income->policy_id  = $polis->id;
                         $income->save();
                     }else{
                         $expense = new \App\Models\Expenses();
@@ -97,6 +112,7 @@ class MemoPosSync extends Component
                         $expense->description = $item->ket_perubahan1;
                         $expense->rekening_bank_id = $bank->id;
                         $expense->type = 1;
+                        $expense->policy_id  = $polis->id;
                         $expense->save();
                     }
                 }
@@ -116,6 +132,7 @@ class MemoPosSync extends Component
                 $expense->description = $item->ket_perubahan1;
                 $expense->rekening_bank_id = $bank->id;
                 $expense->type = 1;
+                $expense->policy_id  = $polis->id;
                 $expense->save();
             }
             if($item->jenis_po =='CNCL'){ // Cancel
@@ -123,6 +140,7 @@ class MemoPosSync extends Component
                 // Find Income Premium Receivable
                 if($uw){
                     $in = \App\Models\Income::where('transaction_table','konven_underwriting')->where('transaction_id',$uw->id)->first();
+                    
                     if($in and $in->status==1){  
                         //jika statusnya belum paid maka embed cancelation ke form income premium receivable 
                         //dan mengurangi nominal dari premi yang diterima
@@ -132,22 +150,23 @@ class MemoPosSync extends Component
                         $cancel->transaction_id = $item->id;
                         $cancel->transaction_table= "konven_memo_pos";
                         $cancel->save();
+                    }else{
+                        $expense = new \App\Models\Expenses();
+                        $expense->user_id = \Auth::user()->id;
+                        $expense->no_voucher = generate_no_voucher_income();
+                        $expense->reference_no = $item->no_dn_cn;
+                        $expense->reference_date = $item->tgl_produksi;
+                        $expense->nominal = abs($item->refund);
+                        $expense->recipient = $item->no_polis.' / '.$item->pemegang_polis;
+                        $expense->reference_type = 'Cancelation';
+                        $expense->transaction_id = $item->id;
+                        $expense->transaction_table = 'konven_memo_pos';
+                        $expense->description = $item->ket_perubahan1;
+                        $expense->rekening_bank_id = $bank->id;
+                        $expense->type = 1;
+                        $expense->policy_id  = $polis->id;
+                        $expense->save();
                     }
-                }else{
-                    $expense = new \App\Models\Expenses();
-                    $expense->user_id = \Auth::user()->id;
-                    $expense->no_voucher = generate_no_voucher_income();
-                    $expense->reference_no = $item->no_dn_cn;
-                    $expense->reference_date = $item->tgl_produksi;
-                    $expense->nominal = abs($item->refund);
-                    $expense->recipient = $item->no_polis.' / '.$item->pemegang_polis;
-                    $expense->reference_type = 'Cancelation';
-                    $expense->transaction_id = $item->id;
-                    $expense->transaction_table = 'konven_memo_pos';
-                    $expense->description = $item->ket_perubahan1;
-                    $expense->rekening_bank_id = $bank->id;
-                    $expense->type = 1;
-                    $expense->save();
                 }
             }
             $this->data .=$item->no_dn_cn.'<br />'.$item->no_polis.' / '.$item->pemegang_polis;

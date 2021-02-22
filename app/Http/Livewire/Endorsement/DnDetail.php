@@ -20,7 +20,7 @@ class DnDetail extends Component
     }
     public function mount($id)
     {
-        $this->data = \App\Models\Expenses::find($id);
+        $this->data = \App\Models\Income::find($id);
         $this->no_voucher = $this->data->no_voucher;
         $this->payment_date = $this->data->payment_date?$this->data->payment_date : date('Y-m-d');
         $this->bank_account_id = $this->data->rekening_bank_id;

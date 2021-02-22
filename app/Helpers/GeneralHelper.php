@@ -28,6 +28,15 @@ function status_account_balance($status)
         case 6:
             return "Claim Payable";
         break;
+        case 7:
+            return "Refund";
+        break;
+        case 8:
+            return "Cancelation";
+        break;
+        case 9:
+            return "Endorsement Reas";
+        break;
     }
 }
 

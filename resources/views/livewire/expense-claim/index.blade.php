@@ -23,7 +23,8 @@
                         </select>
                     </div>
                     <div class="col-md-5">
-                        <a href="{{route('expense.claim.insert')}}" class="btn btn-info"><i class="fa fa-plus"></i> Claim</a>
+                        <a href="{{route('expense.claim.insert')}}" class="btn btn-success"><i class="fa fa-plus"></i> Claim</a>
+                        <a href="javascript:;" class="btn btn-info" wire:click="downloadExcel"><i class="fa fa-download"></i> Download</a>
                         <span wire:loading>
                             <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
                             <span class="sr-only">{{ __('Loading...') }}</span>

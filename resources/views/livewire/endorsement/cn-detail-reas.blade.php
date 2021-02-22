@@ -1,5 +1,5 @@
-@section('title', 'Claim Payable')
-@section('parentPageTitle', 'Expense')
+@section('title', 'DN Insert Reas')
+@section('parentPageTitle', 'Endorsement')
 <div class="clearfix row">
     <div class="col-md-5">
         <div class="card">
@@ -7,6 +7,7 @@
                 <form wire:submit.prevent="save('Submit')">
                     <div class="form-group">
                         <span>{{ __('Voucher Number') }} : <strong class="text-success">{{$no_voucher}}</strong></span>
+                        @if(!$is_readonly)
                         <div class="float-right">
                             <label class="fancy-radio">
                                 <input type="radio" value="1" wire:model="type" /> 
@@ -17,11 +18,12 @@
                                 <span><i></i>Syariah</span>
                             </label> 
                         </div>
+                        @endif
                         <hr />
                     </div>
                     <div class="form-group" wire:ignore>
                         <label>{{ __('No Polis') }}</label>
-                        <select class="form-control select_no_polis" wire:model="no_polis" id="no_polis">
+                        <select class="form-control select_no_polis" wire:model="no_polis" id="no_polis" {{$is_readonly?'disabled' : ''}}>
                             <option value=""> --- Select --- </option>
                             @foreach(\App\Models\Policy::orderBy('pemegang_polis','ASC')->get() as $item)
                             <option value="{{$item->id}}">{{$item->no_polis}} / {{$item->pemegang_polis}}</option>
@@ -33,14 +35,14 @@
                     </div>
                     <div class="form-group">
                         <label>{{ __('Reference No') }}</label>
-                        <input type="text" class="form-control" wire:model="reference_no" />
+                        <input type="text" class="form-control" wire:model="reference_no" {{$is_readonly?'disabled':''}} />
                         @error('reference_no')
                         <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                         @enderror
                     </div>
                     <div class="form-group">
                         <label>{{ __('From Bank Account') }}</label>
-                        <select class="form-control" wire:model="from_bank_account_id">
+                        <select class="form-control" wire:model="from_bank_account_id" {{$is_readonly?'disabled':''}}>
                             <option value=""> --- Select --- </option>
                             @foreach (\App\Models\BankAccount::where('is_client',0)->orderBy('owner','ASC')->get() as $bank)
                                 <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
@@ -52,7 +54,7 @@
                     </div>
                     <div class="form-group" wire:ignore>
                         <label>{{ __('To Bank Account') }}</label>
-                        <select class="form-control select_to_bank" id="to_bank_account_id" wire:model="to_bank_account_id">
+                        <select class="form-control select_to_bank" id="to_bank_account_id" {{$is_readonly?'disabled':''}} wire:model="to_bank_account_id">
                             <option value=""> --- Select --- </option>
                             @foreach (\App\Models\BankAccount::where('is_client',1)->orderBy('owner','ASC')->get() as $bank)
                                 <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
@@ -65,14 +67,14 @@
                     <div class="row">
                         <div class="form-group col-md-6">
                             <label>{{ __('Bank Charges') }}</label>
-                            <input type="text" class="form-control format_number" wire:model="bank_charges">
+                            <input type="text" class="form-control format_number" {{$is_readonly?'disabled':''}} wire:model="bank_charges">
                             @error('bank_charges')
                             <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                             @enderror
                         </div>
                         <div class="form-group col-md-6">
-                            <label>{{ __('Nilai Klaim') }}</label>
-                            <input type="text" class="form-control format_number" wire:model="nilai_klaim">
+                            <label>{{ __('Payment Amount') }}</label>
+                            <input type="text" class="form-control format_number" {{$is_readonly?'disabled':''}} wire:model="payment_amount">
                             @error('nilai_klaim')
                             <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                             @enderror
@@ -80,19 +82,21 @@
                     </div>
                     <div class="form-group">
                         <label>{{ __('Payment Date') }}</label>
-                        <input type="date" class="form-control col-md-6" wire:model="payment_date">
+                        <input type="date" class="form-control col-md-6" {{$is_readonly?'disabled':''}} wire:model="payment_date">
                         @error('payment_date')
                         <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                         @enderror
                     </div>
                     <div class="form-group">
                         <label>{{__('Description')}}</label>
-                        <textarea style="height:100px;" class="form-control" wire:model="description"></textarea>
+                        <textarea style="height:100px;" {{$is_readonly?'disabled':''}} class="form-control" wire:model="description"></textarea>
                     </div>
                     <hr />
                     <a href="javascript:void0()" onclick="history.back()"><i class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
+                    @if(!$is_readonly)
                     <button type="submit" class="ml-3 btn btn-primary" {{!$is_submit?'disabled':''}}><i class="fa fa-save"></i> {{ __('Submit') }}</button>
                     <button type="button" class="ml-3 btn btn-info float-right" wire:click="save('Draft')"><i class="fa fa-save"></i> {{ __('Save as Draft') }}</button>
+                    @endif
                     <div wire:loading>
                         <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
                         <span class="sr-only">Loading...</span>
@@ -143,7 +147,7 @@
                         <h6>Premium Receivable</h6>
                         <hr />
                         <div class="table-responsive" style="max-height: 400px;">
-                            <table class="table table-striped table-hover m-b-0 c_list table-nowrap">
+                            <table class="table table-striped table-hover m-b-0 c_list">
                                 <tr>
                                     <th>No</th>                                    
                                     <th>Status</th>                                    

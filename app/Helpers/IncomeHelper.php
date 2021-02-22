@@ -14,6 +14,9 @@ function status_income($status) {
         case 4:
             return "<label class=\"badge text-danger\">Premi tidak tertagih</label>";
         break;
+        case 5:
+            return "<label class=\"badge text-warning\">Draft</label>";
+        break;
     }
 }
 
