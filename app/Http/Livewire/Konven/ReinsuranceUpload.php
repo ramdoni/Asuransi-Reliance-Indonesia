@@ -22,6 +22,7 @@ class ReinsuranceUpload extends Component
         
         $path = $this->file->getRealPath();
         $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+        $reader->setReadDataOnly(true);
         $data = $reader->load($path);
         $sheetData = $data->getActiveSheet()->toArray();
         
@@ -35,23 +36,23 @@ class ReinsuranceUpload extends Component
                 if($key<1) continue; // skip header
                 
                 foreach($i as $k=>$a){$i[$k] = trim($a);}
-
-                $no_polis = $i[0];
-                $pemegang_polis = $i[1];
-                $peserta = $i[2];
-                $uang_pertanggungan = $i[3];
-                $uang_pertanggungan_reas = $i[4];
-                $premi_gross_ajri = $i[5];
-                $premi_reas = $i[6];
-                $komisi_reinsurance = $i[7];
-                $premi_reas_netto = $i[8];
-                $keterangan = $i[9];
-                $kirim_reas = $i[10];
-                $broker_re = $i[11];
-                $reasuradur = $i[12];
-                $bulan = $i[13];
-                $ekawarsa_jangkawarsa = $i[14];
-                $produk = $i[15];
+                
+                $no_polis = $i[1];
+                $pemegang_polis = $i[2];
+                $peserta = $i[3];
+                $uang_pertanggungan = $i[4];
+                $uang_pertanggungan_reas = $i[5];
+                $premi_gross_ajri = $i[6];
+                $premi_reas = $i[7];
+                $komisi_reinsurance = $i[8];
+                $premi_reas_netto = $i[9];
+                $keterangan = $i[10];
+                $kirim_reas = $i[11];
+                $broker_re = $i[12];
+                $reasuradur = $i[13];
+                $bulan = $i[14];
+                $ekawarsa_jangkawarsa = $i[15];
+                $produk = $i[16];
 
                 $data = new \App\Models\KonvenReinsurance();
                 $find = \App\Models\KonvenReinsurance::where('no_polis',$no_polis)->first();

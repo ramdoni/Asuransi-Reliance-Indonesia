@@ -27,6 +27,7 @@ class Index extends Component
     {
         \LogActivity::add("Expense Claim Delete {$id}");
         \App\Models\Expenses::find($id)->delete();
+        \App\Models\ExpensePeserta::where('expense_id',$id)->delete();
     }
     public function downloadExcel()
     {

@@ -6,7 +6,9 @@
         <div wire:loading>
             <h5 class="modal-title" id="exampleModalLabel">
                 <i class="fa fa-refresh fa-spin fa-1x fa-fw"></i>
-                <span class="sr-only">Loading...</span>  Sync Data {{$total_finish}} / {{$total_sync}}</h5>
+                <span class="sr-only">Loading...</span>  Sync Data 
+                {{-- {{$total_finish}} / {{$total_sync}} --}}
+            </h5>
         </div>
     </div>
     <div class="modal-body">
@@ -14,7 +16,8 @@
             <label>Synchronize Reinsurance Data ?</label>
         </div>
         <div wire:loading class="form-group">
-            <p>{!!$data!!}</p>
+            <p>Please wait...</p>
+            {{-- <p>{!!$data!!}</p> --}}
         </div>
     </div>
     <div class="modal-footer">

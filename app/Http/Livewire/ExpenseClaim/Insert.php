@@ -8,6 +8,7 @@ class Insert extends Component
 {
     public $data,$no_voucher,$no_polis,$nilai_klaim,$premium_receivable,$is_submit=false;
     public $reference_no,$to_bank_account_id,$from_bank_account_id,$payment_date,$bank_charges,$description,$type=1;
+    public $add_pesertas=[],$no_peserta=[],$nama_peserta=[];
     public function render()
     {
         return view('livewire.expense-claim.insert');
@@ -15,6 +16,9 @@ class Insert extends Component
     public function mount()
     {
         $this->no_voucher = generate_no_voucher_expense();
+        $this->add_pesertas[] = 0;
+        $this->no_peserta[] = "";
+        $this->nama_peserta[] = "";
     }
     public function updated($propertyName)
     {
@@ -30,6 +34,16 @@ class Insert extends Component
             $this->premium_receivable = $premium->get();
         }
         $this->emit('init-form');
+    }
+    public function delete_peserta($key)
+    {
+        unset($this->add_pesertas[$key],$this->no_peserta[$key],$this->nama_peserta[$key]);
+    }
+    public function add_peserta()
+    {
+        $this->add_pesertas[] = count($this->add_pesertas);
+        $this->no_peserta[] = '';
+        $this->nama_peserta[] = '';
     }
     public function save($type)
     {
@@ -59,6 +73,20 @@ class Insert extends Component
         $data->description = $this->description;
         $data->type = $this->type;
         $data->save();
+
+        if($this->add_pesertas){
+            foreach($this->add_pesertas as $k=>$v){
+                if(!empty($this->no_peserta[$k]) and !empty($this->nama_peserta[$k])){
+                    $peserta = new \App\Models\ExpensePeserta();
+                    $peserta->expense_id = $data->id;
+                    $peserta->no_peserta = $this->no_peserta[$k];
+                    $peserta->nama_peserta = $this->nama_peserta[$k];
+                    $peserta->type = 1; // Claim Payable
+                    $peserta->policy_id = $this->data->id;
+                    $peserta->save();
+                }
+            }
+        }
 
         if($type=='Submit'){
             // set balance

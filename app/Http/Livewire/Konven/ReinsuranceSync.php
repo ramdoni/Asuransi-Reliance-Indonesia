@@ -22,9 +22,14 @@ class ReinsuranceSync extends Component
     public function reas_sync()
     {
         if($this->is_sync==false) return false;
-        $this->emit('is_sync');
+        //$this->emit('is_sync');
         foreach(\App\Models\KonvenReinsurance::where('status',1)->get() as $key => $item){
-            if($key > 1) continue;
+            //if($key > 1) continue;
+            $no_polis = \App\Models\Policy::where('no_polis',$item->no_polis)->first();
+            if($no_polis) {
+                $no_polis->is_reas=1;
+                $no_polis->save();
+            }
             // find UW
             $uw = \App\Models\KonvenUnderwriting::where('no_polis',$item->no_polis)->first();
             $item->konven_underwriting_id = $uw?$uw->id : null;

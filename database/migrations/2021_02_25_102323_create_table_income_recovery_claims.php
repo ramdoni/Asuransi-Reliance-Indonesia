@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddFieldIsTempParentIdTKonvenKomisi extends Migration
+class CreateTableIncomeRecoveryClaims extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,11 @@ class AddFieldIsTempParentIdTKonvenKomisi extends Migration
      */
     public function up()
     {
-        Schema::table('konven_komisi', function (Blueprint $table) {
-            $table->integer('parent_id')->nullable();
-            $table->boolean('is_temp')->default(0)->nullable();
+        Schema::create('income_recovery_claims', function (Blueprint $table) {
+            $table->id();
+            $table->integer('income_id')->nullable();
+            $table->integer('expense_id')->nullable();
+            $table->timestamps();
         });
     }
 
@@ -26,8 +28,6 @@ class AddFieldIsTempParentIdTKonvenKomisi extends Migration
      */
     public function down()
     {
-        Schema::table('konven_komisi', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('income_recovery_claims');
     }
 }

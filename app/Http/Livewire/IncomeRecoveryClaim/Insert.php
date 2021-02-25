@@ -8,6 +8,8 @@ class Insert extends Component
 {
     public $type=1,$no_voucher,$is_submit=true,$data,$premium_receivable,$expense_id,$outstanding_balance,$reference_no,$payment_amount,$from_bank_account_id,$to_bank_account_id;
     public $is_readonly=false,$payment_date,$bank_charges,$description,$reference_date;
+    public $add_pesertas=[],$no_peserta=[],$nama_peserta=[];
+    public $add_claim_payables=[],$add_expense_id;
     protected $listeners = ['emit-add-bank'=>'emitAddBank'];
     public function render()
     {
@@ -18,6 +20,12 @@ class Insert extends Component
         $this->no_voucher = generate_no_voucher_income();
         $this->payment_date = date('Y-m-d');
         $this->reference_date = date('Y-m-d');
+    }
+    public function add_claim_payable()
+    {
+        $this->add_claim_payables[] = count($this->add_claim_payables);
+        $this->add_expense_id[] = '';
+        $this->emit('init-form');
     }
     public function emitAddBank($id)
     {
@@ -59,9 +67,16 @@ class Insert extends Component
         $data->transaction_id = $this->expense_id;
         $data->transaction_table = 'expenses';
         $data->save();
-
+        if($this->add_claim_payables){
+            foreach($this->add_claim_payables as $k => $v){
+                if($this->add_expense_id[$k]) 
+                \App\Models\IncomeRecoveryClaim::create([
+                    'income_id' => $data->id,
+                    'expense_id' => $this->add_expense_id[$k]
+                ]);
+            }
+        }
         \LogActivity::add("Income - Recovery Claim Submit {$this->data->id}");
-
         session()->flash('message-success',__('Data saved successfully'));
         return redirect()->route('income.recovery-claim');
     }

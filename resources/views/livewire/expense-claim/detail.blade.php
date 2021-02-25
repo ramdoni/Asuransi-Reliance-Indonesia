@@ -34,6 +34,28 @@
                         @enderror
                     </div>
                     <div class="form-group">
+                        <label>{{__('Peserta')}}</label>
+                        @foreach($add_pesertas as $k => $v)
+                            <div class="form-group">
+                                <input type="text" class="form-control mb-2" wire:model="no_peserta.{{$k}}" {{$is_readonly?'disabled':''}} placeholder="No Peserta" />
+                                <input type="text" class="form-control" wire:model="nama_peserta.{{$k}}" {{$is_readonly?'disabled':''}} placeholder="Nama Peserta" />
+                                @if(!$is_readonly)
+                                <a href="javascript:;" class="text-danger" wire:click="delete_peserta({{$k}})"><i class="fa fa-trash"></i> Delete</a>
+                                @endif
+                            </div>
+                        @endforeach
+                        @foreach($add_pesertas_temp as $k => $v)
+                            <div class="form-group">
+                                <input type="text" class="form-control mb-2" wire:model="no_peserta_temp.{{$k}}" placeholder="No Peserta" />
+                                <input type="text" class="form-control" wire:model="nama_peserta_temp.{{$k}}" placeholder="Nama Peserta" />
+                                <a href="javascript:;" class="text-danger" wire:click="delete_peserta_temp({{$k}})"><i class="fa fa-trash"></i> Delete</a>
+                            </div>
+                        @endforeach
+                        @if(!$is_readonly)
+                        <a href="javascript:;" wire:click="add_peserta"><i class="fa fa-plus"></i> Add Peserta</a>
+                        @endif
+                    </div>
+                    <div class="form-group">
                         <label>{{ __('Reference No') }}</label>
                         <input type="text" class="form-control" wire:model="reference_no" {{$is_readonly?'disabled':''}} />
                         @error('reference_no')
@@ -66,16 +88,16 @@
                     </div>
                     <div class="row">
                         <div class="form-group col-md-6">
-                            <label>{{ __('Bank Charges') }}</label>
-                            <input type="text" class="form-control format_number" {{$is_readonly?'disabled':''}} wire:model="bank_charges">
-                            @error('bank_charges')
+                            <label>{{ __('Payment Amount') }}</label>
+                            <input type="text" class="form-control format_number text-right" {{$is_readonly?'disabled':''}} wire:model="nilai_klaim">
+                            @error('nilai_klaim')
                             <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                             @enderror
                         </div>
                         <div class="form-group col-md-6">
-                            <label>{{ __('Nilai Klaim') }}</label>
-                            <input type="text" class="form-control format_number" {{$is_readonly?'disabled':''}} wire:model="nilai_klaim">
-                            @error('nilai_klaim')
+                            <label>{{ __('Bank Charges') }}</label>
+                            <input type="text" class="form-control format_number  text-right" {{$is_readonly?'disabled':''}} wire:model="bank_charges">
+                            @error('bank_charges')
                             <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                             @enderror
                         </div>
@@ -88,8 +110,7 @@
                         @enderror
                     </div>
                     <div class="form-group">
-                        <label>{{__('Description')}}</label>
-                        <textarea style="height:100px;" {{$is_readonly?'disabled':''}} class="form-control" wire:model="description"></textarea>
+                        <textarea style="height:100px;" placeholder="{{__('Description')}}" {{$is_readonly?'disabled':''}} class="form-control" wire:model="description"></textarea>
                     </div>
                     <hr />
                     <a href="javascript:void0()" onclick="history.back()"><i class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
@@ -147,7 +168,7 @@
                         <h6>Premium Receivable</h6>
                         <hr />
                         <div class="table-responsive" style="max-height: 400px;">
-                            <table class="table table-striped table-hover m-b-0 c_list table-nowrap">
+                            <table class="table table-striped table-hover m-b-0 c_list">
                                 <tr>
                                     <th>No</th>                                    
                                     <th>Status</th>                                    

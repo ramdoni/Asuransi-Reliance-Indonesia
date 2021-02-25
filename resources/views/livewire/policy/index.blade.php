@@ -8,7 +8,11 @@
                 <div class="col-md-2">
                     <input type="text" class="form-control" wire:model="keyword" placeholder="Searching..." />
                 </div>
-                <div class="col-md-1">
+                <div class="col-md-10">
+                    <label class="fancy-checkbox">
+                        <input type="checkbox" name="checkbox" wire:model="is_reas">
+                        <span>Reas</span>
+                    </label>
                     <a href="{{route('policy.insert')}}" class="btn btn-primary"><i class="fa fa-plus"></i> Polis</a>
                 </div>
             </div>
@@ -30,7 +34,12 @@
                             @foreach($data as $k => $item)
                             <tr>
                                 <td style="width: 50px;">{{$k+1}}</td>
-                                <td>{{$item->no_polis}}</td>
+                                <td>
+                                    {{$item->no_polis}}
+                                    @if($item->is_reas==1)
+                                    <span class="badge badge-warning">R</span>
+                                    @endif
+                                </td>
                                 <td>{{$item->pemegang_polis}}</td>
                                 <td>{{$item->alamat}}</td>
                                 <td>{{$item->cabang}}</td>

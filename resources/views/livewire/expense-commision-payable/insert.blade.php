@@ -62,21 +62,16 @@
                             <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                             @enderror
                         </div>
-                        <div class="form-group">
-                            <select class="form-control" wire:model="from_bank_account_id.{{$k}}">
-                                <option value=""> --- {{ __('From Bank Account') }} --- </option>
-                                @foreach (\App\Models\BankAccount::where('is_client',0)->orderBy('owner','ASC')->get() as $bank)
-                                    <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
-                                @endforeach
-                            </select>
-                        </div>
                         <div class="form-group" wire:ignore>
-                            <select class="form-control select_to_bank" id="to_bank_account_id.{{$k}}" required wire:model="to_bank_account_id.{{$k}}">
-                                <option value=""> --- {{ __('To Bank Account') }} --- </option>
-                                @foreach (\App\Models\BankAccount::where('is_client',1)->orderBy('owner','ASC')->get() as $bank)
-                                    <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
-                                @endforeach
-                            </select>
+                            <input type="text" class="form-control" wire:model="nama.{{$k}}" placeholder="Name" />
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <input type="text" class="form-control" wire:model="bank.{{$k}}" placeholder="Bank" />
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <input type="text" class="form-control" wire:model="no_rekening.{{$k}}" placeholder="Account Number" />
+                            </div>
                         </div>
                         <div class="row">
                             <div class="form-group col-md-6">
@@ -94,6 +89,14 @@
                     </div>
                     @endforeach
                     <a href="javascript:void(0);" wire:click="add_payment"><i class="fa fa-plus"></i> Add Payment</a>
+                    <div class="form-group">
+                        <select class="form-control" wire:model="from_bank_account_id">
+                            <option value=""> --- {{ __('From Bank Account') }} --- </option>
+                            @foreach (\App\Models\BankAccount::where('is_client',0)->orderBy('owner','ASC')->get() as $bank)
+                                <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
+                            @endforeach
+                        </select>
+                    </div>
                     <hr />
                     <a href="javascript:void0()" onclick="history.back()"><i class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
                     <button type="submit" class="ml-3 btn btn-primary" {{!$is_submit?'disabled':''}}><i class="fa fa-save"></i> {{ __('Submit') }}</button>

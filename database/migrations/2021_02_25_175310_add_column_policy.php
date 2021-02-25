@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class RenameColumnTableIncomeClaim extends Migration
+class AddColumnPolicy extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,8 @@ class RenameColumnTableIncomeClaim extends Migration
      */
     public function up()
     {
-        Schema::table('konven_claim', function (Blueprint $table) {
-            $table->renameColumn('nomor_partipisan','nomor_partisipan');
-            $table->renameColumn('nama_partipisan','nama_partisipan');
+        Schema::table('policys', function (Blueprint $table) {
+            $table->boolean('is_reas')->default(0);
         });
     }
 
@@ -26,7 +25,7 @@ class RenameColumnTableIncomeClaim extends Migration
      */
     public function down()
     {
-        Schema::table('income_claim', function (Blueprint $table) {
+        Schema::table('policy', function (Blueprint $table) {
             //
         });
     }

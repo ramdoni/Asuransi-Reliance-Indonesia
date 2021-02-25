@@ -28,7 +28,7 @@
                     </div>
                     <hr />
                     @foreach($payments as $k => $payment)
-                    <div wire:key="payment-section{{$k}}">
+                    <div>
                         <div class="form-group">
                             <select class="form-control" wire:model="transaction_type.{{$k}}" {{$is_readonly?'disabled':''}}>
                                 <option value=""> --- {{__('Payment Type')}} --- </option>
@@ -41,25 +41,20 @@
                                 <option>Referal Fee</option>
                             </select>
                         </div>
-                        <div class="form-group">
-                            <select class="form-control" wire:model="from_bank_account_id.{{$k}}" {{$is_readonly?'disabled':''}}>
-                                <option value=""> --- {{ __('From Bank Account') }} --- </option>
-                                @foreach (\App\Models\BankAccount::where('is_client',0)->orderBy('owner','ASC')->get() as $bank)
-                                    <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
-                                @endforeach
-                            </select>
-                        </div>
                         <div class="form-group" wire:ignore>
-                            <select class="form-control select_to_bank" id="to_bank_account_id.{{$k}}" wire:model="to_bank_account_id.{{$k}}" {{$is_readonly?'disabled':''}}>
-                                <option value=""> --- {{ __('To Bank Account') }} --- </option>
-                                @foreach (\App\Models\BankAccount::where('is_client',1)->orderBy('owner','ASC')->get() as $bank)
-                                    <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
-                                @endforeach
-                            </select>
+                            <input type="text" class="form-control" wire:model="nama.{{$k}}" placeholder="Name" {{$is_readonly?'disabled':''}} />
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <input type="text" class="form-control" wire:model="bank.{{$k}}" placeholder="Bank" {{$is_readonly?'disabled':''}}/>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <input type="text" class="form-control" wire:model="no_rekening.{{$k}}" placeholder="Account Number" {{$is_readonly?'disabled':''}} />
+                            </div>
                         </div>
                         <div class="row">
                             <div class="form-group col-md-6">
-                                <input type="text" class="form-control format_number" required wire:model="payment_amount.{{$k}}" placeholder="{{ __('Payment Amount') }}" {{$is_readonly?'disabled':''}}>
+                                <input type="text" class="form-control format_number" wire:ignore required wire:model="payment_amount.{{$k}}" placeholder="{{ __('Payment Amount') }}" {{$is_readonly?'disabled':''}}>
                                 @error('payment_amount.{{$k}}')
                                 <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                                 @enderror
@@ -75,7 +70,7 @@
                     </div>
                     @endforeach
                     @foreach($payments_temp as $k => $payment)
-                    <div wire:key="payment-section{{$k}}">
+                    <div>
                         <div class="form-group">
                             <select class="form-control" wire:model="transaction_type_temp.{{$k}}">
                                 <option value=""> --- {{__('Payment Type')}} --- </option>
@@ -88,21 +83,16 @@
                                 <option>Referal Fee</option>
                             </select>
                         </div>
-                        <div class="form-group">
-                            <select class="form-control" wire:model="from_bank_account_id_temp.{{$k}}">
-                                <option value=""> --- {{ __('From Bank Account') }} --- </option>
-                                @foreach (\App\Models\BankAccount::where('is_client',0)->orderBy('owner','ASC')->get() as $bank)
-                                    <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
-                                @endforeach
-                            </select>
-                        </div>
                         <div class="form-group" wire:ignore>
-                            <select class="form-control select_to_bank" id="to_bank_account_id_temp.{{$k}}" wire:model="to_bank_account_id_temp.{{$k}}">
-                                <option value=""> --- {{ __('To Bank Account') }} --- </option>
-                                @foreach (\App\Models\BankAccount::where('is_client',1)->orderBy('owner','ASC')->get() as $bank)
-                                    <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
-                                @endforeach
-                            </select>
+                            <input type="text" class="form-control" wire:model="nama_temp.{{$k}}" placeholder="Name" />
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <input type="text" class="form-control" wire:model="bank_temp.{{$k}}" placeholder="Bank" />
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <input type="text" class="form-control" wire:model="no_rekening_temp.{{$k}}" placeholder="Account Number" />
+                            </div>
                         </div>
                         <div class="row">
                             <div class="form-group col-md-6">
@@ -252,10 +242,9 @@
     Livewire.on('init-form', () =>{
         setTimeout(function(){
             init_form();
-        },1500);
+        },500);
     });
     function init_form(){
-        console.log('init form');
         $('.format_number').priceFormat({
             prefix: '',
             centsSeparator: '.',
@@ -270,18 +259,6 @@
         });
         var selected__ = $('.select_no_polis').find(':selected').val();
         if(selected__ !="") select__2.val(selected__);
-
-        $('.select_to_bank').each(function(){
-            select_to_bank = $(this).select2();
-            $(this).on('change', function (e) {
-                let elementName = $(this).attr('id');
-                var data = $(this).select2("val");
-                @this.set(elementName, data);
-            });
-            
-            var selected_to_bank = $(this).find(':selected').val();
-            if(selected_to_bank !="") select_to_bank.val(selected_to_bank);
-        });
     }
     setTimeout(function(){
         init_form()

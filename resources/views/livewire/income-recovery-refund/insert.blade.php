@@ -28,7 +28,7 @@
                                 <div wire:ignore>
                                     <select class="form-control select_no_polis" wire:model="no_polis" id="no_polis">
                                         <option value=""> --- Select --- </option>
-                                        @foreach(\App\Models\Policy::orderBy('pemegang_polis','ASC')->get() as $item)
+                                        @foreach(\App\Models\Policy::where('is_reas',1)->orderBy('pemegang_polis','ASC')->get() as $item)
                                         <option value="{{$item->id}}">{{$item->no_polis}} / {{$item->pemegang_polis}}</option>
                                         @endforeach
                                     </select>
@@ -71,11 +71,11 @@
                             </td>
                         </tr>
                         <tr>
-                            <th>{{ __('Total Payment Amount')}}</th>
+                            <th>{{ __('Payment Amount')}}</th>
                             <td>
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control format_number text-right" wire:model="payment_amount" placeholder="{{ __('Total Payment Amount') }}" />
+                                        <input type="text" class="form-control format_number text-right" wire:model="payment_amount" placeholder="{{ __('Payment Amount') }}" />
                                         @error('payment_amount')
                                         <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                                         @enderror
@@ -173,6 +173,31 @@
                         <th>Produk</th>
                         <td>:</td>
                         <td>{{isset($data->produk) ? $data->produk : ''}}</td>
+                    </tr>
+                    <tr>
+                        <th>Peserta</th>
+                        <td>:</td>
+                        <td>{{isset($data->reas->peserta) ? $data->reas->peserta : ''}}</td>
+                    </tr>
+                    <tr>
+                        <th>Peserta</th>
+                        <td>:</td>
+                        <td>{{isset($data->reas->peserta) ? $data->reas->peserta : ''}}</td>
+                    </tr>
+                    <tr>
+                        <th>Keterangan T/F</th>
+                        <td>:</td>
+                        <td>{{isset($data->reas->keterangan) ? $data->reas->keterangan : ''}}</td>
+                    </tr>
+                    <tr>
+                        <th>Broker Re / Reasuradur</th>
+                        <td>:</td>
+                        <td>{{isset($data->reas->broker_re) ? $data->reas->broker_re : ''}}</td>
+                    </tr>
+                    <tr>
+                        <th>Premi Reas</th>
+                        <td>:</td>
+                        <td>{{isset($data->reas->premi_reas_netto) ? format_idr($data->reas->premi_reas_netto) : ''}}</td>
                     </tr>
                 </table>
             </div>

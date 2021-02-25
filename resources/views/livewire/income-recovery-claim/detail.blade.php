@@ -12,7 +12,16 @@
                         </tr>
                         <tr>
                             <th style="width:35%">{{ __('Claim Payable') }}</th>
-                            <td>{{$data->no_voucher}}</td>
+                            <td>
+                                @if(isset($data->expense->no_voucher))
+                                    <p><a href="{{route('expense.claim.detail',$data->transaction_id)}}" target="_blank">{!!no_voucher($data->expense)!!}<br />{{$data->expense->recipient}}</a></p>
+                                @endif
+                                @if($list_claim)
+                                    @foreach($list_claim as $item)
+                                    <p><a href="{{route('expense.claim.detail',$data->transaction_id)}}" target="_blank">{!!no_voucher($data->expense)!!}<br />{{$data->expense->recipient}}</a></p>
+                                    @endforeach
+                                @endif
+                            </td>
                         </tr>
                         <tr>
                             <th>{{ __('Reference Date') }}</th>
@@ -61,53 +70,108 @@
     <div class="col-md-5">
         <div class="card mb-3">
             <div class="body">
-                <table class="table table-striped table-hover m-b-0 c_list table-nowrap">
-                    <tr>
-                        <th>No Voucher</th>
-                        <td>:</td>
-                        <td>{!!isset($expense->no_voucher) ? no_voucher($expense) : ''!!}</td>
-                    </tr>
-                    <tr>
-                        <th>Payment Date</th>
-                        <td>:</td>
-                        <td>{!!isset($expense->payment_date) ? date('d-M-Y',strtotime($expense->payment_date)) : ''!!}</td>
-                    </tr>
-                    <tr>
-                        <th>Voucher Date</th>
-                        <td>:</td>
-                        <td>{!!isset($expense->created_at) ? date('d-M-Y',strtotime($expense->created_at)) : ''!!}</td>
-                    </tr>
-                    <tr>
-                        <th>Debit Note / Kwitansi</th>
-                        <td>:</td>
-                        <td>{!!isset($expense->reference_no) ? $expense->reference_no : ''!!}</td>
-                    </tr>
-                    <tr>
-                        <th>Policy Number / Policy Holder</th>
-                        <td>:</td>
-                        <td>{!!isset($expense->recipient) ? $expense->recipient : ''!!}</td>
-                    </tr>
-                    <tr>
-                        <th>From Bank Account</th>
-                        <td>:</td>
-                        <td>{!!isset($expense->from_bank_account->no_rekening) ? $expense->from_bank_account->no_rekening .' - '.$expense->from_bank_account->bank.' an '.$expense->from_bank_account->owner : ''!!}</td>
-                    </tr>
-                    <tr>
-                        <th>To Bank Account</th>
-                        <td>:</td>
-                        <td>{!!isset($expense->bank_account->no_rekening) ? $expense->bank_account->no_rekening .' - '.$expense->bank_account->bank.' an '.$expense->bank_account->owner : ''!!}</td>
-                    </tr>
-                    <tr>
-                        <th>Bank Charges</th>
-                        <td>:</td>
-                        <td>{!!isset($expense->bank_charges) ? format_idr($expense->bank_charges) : ''!!}</td>
-                    </tr>
-                    <tr>
-                        <th>Payment Amount</th>
-                        <td>:</td>
-                        <td>{!!isset($expense->payment_amount) ? format_idr($expense->payment_amount) : ''!!}</td>
-                    </tr>
-                </table>
+                <div class="table-responsive" style="max-height: 532px;">
+                    <table class="table table-striped table-hover m-b-0 c_list table-nowrap">
+                        <tr>
+                            <th>No Voucher</th>
+                            <td>:</td>
+                            <td>{!!isset($expense->no_voucher) ? no_voucher($expense) : ''!!}</td>
+                        </tr>
+                        <tr>
+                            <th>Payment Date</th>
+                            <td>:</td>
+                            <td>{!!isset($expense->payment_date) ? date('d-M-Y',strtotime($expense->payment_date)) : ''!!}</td>
+                        </tr>
+                        <tr>
+                            <th>Voucher Date</th>
+                            <td>:</td>
+                            <td>{!!isset($expense->created_at) ? date('d-M-Y',strtotime($expense->created_at)) : ''!!}</td>
+                        </tr>
+                        <tr>
+                            <th>Debit Note / Kwitansi</th>
+                            <td>:</td>
+                            <td>{!!isset($expense->reference_no) ? $expense->reference_no : ''!!}</td>
+                        </tr>
+                        <tr>
+                            <th>Policy Number / Policy Holder</th>
+                            <td>:</td>
+                            <td>{!!isset($expense->recipient) ? $expense->recipient : ''!!}</td>
+                        </tr>
+                        <tr>
+                            <th>From Bank Account</th>
+                            <td>:</td>
+                            <td>{!!isset($expense->from_bank_account->no_rekening) ? $expense->from_bank_account->no_rekening .' - '.$expense->from_bank_account->bank.' an '.$expense->from_bank_account->owner : ''!!}</td>
+                        </tr>
+                        <tr>
+                            <th>To Bank Account</th>
+                            <td>:</td>
+                            <td>{!!isset($expense->bank_account->no_rekening) ? $expense->bank_account->no_rekening .' - '.$expense->bank_account->bank.' an '.$expense->bank_account->owner : ''!!}</td>
+                        </tr>
+                        <tr>
+                            <th>Bank Charges</th>
+                            <td>:</td>
+                            <td>{!!isset($expense->bank_charges) ? format_idr($expense->bank_charges) : ''!!}</td>
+                        </tr>
+                        <tr>
+                            <th>Payment Amount</th>
+                            <td>:</td>
+                            <td>{!!isset($expense->payment_amount) ? format_idr($expense->payment_amount) : ''!!}</td>
+                        </tr>
+                    </table>
+    
+                    @if($list_claim)
+                    @foreach($list_claim as $claim)
+                        <hr />
+                        <table class="table table-striped table-hover m-b-0 c_list table-nowrap">
+                            <tr>
+                                <th>No Voucher</th>
+                                <td>:</td>
+                                <td>{!!isset($expense->no_voucher) ? no_voucher($expense) : ''!!}</td>
+                            </tr>
+                            <tr>
+                                <th>Payment Date</th>
+                                <td>:</td>
+                                <td>{!!isset($expense->payment_date) ? date('d-M-Y',strtotime($expense->payment_date)) : ''!!}</td>
+                            </tr>
+                            <tr>
+                                <th>Voucher Date</th>
+                                <td>:</td>
+                                <td>{!!isset($expense->created_at) ? date('d-M-Y',strtotime($expense->created_at)) : ''!!}</td>
+                            </tr>
+                            <tr>
+                                <th>Debit Note / Kwitansi</th>
+                                <td>:</td>
+                                <td>{!!isset($expense->reference_no) ? $expense->reference_no : ''!!}</td>
+                            </tr>
+                            <tr>
+                                <th>Policy Number / Policy Holder</th>
+                                <td>:</td>
+                                <td>{!!isset($expense->recipient) ? $expense->recipient : ''!!}</td>
+                            </tr>
+                            <tr>
+                                <th>From Bank Account</th>
+                                <td>:</td>
+                                <td>{!!isset($expense->from_bank_account->no_rekening) ? $expense->from_bank_account->no_rekening .' - '.$expense->from_bank_account->bank.' an '.$expense->from_bank_account->owner : ''!!}</td>
+                            </tr>
+                            <tr>
+                                <th>To Bank Account</th>
+                                <td>:</td>
+                                <td>{!!isset($expense->bank_account->no_rekening) ? $expense->bank_account->no_rekening .' - '.$expense->bank_account->bank.' an '.$expense->bank_account->owner : ''!!}</td>
+                            </tr>
+                            <tr>
+                                <th>Bank Charges</th>
+                                <td>:</td>
+                                <td>{!!isset($expense->bank_charges) ? format_idr($expense->bank_charges) : ''!!}</td>
+                            </tr>
+                            <tr>
+                                <th>Payment Amount</th>
+                                <td>:</td>
+                                <td>{!!isset($expense->payment_amount) ? format_idr($expense->payment_amount) : ''!!}</td>
+                            </tr>
+                        </table>
+                    @endforeach
+                    @endif
+                </div>
             </div>
         </div>
     </div>

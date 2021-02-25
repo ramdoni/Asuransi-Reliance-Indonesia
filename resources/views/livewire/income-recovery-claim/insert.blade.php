@@ -36,6 +36,19 @@
                                 @error('no_polis')
                                 <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                                 @enderror
+                                @foreach($add_claim_payables as $k =>$i)
+                                <div wire:ignore class="mt-2">
+                                    <select class="form-control select_expense_id" wire:model="add_expense_id.{{$k}}" id="add_expense_id.{{$k}}">
+                                        <option value=""> --- Select --- </option>
+                                        @foreach(\App\Models\Expenses::where('reference_type','Claim')->get() as $item)
+                                        <option value="{{$item->id}}">{{$item->no_voucher}} / {{$item->recipient}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                @endforeach
+                                @if(!$is_readonly)
+                                <a href="javascript:;" wire:click="add_claim_payable"><i class="fa fa-plus"></i> Add Claim Payable</a>
+                                @endif
                             </td>
                         </tr>
                         <tr>
@@ -59,33 +72,33 @@
                         </tr>
                         <tr>
                             <th>{{ __('Payment Amount')}}</th>
-                            <td><input type="text" class="form-control format_number col-md-6" wire:model="payment_amount" /></td>
+                            <td>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <input type="text" class="form-control format_number text-right" wire:model="payment_amount" />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="text" {{$is_readonly?'disabled':''}} class="form-control format_number text-right" placeholder="{{__('Bank Charges')}}" wire:model="bank_charges" />
+                                    </div>
+                                </div>
+                            </td>
                         </tr>
-                        {{-- <tr>
-                            <th>{{ __('Outstanding Balance')}}</th>
-                            <td>{{format_idr($this->outstanding_balance)}}</td>
-                        </tr> --}}
                         <tr>
                             <th>{{__('From Bank Account')}}</th>
                             <td>
-                                <div class="row">
-                                    <div class="col-md-10">
-                                        <select class="form-control from_bank_account" id="from_bank_account_id" wire:model="from_bank_account_id" {{$is_readonly?'disabled':''}}>
-                                            <option value=""> --- {{__('Select')}} --- </option>
-                                            @foreach (\App\Models\BankAccount::where('is_client',1)->orderBy('owner','ASC')->get() as $bank)
-                                                <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('from_bank_account_id')
-                                        <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                                        @enderror
-                                    </div>
-                                    <div class="col-md-2 px-0 pt-2">
-                                        @if(!$is_readonly)
-                                        <a href="#" data-toggle="modal" data-target="#modal_add_bank"><i class="fa fa-plus"></i> Add Bank</a>
-                                        @endif
-                                    </div>
-                                </div>
+                                <select class="form-control from_bank_account" id="from_bank_account_id" wire:model="from_bank_account_id" {{$is_readonly?'disabled':''}}>
+                                    <option value=""> --- {{__('Select')}} --- </option>
+                                    @foreach (\App\Models\BankAccount::where('is_client',1)->orderBy('owner','ASC')->get() as $bank)
+                                        <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
+                                    @endforeach
+                                </select>
+                                @error('from_bank_account_id')
+                                <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                                @enderror
+                                <br />
+                                @if(!$is_readonly)
+                                <a href="#" data-toggle="modal" data-target="#modal_add_bank"><i class="fa fa-plus"></i> Add Bank</a>
+                                @endif
                             </td>
                         </tr>
                         <tr>
@@ -111,11 +124,6 @@
                                 @enderror
                             </td>
                         </tr>
-                        
-                        <tr>
-                            <th>{{__('Bank Charges')}}</th>
-                            <td><input type="text" {{$is_readonly?'disabled':''}} class="form-control format_number col-md-6" wire:model="bank_charges" /></td>
-                        </tr>
                         <tr>
                             <th>{{__('Description')}}</th>
                             <td>
@@ -136,7 +144,11 @@
     </div>
     <div class="col-md-5">
         <div class="card mb-3">
-            <div class="body">
+            <div class="header pb-0">
+                <h2>Claim Payable</h2>
+            </div>
+            <hr />
+            <div class="body pt-0">
                 <table class="table table-striped table-hover m-b-0 c_list table-nowrap">
                     <tr>
                         <th>No Voucher</th>
@@ -206,6 +218,7 @@
 @endpush
 @section('page-script')
     Livewire.on('init-form', () =>{
+        $(".modal").modal("hide");
         setTimeout(function(){
             init_form();
         },1500);
@@ -218,15 +231,17 @@
             centsLimit: 0
         });
         
-        select__2 = $('.select_expense_id').select2();
-        $('.select_expense_id').on('change', function (e) {
-            let elementName = $(this).attr('id');
-            var data = $(this).select2("val");
-            @this.set(elementName, data);
+        $('.select_expense_id').each(function(){
+            var select__2 = $(this).select2();
+            $(this).on('change', function (e) {
+                let elementName = $(this).attr('id');
+                var data = $(this).select2("val");
+                @this.set(elementName, data);
+            });
+            var selected__ = $(this).find(':selected').val();
+            if(selected__ !="") select__2.val(selected__);
         });
-        var selected__ = $('.select_expense_id').find(':selected').val();
-        if(selected__ !="") select__2.val(selected__);
-
+        
         select_from_bank = $('.from_bank_account').select2();
         $('.from_bank_account').on('change', function (e) {
             let elementName = $(this).attr('id');
@@ -235,17 +250,6 @@
         });
         var selected__from_bank = $('.from_bank_account').find(':selected').val();
         if(select_from_bank !="") select_from_bank.val(selected__from_bank);
-        
-        $('.select_to_bank').each(function(){
-            select_to_bank = $(this).select2();
-            $(this).on('change', function (e) {
-                let elementName = $(this).attr('id');
-                var data = $(this).select2("val");
-                @this.set(elementName, data);
-            });
-            var selected_to_bank = $(this).find(':selected').val();
-            if(selected_to_bank !="") select_to_bank.val(selected_to_bank);
-        });
     }
     setTimeout(function(){
         init_form()

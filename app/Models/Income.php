@@ -11,22 +11,22 @@ class Income extends Model
     protected $guarded = [];
 
     protected $table="income";
-
+    public function expense()
+    {
+        return $this->belongsTo(\App\Models\Expenses::class,'transaction_id');
+    }
     public function policys()
     {
         return $this->hasOne('\App\Models\Policy','id','policy_id');
     }
-
     public function bank_account()
     {
         return $this->hasOne('\App\Models\BankAccount','id','rekening_bank_id');
     }
-
     public function coa()
     {
         return $this->hasMany('\App\Models\IncomeCoa','income_id','id');
     }
-
     public function journals()
     {
         return $this->hasMany('\App\Models\Journal','transaction_id','id')->where('transaction_table','income');

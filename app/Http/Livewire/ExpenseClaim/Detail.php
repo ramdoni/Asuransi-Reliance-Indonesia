@@ -8,6 +8,8 @@ class Detail extends Component
 {
     public $expense,$data,$no_voucher,$no_polis,$nilai_klaim,$premium_receivable,$is_submit=false,$is_readonly=false;
     public $reference_no,$to_bank_account_id,$from_bank_account_id,$payment_date,$bank_charges,$description,$type=1;
+    public $add_pesertas=[],$add_peserta_id=[],$no_peserta=[],$nama_peserta=[];
+    public $add_pesertas_temp=[],$no_peserta_temp=[],$nama_peserta_temp=[];
     public function render()
     {
         return view('livewire.expense-claim.detail');
@@ -29,12 +31,34 @@ class Detail extends Component
                                             ->join('konven_underwriting','konven_underwriting.id','=','income.transaction_id')
                                             ->where('konven_underwriting.no_polis',$this->data->no_polis);
         $total_premium_receive = clone $premium;
+        $this->add_pesertas = \App\Models\ExpensePeserta::where('expense_id',$id)->get();
+        foreach($this->add_pesertas as $k => $i){
+            $this->add_peserta_id[$k] = $i->id;
+            $this->no_peserta[$k] = $i->no_peserta;
+            $this->nama_peserta[$k] = $i->nama_peserta;
+        }
         if($total_premium_receive->where('income.status',2)->sum('income.payment_amount') > 0) $this->is_submit = true;
         else $this->is_submit = false;
 
         if($this->expense->status==2) $this->is_readonly=true;
-
         $this->premium_receivable = $premium->get();
+    }
+    public function delete_peserta($k)
+    {
+        if($this->add_peserta_id[$k]){
+            \App\Models\ExpensePeserta::find($this->add_peserta_id[$k])->delete();
+            unset($this->add_pesertas[$k],$this->add_peserta_id[$k],$this->no_peserta[$k],$this->nama_peserta[$k]);
+        }
+    }
+    public function delete_peserta_temp($key)
+    {
+        unset($this->add_pesertas_temp[$key],$this->no_peserta_temp[$key],$this->nama_peserta_temp[$key]);
+    }
+    public function add_peserta()
+    {
+        $this->add_pesertas_temp[] = count($this->add_pesertas_temp);
+        $this->no_peserta_temp[] = '';
+        $this->nama_peserta_temp[] = '';
     }
     public function updated($propertyName)
     {
@@ -55,14 +79,14 @@ class Detail extends Component
     {
         $this->bank_charges = replace_idr($this->bank_charges);
         $this->nilai_klaim = replace_idr($this->nilai_klaim);
-        $this->validate(
-            [
+        $this->validate([
                 'no_polis' => 'required',
                 'nilai_klaim' => 'required',
                 'payment_date' => 'required',
                 'from_bank_account_id' => 'required',
                 'to_bank_account_id' => 'required'
             ]);
+        $this->expense->policy_id = $this->data->id;
         $this->expense->from_bank_account_id = $this->from_bank_account_id;
         $this->expense->rekening_bank_id = $this->to_bank_account_id;
         $this->expense->reference_no = $this->reference_no;
@@ -75,6 +99,32 @@ class Detail extends Component
         $this->expense->description = $this->description;
         $this->expense->type = $this->type;
         $this->expense->save();
+        
+        if($this->add_pesertas_temp){
+            foreach($this->add_pesertas_temp as $k=>$v){
+                if(!empty($this->no_peserta_temp[$k]) and !empty($this->nama_peserta_temp[$k])){
+                    $peserta = new \App\Models\ExpensePeserta();
+                    $peserta->expense_id = $this->expense->id;
+                    $peserta->no_peserta = $this->no_peserta_temp[$k];
+                    $peserta->nama_peserta = $this->nama_peserta_temp[$k];
+                    $peserta->type = 1; // Claim Payable
+                    $peserta->policy_id = $this->data->id;
+                    $peserta->save();
+                }
+            }
+        }
+        if($this->add_pesertas){
+            foreach($this->add_pesertas as $k=>$v){
+                if(!empty($this->no_peserta[$k]) and !empty($this->nama_peserta[$k])){
+                    $peserta = \App\Models\ExpensePeserta::find($this->add_peserta_id[$k]);
+                    $peserta->expense_id = $this->expense->id;
+                    $peserta->no_peserta = $this->no_peserta[$k];
+                    $peserta->nama_peserta = $this->nama_peserta[$k];
+                    $peserta->policy_id = $this->data->id;
+                    $peserta->save();
+                }
+            }
+        }
         if($type=='Submit'){
             // set balance
             $bank_balance = \App\Models\BankAccount::find($this->expense->from_bank_account_id);
