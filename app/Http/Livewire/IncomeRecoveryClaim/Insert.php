@@ -8,6 +8,7 @@ class Insert extends Component
 {
     public $type=1,$no_voucher,$is_submit=true,$data,$premium_receivable,$expense_id,$outstanding_balance,$reference_no,$payment_amount,$from_bank_account_id,$to_bank_account_id;
     public $is_readonly=false,$payment_date,$bank_charges,$description,$reference_date;
+    protected $listeners = ['emit-add-bank'=>'emitAddBank'];
     public function render()
     {
         return view('livewire.income-recovery-claim.insert');
@@ -17,6 +18,11 @@ class Insert extends Component
         $this->no_voucher = generate_no_voucher_income();
         $this->payment_date = date('Y-m-d');
         $this->reference_date = date('Y-m-d');
+    }
+    public function emitAddBank($id)
+    {
+        $this->from_bank_account_id = $id;
+        $this->emit('init-form');
     }
     public function updated($propertyName)
     {
