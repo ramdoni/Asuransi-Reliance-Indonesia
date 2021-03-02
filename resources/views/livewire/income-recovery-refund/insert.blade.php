@@ -180,11 +180,6 @@
                         <td>{{isset($data->reas->peserta) ? $data->reas->peserta : ''}}</td>
                     </tr>
                     <tr>
-                        <th>Peserta</th>
-                        <td>:</td>
-                        <td>{{isset($data->reas->peserta) ? $data->reas->peserta : ''}}</td>
-                    </tr>
-                    <tr>
                         <th>Keterangan T/F</th>
                         <td>:</td>
                         <td>{{isset($data->reas->keterangan) ? $data->reas->keterangan : ''}}</td>

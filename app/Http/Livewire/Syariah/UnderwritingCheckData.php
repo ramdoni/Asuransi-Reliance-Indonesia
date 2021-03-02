@@ -38,7 +38,7 @@ class UnderwritingCheckData extends Component
     }
     public function replaceAll()
     {
-        foreach(\App\Models\SyariahUnderwriting::where('is_temp')->get() as $child){
+        foreach(\App\Models\SyariahUnderwriting::where('is_temp',1)->get() as $child){
             $income = \App\Models\Income::where(['transaction_table'=>'syariah_underwriting','transaction_id'=>$child->parent_id])->first();
             if($income) $income->delete();
             \App\Models\SyariahUnderwriting::find($child->parent_id)->delete();

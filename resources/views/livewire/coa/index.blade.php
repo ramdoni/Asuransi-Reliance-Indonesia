@@ -2,7 +2,7 @@
 @section('parentPageTitle', 'Home')
 
 <div class="clearfix row">
-    <div class="col-lg-5">
+    <div class="col-lg-8">
         <div class="card">
             <div class="header row">
                 {{-- <div class="col-md-2">
@@ -28,15 +28,19 @@
                                 <th>{{$group->name}}</th>
                                 <th>{{$group->code}}</th>
                                 <th></th>
+                                <th>Others Expense</th>
+                                <th>Others Income</th>
                             </tr>
-                            @foreach(\App\Models\Coa::where('coa_group_id',$group->id)->get() as $coa)
+                            @foreach(\App\Models\Coa::where('coa_group_id',$group->id)->get() as $k => $coa)
                             <tr>
                                 <td><a href="{{route('coa.edit',['id'=>$coa->id])}}">{{$coa->name}}</a></td>
                                 <td>{{$coa->code}}</td>
                                 <td>{{$coa->code_voucher}}</td>
+                                <td class="text-center"><input type="checkbox" wire:model="is_others_expense.{{$coa->id}}" wire:click="update_('expense',{{$coa->id}})" /></td>
+                                <td class="text-center"><input type="checkbox" wire:model="is_others_income.{{$coa->id}}" wire:click="update_('income',{{$coa->id}})"/></td>
                             </tr>
                             @endforeach
-                            <tr><td colspan="3">&nbsp;</td></tr>
+                            <tr><td colspan="5">&nbsp;</td></tr>
                         @endforeach
                     </table>
                 </div>

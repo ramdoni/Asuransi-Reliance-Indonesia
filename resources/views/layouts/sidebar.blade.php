@@ -49,11 +49,11 @@
                                 {{-- <li class="{{ Request::segment(1) === 'konven-claim' ? 'active' : null }}"><a href="{{route('konven.claim')}}">Claim</a></li> --}}
                             </ul>
                         </li>
-                        <li class="{{ (Request::segment(1) === 'syariah-underwriting') ? 'active' : null }}">
+                        <li class="{{ (Request::segment(1) === 'syariah-underwriting' || Request::segment(1) === 'syariah-reinsurance' ) ? 'active' : null }}">
                             <a href="#App" class="has-arrow"><i class="fa fa-database"></i> <span>Syariah</span></a>
                             <ul>
                                 <li class="{{ Request::segment(1) === 'syariah-underwriting' ? 'active' : null }}"><a href="{{route('syariah.underwriting')}}">Underwriting</a></li>
-                                <li class="{{ Request::segment(1) === 'coa-group' ? 'active' : null }}"><a href="#">Reinsurance</a></li>
+                                <li class="{{ Request::segment(1) === 'syariah-reinsurance' ? 'active' : null }}"><a href="{{route('syariah.reinsurance')}}">Reinsurance</a></li>
                             </ul>
                         </li>
                         <li class="{{ Request::segment(1) === 'users' ? 'active' : null }}">
@@ -86,7 +86,7 @@
                         <li class="{{ Request::segment(1) === 'dashboard' ? 'active' : null }}">
                             <a href="/"><i class="fa fa-home"></i> <span>Dashboard</span></a>
                         </li>
-                        <li class="{{ (Request::segment(1) === 'income-recovery-refund' || Request::segment(1) === 'income-recovery-claim' || Request::segment(1) === 'income-titipan-premi' || Request::segment(1) === 'income-premium-receivable' || Request::segment(1) === 'income-reinsurance' ||  Request::segment(1) ==='income-investment') ? 'active' : null }}">
+                        <li class="{{ (Request::segment(1) === 'others-income' || Request::segment(1) === 'income-recovery-refund' || Request::segment(1) === 'income-recovery-claim' || Request::segment(1) === 'income-titipan-premi' || Request::segment(1) === 'income-premium-receivable' || Request::segment(1) === 'income-reinsurance' ||  Request::segment(1) ==='income-investment') ? 'active' : null }}">
                             <a href="#" class="has-arrow"><i class="fa fa-database"></i> <span>Income</span></a>
                             <ul>
                                 <li class="{{ Request::segment(1) === 'income-premium-receivable' ? 'active' : null }}"><a href="{{route('income.premium-receivable')}}"> Premium Receivable</a></li>
@@ -95,6 +95,7 @@
                                 <li class="{{ Request::segment(1) === 'income-recovery-refund' ? 'active' : null }}"><a href="{{route('income.recovery-refund')}}"> Recovery Refund</a></li>        
                                 <li class="{{ Request::segment(1) === 'income-investment' ? 'active' : null }}"><a href="{{route('income.investment')}}"> Invesment</a></li>        
                                 <li class="{{ Request::segment(1) === 'income-titipan-premi' ? 'active' : null }}"><a href="{{route('income.titipan-premi')}}"> Premium Deposit</a></li>        
+                                <li class="{{ Request::segment(1) === 'others-income' ? 'active' : null }}"><a href="{{route('others-income.index')}}"> Others Income</a></li>        
                             </ul>
                         </li>
                         <li class="{{ (Request::segment(1) === 'expense-refund' || Request::segment(1) === 'expense-handling-fee' || Request::segment(1) === 'expense-cancelation' || Request::segment(1) === 'expense-endorsement' || Request::segment(1) === 'expense-claim' || Request::segment(1) === 'expense-others' || Request::segment(1) === 'expense-reinsurance-premium' || Request::segment(1) === 'expense-commision-payable') ? 'active' : null }}">

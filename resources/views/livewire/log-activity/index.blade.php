@@ -23,6 +23,7 @@
                             <tr>
                                 <th>No</th>
                                 <th>User</th>
+                                <th>Date</th>
                                 <th>Subject</th>
                                 <th>URL</th>
                                 <th>Method</th>
@@ -35,6 +36,7 @@
                             <tr>
                                 <td style="width: 50px;">{{$k+1}}</td>
                                 <td>{{isset($item->user->name) ? $item->user->name : ''}}</td> 
+                                <td>{{date('d-M-Y H:i:s',strtotime($item->created_at))}}</td>
                                 <td>{{$item->subject}}</td> 
                                 <td>{{$item->url}}</td> 
                                 <td>{{$item->method}}</td> 

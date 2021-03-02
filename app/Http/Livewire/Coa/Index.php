@@ -8,7 +8,7 @@ use Livewire\WithPagination;
 class Index extends Component
 {
     use WithPagination;
-    public $keyword,$coa_group_id;
+    public $keyword,$coa_group_id,$is_others_expense,$is_others_income;
     protected $paginationTheme = 'bootstrap';
     public function render()
     {
@@ -23,9 +23,17 @@ class Index extends Component
     public function mount()
     {
         \LogActivity::add("COA");
+
+        foreach(\App\Models\Coa::all() as $k => $coa){
+            $this->is_others_expense[$coa->id] = $coa->is_others_expense;
+            $this->is_others_income[$coa->id] = $coa->is_others_income;
+        }
     }
-    // public function delete($id)
-    // {
-    //     \App\Models\Coa::find($id)->delete();
-    // }
+    public function update_($type,$id)
+    {
+        $coa = \App\Models\Coa::find($id);
+        
+        if($type=='income') \App\Models\Coa::find($id)->update(['is_others_income'=>($coa->is_others_income==1? 0: 1)]);
+        if($type=='expense') \App\Models\Coa::find($id)->update(['is_others_expense'=>($coa->is_others_expense==1? 0: 1)]);
+    }
 }

@@ -158,6 +158,50 @@
                         <td>:</td>
                         <td>{{isset($data->produk) ? $data->produk : ''}}</td>
                     </tr>
+                    @if(isset($data) and $data->type==1)
+                    <tr>
+                        <th>Peserta</th>
+                        <td>:</td>
+                        <td>{{isset($data->reas->peserta) ? $data->reas->peserta : ''}}</td>
+                    </tr>
+                    <tr>
+                        <th>Keterangan T/F</th>
+                        <td>:</td>
+                        <td>{{isset($data->reas->keterangan) ? $data->reas->keterangan : ''}}</td>
+                    </tr>
+                    <tr>
+                        <th>Broker Re / Reasuradur</th>
+                        <td>:</td>
+                        <td>{{isset($data->reas->broker_re) ? $data->reas->broker_re : ''}}</td>
+                    </tr>
+                    <tr>
+                        <th>Premi Reas</th>
+                        <td>:</td>
+                        <td>{{isset($data->reas->premi_reas_netto) ? format_idr($data->reas->premi_reas_netto) : ''}}</td>
+                    </tr>
+                    @endif
+                    @if(isset($data) and $data->type==2)
+                    <tr>
+                        <th>Peserta</th>
+                        <td>:</td>
+                        <td>{{isset($data->reas_syariah->peserta) ? $data->reas_syariah->peserta : ''}}</td>
+                    </tr>
+                    <tr>
+                        <th>Keterangan T/F</th>
+                        <td>:</td>
+                        <td>{{isset($data->reas_syariah->keterangan) ? $data->reas_syariah->keterangan : ''}}</td>
+                    </tr>
+                    <tr>
+                        <th>Broker Re / Reasuradur</th>
+                        <td>:</td>
+                        <td>{{isset($data->reas_syariah->broker_re_reasuradur) ? $data->reas_syariah->broker_re_reasuradur : ''}}</td>
+                    </tr>
+                    <tr>
+                        <th>Premi Reas</th>
+                        <td>:</td>
+                        <td>{{isset($data->reas_syariah->kontribusi_reas_netto) ? format_idr($data->reas_syariah->kontribusi_reas_netto) : ''}}</td>
+                    </tr>
+                    @endif
                 </table>
             </div>
         </div>

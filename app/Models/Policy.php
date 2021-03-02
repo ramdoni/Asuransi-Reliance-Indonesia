@@ -14,4 +14,8 @@ class Policy extends Model
     {
         return $this->belongsTo(\App\Models\KonvenReinsurance::class,'no_polis','no_polis');
     }
+    public function reas_syariah()
+    {
+        return $this->belongsTo(\App\Models\SyariahReinsurance::class,'no_polis','no_polis');
+    }
 }
