@@ -6,7 +6,7 @@
         @if($is_sync)
             <h5 class="modal-title" id="exampleModalLabel">
                 <i class="fa fa-refresh fa-spin fa-1x fa-fw"></i>
-                <span class="sr-only">Loading...</span>  Sync Data {{$total_finish}} / {{$total_sync}}</h5>
+                <span class="sr-only">Loading...</span>  Sync Data </h5>
         @endif
     </div>
     <div class="modal-body">

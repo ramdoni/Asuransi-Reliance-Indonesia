@@ -6,7 +6,7 @@ use Livewire\Component;
 
 class UnderwritingSync extends Component
 {
-    public $total_sync,$is_sync,$total_finish=0,$data,$total_success=0,$total_failed=0;
+    public $total_sync,$is_sync,$total_finish=0,$data='Preparing to synchronize, please wait...!',$total_success=0,$total_failed=0;
     protected $listeners = ['is_sync'=>'uw_sync'];
     public function render()
     {
@@ -24,10 +24,10 @@ class UnderwritingSync extends Component
         if($this->is_sync==false) return false;
         $this->emit('is_sync');
         foreach(\App\Models\KonvenUnderwriting::where('status',1)->get() as $key => $item){
-            if($key > 1) continue;
+            //if($key > 1) continue;
             $item->status=2;
             $item->save();            
-            $this->data = $item->no_kwitansi_debit_note.'<br />'.$item->no_polis.' / '.$item->pemegang_polis;
+            //$this->data = $item->no_kwitansi_debit_note.'<br />'.$item->no_polis.' / '.$item->pemegang_polis;
             if($item->line_bussines=='DWIGUNA'){
                 $coa_premi_netto = 60;
                 $commision_paid = 91;
@@ -81,7 +81,7 @@ class UnderwritingSync extends Component
                 $income->type = 1;
                 $income->save();
 
-                $this->data .= '<br /> Premium Receivable : <strong>'.format_idr($item->premi_netto).'</strong>';
+                //$this->data .= '<br /> Premium Receivable : <strong>'.format_idr($item->premi_netto).'</strong>';
             }
             if(!empty($item->ppn) and !empty($item->jumlah_discount)){
                 // Expense -  Commision Payable
@@ -98,7 +98,7 @@ class UnderwritingSync extends Component
                 $expense->type = 1;
                 $expense->save();
                 $ordering++;
-                $this->data .= '<br /> Handling Fee : <strong>'.format_idr($item->jumlah_discount + $item->jumlah_ppn).'</strong>';
+                //$this->data .= '<br /> Handling Fee : <strong>'.format_idr($item->jumlah_discount + $item->jumlah_ppn).'</strong>';
             }elseif(!empty($item->jumlah_discount)){
                 $new = new \App\Models\KonvenUnderwritingCoa();
                 $new->coa_id = $discount_coa; // Discount Jangkawarsa
@@ -109,7 +109,7 @@ class UnderwritingSync extends Component
                 $new->description = $item->pemegang_polis;
                 $new->save();
                 $ordering++;
-                $this->data .= '<br /> Commision Paid : <strong>'.format_idr($item->jumlah_discount).'</strong>';
+                //$this->data .= '<br /> Commision Paid : <strong>'.format_idr($item->jumlah_discount).'</strong>';
             }
             if(!empty($item->premi_gross) or !empty($item->extra_premi)){
                 $new = new \App\Models\KonvenUnderwritingCoa();

@@ -15,7 +15,9 @@ class UnderwritingCheckData extends Component
                             'replace-all'=>'replaceAll',
                             'replace-old'=>'replaceOld',
                             'delete-new'=>'deleteNew',
-                            'keep-new'=>'keepNew'];
+                            'keep-new'=>'keepNew',
+                            'delete-all' => 'deleteAll'
+                        ];
     public function render()
     {
         $data = \App\Models\KonvenUnderwriting::orderBy('id','DESC')->where('is_temp',1);

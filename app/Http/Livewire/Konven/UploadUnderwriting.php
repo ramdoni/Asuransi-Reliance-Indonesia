@@ -25,6 +25,7 @@ class UploadUnderwriting extends Component
         $path = $this->file->getRealPath();
        
         $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+        $reader->setReadDataOnly(true);
         $data = $reader->load($path);
         $sheetData = $data->getActiveSheet()->toArray();
         
