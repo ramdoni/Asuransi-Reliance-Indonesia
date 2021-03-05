@@ -6,19 +6,11 @@
             <div class="body">
                 <div class="row">
                     <div class="col-md-2">
-                        <select class="form-control" wire:model="coa_id">
-                            <option value=""> --- COA --- </option>
-                            @foreach(\App\Models\Coa::orderBy('name','ASC')->get() as $k=>$i)
-                            <option value="{{$i->id}}">{{$i->name}} / {{$i->code}}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="pl-0 col-md-2">
                         <input type="text" class="form-control" wire:model="keyword" placeholder="Searching..." />
                     </div>
-                    <div class="px-0 col-md-1">
+                    <div class="col-md-1">
                         <select class="form-control" wire:model="year">
-                            <option value=""> -- Year -- </option>
+                            <option value=""> - Year - </option>
                             @foreach(\App\Models\Journal::select( DB::raw( 'YEAR(date_journal) AS year' ))->groupBy('year')->get() as $i)
                             <option>{{$i->year}}</option>
                             @endforeach
@@ -26,13 +18,13 @@
                     </div>
                     <div class="col-md-2">
                         <select class="form-control" wire:model="month">
-                            <option value=""> --- Month --- </option>
+                            <option value=""> -- Month -- </option>
                             @foreach(month() as $k=>$i)
                             <option value="{{$k}}">{{$i}}</option>
                             @endforeach
                         </select>
                     </div>
-                    <div class="px-0 col-md-2">
+                    <div class="col-md-2">
                         <select class="form-control" wire:model="code_cashflow_id">
                             <option value=""> --- Code Cash Flow --- </option>
                             @foreach(get_group_cashflow() as $k=>$i)
@@ -44,7 +36,8 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
+                        <a href="javascript:;" class="btn btn-success" data-toggle="modal" data-target="#modal_add_journal"><i class="fa fa-plus"></i> Journal</a>
                         <a href="javascript:void(0)" class="btn btn-info" wire:click="downloadExcel"><i class="fa fa-download"></i> Download</a>
                         @if($set_multiple_cashflow)
                             <a href="javascript:void(0)" class="btn btn-danger" wire:click="$set('set_multiple_cashflow',false)"><i class="fa fa-times"></i> Cancel</a>
@@ -52,6 +45,10 @@
                         @else
                             <a href="javascript:void(0)" class="btn btn-warning" wire:click="$set('set_multiple_cashflow',true)"><i class="fa fa-check"></i> Set Cash Flow</a>
                         @endif
+                        <div wire:loading>
+                            <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                            <span class="sr-only">Loading...</span>
+                        </div>
                     </div>
                 </div>
                 <div class="px-0 body">
@@ -81,7 +78,7 @@
                                 @php($key_code_cashflow=0)
                                 @foreach($data as $k => $item)
                                 @if($item->no_voucher!=$br)
-                                <tr><td colspan="9"></td></tr>
+                                <tr><td colspan="9" style="background:#18a2b833;padding:1px;"></td></tr>
                                 @endif
                                 <tr>
                                     <td>{{isset($item->coa->code)?$item->coa->code:''}}</td>
@@ -121,6 +118,13 @@
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
                                 <livewire:accounting-journal.set-code-cashflow-checkbox>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="modal_add_journal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <livewire:accounting-journal.insert>
                             </div>
                         </div>
                     </div>

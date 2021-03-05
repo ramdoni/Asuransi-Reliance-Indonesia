@@ -4,9 +4,9 @@
     <div class="col-md-12">
         <div class="card">
             <div class="body">
-                <form id="basic-form" method="post" wire:submit.prevent="saveToJournal">
+                <form id="basic-form" method="post" wire:submit.prevent="save">
                     <div class="row">
-                        <div class="pr-6 col-md-4">
+                        <div class="pr-6 col-md-8">
                             <table class="table pl-0 mb-0 table-striped">
                                 <tr>
                                     <th>{{ __('Voucher Number')}}</th>
@@ -24,11 +24,11 @@
                                 @endif
                             </table>
                         </div>
-                    </div>
+                    </div>                    
                     <div class="mt-3 form-group table-responsive">
-                        <table class="table pl-0 mb-0 table-striped">
+                        <table class="table pl-0 mb-0">
                             <thead>
-                                <tr>
+                                <tr style="background: #eee;">
                                     <th>Account</th>
                                     <th>Description</th>
                                     <th>Debit</th>
@@ -46,72 +46,113 @@
                                 @endforeach
                             </tbody>
                         </table>
-                        @if($is_reclass)
-                        <br />
-                        <h5>Reclassification</h5>
-                        <table class="table pl-0 mb-0 table-striped">
+                        <hr />
+                    </div>
+                    <h5>Reclassification</h5>
+                    <div class="mt-3 form-group table-responsive">
+                        <table class="table pl-0 mb-0">
                             <thead>
-                                <tr>
+                                <tr style="background: #eee;">
+                                    <th>Created</th>
                                     <th>Account</th>
                                     <th>Description</th>
                                     <th>Debit</th>
                                     <th>Credit</th>
-                                    <th></th>
                                 </tr>
                             </thead>
-                                    @foreach($count_account as $k => $form)
-                                    <tr>
-                                        <td style="width:40%;">
-                                            <div>
-                                                <select class="form-control select2" id="coa_id.{{$k}}" wire:model="coa_id.{{$k}}" {{$is_readonly?'disabled':''}} wire:change="setNoVoucher({{$k}})">
-                                                    <option value=""> --- Account -- </option>
-                                                    @foreach(\App\Models\CoaGroup::orderBy('name','ASC')->get() as $group)
-                                                        <optgroup label="{{$group->name}}">
-                                                            @foreach(\App\Models\Coa::where('coa_group_id',$group->id)->orderBy('name','ASC')->get() as $i)
-                                                            <option value="{{$i->id}}">{{$i->name}} / {{$i->code}}</option>
-                                                            @endforeach
-                                                        </optgroup>
-                                                    @endforeach
-                                                </select>
-                                                @error("coa_id.".$k)
-                                                <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                                                @enderror
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control" {{$is_readonly?'disabled':''}} wire:model="description_coa.{{$k}}" />
-                                        </td>
-                                        <td style="width:10%;">
-                                            <input type="text" class="form-control format_number" wire:model="debit.{{$k}}" {{$is_readonly?'disabled':''}} wire:input="sumDebit" />
-                                            @error("debit.{{$k}}")
-                                            <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                                            @enderror
-                                        </td>
-                                        <td style="width:10%;"> 
-                                            <input type="text" class="form-control format_number" wire:model="kredit.{{$k}}" {{$is_readonly?'disabled':''}} wire:input="sumKredit" />
-                                            @error("kredit.{{$k}}")
-                                            <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                                            @enderror
-                                        </td>
-                                        <td>
-                                            @if(!$is_readonly)
-                                                @if($k!=0)<a href="javascript:void(0)" wire:click="deleteAccountForm({{$k}})" class="text-danger"><i class="fa fa-trash"></i></a>@endif
-                                            @endif
-                                        </td>
-                                    </tr>
-                                    @endforeach
+                            <tbody>
+                                @php($br=0)
+                                @foreach($history_reclass as $k => $item)
+                                @if($item->last_ordering!=$br  and $k!=0)
+                                <tr style="background: #eee;"><td style="padding:1px" colspan="5"></td></tr>
+                                @endif
+                                <tr>
+                                    <td>{{date('d-M-Y',strtotime($item->created_at))}}</td>
+                                    <td>{{$item->coa->name}}</td>
+                                    <td>{{$item->description}}</td>
+                                    <td>{{format_idr($item->debit)}}</td>
+                                    <td>{{format_idr($item->kredit)}}</td>
+                                </tr>
+                                @php($br=$item->last_ordering)
+                                @endforeach
                             </tbody>
                         </table>
-                        @endif
                     </div>
-                    <hr>
-                    <a href="javascript:void0()" onclick="history.back()"><i class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
                     @if($is_reclass)
-                    <button type="button" class="ml-3 btn btn-danger" wire:click="cancel_reclass">{{__('Cancel')}}</button>
-                    <button type="submit" {{!$is_submit_journal?'disabled':''}} class="ml-3 btn btn-warning"><i class="fa fa-save"></i> {{ __('Submit to Journal') }}</button>
-                    @else
-                    <button type="button" class="ml-3 btn btn-info" wire:click="reclass">{{ __('Reclassification') }}</button>
+                    <hr />
+                    <table class="table pl-0 mb-0 table-striped">
+                        <thead>
+                            <tr>
+                                <th>Account</th>
+                                <th>Description</th>
+                                <th>Debit</th>
+                                <th>Credit</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach($count_account as $k => $form)
+                        <tr>
+                            <td style="width:40%;">
+                                <div>
+                                    <select class="form-control select2" id="coa_id.{{$k}}" wire:model="coa_id.{{$k}}" {{$is_readonly?'disabled':''}}>
+                                        <option value=""> --- Account -- </option>
+                                        @foreach(\App\Models\CoaGroup::orderBy('name','ASC')->get() as $group)
+                                            <optgroup label="{{$group->name}}">
+                                                @foreach(\App\Models\Coa::where('coa_group_id',$group->id)->orderBy('name','ASC')->get() as $i)
+                                                <option value="{{$i->id}}">{{$i->name}} / {{$i->code}}</option>
+                                                @endforeach
+                                            </optgroup>
+                                        @endforeach
+                                    </select>
+                                    @error("coa_id.".$k)
+                                    <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                                    @enderror
+                                </div>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" {{$is_readonly?'disabled':''}} wire:model="description_coa.{{$k}}" />
+                            </td>
+                            <td style="width:10%;">
+                                <input type="text" class="form-control format_number" wire:model="debit.{{$k}}" {{$is_readonly?'disabled':''}} />
+                                @error("debit.{{$k}}")
+                                <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                                @enderror
+                            </td>
+                            <td style="width:10%;"> 
+                                <input type="text" class="form-control format_number" wire:model="kredit.{{$k}}" {{$is_readonly?'disabled':''}} />
+                                @error("kredit.{{$k}}")
+                                <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                                @enderror
+                            </td>
+                            <td>
+                                @if(!$is_readonly)
+                                    @if($k!=0)<a href="javascript:void(0)" wire:click="delete({{$k}})" class="text-danger"><i class="fa fa-trash"></i></a>@endif
+                                @endif
+                            </td>
+                        </tr>
+                        @endforeach
+                        <tr>
+                            <td colspan="2" class="text-right">Total</td>
+                            <th>{{format_idr($total_debit)}}</th>
+                            <th>{{format_idr($total_kredit)}}</th>
+                        </tr>
+                    </tbody>
+                    </table>
+                    <a href="javascript:;" wire:click="add_account"><i class="fa fa-plus"></i> Account</a>
                     @endif
+                    <hr>
+                    <a href="javascript:void0()" onclick="history.back()" class="mr-3"><i class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
+                    @if($is_reclass)
+                    <button type="button" class="btn btn-danger" wire:click="cancel_reclass">{{__('Cancel')}}</button>
+                    <button type="submit" {{!$is_submit_journal?'disabled':''}} class="ml-3 btn btn-warning"><i class="fa fa-save"></i> {{ __('Submit Reclassification') }}</button>
+                    @else
+                    <button type="button" class="btn btn-danger" wire:click="reclass"><i class="fa fa-edit"></i> {{ __('Reclassification') }}</button>
+                    @endif
+                    <div wire:loading>
+                        <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                        <span class="sr-only">Loading...</span>
+                    </div>
                 </form> 
             </div>
         </div>
@@ -133,7 +174,7 @@
 document.addEventListener("livewire:load", () => {
 		init_form();
     });
-    Livewire.on('changeForm', () =>{
+    Livewire.on('init-form', () =>{
         setTimeout(function(){
             init_form();
         },500);

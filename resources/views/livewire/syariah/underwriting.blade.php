@@ -44,6 +44,7 @@
                     <td>
                         @if($item->status==1)
                         <span class="badge text-warning">Draft</span>
+                        <a href="javascript:;" class="text-danger" wire:click="delete({{$item->id}})"><i class="fa fa-trash"></i></a>
                         @endif
                         @if($item->status==2)
                         <span class="badge text-success">Sync</span>

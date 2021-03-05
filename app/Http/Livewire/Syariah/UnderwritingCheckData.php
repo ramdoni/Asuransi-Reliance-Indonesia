@@ -4,6 +4,8 @@ namespace App\Http\Livewire\Syariah;
 
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Models\SyariahUnderwriting;
+use App\Models\Income;
 
 class UnderwritingCheckData extends Component
 {
@@ -21,7 +23,7 @@ class UnderwritingCheckData extends Component
     public $keyword,$perpage=100;
     public function render()
     {
-        $data = \App\Models\SyariahUnderwriting::orderBy('id','DESC')->where('is_temp',1);
+        $data = SyariahUnderwriting::orderBy('id','DESC')->where('is_temp',1);
         if($this->keyword) $data = $data->where(function($table){
                                                 foreach(\Illuminate\Support\Facades\Schema::getColumnListing('syariah_underwritings') as $column){
                                                     $table->orWhere($column,'LIKE',"%{$this->keyword}%");
@@ -31,17 +33,18 @@ class UnderwritingCheckData extends Component
     }
     public function updated()
     {
-        if(\App\Models\SyariahUnderwriting::where('is_temp',1)->count()==0){
+        if(SyariahUnderwriting::where('is_temp',1)->count()==0){
             session()->flash('message-success',__('Data saved successfully'));
             return redirect()->route('syariah.underwriting');
         }
     }
     public function replaceAll()
     {
-        foreach(\App\Models\SyariahUnderwriting::where('is_temp',1)->get() as $child){
-            $income = \App\Models\Income::where(['transaction_table'=>'syariah_underwriting','transaction_id'=>$child->parent_id])->first();
+        foreach(SyariahUnderwriting::where('is_temp',1)->get() as $child){
+            $income = Income::where(['transaction_table'=>'syariah_underwriting','transaction_id'=>$child->parent_id])->first();
             if($income) $income->delete();
-            \App\Models\SyariahUnderwriting::find($child->parent_id)->delete();
+            $parent = SyariahUnderwriting::find($child->parent_id);
+            if($parent) $parent->delete();
             $child->is_temp=0;
             $child->parent_id=0;
             $child->save();
@@ -50,31 +53,34 @@ class UnderwritingCheckData extends Component
     }
     public function deleteAll()
     {
-        \App\Models\SyariahUnderwriting::where('is_temp',1)->delete();
+        SyariahUnderwriting::where('is_temp',1)->delete();
         $this->updated();
     }
     public function keepAll()
     {
-        \App\Models\SyariahUnderwriting::where('is_temp',1)->update(['is_temp'=>0,'parent_id'=>0]);
+        SyariahUnderwriting::where('is_temp',1)->update(['is_temp'=>0,'parent_id'=>0]);
         $this->updated();
     }
     public function delete($id)
     {
-        \App\Models\SyariahUnderwriting::find($id)->delete();
+        SyariahUnderwriting::find($id)->delete();
         $this->updated();
     }
     public function keep($id)
     {
-        \App\Models\SyariahUnderwriting::find($id)->update(['is_temp'=>0,'parent_id'=>0]);
+        SyariahUnderwriting::find($id)->update(['is_temp'=>0,'parent_id'=>0]);
         $this->updated();
     }
     public function replace($id)
     {
-        $child = \App\Models\SyariahUnderwriting::find($id);
+        $child = SyariahUnderwriting::find($id);
         if($child){
-            $income = \App\Models\Income::where(['transaction_table'=>'syariah_underwriting','transaction_id'=>$child->parent_id])->first();
+            $income = Income::where(['transaction_table'=>'syariah_underwriting','transaction_id'=>$child->parent_id])->first();
             if($income) $income->delete();
-            \App\Models\SyariahUnderwriting::find($child->parent_id)->delete();
+            
+            $parent = SyariahUnderwriting::find($child->parent_id);
+            if($parent) $parent->delete();
+
             $child->is_temp=0;
             $child->parent_id=0;
             $child->save();   

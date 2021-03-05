@@ -22,6 +22,7 @@ class UnderwritingUpload extends Component
         $path = $this->file->getRealPath();
        
         $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+        $reader->setReadDataOnly(true);
         $data = $reader->load($path);
         $sheetData = $data->getActiveSheet()->toArray();
         
@@ -38,8 +39,8 @@ class UnderwritingUpload extends Component
                 $user_akseptasi = $i[3];
                 $transaksi_id = $i[4];
                 $berkas_akseptasi = $i[5];
-                $tanggal_pengajuan_email = $i[6];
-                $tanggal_produksi = $i[7];
+                $tanggal_pengajuan_email = $i[6]?@\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[6]) : '';;
+                $tanggal_produksi = $i[7]?@\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[7]) : '';;
                 $tanggal_akrual = $i[8];
                 $bordero = $i[9];
                 $no_memo = $i[10];
@@ -65,7 +66,7 @@ class UnderwritingUpload extends Component
                 $ektra_kontribusi = (int)$i[30];
                 $total_kontribusi = (int)$i[31];
                 $pot_langsung = (int)$i[32];
-                $jumlah_diskon = (int)$i[33];
+                $jumlah_diskon = abs($i[33]);
                 $status_potongan = $i[34];
                 $handling_fee = (int)$i[35];
                 $jumlah_fee = (int)$i[36];
@@ -78,15 +79,15 @@ class UnderwritingUpload extends Component
                 $extpst = (int)$i[43];
                 $net_kontribusi = (int)$i[44];
                 $terbilang = $i[45];
-                $tgl_update_database = $i[46];
-                $tgl_update_sistem = $i[47];
+                $tgl_update_database = $i[46]?@\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[46]) : '';
+                $tgl_update_sistem = $i[47]?@\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[47]) : '';;
                 $no_berkas_sistem = $i[48];
-                $tgl_posting_sistem = $i[49];
+                $tgl_posting_sistem = $i[49]?@\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[49]) : '';;
                 $ket_posting = $i[50];
                 $grace_periode = $i[51];
                 $grace_periode_number = $i[52];
-                $tgl_jatuh_tempo = $i[53];
-                $tgl_lunas = $i[54];
+                $tgl_jatuh_tempo = $i[53]?@\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[53]) : '';;
+                $tgl_lunas = $i[54]?@\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[54]) : '';;
                 $pembayaran = (int)$i[55];
                 $piutang = (int)$i[56];
                 $total_peserta = $i[57];
@@ -94,6 +95,8 @@ class UnderwritingUpload extends Component
                 $produksi_cash_basis = $i[59];
                 $ket_lampiran = $i[60];
                 $pengeluaran_ujroh = $i[61];
+                //  jika tidak ada debit note skip
+                if(empty($no_debit_note))continue;
 
                 $find = \App\Models\SyariahUnderwriting::where('no_debit_note',$no_debit_note)->first();
                 $data = new \App\Models\SyariahUnderwriting();
@@ -110,9 +113,9 @@ class UnderwritingUpload extends Component
                 $data->user_akseptasi = $user_akseptasi;
                 $data->transaksi_id = $transaksi_id;
                 $data->berkas_akseptasi = $berkas_akseptasi;
-                if($tanggal_pengajuan_email) $data->tanggal_pengajuan_email = date('Y-m-d',strtotime($tanggal_pengajuan_email));
-                if($tanggal_produksi)$data->tanggal_produksi = date('Y-m-d',strtotime($tanggal_produksi));
-                if($tanggal_akrual) $data->tanggal_akrual = date('Y-m-d',strtotime($tanggal_akrual));
+                if($tanggal_pengajuan_email) $data->tanggal_pengajuan_email = date('Y-m-d',$tanggal_pengajuan_email);
+                if($tanggal_produksi)$data->tanggal_produksi = date('Y-m-d',($tanggal_produksi));
+                if($tanggal_akrual) $data->tanggal_akrual = $tanggal_akrual;
                 $data->bordero = $bordero;
                 $data->no_memo = $no_memo;
                 $data->no_debit_note = $no_debit_note;
@@ -149,15 +152,15 @@ class UnderwritingUpload extends Component
                 $data->extpst = $extpst;
                 $data->net_kontribusi = $net_kontribusi;
                 $data->terbilang = $terbilang;
-                if($tgl_update_database) $data->tgl_update_database = date('Y-m-d',strtotime($tgl_update_database));
-                if($tgl_update_sistem) $data->tgl_update_sistem = date('Y-m-d',strtotime($tgl_update_sistem));
+                if($tgl_update_database) $data->tgl_update_database = date('Y-m-d',($tgl_update_database));
+                if($tgl_update_sistem) $data->tgl_update_sistem = date('Y-m-d',($tgl_update_sistem));
                 $data->no_berkas_sistem = $no_berkas_sistem;
-                if($tgl_posting_sistem) $data->tgl_posting_sistem = date('Y-m-d',strtotime($tgl_posting_sistem));
+                if($tgl_posting_sistem) $data->tgl_posting_sistem = date('Y-m-d',($tgl_posting_sistem));
                 $data->ket_posting = $ket_posting;
                 $data->grace_periode = $grace_periode;
                 $data->grace_periode_number = $grace_periode_number;
-                if($tgl_jatuh_tempo) $data->tgl_jatuh_tempo = date('Y-m-d',strtotime($tgl_jatuh_tempo));
-                if($tgl_lunas) $data->tgl_lunas = date('Y-m-d',strtotime($tgl_lunas));
+                if($tgl_jatuh_tempo) $data->tgl_jatuh_tempo = date('Y-m-d',($tgl_jatuh_tempo));
+                if($tgl_lunas) $data->tgl_lunas = date('Y-m-d',($tgl_lunas));
                 $data->pembayaran = $pembayaran;
                 $data->piutang = $piutang;
                 $data->total_peserta = $total_peserta;
