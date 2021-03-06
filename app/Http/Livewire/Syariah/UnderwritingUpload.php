@@ -4,6 +4,8 @@ namespace App\Http\Livewire\Syariah;
 
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use App\Models\SyariahUnderwriting;
+use App\Models\Income;
 
 class UnderwritingUpload extends Component
 {
@@ -30,7 +32,7 @@ class UnderwritingUpload extends Component
             $countLimit = 1;
             $total_double = 0;
             $total_success = 0;
-            \App\Models\SyariahUnderwriting::where('is_temp',1)->delete(); // delete data temp
+            SyariahUnderwriting::where('is_temp',1)->delete(); // delete data temp
             foreach($sheetData as $key => $i){
                 if($key<1) continue; // skip header
                 foreach($i as $k=>$a){ $i[$k] = trim($a); }
@@ -98,10 +100,10 @@ class UnderwritingUpload extends Component
                 //  jika tidak ada debit note skip
                 if(empty($no_debit_note))continue;
 
-                $find = \App\Models\SyariahUnderwriting::where('no_debit_note',$no_debit_note)->first();
-                $data = new \App\Models\SyariahUnderwriting();
+                $find = SyariahUnderwriting::where('no_debit_note',$no_debit_note)->first();
+                $data = new SyariahUnderwriting();
                 if($find){
-                    $income = \App\Models\Income::where(['transaction_table'=>'syariah_underwriting','transaction_id'=>$find->id])->first();
+                    $income = Income::where(['transaction_table'=>'syariah_underwriting','transaction_id'=>$find->id])->first();
                     if(isset($income) and $income->status==2) continue; // skip jika data sudah di receive
 
                     $data->is_temp = 1;

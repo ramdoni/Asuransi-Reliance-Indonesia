@@ -64,46 +64,12 @@ class UnderwritingSync extends Component
                 $income->transaction_id = $item->id;
                 $income->due_date = $item->tgl_jatuh_tempo;
                 $income->type = 2; // Syariah
-                // ketika 
+                // ketika ada tanggal lunasnya 
                 if(!empty($item->tgl_lunas) and !empty($item->pembayaran)){
                     $income->payment_amount = $item->pembayaran;
                     $income->status = 2;
-
-                    $coa_premium_receivable = 0;
-                    switch($item->line_bussines){
-                        case "JANGKAWARSA":
-                            $coa_premium_receivable = 58; //Premium Receivable Jangkawarsa
-                        break;
-                        case "EKAWARSA":
-                            $coa_premium_receivable = 59; //Premium Receivable Ekawarsa
-                        break;
-                        case "DWIGUNA":
-                            $coa_premium_receivable = 60; //Premium Receivable Dwiguna
-                        break;
-                        case "DWIGUNA KOMBINASI":
-                            $coa_premium_receivable = 61; //Premium Receivable Dwiguna Kombinasi
-                        break;
-                        case "KECELAKAAN":
-                            $coa_premium_receivable = 62; //Premium Receivable Kecelakaan Diri
-                        break;
-                        default: 
-                            $coa_premium_receivable = 63; //Premium Receivable Other Tradisional
-                        break;
-                    }        
-                    // Premium Receivable
-                    $journal = new Journal();
-                    $journal->coa_id = $coa_premium_receivable;
-                    $journal->no_voucher = generate_no_voucher($coa_premium_receivable,$item->id);
-                    $journal->date_journal = date('Y-m-d');
-                    $journal->kredit = $income->payment_amount;
-                    $journal->debit = 0;
-                    $journal->saldo = $income->payment_amount;
-                    $journal->transaction_id = $item->id;
-                    $journal->transaction_table = 'syariah_underwriting';
-                    $journal->transaction_number = isset($item->no_kwitansi_debit_note)?$item->no_kwitansi_debit_note:'';
-                    $journal->save();
+                    $income->payment_date = $item->tgl_lunas;
                 }
-
                 $income->save();
                 $this->data .= '<br /> Premium Receivable : <strong>'.format_idr($item->net_kontribusi).'</strong>';
             }

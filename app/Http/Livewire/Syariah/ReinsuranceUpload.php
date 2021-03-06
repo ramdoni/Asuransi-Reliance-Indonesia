@@ -62,7 +62,7 @@ class ReinsuranceUpload extends Component
                 $data->ekawarsa_jangkawarsa = $i[16];
                 $data->tetap_menurun = $i[17];
                 $data->produk = $i[18];
-                if($i[19]) $data->tgl_bayar = $i[19];
+                if($i[19]) $data->tgl_bayar = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[19]);
                 $data->status =1;
                 $data->save();
                 $total_success++;
