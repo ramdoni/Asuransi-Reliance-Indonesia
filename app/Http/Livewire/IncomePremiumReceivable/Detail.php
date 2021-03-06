@@ -193,7 +193,7 @@ class Detail extends Component
                 $journal->saldo = $this->payment_amount - $this->data->nominal;
                 $journal->description = $this->description;
                 $journal->transaction_id = $this->data->id;
-                $journal->transaction_table = 'expenses';
+                $journal->transaction_table = 'income';
                 $journal->transaction_number = isset($this->data->uw->no_kwitansi_debit_note)?$this->data->uw->no_kwitansi_debit_note:'';
                 $journal->save();
             }
@@ -208,7 +208,7 @@ class Detail extends Component
                 $journal->saldo = replace_idr($this->bank_charges);
                 $journal->description = $this->description;
                 $journal->transaction_id = $this->data->id;
-                $journal->transaction_table = 'expenses';
+                $journal->transaction_table = 'income';
                 $journal->transaction_number = isset($this->data->uw->no_kwitansi_debit_note)?$this->data->uw->no_kwitansi_debit_note:'';
                 $journal->save();
             }
@@ -224,7 +224,7 @@ class Detail extends Component
                 $journal->saldo = $this->bank_charges + $this->payment_amount;
                 $journal->description = $this->description;
                 $journal->transaction_id = $this->data->id;
-                $journal->transaction_table = 'expenses';
+                $journal->transaction_table = 'income';
                 $journal->transaction_number = isset($this->data->uw->no_kwitansi_debit_note)?$this->data->uw->no_kwitansi_debit_note:'';
                 $journal->save();
             }

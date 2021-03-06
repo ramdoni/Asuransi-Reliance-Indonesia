@@ -20,6 +20,7 @@ class RefundUpload extends Component
         ]);
         $path = $this->file->getRealPath();
         $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+        $reader->setReadDataOnly(true);
         $data = $reader->load($path);
         $sheetData = $data->getActiveSheet()->toArray();
         
@@ -43,8 +44,8 @@ class RefundUpload extends Component
                 $data->user_memo = $i[2];
                 $data->user_akseptasi = $i[3];
                 $data->berkas_akseptasi = $i[4];
-                if($i[5]) $data->tgl_pengajuan_email = date('Y-m-d',strtotime($i[5]));
-                if($i[6]) $data->tgl_refund = date('Y-m-d',strtotime($i[6]));
+                if($i[5]) $data->tgl_pengajuan_email = date('Y-m-d',\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[5]));
+                if($i[6]) $data->tgl_refund = date('Y-m-d',\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[6]));
                 $data->no_memo = $i[7];
                 $data->no_credit_note = $i[8];
                 $data->no_polis = $i[9];
@@ -61,9 +62,9 @@ class RefundUpload extends Component
                 $data->jumlah_kepesertaan = $i[20];
                 $data->no_kepesertaan_awal = $i[21];
                 $data->no_kepesertaan_akhir = $i[23];
-                if($i[24]) $data->masa_awal = date('Y-m-d',strtotime($i[24]));
-                if($i[25]) $data->masa_akhir = date('Y-m-d',strtotime($i[25]));
-                if($i[26]) $data->tgl_produksi = date('Y-m-d',strtotime($i[26]));
+                if($i[24]) $data->masa_awal = date('Y-m-d',\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[24]));
+                if($i[25]) $data->masa_akhir = date('Y-m-d',\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[25]));
+                if($i[26]) $data->tgl_produksi = date('Y-m-d',\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[26]));
                 $data->no_debit_note_terakseptasi = $i[27];
                 $data->kontribusi_dn = (int)$i[28];
                 $data->manfaat_asuransi = (int)$i[29];
@@ -73,13 +74,13 @@ class RefundUpload extends Component
                 $data->ket_lampiran = $i[33];
                 $data->grace_periode = $i[34];
                 $data->grace_periode_num = $i[35];
-                if($i[36]) $data->tgl_jatoh_tempo = date('Y-m-d',strtotime($i[36]));
-                if($i[37]) $data->tgl_update_database = date('Y-m-d',strtotime($i[37]));
-                if($i[38]) $data->tgl_bayar = date('Y-m-d',strtotime($i[38]));
+                if($i[36]) $data->tgl_jatoh_tempo = date('Y-m-d',\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[36]));
+                if($i[37]) $data->tgl_update_database = date('Y-m-d',\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[37]));
+                if($i[38]) $data->tgl_bayar = date('Y-m-d',\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[38]));
                 $data->ket = $i[39];
                 $data->ket_2 = $i[40];
                 $data->ket_reas = $i[41];
-                if($i[42]) $data->tgl_bayar_reas = date('Y-m-d',strtotime($i[42]));
+                if($i[42]) $data->tgl_bayar_reas = date('Y-m-d',\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[42]));
                 $data->status = 0;
                 $data->user_id = \Auth::user()->id;
                 $data->save();

@@ -21,6 +21,7 @@ class CancelUpload extends Component
         
         $path = $this->file->getRealPath();
         $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+        $reader->setReadDataOnly(true);
         $data = $reader->load($path);
         $sheetData = $data->getActiveSheet()->toArray();
         
@@ -44,8 +45,8 @@ class CancelUpload extends Component
                 $data->user_memo = $i[2];
                 $data->user_akseptasi = $i[3];
                 $data->no_berkas = $i[4];
-                if($i[5]) $data->tgl_pengajuan_email = date('Y-m-d',strtotime($i[5]));
-                if($i[6]) $data->tgl_cancel = date('Y-m-d',strtotime($i[6]));
+                if($i[5]) $data->tgl_pengajuan_email = date('Y-m-d',\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[5]));
+                if($i[6]) $data->tgl_cancel = date('Y-m-d',\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[6]));
                 $data->no_memo = $i[7];
                 $data->no_credit_note = $i[8];
                 $data->no_polis = $i[9];
@@ -62,8 +63,8 @@ class CancelUpload extends Component
                 $data->jumlah_kepesertaan = $i[20];
                 $data->no_kepesertaan_awal = $i[21];
                 $data->no_kepesertaan_akhir = $i[23];
-                if($i[24]) $data->masa_awal = date('Y-m-d',strtotime($i[24]));
-                if($i[25]) $data->masa_akhir = date('Y-m-d',strtotime($i[25]));
+                if($i[24]) $data->masa_awal = date('Y-m-d',\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[24]));
+                if($i[25]) $data->masa_akhir = date('Y-m-d',\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[25]));
                 $data->manfaat_cancel = replace_idr($i[26]);
                 $data->kontribusi_gross_cancel = replace_idr($i[27]);
                 $data->ektra_kontribusi_cancel = replace_idr($i[28]);
@@ -79,12 +80,12 @@ class CancelUpload extends Component
                 $data->terbilang = $i[38];
                 $data->grace_periode = $i[39];
                 $data->grace_periode_num = $i[40];
-                if($i[41]) $data->tgl_jatoh_tempo = date('Y-m-d',strtotime($i[41]));
-                if($i[42]) $data->tgl_update_database = date('Y-m-d',strtotime($i[42]));
+                if($i[41]) $data->tgl_jatoh_tempo = date('Y-m-d',\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[41]));
+                if($i[42]) $data->tgl_update_database = date('Y-m-d',\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[42]));
                 $data->no_debit_note = $i[43];
-                if($i[44]) $data->tgl_debit_note = date('Y-m-d',strtotime($i[44]));
+                if($i[44]) $data->tgl_debit_note = date('Y-m-d',\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[44]));
                 $data->kontribusi_debit_note = $i[45];
-                if($i[46]) $data->tgl_bayar_refund = date('Y-m-d',strtotime($i[46]));
+                if($i[46]) $data->tgl_bayar_refund = date('Y-m-d',\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[46]));
                 $data->ket = $i[47];
                 $data->status = 0;
                 $data->user_id = \Auth::user()->id;
