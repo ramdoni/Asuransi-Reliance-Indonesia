@@ -4,7 +4,7 @@ namespace App\Http\Livewire\Syariah;
 
 use Livewire\Component;
 use App\Models\SyariahUnderwriting;
-use \App\Models\Policy;
+use App\Models\Policy;
 use App\Models\Income;
 use App\Models\Journal;
 

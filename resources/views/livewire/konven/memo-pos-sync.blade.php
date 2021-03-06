@@ -1,15 +1,13 @@
 <form wire:submit.prevent="memo_sync">
     <div class="modal-header">
-        @if(!$is_sync_memo)
         <div wire:loading.remove>
             <h5 class="modal-title" id="exampleModalLabel"><i class="fa fa-refresh"></i> Sync Data</h5>
         </div>
-        @endif
-        @if($is_sync_memo)
+        <div wire:loading>
             <h5 class="modal-title" id="exampleModalLabel">
                 <i class="fa fa-refresh fa-spin fa-1x fa-fw"></i>
-                <span class="sr-only">Loading...</span>  Sync Data {{$total_finish}} / {{$total_sync}}</h5>
-        @endif
+                <span class="sr-only">Loading...</span>  Sync Data</h5>
+        </div>
     </div>
     <div class="modal-body">
         <div class="form-group" wire:loading.remove>

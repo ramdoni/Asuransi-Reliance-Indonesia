@@ -153,14 +153,17 @@ class MemoPosCheckData extends Component
         foreach($data as $child){
             // Check Income
             $income = \App\Models\Income::where(['transaction_table'=>'konven_memo_pos','transaction_id'=>$child->parent_id])->first();
-            if($income and $icome->status==2) 
-                continue;
-            else $income->delete(); // delete income
+            if($income)
+                if($icome->status==2) 
+                    continue;
+                else 
+                    $income->delete(); // delete income
             // Check Expense
             $expense = \App\Models\Expenses::where(['transaction_table'=>'konven_memo_pos','transaction_id'=>$child->parent_id])->first();
-            if($expense and $expense->status==2) 
-                continue;
-            else $expense->delete(); // delete expense
+            if($expense)
+                if($expense->status==2) 
+                    continue;
+                else $expense->delete(); // delete expense
             // delete parent
             \App\Models\KonvenMemo::find($child->parent_id)->delete();
         }

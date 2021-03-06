@@ -3,10 +3,15 @@
 namespace App\Http\Livewire\Konven;
 
 use Livewire\Component;
+use App\Models\KonvenUnderwriting;
+use App\Models\KonvenUnderwritingCoa;
+use App\Models\Income;
+use App\Models\Expenses;
+use App\Models\Journal;
 
 class UnderwritingSync extends Component
 {
-    public $total_sync,$is_sync,$total_finish=0,$data='Preparing to synchronize, please wait...!',$total_success=0,$total_failed=0;
+    public $total_sync,$is_sync,$total_finish=0,$data='Synchronize, please wait...!',$total_success=0,$total_failed=0;
     protected $listeners = ['is_sync'=>'uw_sync'];
     public function render()
     {
@@ -14,7 +19,7 @@ class UnderwritingSync extends Component
     }
     public function mount()
     {
-        $this->total_sync = \App\Models\KonvenUnderwriting::where('status',1)->count();
+        $this->total_sync = KonvenUnderwriting::where('status',1)->count();
     }
     public function cancel_sync(){
         $this->is_sync=false;
@@ -23,7 +28,7 @@ class UnderwritingSync extends Component
     {
         if($this->is_sync==false) return false;
         $this->emit('is_sync');
-        foreach(\App\Models\KonvenUnderwriting::where('status',1)->get() as $key => $item){
+        foreach(KonvenUnderwriting::where('status',1)->get() as $key => $item){
             //if($key > 1) continue;
             $item->status=2;
             $item->save();            
@@ -57,7 +62,7 @@ class UnderwritingSync extends Component
             $ordering = 1;
             // Insert Transaksi
             if(!empty($item->premi_netto)){
-                $new = new \App\Models\KonvenUnderwritingCoa();
+                $new = new KonvenUnderwritingCoa();
                 $new->coa_id = $coa_premi_netto;
                 $new->konven_underwriting_id = $item->id;
                 $new->debit = $item->premi_netto;
@@ -67,7 +72,7 @@ class UnderwritingSync extends Component
                 $new->save();
                 $ordering++;
                 // insert income premium receivable
-                $income = new \App\Models\Income();
+                $income = new Income();
                 $income->user_id = \Auth::user()->id;
                 $income->no_voucher = generate_no_voucher_income();
                 $income->reference_no = $item->no_kwitansi_debit_note;
@@ -85,7 +90,7 @@ class UnderwritingSync extends Component
             }
             if(!empty($item->ppn) and !empty($item->jumlah_discount)){
                 // Expense -  Commision Payable
-                $expense = new \App\Models\Expenses();
+                $expense = new Expenses();
                 $expense->user_id = \Auth::user()->id;
                 $expense->no_voucher = generate_no_voucher_expense();
                 $expense->reference_no = $item->no_kwitansi_debit_note;
@@ -100,7 +105,7 @@ class UnderwritingSync extends Component
                 $ordering++;
                 //$this->data .= '<br /> Handling Fee : <strong>'.format_idr($item->jumlah_discount + $item->jumlah_ppn).'</strong>';
             }elseif(!empty($item->jumlah_discount)){
-                $new = new \App\Models\KonvenUnderwritingCoa();
+                $new = new KonvenUnderwritingCoa();
                 $new->coa_id = $discount_coa; // Discount Jangkawarsa
                 $new->konven_underwriting_id = $item->id;
                 $new->debit = $item->jumlah_discount;
@@ -112,7 +117,7 @@ class UnderwritingSync extends Component
                 //$this->data .= '<br /> Commision Paid : <strong>'.format_idr($item->jumlah_discount).'</strong>';
             }
             if(!empty($item->premi_gross) or !empty($item->extra_premi)){
-                $new = new \App\Models\KonvenUnderwritingCoa();
+                $new = new KonvenUnderwritingCoa();
                 $new->coa_id = $gross_premium; // 	Gross Premium Jangkawarsa
                 $new->konven_underwriting_id = $item->id;
                 $new->debit = 0;
@@ -123,7 +128,7 @@ class UnderwritingSync extends Component
                 $ordering++;
             }
             if(!empty($item->jumlah_pph)){
-                $new = new \App\Models\KonvenUnderwritingCoa();
+                $new = new KonvenUnderwritingCoa();
                 $new->coa_id = 83; // PPH 23 Payable
                 $new->konven_underwriting_id = $item->id;
                 $new->debit = 0;
@@ -134,7 +139,7 @@ class UnderwritingSync extends Component
                 $ordering++;
             }
             if(!empty($item->extsertifikat)){
-                $new = new \App\Models\KonvenUnderwritingCoa();
+                $new = new KonvenUnderwritingCoa();
                 $new->coa_id = 88; // Policy Administration Income
                 $new->konven_underwriting_id = $item->id;
                 $new->debit = 0;
@@ -145,7 +150,7 @@ class UnderwritingSync extends Component
                 $ordering++;
             }
             foreach($item->coaDesc as $k => $coa){
-                $new  = new \App\Models\Journal();
+                $new  = new Journal();
                 $new->transaction_number = $item->no_kwitansi_debit_note;
                 $new->transaction_id = $item->id;
                 $new->transaction_table = 'konven_underwriting'; 
@@ -161,7 +166,7 @@ class UnderwritingSync extends Component
             $this->total_success++;
             $this->total_finish++;
         }
-        if(\App\Models\KonvenUnderwriting::where('status',1)->count()==0){
+        if(KonvenUnderwriting::where('status',1)->count()==0){
             session()->flash('message-success','Synchronize success, Total Success <strong>'.$this->total_success.'</strong>, Total Failed <strong>'.$this->total_failed.'</strong> !');   
             return redirect()->route('konven.underwriting');
         }
