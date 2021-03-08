@@ -30,7 +30,6 @@ class Insert extends Component
         $this->validate(
             [   
                 'nominal' => 'required',
-                'from_bank_account_id' => 'required',
                 'to_bank_account_id' => 'required',
                 'payment_date' => 'required'
             ]);

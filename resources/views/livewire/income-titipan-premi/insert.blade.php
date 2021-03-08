@@ -1,4 +1,4 @@
-@section('title', 'Titipan Premi')
+@section('title', 'Premium Deposit')
 @section('parentPageTitle', 'Income')
 <div class="clearfix row">
     <div class="col-md-7">

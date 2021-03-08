@@ -1,4 +1,4 @@
-@section('title', 'Titipan Premi')
+@section('title', 'Premium Deposit')
 @section('parentPageTitle', 'Income')
 <div class="clearfix row">
     <div class="col-lg-12">
@@ -16,7 +16,7 @@
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <a href="{{route('income.titipan-premi.insert')}}" class="btn btn-info"><i class="fa fa-plus"></i> Titipan Premi</a>
+                        <a href="{{route('income.titipan-premi.insert')}}" class="btn btn-info"><i class="fa fa-plus"></i> Premium Deposit</a>
                     </div>
                 </div>
                 <div class="table-responsive">
