@@ -24,7 +24,11 @@ class Index extends Component
         if($this->payment_date) $data = $data->where('payment_date',$this->payment_date);
         if($this->voucher_date) $data = $data->whereDate('created_at',$this->voucher_date);
         
-        return view('livewire.income-premium-receivable.index')->with(['data'=>$data->paginate(100),'received'=>$received->where('status',2)->sum('payment_amount'),'outstanding'=>$outstanding->where('status',3)->sum('outstanding_balance'),]);
+        return view('livewire.income-premium-receivable.index')->with([
+            'data'=>$data->paginate(100),
+            'received'=>$received->whereNotNull('from_bank_account_id')->whereNotNull('rekening_bank_id')->where('status',2)->sum('payment_amount'),
+            'outstanding'=>$outstanding->where('status',3)->sum('outstanding_balance')
+        ]);
     }
 
     public function mount()
