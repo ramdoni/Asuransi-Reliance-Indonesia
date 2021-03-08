@@ -69,6 +69,7 @@ class UnderwritingSync extends Component
                     $income->payment_amount = $item->pembayaran;
                     $income->status = 2;
                     $income->payment_date = $item->tgl_lunas;
+                    $income->is_auto = 1;
                 }
                 $income->save();
                 $this->data .= '<br /> Premium Receivable : <strong>'.format_idr($item->net_kontribusi).'</strong>';

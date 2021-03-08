@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Syariah;
 
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use App\Models\SyariahReinsurance;
 
 class ReinsuranceUpload extends Component
 {
@@ -30,14 +31,14 @@ class ReinsuranceUpload extends Component
             $countLimit = 1;
             $total_double = 0;
             $total_success = 0;
-            \App\Models\SyariahReinsurance::where('is_temp',1)->delete(); // delete data temp
+            SyariahReinsurance::where('is_temp',1)->delete(); // delete data temp
             foreach($sheetData as $key => $i){
                 if($key<1) continue; // skip header
             
                 foreach($i as $k=>$a){ $i[$k] = trim($a); }
 
-                $find = \App\Models\SyariahReinsurance::where('no_polis',$i[1])->first();
-                $data = new \App\Models\SyariahReinsurance();
+                $find = SyariahReinsurance::where('no_polis',$i[1])->first();
+                $data = new SyariahReinsurance();
                 if($find){
                     $data->is_temp = 1;
                     $data->parent_id = $find->id;
@@ -62,7 +63,7 @@ class ReinsuranceUpload extends Component
                 $data->ekawarsa_jangkawarsa = $i[16];
                 $data->tetap_menurun = $i[17];
                 $data->produk = $i[18];
-                if($i[19]) $data->tgl_bayar = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[19]);
+                if(!empty($i[19])) $data->tgl_bayar = @date('Y-m-d',\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[19]));
                 $data->status =1;
                 $data->save();
                 $total_success++;
