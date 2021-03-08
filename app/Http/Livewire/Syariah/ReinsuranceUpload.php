@@ -34,9 +34,8 @@ class ReinsuranceUpload extends Component
             SyariahReinsurance::where('is_temp',1)->delete(); // delete data temp
             foreach($sheetData as $key => $i){
                 if($key<1) continue; // skip header
-            
+                if(empty($i[1])) continue; // skip jika ada nomor polis kosong
                 foreach($i as $k=>$a){ $i[$k] = trim($a); }
-
                 $find = SyariahReinsurance::where('no_polis',$i[1])->first();
                 $data = new SyariahReinsurance();
                 if($find){

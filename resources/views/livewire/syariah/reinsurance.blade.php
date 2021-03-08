@@ -97,7 +97,7 @@
                         $("#modal_upload_reinsurance").modal('hide');
                         $("#modal_check_data_reinsurance").modal('hide');
                     });
-                    Livewire.on('emit-check-data-reinsurance',()=>{
+                    Livewire.on('emit-check-data',()=>{
                         $("#modal_upload_reinsurance").modal("hide");
                         setTimeout(function(){
                             $("#modal_check_data_reinsurance").modal(
