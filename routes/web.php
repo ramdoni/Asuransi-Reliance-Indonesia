@@ -142,4 +142,7 @@ Route::group(['middleware' => ['auth','access:2']], function(){
 Route::group(['middleware' => ['auth','access:4']], function(){ 
     Route::get('treasury/index',App\Http\Livewire\Treasury\Index::class)->name('treasury.index');
     Route::get('inhouse-transfer',App\Http\Livewire\InhouseTransfer\Index::class)->name('inhouse-transfer.index');
+    Route::get('bank-account-company',App\Http\Livewire\Treasury\BankAccountCompany\Index::class)->name('bank-account-company');
+    Route::get('bank-account-company/insert',App\Http\Livewire\Treasury\BankAccountCompany\Insert::class)->name('bank-account-company.insert');
+    Route::get('bank-account-company/edit/{id}',App\Http\Livewire\Treasury\BankAccountCompany\Edit::class)->name('bank-account-company.edit');
 });

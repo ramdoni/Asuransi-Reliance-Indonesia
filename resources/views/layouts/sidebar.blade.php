@@ -137,6 +137,9 @@
                         <li class="{{ Request::segment(1) === 'inhouser-transfer' ? 'active' : null }}">
                             <a href="{{route('inhouse-transfer.index')}}"><i class="fa fa-home"></i> <span>Inhouse Transfer</span></a>
                         </li>
+                        <li class="{{ Request::segment(1) === 'journal' ? 'active' : null }}">
+                            <a href="{{route('bank-account-company')}}"><i class="fa fa-database"></i> <span>Bank Account</span></a>
+                        </li>   
                         @endif
                     </ul>
                 </nav>

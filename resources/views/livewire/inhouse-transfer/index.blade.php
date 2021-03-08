@@ -10,7 +10,7 @@
                 </ul>
                 <div class="px-0 tab-content">
                     <div class="tab-pane show active" id="inhouse-transfer">
-                        <div class="row mb-3">
+                        <div class="mb-3 row">
                             <div class="col-md-2">
                                 <select class="form-control">
                                     <option value=""> --- From Bank Account --- </option>
@@ -19,7 +19,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-md-2 px-0">
+                            <div class="px-0 col-md-2">
                                 <select class="form-control">
                                     <option value=""> --- To Bank Account --- </option>
                                     @foreach(\App\Models\BankAccount::where('is_client',0)->get() as $bank)
@@ -73,9 +73,9 @@
     </div>
 </div>
 @section('page-script')
-$( document ).ready(function() {
+{{-- $( document ).ready(function() {
     $(".btn-toggle-fullwidth").trigger('click');
-});
+}); --}}
 Livewire.on('emit-add-form-hide',()=>{
     $("#modal_add_inhouse_transfer").modal("hide");
 });

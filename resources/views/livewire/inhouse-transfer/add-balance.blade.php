@@ -12,7 +12,7 @@
                 <select class="form-control" wire:model="bank_account_id">
                     <option value=""> --- Select --- </option>
                     @foreach(\App\Models\BankAccount::where('is_client',0)->get() as $bank)
-                    <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}} (Rp. {{format_idr($bank->open_balance)}})</option>
+                    <option value="{{ $bank->id}}">{{ $bank->bank}} - {{ $bank->no_rekening}} - {{ $bank->owner }}</option>
                     @endforeach
                 </select>
                 @error('bank_account_id')
