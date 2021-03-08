@@ -39,7 +39,7 @@
                                         <div class="row">
                                             <div class="col-md-10">
                                                 <select class="form-control from_bank_account" id="from_bank_account_id" wire:model="from_bank_account_id" {{$is_readonly?'disabled':''}}>
-                                                    <option value=""> --- {{__('Select')}} --- </option>
+                                                    <option value=""> --- {{__('None')}} --- </option>
                                                     @foreach (\App\Models\BankAccount::where('is_client',1)->orderBy('owner','ASC')->get() as $bank)
                                                         <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
                                                     @endforeach
