@@ -88,7 +88,7 @@ class Detail extends Component
         $validate = ['payment_amount'=>'required'];
         if(!$this->temp_titipan_premi){
             $validate['bank_account_id']='required';
-            $validate['from_bank_account_id']='required';
+            // $validate['from_bank_account_id']='required';
         }
         $this->validate($validate);
         $this->payment_amount = replace_idr($this->payment_amount);

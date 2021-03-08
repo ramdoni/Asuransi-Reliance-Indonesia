@@ -212,7 +212,7 @@
                                         <div class="row">
                                             <div class="col-md-9">
                                                 <select class="form-control from_bank_account" id="from_bank_account_id" wire:model="from_bank_account_id" {{$is_readonly?'disabled':''}}>
-                                                    <option value=""> --- {{__('Select')}} --- </option>
+                                                    <option value=""> --- {{__('None')}} --- </option>
                                                     @foreach (\App\Models\BankAccount::where('is_client',1)->orderBy('owner','ASC')->get() as $bank)
                                                         <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
                                                     @endforeach
@@ -221,7 +221,7 @@
                                                 <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                                                 @enderror
                                             </div>
-                                            <div class="col-md-3 px-0 pt-2">
+                                            <div class="px-0 pt-2 col-md-3">
                                                 @if(!$is_readonly)
                                                 <a href="#" data-toggle="modal" data-target="#modal_add_bank"><i class="fa fa-plus"></i> Add Bank</a>
                                                 @endif
@@ -261,15 +261,15 @@
                     <a href="javascript:void0()" onclick="history.back()"><i class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
                     @if(!$is_readonly)
                     <button type="submit" class="ml-3 btn btn-primary btn-sm"><i class="fa fa-save"></i> {{ __('Receive') }}</button>
-                    <button type="button" class="ml-3 btn btn-danger btn-sm float-right" wire:click="$emit('emit-cancel',{{$data->id}})" data-target="#modal_cancel" data-toggle="modal""><i class="fa fa-times"></i> {{ __('Premi tidak tertagih') }}</button>
+                    <button type="button" class="float-right ml-3 btn btn-danger btn-sm" wire:click="$emit('emit-cancel',{{$data->id}})" data-target="#modal_cancel" data-toggle="modal""><i class="fa fa-times"></i> {{ __('Premi tidak tertagih') }}</button>
                     @endif
                 </form>
             </div>
         </div>
     </div>
-    <div class="col-md-5 px-0">
+    <div class="px-0 col-md-5">
         @if($showDetail=='cancelation')
-        <div class="card mt-0">
+        <div class="mt-0 card">
             <div wire:loading style="position:absolute;right:0;">
                 <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
                 <span class="sr-only">Loading...</span>
@@ -306,7 +306,7 @@
         @endif
 
         @if($showDetail=='underwriting')
-        <div class="card mt-0">
+        <div class="mt-0 card">
             <div wire:loading style="position:absolute;right:0;">
                 <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
                 <span class="sr-only">Loading...</span>
