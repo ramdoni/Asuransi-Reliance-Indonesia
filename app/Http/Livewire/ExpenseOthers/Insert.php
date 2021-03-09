@@ -27,6 +27,7 @@ class Insert extends Component
     }
     public function updated($propertyName)
     {
+        $this->calculate();
         $this->emit('init-form');    
     }
     public function emitAddBank($id)

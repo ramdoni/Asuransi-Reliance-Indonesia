@@ -83,8 +83,7 @@ class Detail extends Component
                 'no_polis' => 'required',
                 'nilai_klaim' => 'required',
                 'payment_date' => 'required',
-                'from_bank_account_id' => 'required',
-                'to_bank_account_id' => 'required'
+                'from_bank_account_id' => 'required'
             ]);
         $this->expense->policy_id = $this->data->id;
         $this->expense->from_bank_account_id = $this->from_bank_account_id;

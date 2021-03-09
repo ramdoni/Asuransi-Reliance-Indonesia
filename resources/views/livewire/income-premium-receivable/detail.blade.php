@@ -209,24 +209,18 @@
                                 <tr>
                                     <th>{{__('From Bank Account')}}</th>
                                     <td>
-                                        <div class="row">
-                                            <div class="col-md-9">
-                                                <select class="form-control from_bank_account" id="from_bank_account_id" wire:model="from_bank_account_id" {{$is_readonly?'disabled':''}}>
-                                                    <option value=""> --- {{__('None')}} --- </option>
-                                                    @foreach (\App\Models\BankAccount::where('is_client',1)->orderBy('owner','ASC')->get() as $bank)
-                                                        <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
-                                                    @endforeach
-                                                </select>
-                                                @error('from_bank_account_id')
-                                                <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                                                @enderror
-                                            </div>
-                                            <div class="px-0 pt-2 col-md-3">
-                                                @if(!$is_readonly)
-                                                <a href="#" data-toggle="modal" data-target="#modal_add_bank"><i class="fa fa-plus"></i> Add Bank</a>
-                                                @endif
-                                            </div>
-                                        </div>
+                                        <select class="form-control from_bank_account" id="from_bank_account_id" wire:model="from_bank_account_id" {{$is_readonly?'disabled':''}}>
+                                            <option value=""> --- {{__('None')}} --- </option>
+                                            @foreach (\App\Models\BankAccount::where('is_client',1)->orderBy('owner','ASC')->get() as $bank)
+                                                <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('from_bank_account_id')
+                                        <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                                        @enderror
+                                        @if(!$is_readonly)
+                                        <a href="#" data-toggle="modal" data-target="#modal_add_bank"><i class="fa fa-plus"></i> Add Bank</a>
+                                        @endif
                                     </td>
                                 </tr>
                                 <tr>

@@ -115,36 +115,13 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>{{ __('Transaction Type') }}</label>
-                                <select class="form-control" wire:model="add_payment_transaction_type.{{$k}}">
+                                <select class="form-control select_transaction_type" id="add_payment_transaction_type.{{$k}}" wire:model="add_payment_transaction_type.{{$k}}">
                                     <option value=""> --- Select --- </option>
-                                    <option value="318">Office Rent-Vehicles</option>
-                                    <option value="319">Other Rent-Office</option>
-                                    <option value="320">Electricity, Telephone And Water - Office</option>
-                                    <option value="334">Electricity, Telephone And Water - Investment</option>
-                                    <option value="321">Maintenance Of Rent Office</option>
-                                    <option value="322">Maintenance Of Rent Vehicles</option>
-                                    <option value="323">System & web Expenses</option>
-                                    <option value="342">Jasa Giro</option>
-                                    <option value="346">Gain/Loss On Sale Of Fixed Assets</option>
-                                    <option value="347">Bank Charges</option>
-                                    <option value="296">Salary Expenses</option>
-                                    <option value="297">Insurance Expenses - Health</option>
-                                    <option value="298">Insurance Expenses - Vehicles</option>
-                                    <option value="299">Medical Expenses</option>
-                                    <option value="300">Jamsostek</option>
-                                    <option value="301">Annual Bonus</option>
-                                    <option value="302">PPH 21 Expenses</option>
-                                    <option value="303">PPH 25 Expenses</option>
-                                    <option value="304">Training Expenses</option>
-                                    <option value="305">Post Employeement Benefit</option>
-                                    <option value="306">Social Contribution</option>
-                                    <option value="307">House Rent</option>
-                                    <option value="330">Photocopy, Stamp Duties, Postage, etc</option>
-                                    <option value="331">Other Office Expenses</option>
-                                    <option value="348">Other Expenses</option>
+                                    @foreach(\App\Models\Coa::where('is_others_expense',1)->get() as $coa)
+                                    <option value="{{$coa->id}}">{{$coa->name}}</option>
+                                    @endforeach
                                 </select>
-                        <a href="javascript:;" title="Delete" wire:click="delete({{$k}})" class="text-danger"><i class="fa fa-trash"></i> Delete</a>
-
+                                <a href="javascript:;" title="Delete" wire:click="delete({{$k}})" class="text-danger"><i class="fa fa-trash"></i> Delete</a>
                                 @error('add_payment_transaction_type.'.$k)
                                 <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                                 @enderror
@@ -204,11 +181,19 @@
         $("#modal_add_bank").modal("hide");    
     });
     Livewire.on('init-form', () =>{
-        setTimeout(function(){
-            init_form();
-        },500);
+        init_form();
     });
     function init_form(){
+        $(".select_transaction_type").each(function(){
+            select_transaction_type = $(this).select2();
+            $(this).on('change', function (e) {
+                let elementName = $(this).attr('id');
+                var data = $(this).select2("val");
+                @this.set(elementName, data);
+            });
+            var selected_transaction_type = $(this).find(':selected').val();
+            if(selected_transaction_type !="") select_transaction_type.val(selected_transaction_type);
+        });
         $('.format_number').priceFormat({
             prefix: '',
             centsSeparator: '.',
