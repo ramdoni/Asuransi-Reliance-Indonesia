@@ -27,7 +27,7 @@ class Index extends Component
         return view('livewire.income-premium-receivable.index')->with([
             'data'=>$data->paginate(100),
             'received'=>$received->where('is_auto',0)->where('status',2)->sum('payment_amount'),
-            'outstanding'=>$outstanding->where('status',3)->sum('outstanding_balance')
+            'outstanding'=>$outstanding->where('is_auto',0)->where('status',3)->sum('outstanding_balance')
         ]);
     }
 
