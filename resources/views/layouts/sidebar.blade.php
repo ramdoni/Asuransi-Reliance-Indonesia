@@ -17,7 +17,7 @@
                 </ul>
             </div>
             <hr>
-            <ul class="row list-unstyled">
+            {{-- <ul class="row list-unstyled">
                 <li class="col-6">
                     <small>Receivable</small>
                     <h6>{{format_idr(\App\Models\Income::where('status',3)->whereYear('created_at',date('Y'))->sum('nominal'))}}</h6>
@@ -26,7 +26,7 @@
                     <small>Payable</small>
                     <h6>{{format_idr(\App\Models\Expenses::where('status',3)->whereYear('created_at',date('Y'))->sum('nominal'))}}</h6>
                 </li>
-            </ul>
+            </ul> --}}
         </div>
         <!-- Nav tabs -->
         <ul class="nav nav-tabs">
@@ -121,16 +121,16 @@
                             <a href="{{route('accounting-journal.index')}}"><i class="fa fa-home"></i> <span>Journal</span></a>
                         </li>
                         <li class="{{ Request::segment(1) === 'dashboard' ? 'active' : null }}">
-                            <a href="/"><i class="fa fa-database"></i> <span>Cashflow</span></a>
+                            <a href="#"><i class="fa fa-database"></i> <span>Cashflow</span></a>
                         </li>
                         <li class="{{ Request::segment(1) === 'dashboard' ? 'active' : null }}">
-                            <a href="/"><i class="fa fa-database"></i> <span>Trial Balance</span></a>
+                            <a href="#"><i class="fa fa-database"></i> <span>Trial Balance</span></a>
                         </li>
                         <li class="{{ Request::segment(1) === 'dashboard' ? 'active' : null }}">
-                            <a href="/"><i class="fa fa-database"></i> <span>Income Statement</span></a>
+                            <a href="#"><i class="fa fa-database"></i> <span>Income Statement</span></a>
                         </li>
                         <li class="{{ Request::segment(1) === 'dashboard' ? 'active' : null }}">
-                            <a href="/"><i class="fa fa-database"></i> <span>Balance Sheet</span></a>
+                            <a href="#"><i class="fa fa-database"></i> <span>Balance Sheet</span></a>
                         </li>
                         @endif
                         @if(\Auth::user()->user_access_id==4)<!--Treasury-->     
