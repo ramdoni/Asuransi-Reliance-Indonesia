@@ -5,6 +5,18 @@
         <div class="card">
             <div class="body">
                 <div class="row">
+                    <div class="col-md-3" wire:ignore>
+                        <select class="form-control coa_id" id="coa_id" wire:model="coa_id">
+                            <option value=""> -- COA -- </option>
+                            @foreach(\App\Models\CoaGroup::orderBy('name')->get() as $group)
+                                <optgroup label="{{$group->name}}">
+                                @foreach(\App\Models\Coa::where('coa_group_id',$group->id)->get() as $k => $coa)
+                                <option value="{{$coa->id}}">{{$coa->code}} {{$coa->name}}</option>
+                                @endforeach
+                                </optgroup>
+                            @endforeach
+                        </select>
+                    </div>
                     <div class="col-md-2">
                         <input type="text" class="form-control" wire:model="keyword" placeholder="Searching..." />
                     </div>
@@ -16,7 +28,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-1">
                         <select class="form-control" wire:model="month">
                             <option value=""> -- Month -- </option>
                             @foreach(month() as $k=>$i)
@@ -24,9 +36,9 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-1">
                         <select class="form-control" wire:model="code_cashflow_id">
-                            <option value=""> --- Code Cash Flow --- </option>
+                            <option value=""> Code Cash Flow </option>
                             @foreach(get_group_cashflow() as $k=>$i)
                             <optgroup label="{{$i}}">
                                 @foreach(\App\Models\CodeCashflow::where('group',$k)->get() as $k => $item)
@@ -133,6 +145,26 @@
         </div>
     </div>
 </div>
+@push('after-scripts')
+<link rel="stylesheet" href="{{ asset('assets/vendor/select2/css/select2.min.css') }}"/>
+<script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
+<style>
+    .select2-container .select2-selection--single {height:36px;padding-left:10px;}
+    .select2-container .select2-selection--single .select2-selection__rendered{padding-top:3px;}
+    .select2-container--default .select2-selection--single .select2-selection__arrow{top:4px;right:10px;}
+    .select2-container {width: 100% !important;}
+</style>
+<script>
+    select__2 = $('.coa_id').select2();
+    $('.coa_id').on('change', function (e) {
+        let elementName = $(this).attr('id');
+        var data = $(this).select2("val");
+        @this.set(elementName, data);
+    });
+    var selected__ = $('.coa_id').find(':selected').val();
+    if(selected__ !="") select__2.val(selected__);
+</script>
+@endpush
 @section('page-script')
     Livewire.on('message', msg =>{
         alert(msg);
