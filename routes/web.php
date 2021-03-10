@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Livewire\Home;
 
+date_default_timezone_set("Asia/Bangkok");
 /*
 |--------------------------------------------------------------------------
 | Web Routes
