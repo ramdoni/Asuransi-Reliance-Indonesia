@@ -16,8 +16,8 @@
         <table class="table table-striped table-hover m-b-0 c_list">
             <thead>
                 <tr>
-                    <th>No</th>                                    
-                    <th>Status</th>                                    
+                    <th>No</th>                                        
+                    <th>Type</th>                                    
                     <th>No Voucher</th>                                    
                     <th>Payment Date</th>                                    
                     <th>Voucher Date</th>                                    
@@ -34,7 +34,7 @@
             @foreach($data as $k => $item)
                 <tr>
                     <td style="width: 50px;">{{$k+1}}</td>
-                    <td><a href="{{route('expense.others.detail',['id'=>$item->id])}}">{!!status_expense($item->status)!!}</a></td>
+                    <td>{{$item->reference_type}}</td>
                     <td><a href="{{route('expense.others.detail',['id'=>$item->id])}}">{{$item->no_voucher}}</a></td>
                     <td>{{date('d M Y', strtotime($item->created_at))}}</td>
                     <td>{{date('d M Y', strtotime($item->payment_date))}}</td>

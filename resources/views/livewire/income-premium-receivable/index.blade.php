@@ -31,7 +31,7 @@
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <input type="text" class="form-control" wire:model="payment_date" placeholder="Payment Date" onfocus="(this.type='date')" />
+                        <input type="text" class="form-control payment_date" placeholder="Payment Date" />
                     </div>
                     <div class="col-md-2">
                         <a href="javascript:;" wire:click="downloadExcel" class="btn btn-info"><i class="fa fa-download"></i> Download</a>
@@ -113,3 +113,16 @@
         </div>
     </div>
 </div>
+@push('after-scripts')
+<script type="text/javascript" src="{{ asset('assets/vendor/daterange/moment.min.js')}}"></script>
+<script type="text/javascript" src="{{ asset('assets/vendor/daterange/daterangepicker.js') }}"></script>
+<link rel="stylesheet" type="text/css" href="{{ asset('assets/vendor/daterange/daterangepicker.css') }}" />
+<script>
+    $('.payment_date').daterangepicker({
+        opens: 'left'
+    }, function(start, end, label) {
+        @this.set("payment_date_from", start.format('YYYY-MM-DD'));
+        @this.set("payment_date_to", end);
+    });
+</script>
+@endpush

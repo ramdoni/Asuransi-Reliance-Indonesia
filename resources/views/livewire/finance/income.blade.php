@@ -10,14 +10,6 @@
                 <option value="2"> Syariah</option>
             </select>
         </div>
-        <div class="px-0 col-md-1">
-            <select class="form-control" wire:model="status">
-                <option value=""> --- Status --- </option>
-                <option value="1"> Unpaid </option>
-                <option value="2"> Paid</option>
-                <option value="3"> Outstanding</option>
-            </select>
-        </div>
         <div class="col-md-2 pr-0">
             <input type="text" class="form-control" wire:model="payment_date" placeholder="Payment Date" onfocus="(this.type='date')" />
         </div>
@@ -30,8 +22,7 @@
             <thead>
                 <tr>
                     <th>No</th>         
-                    <th>Type</th>                           
-                    <th>Status</th>                                    
+                    <th>Type</th>                                      
                     <th>No Voucher</th>                                    
                     <th>Payment Date</th>                                    
                     <th>Voucher Date</th>                                    
@@ -51,7 +42,6 @@
                 <tr>
                     <td style="width: 50px;">{{$k+1}}</td>
                     <td>{{$item->reference_type}}</td>
-                    <td>{!!status_income($item->status)!!}</td>
                     <td>{{$item->no_voucher}}
                         @if($item->type==1)
                         <span class="badge badge-danger" title="Konven">K</span>

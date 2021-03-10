@@ -8,7 +8,7 @@ use Livewire\WithPagination;
 class Index extends Component
 {
     use WithPagination;
-    public $keyword,$unit,$status,$payment_date,$voucher_date;
+    public $keyword,$unit,$status,$payment_date_from,$payment_date_to,$voucher_date;
     protected $paginationTheme = 'bootstrap',$export_data;
     public function render()
     {
@@ -21,7 +21,7 @@ class Index extends Component
                                         ->orWhere('client','LIKE',"%{$this->keyword}%");
         if($this->unit) $data = $data->where('type',$this->unit);
         if($this->status) $data = $data->where('status',$this->status);
-        if($this->payment_date) $data = $data->where('payment_date',$this->payment_date);
+        if($this->payment_date_from and $this->payment_date_to) $data = $data->whereBetween('payment_date',[$this->payment_date_from,$this->payment_date_to]);
         if($this->voucher_date) $data = $data->whereDate('created_at',$this->voucher_date);
         
         return view('livewire.income-premium-receivable.index')->with([
@@ -110,7 +110,7 @@ class Index extends Component
                                         ->orWhere('client','LIKE',"%{$this->keyword}%");
         if($this->unit) $data = $data->where('type',$this->unit);
         if($this->status) $data = $data->where('status',$this->status);
-        if($this->payment_date) $data = $data->where('payment_date',$this->payment_date);
+        if($this->payment_date_from and $this->payment_date_to) $data = $data->whereBetween('payment_date',[$this->payment_date_from,$this->payment_date_to]);
         if($this->voucher_date) $data = $data->whereDate('created_at',$this->voucher_date);
         foreach($data->get() as $k => $i){
             $cancelation = 0;
