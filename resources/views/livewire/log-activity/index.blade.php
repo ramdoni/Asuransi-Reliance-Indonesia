@@ -3,7 +3,7 @@
 <div class="clearfix row">
     <div class="col-lg-12">
         <div class="card">
-            <div class="header row">
+            <div class="header pb-0 row">
                 <div class="col-md-3">
                     <input type="text" class="form-control" wire:model="keyword" placeholder="Searching..." />
                 </div>
@@ -14,6 +14,15 @@
                         <option value="{{$user->id}}">{{$user->name}}</option>
                         @endforeach
                     </select>
+                </div>
+                <div class="col-md-2">
+                    <input type="text" class="form-control" wire:model="date" onfocus="(this.type='date')" placeholder="Date" />
+                </div>
+                <div class="col-md-1">
+                    <span wire:loading>
+                        <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                        <span class="sr-only">{{ __('Loading...') }}</span>
+                    </span>
                 </div>
             </div>
             <div class="body">

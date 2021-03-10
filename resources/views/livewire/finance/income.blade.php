@@ -1,20 +1,23 @@
 <div class="body">
     <div class="mb-2 row">
-        <div class="col-md-2">
+        <div class="col-md-3">
             <input type="text" class="form-control" wire:model="keyword" placeholder="Searching..." />
         </div>
-        <div class="col-md-1 pl-0">
+        <div class="col-md-2">
             <select class="form-control" wire:model="unit">
                 <option value=""> --- Unit --- </option>
                 <option value="1"> Konven </option>
                 <option value="2"> Syariah</option>
             </select>
         </div>
-        <div class="col-md-2 pr-0">
-            <input type="text" class="form-control" wire:model="payment_date" placeholder="Payment Date" onfocus="(this.type='date')" />
-        </div>
         <div class="col-md-2">
-            <input type="text" class="form-control" wire:model="voucher_date" placeholder="Voucher Date" onfocus="(this.type='date')" />
+            <input type="text" class="form-control payment_date" placeholder="Payment Date" />
+        </div>
+        <div class="col-md-1">
+            <span wire:loading>
+                <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                <span class="sr-only">{{ __('Loading...') }}</span>
+            </span>
         </div>
     </div>
     <div class="table-responsive">
@@ -42,13 +45,7 @@
                 <tr>
                     <td style="width: 50px;">{{$k+1}}</td>
                     <td>{{$item->reference_type}}</td>
-                    <td>{{$item->no_voucher}}
-                        @if($item->type==1)
-                        <span class="badge badge-danger" title="Konven">K</span>
-                        @else
-                        <span class="badge badge-info" title="Syariah">S</span>
-                        @endif
-                    </td>
+                    <td>{!!no_voucher($item)!!}</td>
                     <td>{{$item->payment_date?date('d M Y', strtotime($item->payment_date)):'-'}}</td>
                     <td>{{date('d M Y', strtotime($item->created_at))}}</td>
                     <td>{{date('d M Y', strtotime($item->reference_date))}}</td>
@@ -68,3 +65,16 @@
     <br />
     {{$data->links()}}
 </div>
+@push('after-scripts')
+<script type="text/javascript" src="{{ asset('assets/vendor/daterange/moment.min.js')}}"></script>
+<script type="text/javascript" src="{{ asset('assets/vendor/daterange/daterangepicker.js') }}"></script>
+<link rel="stylesheet" type="text/css" href="{{ asset('assets/vendor/daterange/daterangepicker.css') }}" />
+<script>
+    $('.payment_date').daterangepicker({
+        opens: 'left'
+    }, function(start, end, label) {
+        @this.set("payment_date_from", start.format('YYYY-MM-DD'));
+        @this.set("payment_date_to", end);
+    });
+</script>
+@endpush
