@@ -15,7 +15,7 @@ class Insert extends Component
     public $telepon;
     public $address;
     public $user_access_id;
-    public $message;
+    public $message,$is_supervisor;
 
     protected $rules = [
         'name' => 'required|string',
@@ -42,6 +42,7 @@ class Insert extends Component
         $data->telepon = $this->telepon;
         $data->address = $this->address;
         $data->user_access_id = $this->user_access_id;
+        $data->is_supervisor = $this->is_supervisor;
         $data->save();
 
         session()->flash('message-success',__('Data saved successfully'));

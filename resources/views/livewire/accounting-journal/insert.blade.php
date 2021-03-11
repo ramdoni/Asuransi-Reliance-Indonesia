@@ -78,7 +78,6 @@
             var selected__ = $(this).find(':selected').val();
             if(selected__ !="") select__2.val(selected__);
         });
-        
     }
     setTimeout(function(){
         init_form()

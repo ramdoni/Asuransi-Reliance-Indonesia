@@ -78,7 +78,7 @@
                                 <li class="{{ Request::segment(1) === 'coa-group' ? 'active' : null }}"><a href="{{route('coa-group')}}">COA Groups</a></li>
                             </ul>
                         </li>
-                        <li class="{{ Request::segment(1) === 'users' ? 'active' : null }}">
+                        <li class="{{ Request::segment(1) === 'log-activity' ? 'active' : null }}">
                             <a href="{{route('log-activity')}}"><i class="fa fa-history"></i> <span>Log Activity</span></a>
                         </li>
                         @endif

@@ -17,6 +17,7 @@ class LogActivity
     	$log['user_id'] = auth()->check() ? auth()->user()->id : 1;
     	LogActivityModel::create($log);
     }
+	
     public static function logActivityLists()
     {
     	return LogActivityModel::latest()->get();

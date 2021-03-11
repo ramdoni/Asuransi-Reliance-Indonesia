@@ -10,11 +10,20 @@ class Detail extends Component
     public $payment_date,$tax_amount,$total_payment_amount,$is_readonly=false,$due_date;
     public $bank_charges,$showDetail='underwriting',$cancelation;
     public $titipan_premi,$temp_titipan_premi=[],$temp_arr_titipan_id=[],$total_titipan_premi=0;
-    protected $listeners = ['emit-add-bank'=>'emitAddBank','set-titipan-premi'=>'setTitipanPremi','refresh-page'=>'$refresh'];
+    public $is_otp_editable=false,$otp,$is_submit;
+    protected $listeners = ['emit-add-bank'=>'emitAddBank','set-titipan-premi'=>'setTitipanPremi','refresh-page'=>'$refresh','otp-editable'=>'otpEditable'];
     public function render()
     {
         return view('livewire.income-premium-receivable.detail');
     }
+
+    public function otpEditable($otp)
+    {
+        $this->otp = $otp;
+        $this->is_readonly = false;
+        $this->is_otp_editable = true;
+    }
+    
     public function clearTitipanPremi()
     {
         $this->reset('temp_titipan_premi','temp_arr_titipan_id','total_titipan_premi','from_bank_account_id','bank_account_id');
@@ -86,11 +95,19 @@ class Detail extends Component
     {   
         $this->emit('init-form');
         $validate = ['payment_amount'=>'required'];
-        if(!$this->temp_titipan_premi){
-            $validate['bank_account_id']='required';
-            // $validate['from_bank_account_id']='required';
+        $validate_message= [];
+
+        if($this->is_otp_editable){
+            $cek = \Otp::check($this->otp);
+            if($cek['status']==false){
+                $this->is_submit = $cek['status'];
+                $validate['is_submit'] = 'boolean';
+                $validate_message['is_submit.boolean'] = $cek['message'];
+            }
         }
-        $this->validate($validate);
+        
+        if(!$this->temp_titipan_premi) $validate['bank_account_id']='required';
+        $this->validate($validate,$validate_message);
         $this->payment_amount = replace_idr($this->payment_amount);
         $this->bank_charges = replace_idr($this->bank_charges);
         if($this->payment_amount==$this->data->nominal || $this->payment_amount > $this->data->nominal) $this->data->status=2;//paid
@@ -104,7 +121,7 @@ class Detail extends Component
         $this->data->bank_charges = $this->bank_charges;
         $this->data->user_id = \Auth::user()->id;
         $this->data->save();
-
+        
         if($this->temp_titipan_premi){
             $total_titipan_premi = 0;
             $nominal_titipan = 0;
@@ -133,6 +150,13 @@ class Detail extends Component
                 $item->save();
             }
         }
+
+        if($this->is_otp_editable){
+            \LogActivity::add("Income - Premium Receivable Editable OTP {$this->data->id}");
+
+            session()->flash('message-success',__('Data saved successfully'));
+            return redirect()->route('income.premium-receivable');
+        }
         if($this->data->status==2){
             // set balance
             $bank_balance = \App\Models\BankAccount::find($this->data->rekening_bank_id);
@@ -151,8 +175,15 @@ class Detail extends Component
             }
             
             $coa_premium_receivable = 0;
-            if(isset($this->data->uw->line_bussines)){
-                switch($this->data->uw->line_bussines){
+            if($this->data->type==1){
+                $line_bussines = isset($this->data->uw->line_bussines) ? $this->data->uw->line_bussines : '';
+            }else{
+                $no_kwitansi_debit_note = isset($this->data->uw_syariah->no_kwitansi_debit_note)?$this->data->uw_syariah->no_kwitansi_debit_note:'';
+                $line_bussines = isset($this->data->uw_syariah->line_bussines) ? $this->data->uw_syariah->line_bussines : '';
+            }
+
+            if(isset($line_bussines)){
+                switch($line_bussines){
                     case "JANGKAWARSA":
                         $coa_premium_receivable = 58; //Premium Receivable Jangkawarsa
                     break;
@@ -184,7 +215,7 @@ class Detail extends Component
                 $journal->description = $this->description;
                 $journal->transaction_id = $this->data->id;
                 $journal->transaction_table = 'expenses';
-                $journal->transaction_number = isset($this->data->uw->no_kwitansi_debit_note)?$this->data->uw->no_kwitansi_debit_note:'';
+                $journal->transaction_number = $no_kwitansi_debit_note;
                 $journal->save();
                 if($this->payment_amount < $this->data->nominal){
                     $journal = new \App\Models\Journal();
@@ -197,7 +228,7 @@ class Detail extends Component
                     $journal->description = $this->description;
                     $journal->transaction_id = $this->data->id;
                     $journal->transaction_table = 'income';
-                    $journal->transaction_number = isset($this->data->uw->no_kwitansi_debit_note)?$this->data->uw->no_kwitansi_debit_note:'';
+                    $journal->transaction_number = $no_kwitansi_debit_note;
                     $journal->save();
                 }
                 // Bank Charges
@@ -212,7 +243,7 @@ class Detail extends Component
                     $journal->description = $this->description;
                     $journal->transaction_id = $this->data->id;
                     $journal->transaction_table = 'income';
-                    $journal->transaction_number = isset($this->data->uw->no_kwitansi_debit_note)?$this->data->uw->no_kwitansi_debit_note:'';
+                    $journal->transaction_number = $no_kwitansi_debit_note;
                     $journal->save();
                 }
                 // Bank
@@ -228,7 +259,7 @@ class Detail extends Component
                     $journal->description = $this->description;
                     $journal->transaction_id = $this->data->id;
                     $journal->transaction_table = 'income';
-                    $journal->transaction_number = isset($this->data->uw->no_kwitansi_debit_note)?$this->data->uw->no_kwitansi_debit_note:'';
+                    $journal->transaction_number = $no_kwitansi_debit_note;
                     $journal->save();
                 }
             }

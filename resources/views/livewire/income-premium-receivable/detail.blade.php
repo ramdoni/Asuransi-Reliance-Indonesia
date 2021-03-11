@@ -7,6 +7,9 @@
                 <form id="basic-form" method="post" wire:submit.prevent="save">
                     <div class="row">
                         <div class="col-md-12">
+                            @error('is_submit')
+                            <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                            @enderror
                             <table class="table pl-0 mb-0 table-striped table-nowrap">
                                 <tr>
                                     <th style="width: 40%;">{{ __('Voucher Number')}}</th>
@@ -40,7 +43,13 @@
                                 </tr>
                                 <tr>
                                     <th>{{ __('Due Date')}}</th>
-                                    <td>{{date('d M Y', strtotime($data->due_date))}} <a href="javascript:;" data-toggle="modal" data-target="#modal_extend_due_date"><i class="fa fa-plus"></i> Extend due date</a></td>
+                                    <td>
+                                        {{date('d M Y', strtotime($data->due_date))}} 
+                                        @if(!$is_readonly)
+                                            <a href="javascript:;" data-toggle="modal" data-target="#modal_extend_due_date"><i class="fa fa-plus"></i> Extend due date</a>
+                                        @endif
+                                    </td>
+                                        
                                 </tr>
                                 <tr>
                                     <th>{{ __('Reference Date')}}</th>
@@ -61,12 +70,6 @@
                                             @endforeach
                                         </td>
                                     </tr> 
-                                    {{-- <tr>
-                                        <th>{{ __('Total After Cancelation')}}</th>
-                                        <td>
-                                            {{format_idr($data->nominal-$data->cancelation->sum('nominal'))}}
-                                        </td>
-                                    </tr> --}}
                                     @endif
                                     @if($data->endorsement_konven->count())
                                     <tr>
@@ -77,15 +80,8 @@
                                             @endforeach
                                         </td>
                                     </tr> 
-                                    {{-- <tr>
-                                        <th>{{ __('Total After Cancelation')}}</th>
-                                        <td>
-                                            {{format_idr($data->nominal-$data->cancelation->sum('nominal'))}}
-                                        </td>
-                                    </tr> --}}
                                     @endif
                                 @endif
-
                                 @if($data->type==2)
                                     @if($data->cancelation_syariah->count())
                                     <tr>
@@ -108,50 +104,6 @@
                                     </tr> 
                                     @endif
                                 @endif
-
-
-                                {{-- @if($data->endorsement->count() || $data->cancelation->count())
-                                    @if($data->cancelation->count())
-                                    <tr>
-                                        <th>{{ __('Cancelation')}}</th>
-                                        <td>
-                                            @foreach($data->cancelation as $cancel)
-                                            <p>{!!format_idr($cancel->nominal).' - <a href="javascript:void(0);" class="text-danger" title="Klik Detail" wire:click="showDetailCancelation('.$cancel->id.')">'.$cancel->konven_memo_pos->no_dn_cn.'</a>'!!}</p> 
-                                            @endforeach
-                                        </td>
-                                    </tr> 
-                                    <tr>
-                                        <th>{{ __('Total After Cancelation')}}</th>
-                                        <td>
-                                            {{format_idr($data->nominal-$data->cancelation->sum('nominal'))}}
-                                        </td>
-                                    </tr>
-                                    @endif
-                                    @if($data->endorsement->count())
-                                    <tr>
-                                        <th>{{ __('Endorsement')}}</th>
-                                        <td>
-                                            @php($end_cn=0)
-                                            @php($end_dn=0)
-                                            @foreach($data->endorsement as $end)
-                                            <p>{!!format_idr($end->nominal).' - <a href="javascript:void(0);" class="text-danger" title="Klik Detail" wire:click="showDetailCancelation('.$end->id.')">'.$end->konven_memo_pos->no_dn_cn.'</a>'!!} <span class="badge badge-warning">{{$end->type}}</span></p> 
-                                            @if($end->type=='CN') @php($end_cn += $end->nominal) @endif
-                                            @if($end->type=='DN') @php($end_dn += $end->nominal) @endif
-                                            @endforeach
-                                        </td>
-                                    </tr> 
-                                    <tr>
-                                        <th>{{ __('Total After Endorsement')}}</th>
-                                        <td>
-                                            @php($data->payment_amount = $data->nominal-$end_cn+$end_dn)
-                                            {{format_idr($data->nominal-$end_cn+$end_dn)}}
-                                        </td>
-                                    </tr>
-                                    @endif
-                                @endif --}}
-
-
-
                                 <tr>
                                     <th>{{ __('Payment Amount')}}</th>
                                     <td>
@@ -256,6 +208,9 @@
                     @if(!$is_readonly)
                     <button type="submit" class="ml-3 btn btn-primary btn-sm"><i class="fa fa-save"></i> {{ __('Receive') }}</button>
                     <button type="button" class="float-right ml-3 btn btn-danger btn-sm" wire:click="$emit('emit-cancel',{{$data->id}})" data-target="#modal_cancel" data-toggle="modal""><i class="fa fa-times"></i> {{ __('Premi tidak tertagih') }}</button>
+                    @endif
+                    @if($data->status==2 and $is_otp_editable==false)
+                        <a href="javascript:;" class="btn btn-danger ml-3" data-toggle="modal" data-target="#modal_konfirmasi_otp"><i class="fa fa-edit"></i> Edit </a>
                     @endif
                 </form>
             </div>
@@ -547,6 +502,11 @@
         </div>
         @endif
     </div>
+    <div wire:ignore.self class="modal fade" id="modal_konfirmasi_otp" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <livewire:income-premium-receivable.konfirmasi-otp />
+        </div>
+    </div>
     <div wire:ignore.self class="modal fade" id="modal_add_bank" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <livewire:income-premium-receivable.add-bank />
@@ -569,6 +529,9 @@
     .select2-container {width: 100% !important;}
 </style>
 <script>
+Livewire.on('otp-editable',()=>{
+    $("#modal_konfirmasi_otp").modal('hide');
+});
 Livewire.on('set-titipan-premi',(id)=>{
     $("#modal_add_titipan_premi").modal("hide");
 });

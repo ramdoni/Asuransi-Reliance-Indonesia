@@ -6,15 +6,24 @@
             <div class="body">
                 <form id="basic-form" method="post" wire:submit.prevent="save">
                     <div class="row">
-                        <div class="pr-6 col-md-8">
+                        <div class="pr-6 col-md-4">
                             <table class="table pl-0 mb-0 table-striped">
                                 <tr>
                                     <th>{{ __('Voucher Number')}}</th>
                                     <td>{{$data->no_voucher}}</td>
                                 </tr>
                                 <tr>
-                                    <th>{{ __('Voucher Date')}}</th>
-                                    <td>{{date('d M Y',strtotime($data->created_at))}}</td>
+                                    <th>{{ __('Journal Date')}}</th>
+                                    <td>
+                                        @if(!$is_otp_editable)
+                                        {{date('d M Y',strtotime($data->created_at))}}
+                                        <a href="javascript:;" class="ml-2" data-toggle="modal" data-target="#modal_konfirmasi_otp"><i class="fa fa-edit"></i> Edit</a>
+                                        @endif
+                                        @if($is_otp_editable)
+                                            <input type="date" class="form-control" wire:model="journal_date" />
+                                            <a href="javascript:;" class="btn btn-info btn-sm"><i class="fa fa-save"></i> Save</a>
+                                        @endif
+                                    </td>
                                 </tr>
                                 @if(isset($uw))
                                 <tr>
@@ -26,7 +35,7 @@
                         </div>
                     </div>                    
                     <div class="mt-3 form-group table-responsive">
-                        <table class="table pl-0 mb-0">
+                        <table class="table pl-0 mb-0 table-bordered">
                             <thead>
                                 <tr style="background: #eee;">
                                     <th>Account</th>
@@ -50,7 +59,7 @@
                     </div>
                     <h5>Reclassification</h5>
                     <div class="mt-3 form-group table-responsive">
-                        <table class="table pl-0 mb-0">
+                        <table class="table pl-0 mb-0 table-bordered">
                             <thead>
                                 <tr style="background: #eee;">
                                     <th>Created</th>
@@ -158,6 +167,11 @@
         </div>
     </div>
 </div>
+<div wire:ignore.self class="modal fade" id="modal_konfirmasi_otp" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <livewire:income-premium-receivable.konfirmasi-otp />
+    </div>
+</div>
 @push('after-scripts')
 <script src="{{ asset('assets/js/jquery.priceformat.min.js') }}"></script>
 <link rel="stylesheet" href="{{ asset('assets/vendor/select2/css/select2.min.css') }}"/>
@@ -170,7 +184,9 @@
 </style>
 @endpush
 @section('page-script')
-
+Livewire.on('otp-editable',()=>{
+    $("#modal_konfirmasi_otp").modal('hide');
+});
 document.addEventListener("livewire:load", () => {
 		init_form();
     });

@@ -13,11 +13,13 @@ class Index extends Component
 
     public function render()
     {
-        $data = \App\Models\BankAccount::orderBy('id','DESC');
-        if($this->keyword) $data = $data->where('no_rekening','LIKE', '%'.$this->keyword.'%')
-                                                    ->orWhere('owner','LIKE', '%'.$this->keyword.'%')
-                                                    ->orWhere('bank','LIKE', '%'.$this->keyword.'%')
-                                                    ->orWhere('cabang','LIKE', '%'.$this->keyword.'%');
+        $data = \App\Models\BankAccount::orderBy('id','DESC')->where('is_client',1);
+        if($this->keyword) $data = $data->where(function($table){
+            $table->where('no_rekening','LIKE', '%'.$this->keyword.'%')
+            ->orWhere('owner','LIKE', '%'.$this->keyword.'%')
+            ->orWhere('bank','LIKE', '%'.$this->keyword.'%')
+            ->orWhere('cabang','LIKE', '%'.$this->keyword.'%');
+        });
 
         return view('livewire.bank-account.index')->with(['data'=>$data->paginate(50)]);
     }

@@ -11,21 +11,31 @@ class Detail extends Component
 {
     public $data,$total_amount,$payment_amount,$count_account=[],$is_readonly=false,$sum_debit,$sum_kredit,$history_reclass;
     public $is_submit_journal,$coas,$is_reclass=false;
-    public $uw;
+    public $uw,$journal_date;
     public $coa_id,$description_coa,$debit,$kredit,$total_debit,$total_kredit;
+    public $is_otp_editable=false,$otp,$is_submit;
+    protected $listeners = ['otp-editable'=>'otpEditable'];
+
     public function render()
     {
         return view('livewire.accounting-journal.detail');
     }
+
+    public function otpEditable($otp)
+    {
+        $this->otp = $otp;
+        $this->is_otp_editable = true;
+    }
+
     public function mount($id)
     {
         $this->data = Journal::find($id);
+        $this->journal_date = $this->data->created_at;
         $this->coas = Journal::where('no_voucher', $this->data->no_voucher)->get();
         $this->sum_debit = Journal::where('no_voucher', $this->data->no_voucher)->sum('debit');
         $this->sum_kredit = Journal::where('no_voucher', $this->data->no_voucher)->sum('kredit');
-        if($this->data->transaction_table=='konven_underwriting'){
-            $this->uw = KonvenUnderwriting::find($this->data->transaction_id);
-        }
+        if($this->data->transaction_table=='konven_underwriting') $this->uw = KonvenUnderwriting::find($this->data->transaction_id);
+        
         $this->history_reclass = JournalReclas::where('no_voucher',$this->data->no_voucher)->orderBy('id','DESC')->get();
         \LogActivity::add("Accounting - Journal Detail {$id}");
     }
