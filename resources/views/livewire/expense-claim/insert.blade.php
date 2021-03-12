@@ -52,7 +52,7 @@
                     <div class="form-group">
                         <label>{{ __('From Bank Account') }}</label>
                         <select class="form-control" wire:model="from_bank_account_id">
-                            <option value=""> --- Select --- </option>
+                            <option value=""> --- None --- </option>
                             @foreach (\App\Models\BankAccount::where('is_client',0)->orderBy('owner','ASC')->get() as $bank)
                                 <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
                             @endforeach
