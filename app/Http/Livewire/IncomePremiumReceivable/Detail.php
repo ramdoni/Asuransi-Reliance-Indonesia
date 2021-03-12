@@ -177,6 +177,7 @@ class Detail extends Component
             $coa_premium_receivable = 0;
             if($this->data->type==1){
                 $line_bussines = isset($this->data->uw->line_bussines) ? $this->data->uw->line_bussines : '';
+                $no_kwitansi_debit_note = isset($this->data->uw->no_kwitansi_debit_note)?$this->data->uw->no_kwitansi_debit_note:'';
             }else{
                 $no_kwitansi_debit_note = isset($this->data->uw_syariah->no_kwitansi_debit_note)?$this->data->uw_syariah->no_kwitansi_debit_note:'';
                 $line_bussines = isset($this->data->uw_syariah->line_bussines) ? $this->data->uw_syariah->line_bussines : '';
