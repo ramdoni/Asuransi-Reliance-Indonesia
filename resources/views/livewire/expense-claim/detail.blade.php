@@ -77,7 +77,7 @@
                     <div class="form-group">
                         <label>{{ __('To Bank Account') }}</label>
                         <select class="form-control select_to_bank" id="to_bank_account_id" {{$is_readonly?'disabled':''}} wire:model="to_bank_account_id">
-                            <option value=""> --- Select --- </option>
+                            <option value=""> --- None --- </option>
                             @foreach (\App\Models\BankAccount::where('is_client',1)->orderBy('owner','ASC')->get() as $bank)
                                 <option value="{{ $bank->id }}">{{ $bank->bank}} - {{ $bank->no_rekening}} - {{ $bank->owner }}</option>
                             @endforeach
