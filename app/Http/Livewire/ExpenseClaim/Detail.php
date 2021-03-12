@@ -10,6 +10,7 @@ class Detail extends Component
     public $reference_no,$to_bank_account_id,$from_bank_account_id,$payment_date,$bank_charges,$description,$type=1;
     public $add_pesertas=[],$add_peserta_id=[],$no_peserta=[],$nama_peserta=[];
     public $add_pesertas_temp=[],$no_peserta_temp=[],$nama_peserta_temp=[];
+    protected $listeners = ['emit-add-bank'=>'emitAddBank'];
     public function render()
     {
         return view('livewire.expense-claim.detail');
@@ -43,6 +44,13 @@ class Detail extends Component
         if($this->expense->status==2) $this->is_readonly=true;
         $this->premium_receivable = $premium->get();
     }
+
+    public function emitAddBank($id)
+    {
+        $this->to_bank_account_id = $id;
+        $this->emit('init-form');
+    }
+    
     public function delete_peserta($k)
     {
         if($this->add_peserta_id[$k]){

@@ -9,10 +9,12 @@ class Insert extends Component
     public $data,$no_voucher,$no_polis,$nilai_klaim,$premium_receivable,$is_submit=false;
     public $reference_no,$to_bank_account_id,$from_bank_account_id,$payment_date,$bank_charges,$description,$type=1;
     public $add_pesertas=[],$no_peserta=[],$nama_peserta=[];
+    protected $listeners = ['emit-add-bank'=>'emitAddBank'];
     public function render()
     {
         return view('livewire.expense-claim.insert');
     }
+    
     public function mount()
     {
         $this->no_voucher = generate_no_voucher_expense();
@@ -20,6 +22,13 @@ class Insert extends Component
         $this->no_peserta[] = "";
         $this->nama_peserta[] = "";
     }
+
+    public function emitAddBank($id)
+    {
+        $this->to_bank_account_id = $id;
+        $this->emit('init-form');
+    }
+
     public function updated($propertyName)
     {
         if($propertyName=='no_polis'){

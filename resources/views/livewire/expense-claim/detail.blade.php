@@ -67,21 +67,22 @@
                         <select class="form-control" wire:model="from_bank_account_id" {{$is_readonly?'disabled':''}}>
                             <option value=""> --- Select --- </option>
                             @foreach (\App\Models\BankAccount::where('is_client',0)->orderBy('owner','ASC')->get() as $bank)
-                                <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
+                                <option value="{{ $bank->id }}">{{ $bank->bank}} - {{ $bank->no_rekening}} - {{ $bank->owner }}</option>
                             @endforeach
                         </select>
                         @error('from_bank_account_id')
                         <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                         @enderror
                     </div>
-                    <div class="form-group" wire:ignore>
+                    <div class="form-group">
                         <label>{{ __('To Bank Account') }}</label>
                         <select class="form-control select_to_bank" id="to_bank_account_id" {{$is_readonly?'disabled':''}} wire:model="to_bank_account_id">
                             <option value=""> --- Select --- </option>
                             @foreach (\App\Models\BankAccount::where('is_client',1)->orderBy('owner','ASC')->get() as $bank)
-                                <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
+                                <option value="{{ $bank->id }}">{{ $bank->bank}} - {{ $bank->no_rekening}} - {{ $bank->owner }}</option>
                             @endforeach
                         </select>
+                        <a href="#" data-toggle="modal" data-target="#modal_add_bank"><i class="fa fa-plus"></i> Add Bank</a>
                         @error('to_bank_account_id')
                         <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                         @enderror
@@ -269,6 +270,11 @@
         </div>
     </div>
 </div>
+<div wire:ignore.self class="modal fade" id="modal_add_bank" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <livewire:expense-claim.add-bank />
+    </div>
+</div>
 @push('after-scripts')
 <script src="{{ asset('assets/js/jquery.priceformat.min.js') }}"></script>
 <link rel="stylesheet" href="{{ asset('assets/vendor/select2/css/select2.min.css') }}"/>
@@ -281,6 +287,9 @@
 </style>
 @endpush
 @section('page-script')
+    Livewire.on('emit-add-bank',()=>{
+        $("#modal_add_bank").modal("hide");
+    });
     Livewire.on('init-form', () =>{
         setTimeout(function(){
             init_form();
