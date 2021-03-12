@@ -11,15 +11,16 @@ class Income extends Component
     public $keyword,$unit,$status,$payment_date_from,$payment_date_to,$voucher_date;
     protected $paginationTheme = 'bootstrap';
     public function render()
-    {
-        $data = \App\Models\Income::orderBy('id','desc')->where('reference_type','Premium Receivable');
-        if($this->keyword) $data = $data->where('description','LIKE', "%{$this->keyword}%")
-                                        ->orWhere('no_voucher','LIKE',"%{$this->keyword}%")
-                                        ->orWhere('reference_no','LIKE',"%{$this->keyword}%")
-                                        ->orWhere('client','LIKE',"%{$this->keyword}%");
+    {   
+        $data = \App\Models\Income::orderBy('id','desc')->where('reference_type','Premium Receivable')->where('status',2);
+        if($this->keyword) $data = $data->where(function(){
+            $table->where('description','LIKE', "%{$this->keyword}%")
+            ->orWhere('no_voucher','LIKE',"%{$this->keyword}%")
+            ->orWhere('reference_no','LIKE',"%{$this->keyword}%")
+            ->orWhere('client','LIKE',"%{$this->keyword}%");
+        });
 
         if($this->unit) $data = $data->where('type',$this->unit);
-        if($this->status) $data = $data->where('status',$this->status);
         if($this->payment_date_from and $this->payment_date_to) $data = $data->whereBetween('payment_date',[$this->payment_date_from,$this->payment_date_to]);
         if($this->voucher_date) $data = $data->whereDate('created_at',$this->voucher_date);
 
