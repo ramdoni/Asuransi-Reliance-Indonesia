@@ -21,7 +21,7 @@
                                         @endif
                                         @if($is_otp_editable)
                                             <input type="date" class="form-control" wire:model="journal_date" />
-                                            <a href="javascript:;" class="btn btn-info btn-sm"><i class="fa fa-save"></i> Save</a>
+                                            <a href="javascript:;" class="btn btn-info btn-sm" wire:click="saveJournalDate"><i class="fa fa-save"></i> Save</a>
                                         @endif
                                     </td>
                                 </tr>

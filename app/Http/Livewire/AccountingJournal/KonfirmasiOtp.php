@@ -21,7 +21,7 @@ class KonfirmasiOtp extends Component
         $this->is_request_otp=true;
         $phone = get_supervisor();
 
-        \LogActivity::add("Income - Premium Receivable Request OTP");
+        \LogActivity::add("Accounting - Journal Request OTP");
 
         $cek_otp = UserOtp::where('request_user_id',\Auth::user()->id)->whereDate('expired',date('Y-m-d'))->count();
         if($cek_otp >=3){

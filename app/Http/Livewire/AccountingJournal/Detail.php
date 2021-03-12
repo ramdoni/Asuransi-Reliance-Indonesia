@@ -27,10 +27,24 @@ class Detail extends Component
         $this->is_otp_editable = true;
     }
 
+    public function saveJournalDate()
+    {
+        $this->validate([
+            'journal_date'=>'required'
+        ]); 
+
+        Journal::where(['no_voucher'=>$this->data->no_voucher])->update(['date_journal'=> $this->journal_date]);
+        
+        \LogActivity::add("Accounting Editable Journal Date OTP {$this->data->id}");
+
+        $this->emit('message-success',__('Journal Date saved.'));
+        $this->is_otp_editable = false;
+    }
+
     public function mount($id)
     {
         $this->data = Journal::find($id);
-        $this->journal_date = $this->data->created_at;
+        $this->journal_date = date('Y-m-d',strtotime($this->data->date_journal));
         $this->coas = Journal::where('no_voucher', $this->data->no_voucher)->get();
         $this->sum_debit = Journal::where('no_voucher', $this->data->no_voucher)->sum('debit');
         $this->sum_kredit = Journal::where('no_voucher', $this->data->no_voucher)->sum('kredit');
