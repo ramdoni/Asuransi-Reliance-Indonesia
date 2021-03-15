@@ -13,7 +13,7 @@ class Income extends Component
     public function render()
     {   
         $data = \App\Models\Income::orderBy('id','desc')->where('reference_type','Premium Receivable')->where('status',2);
-        if($this->keyword) $data = $data->where(function(){
+        if($this->keyword) $data = $data->where(function($table){
             $table->where('description','LIKE', "%{$this->keyword}%")
             ->orWhere('no_voucher','LIKE',"%{$this->keyword}%")
             ->orWhere('reference_no','LIKE',"%{$this->keyword}%")
