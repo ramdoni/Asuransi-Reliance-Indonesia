@@ -13,8 +13,7 @@ class Index extends Component
     public function render()
     {
         $data = \App\Models\Income::orderBy('id','desc')->where('reference_type','Premium Receivable');
-        $received = clone $data;
-        $outstanding = clone $data;
+        
         if($this->keyword) $data = $data->where('description','LIKE', "%{$this->keyword}%")
                                         ->orWhere('no_voucher','LIKE',"%{$this->keyword}%")
                                         ->orWhere('reference_no','LIKE',"%{$this->keyword}%")
@@ -24,6 +23,9 @@ class Index extends Component
         if($this->payment_date_from and $this->payment_date_to) $data = $data->whereBetween('payment_date',[$this->payment_date_from,$this->payment_date_to]);
         if($this->voucher_date) $data = $data->whereDate('created_at',$this->voucher_date);
         
+        $received = clone $data;
+        $outstanding = clone $data;
+
         return view('livewire.income-premium-receivable.index')->with([
             'data'=>$data->paginate(100),
             'received'=>$received->where('is_auto',0)->where('status',2)->sum('payment_amount'),

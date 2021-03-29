@@ -1,5 +1,5 @@
 @section('title', 'Premium Receivable '.$data->no_voucher)
-@section('parentPageTitle', 'Home')
+@section('parentPageTitle', 'Income')
 <div class="clearfix row">
     <div class="col-md-7">
         <div class="card">
@@ -200,7 +200,6 @@
                                     </td>
                                 </tr>
                             </table>
-                            
                         </div>
                     </div>
                     <hr />

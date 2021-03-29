@@ -6,7 +6,7 @@
             <div class="body">
                 <div class="row">
                     <div class="col-md-8">
-                        <h4>{{format_idr(\App\Models\Income::where(['reference_type'=>'Premium Receivable','status'=>2,'is_auto'=>0])->sum('payment_amount'))}}</h4>
+                        <h5>{{format_idr(\App\Models\Income::where(['reference_type'=>'Premium Receivable','status'=>2,'is_auto'=>0])->sum('payment_amount'))}}</h5>
                     </div>
                     <div class="col-md-4 text-right" style="display: flex;justify-content: flex-end;align-items: flex-end;">
                         Unpaid
@@ -29,7 +29,7 @@
     <div class="col-lg-3 col-md-6">
         <div class="card overflowhidden">
             <div class="body">
-                <h4>{{format_idr(\App\Models\Expenses::where('reference_type','Claim')->where('status',2)->sum('payment_amount'))}} <i class="fa fa-minus-circle float-right"></i></h4>
+                <h5>{{format_idr(\App\Models\Expenses::where('reference_type','Claim')->where('status',2)->sum('payment_amount'))}} <i class="fa fa-minus-circle float-right"></i></h5>
                 <span>Claim</span>       
             </div>
             <div class="progress progress-xs progress-transparent custom-color-yellow m-b-0">
@@ -40,7 +40,7 @@
     <div class="col-lg-3 col-md-6">
         <div class="card overflowhidden">
             <div class="body">
-                <h4>{{format_idr(\App\Models\Income::where('status',2)->where('is_auto',0)->sum('payment_amount'))}} <i class="fa fa-plus-circle float-right"></i></h4>
+                <h5>{{format_idr(\App\Models\Income::where('status',2)->where('is_auto',0)->sum('payment_amount'))}} <i class="fa fa-plus-circle float-right"></i></h5>
                 <span>Income</span>                            
             </div>
             <div class="progress progress-xs progress-transparent custom-color-blue m-b-0">
@@ -51,7 +51,7 @@
     <div class="col-lg-3 col-md-6">
         <div class="card overflowhidden">
             <div class="body">
-                <h4>{{format_idr(\App\Models\Expenses::where('status',2)->sum('payment_amount'))}} <i class="fa fa-minus-circle float-right"></i></h4>
+                <h5>{{format_idr(\App\Models\Expenses::where('status',2)->sum('payment_amount'))}} <i class="fa fa-minus-circle float-right"></i></h5>
                 <span>Expense</span>        
             </div>
             <div class="progress progress-xs progress-transparent custom-color-green m-b-0">

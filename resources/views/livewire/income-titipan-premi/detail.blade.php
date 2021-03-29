@@ -63,7 +63,7 @@
             <div class="body">
                 <div class="row">
                     <div class="col-md-6">
-                        <h5>Premium Receivable</h5>
+                        <h5>Transaction</h5>
                     </div>
                     <div class="col-md-6 text-right">
                         <h5 class="text-danger">{{format_idr($data->titipan_premi->sum('nominal'))}}</h5>
@@ -72,7 +72,8 @@
                 <hr />
                 @foreach($data->titipan_premi as $item)
                     @if($item->premi)
-                    <p>No Voucher : <a href="{{route('income.premium-receivable.detail',$item->premi->id)}}" target="_blank">{{$item->premi->no_voucher}}</a><br />
+                    <h6>{{$item->transaction_type}}</h6>
+                    <p><label>No Voucher </label> : {{$item->premi->no_voucher}}<br />
                         {{$item->premi->reference_no}} / {{$item->premi->client}} <br /><strong class="text-danger">Rp. {{format_idr($item->nominal)}}</strong>
                     </p>
                     <hr />

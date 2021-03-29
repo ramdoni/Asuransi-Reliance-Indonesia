@@ -29,11 +29,13 @@ class Detail extends Component
         $this->reset('temp_titipan_premi','temp_arr_titipan_id','total_titipan_premi','from_bank_account_id','bank_account_id');
         $this->emit('init-form');
     }
+
     public function updated($propertyName)
     {
         $this->outstanding_balance = abs(replace_idr($this->payment_amount) - $this->data->nominal);
         $this->emit('init-form');
     }
+
     public function setTitipanPremi($id)
     {
         $this->temp_arr_titipan_id[] = $id;
@@ -51,11 +53,13 @@ class Detail extends Component
         }
         $this->emit('init-form');
     }
+
     public function emitAddBank($id)
     {
         $this->to_bank_account_id = $id;
         $this->emit('init-form');
     }
+    
     public function mount($id)
     {
         \LogActivity::add("Income - Premium Receivable Edit {$id}");
@@ -70,7 +74,7 @@ class Detail extends Component
         $this->due_date = $this->data->due_date;
         $this->bank_charges = $this->bank_charges;
         // cek titipan premi
-        $this->titipan_premi = \App\Models\IncomeTitipanPremi::where('income_premium_id',$this->data->id)->get();      
+        $this->titipan_premi = \App\Models\IncomeTitipanPremi::where(['income_premium_id'=>$this->data->id,'transaction_type'=>'Premium Receive'])->get();      
         if($this->data->status==1) $this->description = 'Premi ab '. (isset($this->data->uw->pemegang_polis) ? ($this->data->uw->pemegang_polis .' bulan '. $this->data->uw->bulan .' dengan No Invoice :'.$this->data->uw->no_kwitansi_debit_note) : ''); 
         if($this->payment_amount =="") $this->payment_amount=$this->data->nominal;
         if($this->data->status==2 || $this->data->status==4){ $this->is_readonly = true;}
@@ -106,7 +110,8 @@ class Detail extends Component
             }
         }
         
-        if(!$this->temp_titipan_premi) $validate['bank_account_id']='required';
+        if(!$this->temp_titipan_premi and !$this->titipan_premi) $validate['bank_account_id']='required';
+
         $this->validate($validate,$validate_message);
         $this->payment_amount = replace_idr($this->payment_amount);
         $this->bank_charges = replace_idr($this->bank_charges);
@@ -132,7 +137,8 @@ class Detail extends Component
                     \App\Models\IncomeTitipanPremi::create([
                         'income_premium_id' => $this->data->id,
                         'income_titipan_id' => $item->id,
-                        'nominal' => $item->nominal
+                        'nominal' => $item->nominal,
+                        'transaction_type'=>'Premium Receive'
                     ]);
                     $item->payment_amount = $item->nominal;
                     $item->outstanding_balance = $item->outstanding_balance - $item->nominal;
@@ -142,7 +148,8 @@ class Detail extends Component
                     \App\Models\IncomeTitipanPremi::create([
                         'income_premium_id' => $this->data->id,
                         'income_titipan_id' => $item->id,
-                        'nominal' => ($this->data->nominal - $total_titipan_premi)
+                        'nominal' => ($this->data->nominal - $total_titipan_premi),
+                        'transaction_type'=>'Premium Receive'
                     ]);
                     $item->outstanding_balance = $item->outstanding_balance - ($this->data->nominal - $total_titipan_premi);
                     $item->payment_amount = $item->payment_amount + ($this->data->nominal - $total_titipan_premi);
@@ -247,12 +254,12 @@ class Detail extends Component
                     $journal->transaction_number = $no_kwitansi_debit_note;
                     $journal->save();
                 }
-                // Bank
-                $coa_bank_account = \App\Models\BankAccount::find($this->bank_account_id);
-                if($coa_bank_account and !empty($coa_bank_account->coa_id)){
+
+                if($this->temp_titipan_premi){
+                    # jika premium receive dari titipan premi maka ter create coa premium suspend
                     $journal = new \App\Models\Journal();
-                    $journal->coa_id = $coa_bank_account->coa_id;
-                    $journal->no_voucher = generate_no_voucher($coa_bank_account->coa_id,$this->data->id);
+                    $journal->coa_id = get_coa(406000); // premium suspend
+                    $journal->no_voucher = generate_no_voucher(get_coa(406000),$this->data->id);
                     $journal->date_journal = date('Y-m-d');
                     $journal->debit = $this->bank_charges + $this->payment_amount;
                     $journal->kredit = 0;
@@ -262,6 +269,25 @@ class Detail extends Component
                     $journal->transaction_table = 'income';
                     $journal->transaction_number = $no_kwitansi_debit_note;
                     $journal->save();
+                }
+                else
+                {
+                    # jika penerimaan premi dari transfer maka tercreate coa berdasarkan banknya
+                    $coa_bank_account = \App\Models\BankAccount::find($this->bank_account_id);
+                    if($coa_bank_account and !empty($coa_bank_account->coa_id)){
+                        $journal = new \App\Models\Journal();
+                        $journal->coa_id = $coa_bank_account->coa_id;
+                        $journal->no_voucher = generate_no_voucher($coa_bank_account->coa_id,$this->data->id);
+                        $journal->date_journal = date('Y-m-d');
+                        $journal->debit = $this->bank_charges + $this->payment_amount;
+                        $journal->kredit = 0;
+                        $journal->saldo = $this->bank_charges + $this->payment_amount;
+                        $journal->description = $this->description;
+                        $journal->transaction_id = $this->data->id;
+                        $journal->transaction_table = 'income';
+                        $journal->transaction_number = $no_kwitansi_debit_note;
+                        $journal->save();
+                    }
                 }
             }
         }

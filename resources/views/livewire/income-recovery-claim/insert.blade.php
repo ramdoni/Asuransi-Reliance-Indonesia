@@ -1,5 +1,5 @@
 @section('title', 'Recovery Claim')
-@section('parentPageTitle', 'Expense')
+@section('parentPageTitle', 'Income')
 <div class="clearfix row">
     <div class="col-md-7">
         <div class="card">
@@ -219,9 +219,7 @@
 @section('page-script')
     Livewire.on('init-form', () =>{
         $(".modal").modal("hide");
-        setTimeout(function(){
-            init_form();
-        },1500);
+        init_form();
     });
     function init_form(){
         $('.format_number').priceFormat({

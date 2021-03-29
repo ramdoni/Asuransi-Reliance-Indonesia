@@ -2,6 +2,12 @@
 use App\Models\User;
 use App\Models\UserOtp;
 
+function get_coa($code,$field="id")
+{
+    $coa = \App\Models\Coa::where('code', $code)->first();
+    return $coa?$coa->$field : '';
+}
+
 /**
  * Replace first string
  */

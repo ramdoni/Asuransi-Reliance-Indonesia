@@ -1,5 +1,5 @@
 @section('title', 'Reinsurance Commision '.$data->no_voucher)
-@section('parentPageTitle', 'Home')
+@section('parentPageTitle', 'Income')
 <div class="clearfix row">
     <div class="col-md-7">
         <div class="card">
@@ -10,7 +10,7 @@
                             <table class="table pl-0 mb-0 table-striped">
                                 <tr>
                                     <th>{{ __('Voucher Number')}}</th>
-                                    <td>{{$data->no_voucher}}</td>
+                                    <td>{!!no_voucher($data)!!}</td>
                                 </tr>
                                 <tr>
                                     <th>{{ __('Voucher Date')}}</th>
@@ -34,34 +34,71 @@
                                 </tr>
                                 <tr>
                                     <th>{{ __('Payment Amount')}}</th>
-                                    <td><input type="text" class="form-control format_number" wire:model="payment_amount" /></td>
+                                    <td><input type="text" class="form-control format_number" {{$is_readonly?'disabled':''}} wire:model="payment_amount" /></td>
                                 </tr>
                                 <tr>
                                     <th>{{ __('Outstanding Balance')}}</th>
                                     <td>{{format_idr($this->outstanding_balance)}}</td>
                                 </tr>
                                 <tr>
+                                    <th>{{__('Payment Date')}}*<small>{{__('Default today')}}</small></th>
+                                    <td>
+                                        <input type="date" class="form-control col-md-6" {{$is_readonly?'disabled':''}} wire:model="payment_date" />
+                                        @error('payment_date')
+                                        <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                                        @enderror
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Premium Deposit</th>
+                                    <td>
+                                        @if($titipan_premi)
+                                            @foreach($titipan_premi as $item)
+                                            @php($titipan = $item->titipan)
+                                            <p>
+                                                No Voucher : <a href="{{route('income.titipan-premi.detail',$titipan->id)}}" target="_blank">{{$titipan->no_voucher}}</a> <br />
+                                                {{isset($titipan->from_bank_account->no_rekening) ? $titipan->from_bank_account->no_rekening .'- '.$titipan->from_bank_account->bank.' an '. $titipan->from_bank_account->owner : '-'}} <br />
+                                                 <strong>{{format_idr($item->nominal)}}</strong>
+                                                @if(!$is_readonly)
+                                                 <a href="javascript:void(0)" wire:click="clearTitipanPremi" class="text-danger"><i class="fa fa-trash"></i></a>
+                                                @endif
+                                            </p>
+                                            @endforeach
+                                        @endif
+
+                                        @if($temp_titipan_premi)
+                                            @foreach($temp_titipan_premi as $titipan)
+                                            <p>
+                                                No Voucher : <a href="{{route('income.titipan-premi.detail',$titipan->id)}}" target="_blank">{{$titipan->no_voucher}}</a> <br />
+                                                {{isset($titipan->from_bank_account->no_rekening) ? $titipan->from_bank_account->no_rekening .'- '.$titipan->from_bank_account->bank.' an '. $titipan->from_bank_account->owner : '-'}} <br />
+                                                 <strong>{{format_idr($titipan->outstanding_balance)}}</strong>
+                                                @if(!$is_readonly)
+                                                 <a href="javascript:void(0)" wire:click="clearTitipanPremi" class="text-danger"><i class="fa fa-trash"></i></a>
+                                                @endif
+                                            </p>
+                                            <hr />
+                                            @endforeach
+                                        @endif
+                                        @if($total_titipan_premi <= $data->nominal and !$is_readonly)
+                                        <a href="javascript:void(0)" data-target="#modal_add_titipan_premi" data-toggle="modal"><i class="fa fa-plus"></i> Premium Deposit</a>
+                                        @endif
+                                    </td>
+                                </tr>
+                                <tr>
                                     <th>{{__('From Bank Account')}}</th>
                                     <td>
-                                        <div class="row">
-                                            <div class="col-md-10">
-                                                <select class="form-control from_bank_account" wire:model="from_bank_account_id" {{$is_readonly?'disabled':''}}>
-                                                    <option value=""> --- {{__('Select')}} --- </option>
-                                                    @foreach (\App\Models\BankAccount::where('is_client',1)->orderBy('owner','ASC')->get() as $bank)
-                                                        <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
-                                                    @endforeach
-                                                </select>
-                                                @error('from_bank_account_id')
-                                                <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                                                @enderror
-                                            </div>
-                                            <div class="col-md-2 px-0 pt-2">
-                                                @if(!$is_readonly)
-                                                <a href="#" data-toggle="modal" data-target="#modal_add_bank"><i class="fa fa-plus"></i> Add Bank</a>
-                                                @endif
-                                            </div>
-                                        </div>
-                                        
+                                        <select class="form-control from_bank_account" id="from_bank_account_id" wire:model="from_bank_account_id" {{$is_readonly?'disabled':''}}>
+                                            <option value=""> --- {{__('Select')}} --- </option>
+                                            @foreach (\App\Models\BankAccount::where('is_client',1)->orderBy('owner','ASC')->get() as $bank)
+                                                <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('from_bank_account_id')
+                                        <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                                        @enderror<br />
+                                        @if(!$is_readonly)
+                                        <a href="#" data-toggle="modal" data-target="#modal_add_bank"><i class="fa fa-plus"></i> Add Bank</a>
+                                        @endif
                                     </td>
                                 </tr>
                                 <tr>
@@ -79,23 +116,13 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th>{{__('Payment Date')}}*<small>{{__('Default today')}}</small></th>
-                                    <td>
-                                        <input type="date" class="form-control col-md-6" {{$is_readonly?'disabled':''}} wire:model="payment_date" />
-                                        @error('payment_date')
-                                        <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                                        @enderror
-                                    </td>
-                                </tr>
-                                
-                                <tr>
                                     <th>{{__('Bank Charges')}}</th>
                                     <td><input type="text" {{$is_readonly?'disabled':''}} class="form-control format_number col-md-6" wire:model="bank_charges" /></td>
                                 </tr>
                                 <tr>
                                     <th>{{__('Description')}}</th>
                                     <td>
-                                        <textarea style="height:100px;" class="form-control" wire:model="description"></textarea>
+                                        <textarea style="height:100px;" {{$is_readonly?'disabled':''}} class="form-control" wire:model="description"></textarea>
                                     </td>
                                 </tr>
                             </table>
@@ -103,7 +130,13 @@
                     </div>
                     <hr />
                     <a href="javascript:void0()" onclick="history.back()"><i class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
+                    @if(!$is_readonly)
                     <button type="submit" class="ml-3 btn btn-primary"><i class="fa fa-save"></i> {{ __('Submit') }}</button>
+                    @endif
+                    <span wire:loading>
+                        <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                        <span class="sr-only">{{ __('Loading...') }}</span>
+                    </span>
                 </form>
             </div>
         </div>
@@ -129,6 +162,7 @@
             </div>
         </div>
     </div>
+    <livewire:general.add-titipan-premi />
 </div>
 <div wire:ignore.self class="modal fade" id="modal_add_bank" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -137,20 +171,10 @@
 </div>
 @push('after-scripts')
 <script src="{{ asset('assets/js/jquery.priceformat.min.js') }}"></script>
-<link rel="stylesheet" href="{{ asset('assets/vendor/select2/css/select2.min.css') }}"/>
-<script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
-<style>
-    .select2-container .select2-selection--single {height:36px;padding-left:10px;}
-    .select2-container .select2-selection--single .select2-selection__rendered{padding-top:3px;}
-    .select2-container--default .select2-selection--single .select2-selection__arrow{top:4px;right:10px;}
-    .select2-container {width: 100% !important;}
-</style>
 @endpush
 @section('page-script')
-    Livewire.on('changeForm', () =>{
-        setTimeout(function(){
-            init_form();
-        },500);
+    Livewire.on('init-form', () =>{
+        init_form();
     });
     function init_form(){
         $('.format_number').priceFormat({
@@ -159,14 +183,13 @@
             thousandsSeparator: '.',
             centsLimit: 0
         });
-
-        select__2 = $('.select_no_polis').select2();
-        $('.select_no_polis').on('change', function (e) {
+        select__2 = $('.from_bank_account').select2();
+        $('.from_bank_account').on('change', function (e) {
             let elementName = $(this).attr('id');
             var data = $(this).select2("val");
             @this.set(elementName, data);
         });
-        var selected__ = $('.select_no_polis').find(':selected').val();
+        var selected__ = $('.from_bank_account').find(':selected').val();
         if(selected__ !="") select__2.val(selected__);
     }
     setTimeout(function(){
