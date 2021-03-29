@@ -37,7 +37,7 @@
                     <div class="body py-2">
                         <div class="number">
                             <h6 class="text-info">Total</h6>
-                            <span>{{ format_idr($received + $outstanding) }}</span>
+                            <span>{{ format_idr($total) }}</span>
                         </div>
                     </div>
                     <div class="progress progress-xs progress-transparent custom-color-blue  m-b-0">

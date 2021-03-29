@@ -84,6 +84,41 @@
                             </td>
                         </tr>
                         <tr>
+                            <th>Premium Deposit</th>
+                            <td>
+                                @if($titipan_premi)
+                                    @foreach($titipan_premi as $item)
+                                    @php($titipan = $item->titipan)
+                                    <p>
+                                        No Voucher : <a href="{{route('income.titipan-premi.detail',$titipan->id)}}" target="_blank">{{$titipan->no_voucher}}</a> <br />
+                                        {{isset($titipan->from_bank_account->no_rekening) ? $titipan->from_bank_account->no_rekening .'- '.$titipan->from_bank_account->bank.' an '. $titipan->from_bank_account->owner : '-'}} <br />
+                                         <strong>{{format_idr($item->nominal)}}</strong>
+                                        @if(!$is_readonly)
+                                         <a href="javascript:void(0)" wire:click="clearTitipanPremi" class="text-danger"><i class="fa fa-trash"></i></a>
+                                        @endif
+                                    </p>
+                                    @endforeach
+                                @endif
+
+                                @if($temp_titipan_premi)
+                                    @foreach($temp_titipan_premi as $titipan)
+                                    <p>
+                                        No Voucher : <a href="{{route('income.titipan-premi.detail',$titipan->id)}}" target="_blank">{{$titipan->no_voucher}}</a> <br />
+                                        {{isset($titipan->from_bank_account->no_rekening) ? $titipan->from_bank_account->no_rekening .'- '.$titipan->from_bank_account->bank.' an '. $titipan->from_bank_account->owner : '-'}} <br />
+                                         <strong>{{format_idr($titipan->outstanding_balance)}}</strong>
+                                        @if(!$is_readonly)
+                                         <a href="javascript:void(0)" wire:click="clearTitipanPremi" class="text-danger"><i class="fa fa-trash"></i></a>
+                                        @endif
+                                    </p>
+                                    <hr />
+                                    @endforeach
+                                @endif
+                                @if($total_titipan_premi <= $payment_amount and !$is_readonly)
+                                <a href="javascript:void(0)" data-target="#modal_add_titipan_premi" data-toggle="modal"><i class="fa fa-plus"></i> Premium Deposit</a>
+                                @endif
+                            </td>
+                        </tr>
+                        <tr>
                             <th>{{__('From Bank Account')}}</th>
                             <td>
                                 <select class="form-control from_bank_account" id="from_bank_account_id" wire:model="from_bank_account_id" {{$is_readonly?'disabled':''}}>
@@ -199,6 +234,7 @@
             </div>
         </div>
     </div>
+    <livewire:general.add-titipan-premi />
 </div>
 <div wire:ignore.self class="modal fade" id="modal_add_bank" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
