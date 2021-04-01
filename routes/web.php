@@ -76,6 +76,10 @@ Route::group(['middleware' => ['auth','access:3']], function(){
     Route::get('income/edit/{id}',App\Http\Livewire\Income\Edit::class)->name('income.edit');
     Route::get('expense',App\Http\Livewire\Expense\Index::class)->name('expense');
     Route::get('expense/edit/{id}',App\Http\Livewire\Expense\Edit::class)->name('expense.edit');
+    Route::get('journal-penyesuaian',App\Http\Livewire\JournalPenyesuaian\Index::class)->name('journal-penyesuaian.index');
+    Route::get('general-ledger',App\Http\Livewire\GeneralLedger\Index::class)->name('general-ledger.index');
+    Route::get('general-ledger-syariah',App\Http\Livewire\GeneralLedger\Syariah::class)->name('general-ledger.syariah');
+    Route::get('general-ledger-konven',App\Http\Livewire\GeneralLedger\Konven::class)->name('general-ledger.konven');
 });
 // Finance
 Route::group(['middleware' => ['auth','access:2']], function(){    

@@ -151,16 +151,19 @@
                     <a href="javascript:;" wire:click="add_account"><i class="fa fa-plus"></i> Account</a>
                     @endif
                     <hr>
-                    <a href="javascript:void0()" onclick="history.back()" class="mr-3"><i class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
-                    @if($is_reclass)
-                    <button type="button" class="btn btn-danger" wire:click="cancel_reclass">{{__('Cancel')}}</button>
-                    <button type="submit" {{!$is_submit_journal?'disabled':''}} class="ml-3 btn btn-warning"><i class="fa fa-save"></i> {{ __('Submit Reclassification') }}</button>
-                    @else
-                    <button type="button" class="btn btn-danger" wire:click="reclass"><i class="fa fa-edit"></i> {{ __('Reclassification') }}</button>
-                    @endif
-                    <div wire:loading>
-                        <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
-                        <span class="sr-only">Loading...</span>
+                    <div class="row px-3">
+                        <a href="javascript:void0()" onclick="history.back()" class="mr-3 mt-1"><i class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
+                        @if($is_reclass)
+                            <button type="button" class="btn btn-danger mx-2" wire:click="cancel_reclass">{{__('Cancel')}}</button>
+                            <button type="submit" {{!$is_submit_journal?'disabled':''}} class="ml-3 btn btn-warning"><i class="fa fa-save"></i> {{ __('Submit Reclassification') }}</button>
+                        @else
+                            <button type="button" class="btn btn-danger mx-2" wire:click="reclass"><i class="fa fa-edit"></i> {{ __('Reclassification') }}</button>
+                        @endif
+                        @livewire('accounting-journal.adjusting',['data'=>$data,'coas'=>$coas])
+                        <div wire:loading>
+                            <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                            <span class="sr-only">Loading...</span>
+                        </div>
                     </div>
                 </form> 
             </div>

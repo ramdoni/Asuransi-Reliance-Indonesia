@@ -1,6 +1,24 @@
 @section('title', 'Claim Payable')
 @section('parentPageTitle', 'Expense')
 <div class="clearfix row">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card mb-0">
+                    <div class="body py-2">
+                        <div class="number">
+                            <h6 class="text-success">Payment Amount</h6>
+                            <span>{{ format_idr($payment_amount) }}</span>
+                        </div>
+                    </div>
+                    <div class="progress progress-xs progress-transparent custom-color-green m-b-0">
+                        <div class="progress-bar" data-transitiongoal="87" aria-valuenow="87" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="col-lg-12">
         <div class="card">
             <div class="body">

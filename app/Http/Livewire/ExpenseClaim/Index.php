@@ -17,8 +17,12 @@ class Index extends Component
                                         });
         if($this->status) $data = $data->where('status',$this->status);
         if($this->type) $data = $data->where('type',$this->type);
-        return view('livewire.expense-claim.index')->with(['data'=>$data->paginate(100)]);
+        
+        $total = clone $data;
+
+        return view('livewire.expense-claim.index')->with(['data'=>$data->paginate(100),'payment_amount'=>$total->sum('payment_amount')]);
     }
+    
     public function mount()
     {
         \LogActivity::add("Expense Claim");

@@ -20,7 +20,10 @@ class Index extends Component
                                         });
         if($this->status) $data = $data->where('status',$this->status);
         if($this->type) $data = $data->where('type',$this->type);
-        return view('livewire.income-reinsurance.index')->with(['data'=>$data->paginate(100)]);
+        
+        $total = clone  $data;
+
+        return view('livewire.income-reinsurance.index')->with(['data'=>$data->paginate(100),'total'=>$total->sum('nominal'),'payment_amount'=>$total->sum('payment_amount'),'outstanding_balance'=>$total->sum('outstanding_balance')]);
     }
     public function mount()
     {

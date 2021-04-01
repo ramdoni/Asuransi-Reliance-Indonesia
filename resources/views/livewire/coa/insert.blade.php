@@ -1,5 +1,5 @@
-@section('title', __('COA Type'))
-@section('parentPageTitle', 'Home')
+@section('title', __('Insert'))
+@section('parentPageTitle', 'COA  (Chart Of Account)')
 
 <div class="clearfix row">
     <div class="col-md-4">
@@ -38,6 +38,13 @@
                         <label>{{ __('Account Name') }}</label>
                         <input type="text" class="form-control"  wire:model="name" >
                         @error('name')
+                        <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                        @enderror
+                    </div>
+                    <div class="form-group">
+                        <label>{{ __('Opening Balance') }}</label>
+                        <input type="text" class="form-control"  wire:model="opening_balance" >
+                        @error('opening_balance')
                         <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                         @enderror
                     </div>

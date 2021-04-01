@@ -4,15 +4,18 @@ namespace App\Http\Livewire\ExpenseCommisionPayable;
 
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Models\Expenses;
+use App\Models\ExpensePayment;
+use LogActivity;
 
 class Index extends Component
 {
     use WithPagination;
-    public $keyword,$unit,$status;
+    public $keyword,$unit,$status,$paging_total_=1;
     protected $paginationTheme = 'bootstrap';
     public function render()
     {
-        $data = \App\Models\Expenses::orderBy('id','desc')->where('reference_type','Komisi');
+        $data = Expenses::orderBy('id','desc')->where('reference_type','Komisi');
         if($this->keyword) $data = $data->where(function($table){
                                             $table->where('description','LIKE', "%{$this->keyword}%")
                                             ->orWhere('no_voucher','LIKE',"%{$this->keyword}%")
@@ -21,17 +24,38 @@ class Index extends Component
                                         });
         if($this->status) $data = $data->where('status',$this->status);
         if($this->unit) $data = $data->where('type',$this->unit);
-        return view('livewire.expense-commision-payable.index')->with(['data'=>$data->paginate(100)]);
+        
+        $total = clone $data;
+        $fee_base = 0;$maintenance=0;$admin_agency=0;$agen_penutup=0;$operasional_agency=0;$handling_fee_broker=0;$referal_fee=0;
+        foreach($total->get() as $item){
+            $fee_base += $item->payment_fee_base ? $item->payment_fee_base->payment_amount:0;
+            $maintenance += $item->payment_maintenance ? $item->payment_maintenance->payment_amount:0;
+            $admin_agency += $item->payment_admin_agency ? $item->payment_admin_agency->payment_amount:0;
+            $agen_penutup += $item->payment_agen_penutups ? $item->payment_agen_penutup->payment_amount:0;
+            $operasional_agency += $item->payment_operasional_agency ? $item->payment_operasional_agency->payment_amount:0;
+            $handling_fee_broker += $item->payment_handling_fee_broker ? $item->payment_handling_fee_broker->payment_amount:0;
+            $referal_fee += $item->payment_referal_fee ? $item->payment_referal_fee->payment_amount:0;
+        }
+        
+        return view('livewire.expense-commision-payable.index')->with([
+            'fee_base'=>$fee_base,
+            'maintenance'=>$maintenance,
+            'admin_agency'=>$admin_agency,
+            'agen_penutup'=>$agen_penutup,
+            'operasional_agency'=>$operasional_agency,
+            'handling_fee_broker'=>$handling_fee_broker,
+            'referal_fee'=>$referal_fee,
+            'data'=>$data->paginate(100),'total'=>0,'received'=>0,'outstanding'=>0]);
     }
     public function delete($id)
     {
-        \App\Models\Expenses::find($id)->delete();
-        \App\Models\ExpensePayment::where('expense_id',$id)->delete();
-        \LogActivity::add("Expense - Commision Payable Delete {$id}");
+        Expenses::find($id)->delete();
+        ExpensePayment::where('expense_id',$id)->delete();
+        LogActivity::add("Expense - Commision Payable Delete {$id}");
     }
     public function mount()
     {
-        \LogActivity::add('Expense - Commision Payable');
+        LogActivity::add('Expense - Commision Payable');
     }
     public function downloadExcel()
     {
@@ -169,7 +193,7 @@ class Index extends Component
         $objPHPExcel->getActiveSheet()->freezePane('A5');
         // $objPHPExcel->getActiveSheet()->setAutoFilter('B3:N3');
         $num=5;
-        $data = \App\Models\Expenses::orderBy('id','desc')->where('reference_type','Komisi');
+        $data = Expenses::orderBy('id','desc')->where('reference_type','Komisi');
         if($this->keyword) $data = $data->where(function($table){
                                             $table->where('description','LIKE', "%{$this->keyword}%")
                                             ->orWhere('no_voucher','LIKE',"%{$this->keyword}%")

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\JournalPenyesuaian;
 
 class Journal extends Model
 {
@@ -22,5 +23,10 @@ class Journal extends Model
     public function code_cashflow()
     {
         return $this->hasOne('\App\Models\CodeCashflow','id','code_cashflow_id');
+    }
+    
+    public function penyesuaian()
+    {
+        return $this->hasMany(JournalPenyesuaian::class,'journal_no_voucher','no_voucher');
     }
 }

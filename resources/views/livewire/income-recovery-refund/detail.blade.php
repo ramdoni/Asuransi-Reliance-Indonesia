@@ -36,13 +36,28 @@
                             <td>{{format_idr($income->payment_amount)}}</td>
                         </tr>
                         <tr>
+                            <th>Premium Deposit</th>
+                            <td>
+                                @if($titipan_premi)
+                                    @foreach($titipan_premi as $item)
+                                    @php($titipan = $item->titipan)
+                                    <p>
+                                        No Voucher : <a href="{{route('income.titipan-premi.detail',$titipan->id)}}" target="_blank">{{$titipan->no_voucher}}</a> <br />
+                                        {{isset($titipan->from_bank_account->no_rekening) ? $titipan->from_bank_account->no_rekening .'- '.$titipan->from_bank_account->bank.' an '. $titipan->from_bank_account->owner : '-'}} <br />
+                                         <strong>{{format_idr($item->nominal)}}</strong>
+                                    </p>
+                                    @endforeach
+                                @endif
+                            </td>
+                        </tr>
+                        <tr>
                             <th>{{__('Bank Charges')}}</th>
                             <td>{{format_idr($income->bank_charges)}}</td>
                         </tr>
                         <tr>
                             <th>{{__('From Bank Account')}}</th>
                             <td>
-                                @if($income->from_bank_account->owner)
+                                @if(isset($income->from_bank_account->owner))
                                 {{ $income->from_bank_account->owner }} - {{ $income->from_bank_account->no_rekening}} {{ $income->from_bank_account->bank}}
                                 @endif
                             </td>
@@ -50,8 +65,8 @@
                         <tr>
                             <th>{{__('To Bank Account')}}</th>
                             <td>
-                                @if($income->bank_account->owner)
-                                {{ $income->bank_account->owner }} - {{ $income->bank_account->no_rekening}} {{ $income->bank_account->bank}}
+                                @if(isset($income->bank_account->owner))
+                                {{ $income->bank_account->bank}} - {{ $income->bank_account->no_rekening}}  - {{ $income->bank_account->owner }} 
                                 @endif
                             </td>
                         </tr>

@@ -96,4 +96,9 @@
     </div>
     <br />
     {{$data->links()}}
+    @push('after-scripts')
+    <script>
+        $('.total_credit_note').html("{{$total_payment_amount}}");
+    </script>
+    @endpush
 </div>

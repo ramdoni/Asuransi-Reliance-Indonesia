@@ -21,7 +21,9 @@ class Index extends Component
         if($this->status) $data = $data->where('status',$this->status);
         if($this->type) $data = $data->where('type',$this->type);
 
-        return view('livewire.income-recovery-refund.index')->with(['data'=>$data->paginate(100)]);
+        $total = clone $data;
+
+        return view('livewire.income-recovery-refund.index')->with(['data'=>$data->paginate(100),'total'=>$total->sum('payment_amount'),'total_row'=>$total->count()]);
     }
 
     public function downloadExcel()

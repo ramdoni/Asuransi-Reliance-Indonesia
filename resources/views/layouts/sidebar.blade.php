@@ -170,6 +170,24 @@
                                     <span>Journal</span></a>
                             </li>
                             <li class="{{ Request::segment(1) === 'dashboard' ? 'active' : null }}">
+                                <a href="{{ route('journal-penyesuaian.index') }}"><i class="fa fa-edit"></i>
+                                    <span>Journal Penyesuaian</span></a>
+                            </li>
+                            <li
+                                class="{{ (Request::segment(1) === 'general-ledger-syariah' || Request::segment(1) === 'general-ledger-konven')?'active':''}}">
+                                <a href="#" class="has-arrow"><i class="fa fa-table"></i> <span>General Ledger</span></a>
+                                <ul>
+                                    <li
+                                        class="{{ Request::segment(1) === 'general-ledger-syariah' ? 'active' : null }}">
+                                        <a href="{{ route('general-ledger.syariah') }}"> Syariah</a>
+                                    </li>
+                                    <li
+                                        class="{{ Request::segment(1) === 'general-ledger-konven' ? 'active' : null }}">
+                                        <a href="{{ route('general-ledger.konven') }}"> Konven</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="{{ Request::segment(1) === 'dashboard' ? 'active' : null }}">
                                 <a href="#"><i class="fa fa-database"></i> <span>Cashflow</span></a>
                             </li>
                             <li class="{{ Request::segment(1) === 'dashboard' ? 'active' : null }}">

@@ -36,6 +36,21 @@
                             <td>{{format_idr($data->payment_amount)}}</td>
                         </tr>
                         <tr>
+                            <th>Premium Deposit</th>
+                            <td>
+                                @if($titipan_premi)
+                                    @foreach($titipan_premi as $item)
+                                    @php($titipan = $item->titipan)
+                                    <p>
+                                        No Voucher : <a href="{{route('income.titipan-premi.detail',$titipan->id)}}" target="_blank">{{$titipan->no_voucher}}</a> <br />
+                                        {{isset($titipan->from_bank_account->no_rekening) ? $titipan->from_bank_account->no_rekening .'- '.$titipan->from_bank_account->bank.' an '. $titipan->from_bank_account->owner : '-'}} <br />
+                                         <strong>{{format_idr($item->nominal)}}</strong>
+                                    </p>
+                                    @endforeach
+                                @endif
+                            </td>
+                        </tr>
+                        <tr>
                             <th>{{__('From Bank Account')}}</th>
                             <td>{!!isset($data->from_bank_account->no_rekening) ? $data->from_bank_account->no_rekening .' - '.$data->from_bank_account->bank.' an '.$data->from_bank_account->owner : ''!!}</td>
                         </tr>

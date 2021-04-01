@@ -65,6 +65,6 @@ class Income extends Model
     }
     public function titipan_premi()
     {
-        return $this->hasMany(\App\Models\IncomeTitipanPremi::class,'income_titipan_id');
+        return $this->hasMany(\App\Models\IncomeTitipanPremi::class,'income_titipan_id')->orderBy('id','DESC');
     }
 }

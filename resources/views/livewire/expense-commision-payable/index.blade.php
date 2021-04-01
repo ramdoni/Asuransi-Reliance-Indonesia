@@ -1,6 +1,114 @@
 @section('title', 'Commision Payable')
 @section('parentPageTitle', 'Expense')
 <div class="clearfix row">
+    <div class="col-md-12">
+        <div class="row">
+            @if($paging_total_==1)
+            <div class="col-md-3">
+                <div class="card mb-0">
+                    <div class="body py-2">
+                        <div class="number">
+                            <h6 class="text-info">Fee Base</h6>
+                            <span>{{ format_idr($fee_base) }}</span>
+                        </div>
+                    </div>
+                    <div class="progress progress-xs progress-transparent custom-color-blue m-b-0">
+                        <div class="progress-bar" data-transitiongoal="87" aria-valuenow="87" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card mb-0">
+                    <div class="body py-2">
+                        <div class="number">
+                            <h6 class="text-success">Maintenance</h6>
+                            <span>{{ format_idr($maintenance) }}</span>
+                        </div>
+                    </div>
+                    <div class="progress progress-xs progress-transparent custom-color-green m-b-0">
+                        <div class="progress-bar" data-transitiongoal="87" aria-valuenow="87" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card  mb-0">
+                    <div class="body py-2">
+                        <div class="number">
+                            <h6 class="text-warning">Admin Agency</h6>
+                            <span>{{ format_idr($admin_agency) }}</span>
+                        </div>
+                    </div>
+                    <div class="progress progress-xs progress-transparent custom-color-yellow  m-b-0">
+                        <div class="progress-bar" data-transitiongoal="87" aria-valuenow="87" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card  mb-0">
+                    <div class="body py-2">
+                        <div class="number">
+                            <h6 class="text-danger">Agen Penutup</h6>
+                            <span>{{ format_idr($agen_penutup) }}</span>
+                        </div>
+                    </div>
+                    <div class="progress progress-xs progress-transparent custom-color-red  m-b-0">
+                        <div class="progress-bar" data-transitiongoal="87" aria-valuenow="87" style="background: red;width: 100%;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+                <button type="button" class="btn btn-outline-secondary btn-sm" wire:click="$set('paging_total_',2)" style="position: absolute;right: 0;top: 16px;"><i class="fa fa-angle-right"></i></button>
+            @endif
+            @if($paging_total_==2)
+            <div class="col-md-3">
+                <div class="card mb-0">
+                    <div class="body py-2">
+                        <div class="number">
+                            <h6 class="text-info">Operasional Agency</h6>
+                            <span>{{ format_idr($operasional_agency) }}</span>
+                        </div>
+                    </div>
+                    <div class="progress progress-xs progress-transparent custom-color-blue m-b-0">
+                        <div class="progress-bar" data-transitiongoal="87" aria-valuenow="87" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card mb-0">
+                    <div class="body py-2">
+                        <div class="number">
+                            <h6 class="text-success">Handling Fee Broker</h6>
+                            <span>{{ format_idr($handling_fee_broker) }}</span>
+                        </div>
+                    </div>
+                    <div class="progress progress-xs progress-transparent custom-color-green m-b-0">
+                        <div class="progress-bar" data-transitiongoal="87" aria-valuenow="87" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card  mb-0">
+                    <div class="body py-2">
+                        <div class="number">
+                            <h6 class="text-warning">Referal Fee</h6>
+                            <span>{{ format_idr($referal_fee) }}</span>
+                        </div>
+                    </div>
+                    <div class="progress progress-xs progress-transparent custom-color-yellow  m-b-0">
+                        <div class="progress-bar" data-transitiongoal="87" aria-valuenow="87" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-outline-secondary btn-sm" wire:click="$set('paging_total_',1)" style="position: absolute;left: 0;top: 16px;"><i class="fa fa-angle-left"></i></button>
+            @endif
+        </div>
+    </div>
     <div class="col-lg-12">
         <div class="card">
             <div class="body">

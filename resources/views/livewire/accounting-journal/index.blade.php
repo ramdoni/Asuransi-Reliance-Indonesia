@@ -65,8 +65,8 @@
                 </div>
                 <div class="px-0 body">
                     <div class="table-responsive">
-                        <table class="table table-striped m-b-0 c_list table-bordered table-style1 table-hover">
-                            <thead>
+                        <table class="table m-b-0 c_list table-bordered table-style1 table-hover">
+                            <thead style="background:#eee">
                                 <tr>                    
                                     <th>COA</th>                                    
                                     <th>No Voucher</th>                                    
@@ -90,7 +90,7 @@
                                 @php($key_code_cashflow=0)
                                 @foreach($data as $k => $item)
                                 @if($item->no_voucher!=$br)
-                                <tr><td colspan="9" style="background:#18a2b833;padding:1px;"></td></tr>
+                                <tr><td colspan="9" style="background:#eee;padding:1px;"></td></tr>
                                 @endif
                                 <tr>
                                     <td>{{isset($item->coa->code)?$item->coa->code:''}}</td>

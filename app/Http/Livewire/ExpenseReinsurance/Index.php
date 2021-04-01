@@ -22,9 +22,11 @@ class Index extends Component
                                     });
         if($this->status) $data = $data->where('status',$this->status);
         if($this->unit) $data = $data->where('type',$this->unit);
+        
         $this->received = clone $data;$this->received = $this->received->where('status',2)->sum('payment_amount');
         $this->outstanding = clone $data;$this->outstanding = $this->outstanding->sum('outstanding_balance');
-        return view('livewire.expense-reinsurance.index')->with(['data'=>$data->paginate(100)]);
+                
+        return view('livewire.expense-reinsurance.index')->with(['data'=>$data->paginate(100),'total'=>$data->sum('nominal')]);
     }
     public function mount()
     {

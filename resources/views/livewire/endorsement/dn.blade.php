@@ -100,4 +100,9 @@
     </div>
     <br />
     {{$data->links()}}
+    @push('after-scripts')
+    <script>
+        $('.total_debit_note').html("{{$total_payment_amount}}");
+    </script>
+    @endpush
 </div>

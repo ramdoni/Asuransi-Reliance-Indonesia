@@ -36,7 +36,7 @@ class Index extends Component
         $this->set_multiple_cashflow = false;
         $this->check_all = false;
     } 
-    public function saveCodeCashflow(){
+    public function saveCodeCashflow($id){
         $this->emit('modalEdit',$id);
     }
     public function submitCashFlow()

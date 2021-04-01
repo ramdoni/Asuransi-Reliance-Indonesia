@@ -20,8 +20,10 @@ class Index extends Component
                                     });
         if($this->type) $data = $data->where('type',$this->type);
         if($this->status) $data = $data->where('status',$this->status);
+        
+        $total = clone $data;
 
-        return view('livewire.expense-cancelation.index')->with(['data'=>$data->paginate(100)]);
+        return view('livewire.expense-cancelation.index')->with(['data'=>$data->paginate(100),'total'=>$total->sum('nominal'),'payment_amount'=>$total->sum('payment_amount')]);
     }
     public function mount()
     {

@@ -6,7 +6,7 @@ use Livewire\Component;
 
 class Edit extends Component
 {
-    public $coa_group_id,$code,$name,$coa_type_id,$description,$data,$code_voucher;
+    public $coa_group_id,$code,$name,$coa_type_id,$description,$data,$code_voucher,$opening_balance;
 
     public function render()
     {
@@ -22,6 +22,8 @@ class Edit extends Component
         $this->coa_type_id = $this->data->coa_type_id;
         $this->description = $this->data->description;
         $this->code_voucher = $this->data->code_voucher;
+        $this->opening_balance = $this->data->opening_balance;
+
         \LogActivity::add("COA Edit {$id}");
     }
 
@@ -41,6 +43,7 @@ class Edit extends Component
         $this->data->coa_type_id = $this->coa_type_id;
         $this->data->description = $this->description;
         $this->data->code_voucher = $this->code_voucher;
+        $this->data->opening_balance = $this->opening_balance;
         $this->data->save();
         
         session()->flash('message-success',__('Data saved successfully'));

@@ -5,6 +5,20 @@
     <div class="col-lg-12">
         <div class="row">
             <div class="col-md-4">
+                <div class="card  mb-0">
+                    <div class="body py-2">
+                        <div class="number">
+                            <h6 class="text-info">Total</h6>
+                            <span>{{ format_idr($total) }}</span>
+                        </div>
+                    </div>
+                    <div class="progress progress-xs progress-transparent custom-color-blue  m-b-0">
+                        <div class="progress-bar" data-transitiongoal="87" aria-valuenow="87" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
                 <div class="card mb-0">
                     <div class="body py-2">
                         <div class="number">
@@ -27,20 +41,6 @@
                         </div>
                     </div>
                     <div class="progress progress-xs progress-transparent custom-color-yellow m-b-0">
-                        <div class="progress-bar" data-transitiongoal="87" aria-valuenow="87" style="width: 100%;">
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card  mb-0">
-                    <div class="body py-2">
-                        <div class="number">
-                            <h6 class="text-info">Total</h6>
-                            <span>{{ format_idr($total) }}</span>
-                        </div>
-                    </div>
-                    <div class="progress progress-xs progress-transparent custom-color-blue  m-b-0">
                         <div class="progress-bar" data-transitiongoal="87" aria-valuenow="87" style="width: 100%;">
                         </div>
                     </div>

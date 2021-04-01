@@ -65,14 +65,14 @@
                     <div class="row">
                         <div class="form-group col-md-6">
                             <label>{{ __('Bank Charges') }}</label>
-                            <input type="text" class="form-control format_number" wire:model="bank_charges">
+                            <input type="text" class="form-control format_number text-right" wire:model="bank_charges">
                             @error('bank_charges')
                             <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                             @enderror
                         </div>
                         <div class="form-group col-md-6">
                             <label>{{ __('Payment Amount') }}</label>
-                            <input type="text" class="form-control format_number" wire:model="payment_amount">
+                            <input type="text" class="form-control format_number text-right" wire:model="payment_amount">
                             @error('payment_amount')
                             <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                             @enderror

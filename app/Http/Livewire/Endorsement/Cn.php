@@ -28,8 +28,12 @@ class Cn extends Component
                                         ->orWhere('reference_no','LIKE',"%{$this->keyword}%");
         if($this->status) $data = $data->where('status',$this->status);
         if($this->type) $data = $data->where('type',$this->type);
-        return view('livewire.endorsement.cn')->with(['data'=>$data->paginate(100)]);
+        
+        $total = clone $data;
+
+        return view('livewire.endorsement.cn')->with(['data'=>$data->paginate(100),'total_payment_amount'=>format_idr($total->sum('payment_amount'))]);
     }
+
     public function mount()
     {
         \LogActivity::add("Endorsement Credit Note");

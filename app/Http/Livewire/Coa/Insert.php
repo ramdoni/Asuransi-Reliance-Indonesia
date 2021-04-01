@@ -6,7 +6,7 @@ use Livewire\Component;
 
 class Insert extends Component
 {
-    public $coa_group_id,$code,$name,$coa_type_id,$description,$code_voucher;
+    public $coa_group_id,$code,$name,$coa_type_id,$description,$code_voucher,$opening_balance;
     public function render()
     {
         return view('livewire.coa.insert');
@@ -31,6 +31,7 @@ class Insert extends Component
         // $data->coa_type_id = $this->coa_type_id;
         $data->description = $this->description;
         $data->code_voucher = $this->code_voucher;
+        $data->opening_balance = $this->opening_balance;
         $data->save();
         
         session()->flash('message-success',__('Data saved successfully'));

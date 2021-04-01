@@ -3,6 +3,14 @@
 namespace App\Http\Livewire\IncomePremiumReceivable;
 
 use Livewire\Component;
+use App\Models\Income;
+use App\Models\IncomeTitipanPremi;
+use App\Models\KonvenMemo;
+use App\Models\SyariahCancel;
+use App\Models\Journal;
+use App\Models\JournalPenyesuaian;
+use App\Models\BankAccount;
+use App\Models\BankAccountBalance;
 
 class Detail extends Component
 {
@@ -63,7 +71,7 @@ class Detail extends Component
     public function mount($id)
     {
         \LogActivity::add("Income - Premium Receivable Edit {$id}");
-        $this->data = \App\Models\Income::find($id);
+        $this->data = Income::find($id);
         $this->no_voucher = $this->data->no_voucher;
         $this->payment_date = $this->data->payment_date?$this->data->payment_date : date('Y-m-d');
         $this->bank_account_id = $this->data->rekening_bank_id;
@@ -74,7 +82,7 @@ class Detail extends Component
         $this->due_date = $this->data->due_date;
         $this->bank_charges = $this->bank_charges;
         // cek titipan premi
-        $this->titipan_premi = \App\Models\IncomeTitipanPremi::where(['income_premium_id'=>$this->data->id,'transaction_type'=>'Premium Receive'])->get();      
+        $this->titipan_premi = IncomeTitipanPremi::where(['income_premium_id'=>$this->data->id,'transaction_type'=>'Premium Receive'])->get();      
         if($this->data->status==1) $this->description = 'Premi ab '. (isset($this->data->uw->pemegang_polis) ? ($this->data->uw->pemegang_polis .' bulan '. $this->data->uw->bulan .' dengan No Invoice :'.$this->data->uw->no_kwitansi_debit_note) : ''); 
         if($this->payment_amount =="") $this->payment_amount=$this->data->nominal;
         if($this->data->status==2 || $this->data->status==4){ $this->is_readonly = true;}
@@ -90,8 +98,8 @@ class Detail extends Component
     }
     public function showDetailCancelation($id)
     {
-        if($this->data->type==1) $this->cancelation = \App\Models\KonvenMemo::find($id);
-        if($this->data->type==2) $this->cancelation = \App\Models\SyariahCancel::find($id);
+        if($this->data->type==1) $this->cancelation = KonvenMemo::find($id);
+        if($this->data->type==2) $this->cancelation = SyariahCancel::find($id);
         $this->showDetail='cancelation';
         $this->emit('init-form');
     }
@@ -110,7 +118,7 @@ class Detail extends Component
             }
         }
         
-        if(!$this->temp_titipan_premi and !$this->titipan_premi) $validate['bank_account_id']='required';
+        if(!$this->temp_titipan_premi and $this->titipan_premi->count()==0) $validate['bank_account_id']='required';
 
         $this->validate($validate,$validate_message);
         $this->payment_amount = replace_idr($this->payment_amount);
@@ -131,10 +139,10 @@ class Detail extends Component
             $total_titipan_premi = 0;
             $nominal_titipan = 0;
             foreach($this->temp_arr_titipan_id as $k => $val){
-                $item = \App\Models\Income::find($val);
+                $item = Income::find($val);
                 $total_titipan_premi += $item->outstanding_balance;            
                 if($total_titipan_premi < $this->data->nominal){
-                    \App\Models\IncomeTitipanPremi::create([
+                    IncomeTitipanPremi::create([
                         'income_premium_id' => $this->data->id,
                         'income_titipan_id' => $item->id,
                         'nominal' => $item->nominal,
@@ -145,7 +153,7 @@ class Detail extends Component
                     $item->status = 2;
                 }elseif($total_titipan_premi > $this->data->nominal){ // jika sudah melebihi nominal premi, maka status titipan premi jadi completed
                     $total_titipan_premi -= $item->outstanding_balance;
-                    \App\Models\IncomeTitipanPremi::create([
+                    IncomeTitipanPremi::create([
                         'income_premium_id' => $this->data->id,
                         'income_titipan_id' => $item->id,
                         'nominal' => ($this->data->nominal - $total_titipan_premi),
@@ -158,29 +166,7 @@ class Detail extends Component
             }
         }
 
-        if($this->is_otp_editable){
-            \LogActivity::add("Income - Premium Receivable Editable OTP {$this->data->id}");
-
-            session()->flash('message-success',__('Data saved successfully'));
-            return redirect()->route('income.premium-receivable');
-        }
         if($this->data->status==2){
-            // set balance
-            $bank_balance = \App\Models\BankAccount::find($this->data->rekening_bank_id);
-            if($bank_balance){
-                $bank_balance->open_balance = $bank_balance->open_balance + $this->payment_amount;
-                $bank_balance->save();
-
-                $balance = new \App\Models\BankAccountBalance();
-                $balance->kredit = $this->payment_amount;
-                $balance->bank_account_id = $bank_balance->id;
-                $balance->status = 1;
-                $balance->type = 4; // Inhouse transfer
-                $balance->nominal = $bank_balance->open_balance;
-                $balance->transaction_date = $this->payment_date;
-                $balance->save();
-            }
-            
             $coa_premium_receivable = 0;
             if($this->data->type==1){
                 $line_bussines = isset($this->data->uw->line_bussines) ? $this->data->uw->line_bussines : '';
@@ -188,6 +174,34 @@ class Detail extends Component
             }else{
                 $no_kwitansi_debit_note = isset($this->data->uw_syariah->no_kwitansi_debit_note)?$this->data->uw_syariah->no_kwitansi_debit_note:'';
                 $line_bussines = isset($this->data->uw_syariah->line_bussines) ? $this->data->uw_syariah->line_bussines : '';
+            }
+            // jika ada perubahan data dari yang sudah paid
+            // maka ter-create journal penyesuaian me refer ke journal sebelumnya
+            if($this->is_otp_editable){
+                $find_journal = Journal::where(['transaction_table'=>'income','transaction_id'=>$this->data->id])->first();
+                Journal::where(['transaction_table'=>'income','transaction_id'=>$this->data->id])->update(['is_adjusting'=>1]);
+                \LogActivity::add("Income - Premium Receivable Editable OTP {$this->data->id}");
+                $count_journal_penyesuaian = JournalPenyesuaian::count()+1;
+                if(!$find_journal){
+                    session()->flash('message-success',__('Data saved successfully'));
+                    return redirect()->route('income.premium-receivable');
+                }
+            }
+
+            // set balance
+            $bank_balance = BankAccount::find($this->data->rekening_bank_id);
+            if($bank_balance and !$this->is_otp_editable){
+                $bank_balance->open_balance = $bank_balance->open_balance + $this->payment_amount;
+                $bank_balance->save();
+
+                $balance = new BankAccountBalance();
+                $balance->kredit = $this->payment_amount;
+                $balance->bank_account_id = $bank_balance->id;
+                $balance->status = 1;
+                $balance->type = 4; // Inhouse transfer
+                $balance->nominal = $bank_balance->open_balance;
+                $balance->transaction_date = $this->payment_date;
+                $balance->save();
             }
 
             if(isset($line_bussines)){
@@ -213,26 +227,49 @@ class Detail extends Component
                 }
                 
                 // Premium Receivable
-                $journal = new \App\Models\Journal();
+                if($this->is_otp_editable){
+                    // journal penyesuaian
+                    $journal = new JournalPenyesuaian();
+                    $journal->kredit = 0;
+                    $journal->debit = 0;
+                    $journal->saldo = 0; 
+                    $journal->journal_no_voucher = $find_journal->no_voucher;
+                    $journal->no_voucher = generate_no_voucher($coa_premium_receivable, $count_journal_penyesuaian);
+                } else {
+                    $journal = new Journal();
+                    $journal->kredit = $this->payment_amount;
+                    $journal->debit = 0;
+                    $journal->saldo = $this->payment_amount; 
+                    $journal->no_voucher = generate_no_voucher($coa_premium_receivable,$this->data->id);
+                }
+
                 $journal->coa_id = $coa_premium_receivable;
-                $journal->no_voucher = generate_no_voucher($coa_premium_receivable,$this->data->id);
                 $journal->date_journal = date('Y-m-d');
-                $journal->kredit = $this->payment_amount;
-                $journal->debit = 0;
-                $journal->saldo = $this->payment_amount;
                 $journal->description = $this->description;
                 $journal->transaction_id = $this->data->id;
-                $journal->transaction_table = 'expenses';
+                $journal->transaction_table = 'income';
                 $journal->transaction_number = $no_kwitansi_debit_note;
                 $journal->save();
+
                 if($this->payment_amount < $this->data->nominal){
-                    $journal = new \App\Models\Journal();
+                    if($this->is_otp_editable){
+                        // journal penyesuaian
+                        $journal = new JournalPenyesuaian();
+                        $journal->kredit = 0;
+                        $journal->debit = 0;
+                        $journal->saldo = 0; 
+                        $journal->journal_no_voucher = $find_journal->no_voucher;
+                        $journal->no_voucher = generate_no_voucher(206, $count_journal_penyesuaian);
+                    } else {
+                        $journal = new Journal();
+                        $journal->kredit = $this->payment_amount - $this->data->nominal;
+                        $journal->debit = 0;
+                        $journal->saldo = $this->payment_amount - $this->data->nominal;
+                        $journal->no_voucher = generate_no_voucher(206,$this->data->id);
+                    }
+
                     $journal->coa_id = 206;//Other Payable
-                    $journal->no_voucher = generate_no_voucher(206,$this->data->id);
                     $journal->date_journal = date('Y-m-d');
-                    $journal->kredit = $this->payment_amount - $this->data->nominal;
-                    $journal->debit = 0;
-                    $journal->saldo = $this->payment_amount - $this->data->nominal;
                     $journal->description = $this->description;
                     $journal->transaction_id = $this->data->id;
                     $journal->transaction_table = 'income';
@@ -241,13 +278,24 @@ class Detail extends Component
                 }
                 // Bank Charges
                 if(!empty($this->bank_charges)){
-                    $journal = new \App\Models\Journal();
+                    if($this->is_otp_editable){
+                        // journal penyesuaian
+                        $journal = new JournalPenyesuaian();
+                        $journal->kredit = 0;
+                        $journal->debit = 0;
+                        $journal->saldo = 0; 
+                        $journal->journal_no_voucher = $find_journal->no_voucher;
+                        $journal->no_voucher = generate_no_voucher(347, $count_journal_penyesuaian);
+                    } else {
+                        $journal = new Journal();
+                        $journal->kredit = replace_idr($this->bank_charges);
+                        $journal->debit = 0;
+                        $journal->saldo = replace_idr($this->bank_charges);
+                        $journal->no_voucher = generate_no_voucher(347,$this->data->id);
+                    }
+
                     $journal->coa_id = 347; // Bank Charges
-                    $journal->no_voucher = generate_no_voucher(347,$this->data->id);
                     $journal->date_journal = date('Y-m-d');
-                    $journal->kredit = replace_idr($this->bank_charges);
-                    $journal->debit = 0;
-                    $journal->saldo = replace_idr($this->bank_charges);
                     $journal->description = $this->description;
                     $journal->transaction_id = $this->data->id;
                     $journal->transaction_table = 'income';
@@ -255,15 +303,26 @@ class Detail extends Component
                     $journal->save();
                 }
 
-                if($this->temp_titipan_premi){
+                if($this->temp_titipan_premi || $this->titipan_premi->count()>0){
                     # jika premium receive dari titipan premi maka ter create coa premium suspend
-                    $journal = new \App\Models\Journal();
+                    if($this->is_otp_editable){
+                        // journal penyesuaian
+                        $journal = new JournalPenyesuaian();
+                        $journal->kredit = 0;
+                        $journal->debit = 0;
+                        $journal->saldo = 0; 
+                        $journal->journal_no_voucher = $find_journal->no_voucher;
+                        $journal->no_voucher = generate_no_voucher(get_coa(406000), $count_journal_penyesuaian);
+                    } else {
+                        $journal = new Journal();
+                        $journal->debit = $this->bank_charges + $this->payment_amount;
+                        $journal->kredit = 0;
+                        $journal->saldo = $this->bank_charges + $this->payment_amount;
+                        $journal->no_voucher = generate_no_voucher(get_coa(406000),$this->data->id);
+                    }
+
                     $journal->coa_id = get_coa(406000); // premium suspend
-                    $journal->no_voucher = generate_no_voucher(get_coa(406000),$this->data->id);
                     $journal->date_journal = date('Y-m-d');
-                    $journal->debit = $this->bank_charges + $this->payment_amount;
-                    $journal->kredit = 0;
-                    $journal->saldo = $this->bank_charges + $this->payment_amount;
                     $journal->description = $this->description;
                     $journal->transaction_id = $this->data->id;
                     $journal->transaction_table = 'income';
@@ -273,15 +332,26 @@ class Detail extends Component
                 else
                 {
                     # jika penerimaan premi dari transfer maka tercreate coa berdasarkan banknya
-                    $coa_bank_account = \App\Models\BankAccount::find($this->bank_account_id);
+                    $coa_bank_account = BankAccount::find($this->bank_account_id);
                     if($coa_bank_account and !empty($coa_bank_account->coa_id)){
-                        $journal = new \App\Models\Journal();
+                        if($this->is_otp_editable){
+                            // journal penyesuaian
+                            $journal = new JournalPenyesuaian();
+                            $journal->kredit = 0;
+                            $journal->debit = 0;
+                            $journal->saldo = 0; 
+                            $journal->journal_no_voucher = $find_journal->no_voucher;
+                            $journal->no_voucher = generate_no_voucher($coa_bank_account->coa_id, $count_journal_penyesuaian);
+                        } else {
+                            $journal = new Journal();
+                            $journal->debit = $this->bank_charges + $this->payment_amount;
+                            $journal->kredit = 0;
+                            $journal->saldo = $this->bank_charges + $this->payment_amount;
+                            $journal->no_voucher = generate_no_voucher($coa_bank_account->coa_id,$this->data->id);
+                        }
+                        
                         $journal->coa_id = $coa_bank_account->coa_id;
-                        $journal->no_voucher = generate_no_voucher($coa_bank_account->coa_id,$this->data->id);
                         $journal->date_journal = date('Y-m-d');
-                        $journal->debit = $this->bank_charges + $this->payment_amount;
-                        $journal->kredit = 0;
-                        $journal->saldo = $this->bank_charges + $this->payment_amount;
                         $journal->description = $this->description;
                         $journal->transaction_id = $this->data->id;
                         $journal->transaction_table = 'income';
@@ -291,6 +361,7 @@ class Detail extends Component
                 }
             }
         }
+
         \LogActivity::add("Income - Premium Receivable Save {$this->data->id}");
 
         session()->flash('message-success',__('Data saved successfully'));

@@ -13,10 +13,10 @@ class Insert extends Component
     public $type=1,$no_voucher,$is_submit=true,$data,$premium_receivable,$expense_id,$outstanding_balance,$reference_no,$payment_amount,$from_bank_account_id,$to_bank_account_id;
     public $is_readonly=false,$payment_date,$bank_charges,$description,$reference_date;
     public $add_pesertas=[],$no_peserta=[],$nama_peserta=[];
-    public $add_claim_payables=[],$add_expense_id;
+    public $add_claim_payables=[],$add_expense_id=[];
     public $titipan_premi,$temp_titipan_premi=[],$temp_arr_titipan_id=[],$total_titipan_premi=0;
 
-    protected $listeners = ['emit-add-bank'=>'emitAddBank','set-titipan-premi'=>'setTitipanPremi',];
+    protected $listeners = ['emit-add-bank'=>'emitAddBank','set-titipan-premi'=>'setTitipanPremi'];
 
     public function render()
     {
@@ -32,7 +32,7 @@ class Insert extends Component
     
     public function clearTitipanPremi()
     {
-        $this->reset('temp_titipan_premi','temp_arr_titipan_id','total_titipan_premi','from_bank_account_id','bank_account_id');
+        $this->reset('temp_titipan_premi','temp_arr_titipan_id','total_titipan_premi','from_bank_account_id','to_bank_account_id');
         $this->emit('init-form');
     }
 
@@ -44,11 +44,11 @@ class Insert extends Component
         foreach($this->temp_titipan_premi as $titipan){
             $this->total_titipan_premi += $titipan->outstanding_balance;
         }
-        if($this->total_titipan_premi < $this->data->nominal){
+        if($this->total_titipan_premi < $this->payment_amount){
             $this->payment_amount = $this->total_titipan_premi;
-            $this->outstanding_balance = abs(replace_idr($this->payment_amount) - $this->data->nominal);
-        }elseif($this->total_titipan_premi>$this->data->nominal){
-            $this->payment_amount = $this->data->nominal;
+            $this->outstanding_balance = abs(replace_idr($this->payment_amount) - $this->nominal);
+        }elseif($this->total_titipan_premi>$this->payment_amount){
+            $this->payment_amount = $this->payment_amount;
             $this->outstanding_balance = 0;
         }
         $this->emit('init-form');
@@ -60,11 +60,13 @@ class Insert extends Component
         $this->add_expense_id[] = '';
         $this->emit('init-form');
     }
+
     public function emitAddBank($id)
     {
         $this->from_bank_account_id = $id;
         $this->emit('init-form');
     }
+
     public function updated($propertyName)
     {
         if($propertyName=='expense_id'){
@@ -72,6 +74,7 @@ class Insert extends Component
         }
         $this->emit('init-form');
     }
+
     public function save()
     {
         $this->validate([
@@ -79,6 +82,7 @@ class Insert extends Component
             'expense_id' => 'required',
             'payment_amount' => 'required'
         ]);
+
         $this->payment_amount = replace_idr($this->payment_amount);
         $this->bank_charges = replace_idr($this->bank_charges);
         $data = new Income();
@@ -103,30 +107,29 @@ class Insert extends Component
 
         if($this->temp_titipan_premi){
             $total_titipan_premi = 0;
-            $nominal_titipan = 0;
             foreach($this->temp_arr_titipan_id as $k => $val){
                 $item = Income::find($val);
                 $total_titipan_premi += $item->outstanding_balance;            
-                if($total_titipan_premi < $this->data->nominal){
+                if($total_titipan_premi < $this->payment_amount){
                     IncomeTitipanPremi::create([
-                        'income_premium_id' => $this->data->id,
+                        'income_premium_id' => $data->id,
                         'income_titipan_id' => $item->id,
                         'nominal' => $item->nominal,
-                        'transaction_type'=>'Premium Receive'
+                        'transaction_type'=>'Recovery Claim'
                     ]);
                     $item->payment_amount = $item->nominal;
                     $item->outstanding_balance = $item->outstanding_balance - $item->nominal;
                     $item->status = 2;
-                }elseif($total_titipan_premi > $this->data->nominal){ // jika sudah melebihi nominal premi, maka status titipan premi jadi completed
+                }elseif($total_titipan_premi > $this->payment_amount){ // jika sudah melebihi nominal premi, maka status titipan premi jadi completed
                     $total_titipan_premi -= $item->outstanding_balance;
                     IncomeTitipanPremi::create([
-                        'income_premium_id' => $this->data->id,
+                        'income_premium_id' => $data->id,
                         'income_titipan_id' => $item->id,
-                        'nominal' => ($data->nominal - $total_titipan_premi),
-                        'transaction_type'=>'Premium Receive'
+                        'nominal' => ($data->payment_amount - $total_titipan_premi),
+                        'transaction_type'=>'Recovery Claim'
                     ]);
-                    $item->outstanding_balance = $item->outstanding_balance - ($data->nominal - $total_titipan_premi);
-                    $item->payment_amount = $item->payment_amount + ($data->nominal - $total_titipan_premi);
+                    $item->outstanding_balance = $item->outstanding_balance - ($data->payment_amount - $total_titipan_premi);
+                    $item->payment_amount = $item->payment_amount + ($data->payment_amount - $total_titipan_premi);
                 }
                 $item->save();
             }

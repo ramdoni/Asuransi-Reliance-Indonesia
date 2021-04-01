@@ -19,8 +19,21 @@ class Index extends Component
         if($this->coa_id) $data = $data->where('coa_id',$this->coa_id);
         if($this->status) $data = $data->where('status',$this->status);
 
-        return view('livewire.expense-handling-fee.index')->with(['data'=>$data->paginate(100)]);
+        $total = clone $data;
+        $pph=0;$ppn=0;$total_=0;
+
+        foreach($total->get() as $item){
+            $pph += isset($item->uw->jumlah_pph) ? $item->uw->jumlah_pph : 0; 
+            $ppn += isset($item->uw->jumlah_ppn) ? $item->uw->jumlah_ppn : 0; 
+            $total_ += $item->payment_amount;
+        }
+
+        return view('livewire.expense-handling-fee.index')->with(['data'=>$data->paginate(100),
+                    'payment_amount'=>$total_,
+                    'pph'=>$pph,
+                    'ppn'=>$ppn]);
     }
+
     public function mount()
     {
         \LogActivity::add("Expense Handling Fee");
