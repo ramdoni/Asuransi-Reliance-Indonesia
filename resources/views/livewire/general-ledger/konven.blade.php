@@ -6,18 +6,10 @@
             <div class="body">
                 <div class="row">
                     <div class="col-md-2">
-                        <select class="form-control" wire:model="coa_group_id">
-                            <option value=""> -- All Group -- </option>
-                            @foreach(\App\Models\CoaGroup::orderBy('name',"ASC")->get() as $group)
-                            <option value="{{$group->id}}">{{$group->name}}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <input type="text" class="form-control journal_date" placeholder="Journal Date" />
+                        <input type="text" class="form-control date" placeholder="Date Submited" />
                     </div>
                     <div class="col-md-8">
-                        <button type="button" wire:click="downloadExcel" class="btn btn-info"><i class="fa fa-download"></i> Download Report</button>
+                        <a href="{{route('general-ledger.konven-create')}}" class="btn btn-info" title="Create General Ledger"><i class="fa fa-plus"></i> General Ledger</a>
                         <span wire:loading>
                             <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
                             <span class="sr-only">{{ __('Loading...') }}</span>
@@ -29,73 +21,24 @@
                     <table class="table table-hover m-b-0 c_list table-bordered">
                         <thead style="background: #eee;">
                             <tr>
+                                <th>No</th>
+                                <th>User</th>
+                                <th>Date Submited</th>
+                                <th>Created</th>
                                 <th></th>
-                                <th>No Voucher</th>
-                                <th>Date</th>
-                                <th>Account</th>
-                                <th>Description</th>
-                                <th>Debit</th>
-                                <th>Kredit</th>
-                                <th>Saldo</th>
                             </tr>
                         </thead>
-                        @foreach($coas as $coa)
+                        @foreach($data as $k => $item)
                             <tr>
-                                <td>{{$coa->code}}</td>
-                                <th colspan="7">{{$coa->name}}</th>
+                                <td>{{$data->currentPage()+$k}}</td>
+                                <td>{{isset($item->user->name)?$item->user->name : ''}}</td>
+                                <td>{{$item->submit_date}}</td>
+                                <td>{{$item->created_at}}</td>
+                                <td>
+                                    <a href="{{route('general-ledger.konven-detail',$item->id)}}" class="mx-2"><i class="fa fa-search"></i> Detail</a> 
+                                    <a href="javascript:;" wire:click="downloadReport({{$item->id}})" title="Download Report"><i class="fa fa-download"></i> Report</a>
+                                </td>
                             </tr>
-                            <tr>
-                                <td></td>
-                                <th colspan="6">Saldo Awal</th>
-                                <td class="text-right">{{format_idr($coa->opening_balance)}}</td>
-                            </tr>
-                            @foreach(\App\Models\Journal::where('coa_id',$coa->id)->get() as $journal)
-                                <tr>
-                                    <td></td>
-                                    <td>{{$journal->no_voucher}}</td>
-                                    <td>{{date('d-M-Y',strtotime($journal->date_journal))}}</td>
-                                    <td>{{isset($journal->coa->name)?$journal->coa->name : ''}}</td>
-                                    <td>{{$journal->description}}</td>
-                                    <td class="text-right">{{format_idr($journal->debit)}}</td>
-                                    <td class="text-right">{{format_idr($journal->kredit)}}</td>
-                                    <td class="text-right">{{format_idr($journal->saldo)}}</td>
-                                </tr>
-                            @endforeach
-                            @if(\App\Models\Journal::where('coa_id',$coa->id)->count()==0)
-                                <tr>
-                                    <td>&nbsp;</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                            @endif
-                            <thead style="background: #eee;">
-                                <tr>
-                                    <th colspan="5" class="text-center">Total {{$coa->name}}</th>
-                                    <th></th>
-                                    <th></th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tr>
-                                <td colspan="9" class="py-2" style="border-left:0;border-right:0;"></td>
-                            </tr>
-                            <thead style="background: #eee;">
-                                <tr>
-                                    <th></th>
-                                    <th>No Voucher</th>
-                                    <th>Date</th>
-                                    <th>Account</th>
-                                    <th>Description</th>
-                                    <th>Debit</th>
-                                    <th>Kredit</th>
-                                    <th>Saldo</th>
-                                </tr>
-                            </thead>
                         @endforeach
                     </table>
                 </div>
@@ -105,9 +48,19 @@
     @push('after-scripts')
     <script type="text/javascript" src="{{ asset('assets/vendor/daterange/moment.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('assets/vendor/daterange/daterangepicker.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('assets/vendor/toastr/toastr.min.css') }}"/>
+    <script src="{{ asset('assets/vendor/toastr/toastr.js') }}"></script>
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/vendor/daterange/daterangepicker.css') }}" />
     <script>
-        $('.journal_date').daterangepicker({
+        Livewire.on('added-journal',()=>{
+            toastr.remove();
+            toastr.options.timeOut = true;
+            toastr['success']('Journal added', '', {
+                    positionClass: 'toast-bottom-center'
+                });
+        });
+    
+        $('.date').daterangepicker({
             opens: 'left',
             locale: {
                 cancelLabel: 'Clear'
@@ -116,7 +69,7 @@
         }, function(start, end, label) {
             @this.set("from_date", start.format('YYYY-MM-DD'));
             @this.set("to_date", end.format('YYYY-MM-DD'));
-            $('.journal_date').val(start.format('DD/MM/YYYY') + '-' + end.format('DD/MM/YYYY'));
+            $('.date').val(start.format('DD/MM/YYYY') + '-' + end.format('DD/MM/YYYY'));
         });
 
     </script>

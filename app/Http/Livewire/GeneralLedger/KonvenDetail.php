@@ -3,23 +3,50 @@
 namespace App\Http\Livewire\GeneralLedger;
 
 use Livewire\Component;
-use App\Models\Journal;
 use App\Models\GeneralLedger;
+use App\Models\Journal;
 
-class Konven extends Component
+class KonvenDetail extends Component
 {
-    public $from_date,$to_date;
-    
+    public $coas,$coa_group,$gl,$coa_group_id;
+
     public function render()
     {
-        $data = GeneralLedger::orderBy('id','ASC');
-        
-        if($this->from_date and $this->to_date) $data->whereBetween('submit_date',[$this->from_date,$this->to_date]);
-
-        return view('livewire.general-ledger.konven')->with(['data'=>$data->paginate(100)]);
+        return view('livewire.general-ledger.konven-detail');
     }
 
-    public function downloadReport(GeneralLedger $gl)
+    public function mount(GeneralLedger $gl)
+    {
+        $this->gl = $gl;
+
+        $this->coas  = Journal::select('coas.*')->where('general_ledger_id',$this->gl->id)
+                            ->join('coas','coas.id','=','journals.coa_id')
+                            ->groupBy('journals.coa_id')->get();
+
+        $this->coa_group = Journal::select('coa_groups.*')
+                            ->where('general_ledger_id',$this->gl->id)
+                            ->join('coas','coas.id','=','journals.coa_id')
+                            ->join('coa_groups','coa_groups.id','=','coas.coa_group_id')    
+                            ->groupBy('coa_groups.id')->get();        
+    }
+
+    public function updated($propertyName)
+    {
+        $this->coas  = Journal::select('coas.*')->where('general_ledger_id',$this->gl->id)->join('coas','coas.id','=','journals.coa_id');
+
+        if($propertyName=='coa_group_id' and !empty($this->coa_group_id)){
+            $this->coas = $this->coas->where('coas.coa_group_id',$this->coa_group_id);
+        }
+        $this->coas = $this->coas->groupBy('journals.coa_id')->get();
+
+        $this->coa_group = Journal::select('coa_groups.*')
+                            ->where('general_ledger_id',$this->gl->id)
+                            ->join('coas','coas.id','=','journals.coa_id')
+                            ->join('coa_groups','coa_groups.id','=','coas.coa_group_id')    
+                            ->groupBy('coa_groups.id')->get();    
+    }
+
+    public function downloadReport()
     {
         set_time_limit(500); 
         $objPHPExcel = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
@@ -33,10 +60,12 @@ class Konven extends Component
                                     ->setCategory("Expense");
         
         $coa_groups = Journal::select('coa_groups.*')
-                            ->where('general_ledger_id',$gl->id)
+                            ->where('general_ledger_id',$this->gl->id)
                             ->join('coas','coas.id','=','journals.coa_id')
                             ->join('coa_groups','coa_groups.id','=','coas.coa_group_id')    
                             ->groupBy('coa_groups.id');
+        
+        if($this->coa_group_id) $coa_groups->where('coa_groups.id',$this->coa_group_id);
 
         foreach($coa_groups->get() as $index => $group){
             $num=5;
@@ -65,7 +94,7 @@ class Konven extends Component
             $objPHPExcel->getActiveSheet()
                 ->setCellValue('B1', 'PT ASURANSI JIWA RELIANCE INDONESIA')
                 ->setCellValue('B2', 'BUKU BESAR '.strtoupper($group->name))
-                ->setCellValue('B3', date('d F Y',strtotime($gl->submit_date)));
+                ->setCellValue('B3', date('d F Y',strtotime($this->gl->submit_date)));
             $objPHPExcel->getActiveSheet()->getStyle("B1")->applyFromArray(['font' => ['bold' => true]]);
             $objPHPExcel->getActiveSheet()->getStyle("B2")->applyFromArray(['font' => ['bold' => true]]);
             $objPHPExcel->getActiveSheet()->getStyle("B3")->applyFromArray(['font' => ['bold' => true]]);
@@ -73,7 +102,7 @@ class Konven extends Component
             $objPHPExcel->getActiveSheet()->getStyle("B2")->getAlignment()->setHorizontal('center');
             $objPHPExcel->getActiveSheet()->getStyle("B3")->getAlignment()->setHorizontal('center');
             
-            $coas  = Journal::select('coas.*')->where('general_ledger_id',$gl->id)
+            $coas  = Journal::select('coas.*')->where('general_ledger_id',$this->gl->id)
                                 ->join('coas','coas.id','=','journals.coa_id')
                                 ->where('coas.coa_group_id',$group->id)
                                 ->groupBy('journals.coa_id')->get();
@@ -112,7 +141,7 @@ class Konven extends Component
                 // Journal
                 $num++;
                 $total_debit=0;$total_kredit=0;$total_saldo=0;
-                foreach(Journal::where(['coa_id'=>$coa->id,'general_ledger_id'=>$gl->id])->get() as $journal){
+                foreach(Journal::where(['coa_id'=>$coa->id,'general_ledger_id'=>$this->gl->id])->get() as $journal){
                     $objPHPExcel->setActiveSheetIndex($index)
                         ->setCellValue('B'.$num,$journal->no_voucher)
                         ->setCellValue('C'.$num,date('d-M-Y',strtotime($journal->date_journal)))
@@ -191,6 +220,6 @@ class Konven extends Component
         header ('Pragma: public'); // HTTP/1.0
         return response()->streamDownload(function() use($writer){
             $writer->save('php://output');
-        },'general-ledger-' .date('d-M-Y',strtotime($gl->submit_date)) .'.xlsx');
+        },'general-ledger-' .date('d-M-Y',strtotime($this->gl->submit_date)) .'.xlsx');
     }
 }

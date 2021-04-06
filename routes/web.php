@@ -80,6 +80,8 @@ Route::group(['middleware' => ['auth','access:3']], function(){
     Route::get('general-ledger',App\Http\Livewire\GeneralLedger\Index::class)->name('general-ledger.index');
     Route::get('general-ledger-syariah',App\Http\Livewire\GeneralLedger\Syariah::class)->name('general-ledger.syariah');
     Route::get('general-ledger-konven',App\Http\Livewire\GeneralLedger\Konven::class)->name('general-ledger.konven');
+    Route::get('general-ledger-konven/detail/{gl}',App\Http\Livewire\GeneralLedger\KonvenDetail::class)->name('general-ledger.konven-detail');
+    Route::get('general-ledger-konven/create',App\Http\Livewire\GeneralLedger\KonvenCreate::class)->name('general-ledger.konven-create');
 });
 // Finance
 Route::group(['middleware' => ['auth','access:2']], function(){    
