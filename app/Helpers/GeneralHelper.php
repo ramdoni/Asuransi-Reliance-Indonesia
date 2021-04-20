@@ -2,6 +2,13 @@
 use App\Models\User;
 use App\Models\UserOtp;
 
+function general_ledger_number()
+{
+    $count = \App\Models\GeneralLedger::count()+1;
+    
+    return 'GL-'.str_pad($count,6, '0', STR_PAD_LEFT).'/'.date('m').'/'.date('Y');
+}
+
 function get_coa($code,$field="id")
 {
     $coa = \App\Models\Coa::where('code', $code)->first();
@@ -69,7 +76,6 @@ function send_wa($param)
     $result = curl_exec($curl);
     curl_close($curl);
 }
-
 
 function no_voucher($item)
 {

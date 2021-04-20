@@ -16,11 +16,13 @@ date_default_timezone_set("Asia/Bangkok");
 */
 Route::get('/', Home::class)->name('home')->middleware('auth');
 Route::get('login', App\Http\Livewire\Login::class)->name('login');
+
 // All login
 Route::group(['middleware' => ['auth']], function(){    
     Route::get('profile',App\Http\Livewire\Profile::class)->name('profile');
     Route::get('back-to-admin',[App\Http\Controllers\IndexController::class,'backtoadmin'])->name('back-to-admin');
 });
+
 // Administrator
 Route::group(['middleware' => ['auth','access:1']], function(){    
     Route::get('setting',App\Http\Livewire\Setting::class)->name('setting');
@@ -68,6 +70,7 @@ Route::group(['middleware' => ['auth','access:1']], function(){
     Route::get('syariah-reinsurance',App\Http\Livewire\Syariah\Reinsurance::class)->name('syariah.reinsurance');
     Route::get('log-activity',App\Http\Livewire\LogActivity\Index::class)->name('log-activity');
 });
+
 // Accounting
 Route::group(['middleware' => ['auth','access:3']], function(){ 
     Route::get('accounting-journal',App\Http\Livewire\AccountingJournal\Index::class)->name('accounting-journal.index');
@@ -78,11 +81,15 @@ Route::group(['middleware' => ['auth','access:3']], function(){
     Route::get('expense/edit/{id}',App\Http\Livewire\Expense\Edit::class)->name('expense.edit');
     Route::get('journal-penyesuaian',App\Http\Livewire\JournalPenyesuaian\Index::class)->name('journal-penyesuaian.index');
     Route::get('general-ledger',App\Http\Livewire\GeneralLedger\Index::class)->name('general-ledger.index');
+    Route::get('general-ledger/detail/{id}',App\Http\Livewire\GeneralLedger\Detail::class)->name('general-ledger.detail');
+    Route::get('general-ledger/revisi/{id}',App\Http\Livewire\GeneralLedger\Revisi::class)->name('general-ledger.revisi');
+    Route::get('general-ledger/create/{coa}',App\Http\Livewire\GeneralLedger\Create::class)->name('general-ledger.create');
     Route::get('general-ledger-syariah',App\Http\Livewire\GeneralLedger\Syariah::class)->name('general-ledger.syariah');
     Route::get('general-ledger-konven',App\Http\Livewire\GeneralLedger\Konven::class)->name('general-ledger.konven');
     Route::get('general-ledger-konven/detail/{gl}',App\Http\Livewire\GeneralLedger\KonvenDetail::class)->name('general-ledger.konven-detail');
     Route::get('general-ledger-konven/create',App\Http\Livewire\GeneralLedger\KonvenCreate::class)->name('general-ledger.konven-create');
 });
+
 // Finance
 Route::group(['middleware' => ['auth','access:2']], function(){    
     Route::get('trial-balance',App\Http\Livewire\TrialBalance\Index::class)->name('trial-balance');

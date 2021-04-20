@@ -171,10 +171,12 @@
                             </li>
                             <li class="{{ Request::segment(1) === 'dashboard' ? 'active' : null }}">
                                 <a href="{{ route('journal-penyesuaian.index') }}"><i class="fa fa-edit"></i>
-                                    <span>Journal Penyesuaian</span></a>
+                                    <span>Adjusting</span></a>
                             </li>
-                            <li
-                                class="{{ (Request::segment(1) === 'general-ledger-syariah' || Request::segment(1) === 'general-ledger-konven')?'active':''}}">
+                            <li class="{{ Request::segment(1) === 'general-ledger' ? 'active' : null }}">
+                                <a href="{{ route('general-ledger.index') }}"><i class="fa fa-table"></i>
+                                    <span>General Ledger</span></a>
+                                {{-- class="{{ (Request::segment(1) === 'general-ledger-syariah' || Request::segment(1) === 'general-ledger-konven')?'active':''}}">
                                 <a href="#" class="has-arrow"><i class="fa fa-table"></i> <span>General Ledger</span></a>
                                 <ul>
                                     <li
@@ -185,7 +187,7 @@
                                         class="{{ Request::segment(1) === 'general-ledger-konven' ? 'active' : null }}">
                                         <a href="{{ route('general-ledger.konven') }}"> Konven</a>
                                     </li>
-                                </ul>
+                                </ul> --}}
                             </li>
                             <li class="{{ Request::segment(1) === 'dashboard' ? 'active' : null }}">
                                 <a href="#"><i class="fa fa-database"></i> <span>Cashflow</span></a>

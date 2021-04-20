@@ -96,6 +96,7 @@ class Detail extends Component
         }    
         $this->payment_amount = format_idr($this->payment_amount);
     }
+    
     public function showDetailCancelation($id)
     {
         if($this->data->type==1) $this->cancelation = KonvenMemo::find($id);
@@ -103,6 +104,7 @@ class Detail extends Component
         $this->showDetail='cancelation';
         $this->emit('init-form');
     }
+
     public function save()
     {   
         $this->emit('init-form');
@@ -179,7 +181,9 @@ class Detail extends Component
             // maka ter-create journal penyesuaian me refer ke journal sebelumnya
             if($this->is_otp_editable){
                 $find_journal = Journal::where(['transaction_table'=>'income','transaction_id'=>$this->data->id])->first();
-                Journal::where(['transaction_table'=>'income','transaction_id'=>$this->data->id])->update(['is_adjusting'=>1]);
+                
+                Journal::where(['transaction_table'=>'income','transaction_id'=>$this->data->id])->update(['is_adjusting'=>1,'debit'=>0,'kredit'=>0,'saldo'=>0]);
+
                 \LogActivity::add("Income - Premium Receivable Editable OTP {$this->data->id}");
                 $count_journal_penyesuaian = JournalPenyesuaian::count()+1;
                 if(!$find_journal){

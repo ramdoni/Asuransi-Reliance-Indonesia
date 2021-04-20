@@ -49,8 +49,7 @@
                 <div class="px-0 body">
                     <div class="table-responsive">
                         <table class="table m-b-0 c_list table-bordered table-style1">
-                        @foreach($data as $journal)
-                            <thead style="background:#eee;">
+                            <thead>
                                 <tr>                    
                                     <th>COA</th>                                    
                                     <th>No Voucher</th>                                    
@@ -62,9 +61,16 @@
                                     <th>Saldo</th>
                                 </tr>
                             </thead>
+                            
+                            @foreach($data as $key => $journal)
+                            {{-- @if($key!=0)
+                            <tr>                    
+                                <th colspan="8"></th>                                    
+                            </tr>
+                            @endif --}}
                             <tbody>
                                 @foreach(\App\Models\Journal::where('no_voucher',$journal['no_voucher'])->get() as $item)
-                                <tr>
+                                <tr style="background: #eeeeeeee">
                                     <td>{{isset($item->coa->code)?$item->coa->code:''}}</td>
                                     <td><a href="{{route('accounting-journal.detail',['id'=>$item->id])}}">{{$item->no_voucher}}</a></td>
                                     <td>{{date('d-M-Y',strtotime($item->date_journal))}}</td>
@@ -75,40 +81,23 @@
                                     <td class="text-right">{{format_idr($item->saldo)}}</td>
                                 </tr>
                                 @endforeach
-                                <tr>
-                                    <td colspan="8" style="padding-left:30px !important;">
-                                        <label>Journal Penyesuaian</label>
-                                        <table class="table">
-                                            <tr>
-                                                <th>COA</th>                                    
-                                                <th>No Voucher</th>                                    
-                                                <th>Journal Date</th>                                    
-                                                <th>Account</th>                                    
-                                                <th>Description</th>                                    
-                                                <th>Debit</th>                                    
-                                                <th>Kredit</th>
-                                                <th>Saldo</th>
-                                            </tr>
-                                            @php($br_=0)
-                                            @foreach(\App\Models\JournalPenyesuaian::where('journal_no_voucher',$journal->no_voucher)->get() as $p)
-                                                @if($p->no_voucher!=$br_)
-                                                    <tr><td colspan="9" style="background:#bbbaba;padding:1px;"></td></tr>
-                                                @endif
-                                                <tr>
-                                                    <td>{{isset($p->coa->code)?$p->coa->code:''}}</td>
-                                                    <td><a href="{{route('accounting-journal.detail',['id'=>$p->id])}}">{{$p->no_voucher}}</a></td>
-                                                    <td>{{date('d-M-Y',strtotime($p->date_journal))}}</td>
-                                                    <td>{{isset($p->coa->name)?$p->coa->name:''}}</td>
-                                                    <td>{{$p->description}}</td>
-                                                    <td class="text-right">{{format_idr($p->debit)}}</td>
-                                                    <td class="text-right">{{format_idr($p->kredit)}}</td>
-                                                    <td class="text-right">{{format_idr($p->saldo)}}</td>
-                                                </tr>
-                                                @php($br_=$p->no_voucher)
-                                            @endforeach
-                                        </table>
-                                    </td>
-                                </tr>
+                                @php($br_=0)
+                                @foreach(\App\Models\JournalPenyesuaian::where('journal_no_voucher',$journal->no_voucher)->get() as $p)
+                                    @if($p->no_voucher!=$br_)
+                                        <tr><td colspan="9" style="background:#bbbaba;padding:1px;"></td></tr>
+                                    @endif
+                                    <tr>
+                                        <td>{{isset($p->coa->code)?$p->coa->code:''}}</td>
+                                        <td><a href="{{route('accounting-journal.detail',['id'=>$p->id])}}">{{$p->no_voucher}}</a></td>
+                                        <td>{{date('d-M-Y',strtotime($p->date_journal))}}</td>
+                                        <td>{{isset($p->coa->name)?$p->coa->name:''}}</td>
+                                        <td>{{$p->description}}</td>
+                                        <td class="text-right">{{format_idr($p->debit)}}</td>
+                                        <td class="text-right">{{format_idr($p->kredit)}}</td>
+                                        <td class="text-right">{{format_idr($p->saldo)}}</td>
+                                    </tr>
+                                    @php($br_=$p->no_voucher)
+                                @endforeach
                             </tbody>
                             <tr>
                                 <td colspan="9" class="py-1" style="border-left:0;border-right:0;"></td>
