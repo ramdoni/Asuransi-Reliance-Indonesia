@@ -22,7 +22,7 @@
                             </div>          
                             <div class="col-md-12 form-group">
                             @error('otp')
-                            <span class="text-danger">{{ $message }}</span>
+                                <span class="text-danger">{{ $message }}</span>
                             @enderror
                             </div>
                         </div>
@@ -40,3 +40,10 @@
         </div>
     </div>
 </div>
+@push('after-scripts')
+<script>
+    Livewire.on('otp-editable',()=>{
+        $("#modal_konfirmasi_otp").modal("hide");
+    });
+</script>
+@endpush

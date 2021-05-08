@@ -8,13 +8,13 @@ use App\Models\Journal;
 
 class Library extends Component
 {
-    public $coa_id,$month,$year;
+    public $coa_group_id,$month,$year;
 
     public function render()
     {
         $library = GeneralLedger::orderBy('id','DESC');
         
-        if($this->coa_id) $library->where('coa_id',$this->coa_id);
+        if($this->coa_group_id) $library->where('coa_group_id',$this->coa_group_id);
         if($this->month) $library->where('month',$this->month);
         if($this->year) $library->where('year',$this->year);
 

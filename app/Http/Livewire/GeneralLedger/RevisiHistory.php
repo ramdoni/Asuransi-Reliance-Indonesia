@@ -4,25 +4,26 @@ namespace App\Http\Livewire\GeneralLedger;
 
 use Livewire\Component;
 use App\Models\GeneralLedger;
-use App\Models\Journal;
+use App\Models\GeneralLedgerHistory;
 use App\Models\Coa;
 
-class Detail extends Component
+class RevisiHistory extends Component
 {
-    public $data,$coa_group;
+    public $data,$histories,$coa_group;
 
     public function render()
     {
-        return view('livewire.general-ledger.detail');
+        return view('livewire.general-ledger.revisi-history');
     }
 
-    public function mount(GeneralLedger $id)
+    public function mount(GeneralLedger $gl)
     {
-        $this->data = $id;
-        $this->coa_group = $this->data->coa_group; 
+        $this->data = $gl;
+        $this->histories = GeneralLedgerHistory::where('general_ledger_id',$gl->id)->groupBy('is_revisi')->orderBy('is_revisi','DESC')->get();
+        $this->coa_group = $this->data->coa_group;
     }
 
-    public function download()
+    public function downloadReport($is_revisi)
     {
         set_time_limit(500); 
         $objPHPExcel = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
@@ -66,9 +67,8 @@ class Detail extends Component
         $objPHPExcel->getActiveSheet()->getStyle("B2")->getAlignment()->setHorizontal('center');
         $objPHPExcel->getActiveSheet()->getStyle("B3")->getAlignment()->setHorizontal('center');
         
-
         foreach(Coa::where('coa_group_id',$this->coa_group->id)->get() as $coa){
-            if(Journal::where(['general_ledger_id'=>$this->data->id,'coa_id'=>$coa->id])->count()==0) continue;
+            if(GeneralLedgerHistory::select('journals.*')->join('journals','journals.id','=','general_ledger_history.journal_id')->where(['is_revisi'=>$is_revisi,'general_ledger_history.general_ledger_id'=>$this->data->id,'journals.coa_id'=>$coa->id])->count()==0)continue;
             // Header
             $objPHPExcel->getActiveSheet()
                 ->setCellValue('A'.$num, '')
@@ -102,7 +102,7 @@ class Detail extends Component
             // Journal
             $num++;
             $total_debit=0;$total_kredit=0;$total_saldo=0;
-            foreach(Journal::where(['general_ledger_id'=>$this->data->id,'coa_id'=>$coa->id])->get() as $journal){
+            foreach(GeneralLedgerHistory::select('journals.*')->join('journals','journals.id','=','general_ledger_history.journal_id')->where(['is_revisi'=>$is_revisi,'general_ledger_history.general_ledger_id'=>$this->data->id,'journals.coa_id'=>$coa->id])->get() as $journal){
                 $objPHPExcel->setActiveSheetIndex(0)
                     ->setCellValue('B'.$num,$journal->no_voucher)
                     ->setCellValue('C'.$num,date('d-M-Y',strtotime($journal->date_journal)))
@@ -182,6 +182,6 @@ class Detail extends Component
         header ('Pragma: public'); // HTTP/1.0
         return response()->streamDownload(function() use($writer){
             $writer->save('php://output');
-        },'general-ledger-' .date('d-M-Y') .'.xlsx');       
+        },'general-ledger-' .date('d-M-Y').'.xlsx');
     }
 }

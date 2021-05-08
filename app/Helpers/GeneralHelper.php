@@ -2,6 +2,11 @@
 use App\Models\User;
 use App\Models\UserOtp;
 
+function gl_number($item)
+{
+    return $item->general_ledger_number .($item->revisi!=0 ? " - R{$item->revisi}" : "");
+}
+
 function general_ledger_number()
 {
     $count = \App\Models\GeneralLedger::count()+1;

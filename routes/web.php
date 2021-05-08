@@ -82,8 +82,9 @@ Route::group(['middleware' => ['auth','access:3']], function(){
     Route::get('journal-penyesuaian',App\Http\Livewire\JournalPenyesuaian\Index::class)->name('journal-penyesuaian.index');
     Route::get('general-ledger',App\Http\Livewire\GeneralLedger\Index::class)->name('general-ledger.index');
     Route::get('general-ledger/detail/{id}',App\Http\Livewire\GeneralLedger\Detail::class)->name('general-ledger.detail');
-    Route::get('general-ledger/revisi/{id}',App\Http\Livewire\GeneralLedger\Revisi::class)->name('general-ledger.revisi');
-    Route::get('general-ledger/create/{coa}',App\Http\Livewire\GeneralLedger\Create::class)->name('general-ledger.create');
+    Route::get('general-ledger/revisi/{gl}',App\Http\Livewire\GeneralLedger\Revisi::class)->name('general-ledger.revisi');
+    Route::get('general-ledger/revisi-history/{gl}',App\Http\Livewire\GeneralLedger\RevisiHistory::class)->name('general-ledger.revisi-history');
+    Route::get('general-ledger/create/{coa_group}',App\Http\Livewire\GeneralLedger\Create::class)->name('general-ledger.create');
     Route::get('general-ledger-syariah',App\Http\Livewire\GeneralLedger\Syariah::class)->name('general-ledger.syariah');
     Route::get('general-ledger-konven',App\Http\Livewire\GeneralLedger\Konven::class)->name('general-ledger.konven');
     Route::get('general-ledger-konven/detail/{gl}',App\Http\Livewire\GeneralLedger\KonvenDetail::class)->name('general-ledger.konven-detail');

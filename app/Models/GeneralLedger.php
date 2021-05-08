@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
-use App\Models\Coa;
+use App\Models\CoaGroup;
 
 class GeneralLedger extends Model
 {
@@ -18,8 +18,8 @@ class GeneralLedger extends Model
         return $this->belongsTo(User::class,'user_id');
     }
 
-    public function coa()
+    public function coa_group()
     {
-        return $this->belongsTo(Coa::class,'coa_id');
+        return $this->belongsTo(CoaGroup::class,'coa_group_id');
     }
 }

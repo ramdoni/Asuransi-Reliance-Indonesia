@@ -1,21 +1,19 @@
-@section('title', gl_number($data))
+@section('title', 'History Revisi : '.$data->general_ledger_number)
 @section('parentPageTitle', 'General Ledger')
 <div class="clearfix row">
     <div class="col-lg-12">
+        @foreach($histories as $history)
         <div class="card">
             <div class="body">
                 <div class="row">
-                    <div class="col-md-8">                        
-                        <a href="javascript:void(0)" class="btn btn-success" wire:click="download"><i class="fa fa-download"></i> Download Report</a>
-                        <a href="{{route('general-ledger.revisi',$data->id)}}" class="btn btn-info"><i class="fa fa-edit"></i> Revisi</a>
-                        <a href="{{route('general-ledger.revisi-history',$data->id)}}" class="btn btn-warning"><i class="fa fa-history"></i> History Revisi</a>
-                        <span wire:loading>
-                            <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
-                            <span class="sr-only">{{ __('Loading...') }}</span>
-                        </span>
+                    <div class="col-md-2">
+                        <h6 class="text-success">{{$history->gl->general_ledger_number}}{{$history->is_revisi!=0 ? "-R".$history->is_revisi : ''}}</h6>
+                        <span>{{date('d M Y',strtotime($history->created_at))}}</span>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="javascript:;" wire:click="downloadReport({{$history->is_revisi}})" class="badge badge-info"><i class="fa fa-download"></i> Download Report</a>
                     </div>
                 </div>
-                <hr />
                 <div class="table-responsive">
                     <table class="table table-hover m-b-0 c_list table-bordered">
                         <thead style="background: #eee;">
@@ -30,8 +28,8 @@
                                 <th>Saldo</th>
                             </tr>
                         </thead>
-                        @foreach(\App\Models\Coa::where('coa_group_id',$coa_group->id)->get() as $coa)
-                            @if(\App\Models\Journal::where(['general_ledger_id'=>$data->id,'coa_id'=>$coa->id])->count()==0) @continue @endif
+                        @foreach(\App\Models\Coa::where('coa_group_id',$data->coa_group_id)->get() as $coa)
+                            @if(\App\Models\GeneralLedgerHistory::select('journals.*')->join('journals','journals.id','=','general_ledger_history.journal_id')->where(['is_revisi'=>$history->is_revisi,'general_ledger_history.general_ledger_id'=>$data->id,'journals.coa_id'=>$coa->id])->count()==0) @continue @endif
                             <tr>
                                 <td>{{$coa->code}}</td>
                                 <th colspan="7">{{$coa->name}}</th>
@@ -44,7 +42,7 @@
                             @php($total_debit=0)
                             @php($total_kredit=0)
                             @php($total_saldo=$coa->opening_balance)
-                            @foreach(\App\Models\Journal::where(['general_ledger_id'=>$data->id,'coa_id'=>$coa->id])->get() as $journal)
+                            @foreach(\App\Models\GeneralLedgerHistory::select('journals.*')->join('journals','journals.id','=','general_ledger_history.journal_id')->where(['is_revisi'=>$history->is_revisi,'general_ledger_history.general_ledger_id'=>$data->id,'journals.coa_id'=>$coa->id])->get() as $journal)
                                 <tr>
                                     <td class="text-center"></td>
                                     <td>{{$journal->no_voucher}}</td>
@@ -79,14 +77,11 @@
                                     <th class="text-right">{{format_idr($total_saldo)}}</th>
                                 </tr>
                             </thead>
-                            <tr>
-                                <td colspan="9" class="py-2" style="border-left:0;border-right:0;"></td>
-                            </tr>
                         @endforeach
                     </table>
                 </div>
             </div>
         </div>
+        @endforeach
     </div>
 </div>
-

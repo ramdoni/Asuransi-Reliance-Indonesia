@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\GeneralLedger;
 
 use Livewire\Component;
+use App\Models\CoaGroup;
 use App\Models\Coa;
 use App\Models\Journal;
 use App\Models\GeneralLedger;
@@ -11,22 +12,22 @@ class Create extends Component
 {
     public $coa,$year,$month;
 
-    public $total_selected,$coa_group_id,$from_date,$to_date,$create_gl=false,$journal_id=[],$message_error="",$coas;
+    public $total_selected,$coa_group_id,$from_date,$to_date,$create_gl=false,$journal_id=[],$message_error="",$coas,$coa_group;
 
     public function render()
     {
         return view('livewire.general-ledger.create');
     }
 
-    public function mount(Coa $coa)
+    public function mount(CoaGroup $coa_group)
     {
-        $this->coa = $coa;
+        $this->coa_group = $coa_group;
         
-        foreach(Journal::whereNull('general_ledger_id')->where('coa_id',$this->coa->id)->get() as $journal){
+        foreach(Journal::select('journals.*')->join('coas','coas.id','=','journals.coa_id')->whereNull('journals.general_ledger_id')->where(['coas.coa_group_id'=>$this->coa_group->id])->get() as $journal){
             $this->journal_id[$journal->id] = $journal->status_general_ledger ==1 ? 1 : 0; 
         }
-        $this->total_selected = Journal::where(['status_general_ledger'=>1,'coa_id'=>$this->coa->id])->count();
-        $this->coas = Journal::where(['coa_id'=>$this->coa->id])->whereNull('general_ledger_id')->get();
+
+        $this->total_selected = Journal::select('journals.*')->join('coas','coas.id','=','journals.coa_id')->where(['status_general_ledger'=>1,'coas.coa_group_id'=>$this->coa_group->id])->count();
     }
     
     public function updated()
@@ -42,8 +43,8 @@ class Create extends Component
             $item->save();
             $this->journal_id[$item->id] = 1;
         }
-        $this->total_selected = Journal::where(['status_general_ledger'=>1,'coa_id'=>$this->coa->id])->count();
 
+        $this->total_selected = Journal::join('coas','coas.id','=','journals.coa_id')->where(['status_general_ledger'=>1,'coas.coa_group_id'=>$this->coa_group->id])->count();
         $this->emit('added-journal', "Select All");
     }
 
@@ -229,15 +230,15 @@ class Create extends Component
 
         $selected->save();
 
-        $this->total_selected = Journal::where(['status_general_ledger'=>1,'coa_id'=>$this->coa->id])->count();
+        $this->total_selected = Journal::join('coas','coas.id','=','journals.coa_id')
+                                            ->where(['status_general_ledger'=>1,'coas.coa_group_id'=>$this->coa_group->id])->count();
     }
 
     public function clear_selected()
     {
         Journal::where(['status_general_ledger'=>1])->update(['status_general_ledger'=>0]);
         
-        $this->total_selected = Journal::where(['status_general_ledger'=>1,'coa_id'=>$this->coa->id])->count();
-
-        $this->emit('added-journal', "Clear selected data..");
+        $this->total_selected = Journal::join('coas','coas.id','=','journals.coa_id')->where(['status_general_ledger'=>1,'coa.coa_group_id'=>$this->coa_group->id])->count();
+        $this->emit('added-journal', "Clear selected data...");
     }
 }

@@ -1,7 +1,7 @@
 <div class="modal-content">
     <form wire:submit.prevent="submit">
         <div class="modal-header row">
-            <h5 class="modal-title ml-3" id="exampleModalLabel"><i class="fa fa-plus"></i> Submit General Ledger <span class="text-danger">{{general_ledger_number()}}</span></h5>
+            <h5 class="modal-title ml-3" id="exampleModalLabel"><i class="fa fa-edit"></i> Revisi General Ledger <span class="text-danger">{{general_ledger_number()}}</span></h5>
             <span wire:loading>
                 <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
                 <span class="sr-only">{{ __('Loading...') }}</span>
@@ -26,7 +26,7 @@
                         </tr>
                     </thead>
                     @foreach(\App\Models\Coa::where('coa_group_id',$coa_group->id)->get() as $coa)
-                     @if(\App\Models\Journal::where(['coa_id'=>$coa->id,'status_general_ledger'=>1])->count()==0) @continue @endif
+                     @if(\App\Models\Journal::where(['coa_id'=>$coa->id])->where(function($table) use($data){ $table->where('status_general_ledger',1)->orWhere('general_ledger_id',$data->id); })->count()==0) @continue @endif
                         <tr>
                             <td>{{$coa->code}}</td>
                             <th colspan="7">{{$coa->name}}</th>
@@ -39,7 +39,7 @@
                         @php($total_debit=0)
                         @php($total_kredit=0)
                         @php($total_saldo=$coa->opening_balance)
-                        @foreach(\App\Models\Journal::where(['coa_id'=>$coa->id,'status_general_ledger'=>1])->get() as $journal)
+                        @foreach(\App\Models\Journal::where(['coa_id'=>$coa->id])->where(function($table) use($data){ $table->where('status_general_ledger',1)->orWhere('general_ledger_id',$data->id); })->get() as $journal)
                             <tr>
                                 <td class="text-center"><a href="javascript:;" wire:click="delete({{$journal->id}})" class="text-danger"><i class="fa fa-trash"></i></a></td>
                                 <td>{{$journal->no_voucher}}</td>
@@ -86,40 +86,11 @@
                 </span>
             </div>
             <div class="col-md-2">
-                <label>Month</label>
-                <select class="form-control" wire:model="month">
-                    <option value=""> --- Select --- </option>
-                    <option value="1">Januari</option>
-                    <option value="2">Februari</option>
-                    <option value="3">Maret</option>
-                    <option value="4">April</option>
-                    <option value="5">Mei</option>
-                    <option value="6">Juni</option>
-                    <option value="7">Juli</option>
-                    <option value="8">Agustus</option>
-                    <option value="9">September</option>
-                    <option value="10">Oktober</option>
-                    <option value="11">November</option>
-                    <option value="12">Desember</option>
-                </select>
-                @error("month")
-                <span class="text-danger">{{ $message }}</span>
-                @enderror
-            </div>
-            <div class="col-md-2">
-                <label>Year</label>
-                <select class="form-control" wire:model="year">
-                    <option value=""> --- Select --- </option>
-                    @for($tahun=date('Y');$tahun<date('Year',strtotime("+3 Year"));$tahun++)
-                    <option>{{$tahun}}</option>
-                    @endfor
-                </select>
-                @error("year")
-                <span class="text-danger">{{ $message }}</span>
-                @enderror
-            </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-info mt-4"><i class="fa fa-save"></i> Submit General Ledger</button>
+                @if($is_valid)
+                    <button type="submit" class="btn btn-info mt-4"><i class="fa fa-save"></i> Submit Revisi</button>
+                @else
+                    <a class="btn btn-warning mt-4" data-toggle="modal" data-target="#modal_konfirmasi_otp"><i class="fa fa-arrow-right"></i> Request OTP</a>
+                @endif
                 <span class="text-danger">{{ $message_error }}</span>
             </div>
         </div>

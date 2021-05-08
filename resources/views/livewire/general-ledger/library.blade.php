@@ -1,10 +1,18 @@
 <div>
     <div class="row">
         <div class="col-md-3" wire:ignore>
-            <select class="form-control" wire:model="coa_id" id="coa_id">
-                <option value=""> --- COA --- </option>
-                @foreach(\App\Models\Coa::orderBy('name','ASC')->get() as $coa)
-                <option>{{$coa->name}}</option>
+            <select class="form-control" wire:model="coa_group_id" id="coa_group_id">
+                <option value=""> --- Categories --- </option>
+                @foreach(\App\Models\CoaGroup::orderBy('name','ASC')->get() as $coa)
+                <option value="{{$coa->id}}">{{$coa->name}}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select class="form-control" wire:model="year">
+                <option value=""> --- Year --- </option>
+                @foreach(\App\Models\GeneralLedger::groupBy('year')->get() as $gl)
+                <option>{{$gl->year}}</option>
                 @endforeach
             </select>
         </div>
@@ -25,14 +33,6 @@
                 <option value="12">Desember</option>
             </select>
         </div>
-        <div class="col-md-2">
-            <select class="form-control" wire:model="year">
-                <option value=""> --- Year --- </option>
-                @foreach(\App\Models\GeneralLedger::groupBy('year')->get() as $gl)
-                <option>{{$gl->year}}</option>
-                @endforeach
-            </select>
-        </div>
         <div class="col-md-5">
             <span wire:loading>
                 <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
@@ -46,8 +46,8 @@
             <thead>
                 <tr>
                     <th style="width:50px;">No</th>
-                    <th>General Ledger Number</th>
-                    <th>COA</th>
+                    <th>Number</th>
+                    <th>Categories</th>
                     <th>Month</th>
                     <th>Year</th>
                     <th></th>
@@ -58,8 +58,8 @@
             @foreach($library as $item)
                 <tr>
                     <td>{{$num}}</td>
-                    <td><a href="{{route('general-ledger.detail',$item->id)}}">{{$item->general_ledger_number}}</a></td>
-                    <td>{{isset($item->coa->name) ? $item->coa->name : ''}}</td>
+                    <td><a href="{{route('general-ledger.detail',$item->id)}}">{{gl_number($item)}}</a></td>
+                    <td>{{isset($item->coa_group->name) ? $item->coa_group->name : ''}}</td>
                     <td>{{date('F', mktime(0, 0, 0, $item->month, 10))}}</td>
                     <td>{{$item->year}}</td>
                     <td>
@@ -82,10 +82,10 @@
         .select2-container {width: 100% !important;}
     </style>
     <script>
-        select__2 = $('#coa_id').select2();
-        $('#coa_id').on('change', function (e) {
+        select__2 = $('#coa_group_id').select2();
+        $('#coa_group_id').on('change', function (e) {
             var data = $(this).select2("val");
-            @this.set('coa_id', data);
+            @this.set('coa_group_id', data);
         });
     </script>
     @endpush

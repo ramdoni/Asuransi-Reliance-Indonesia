@@ -1,4 +1,4 @@
-@section('title', "{$coa->name} #{$coa->code}")
+@section('title', "{$coa_group->name} #{$coa_group->code}")
 @section('parentPageTitle', 'General Ledger')
 <div class="clearfix row">
     <div class="col-lg-12">
@@ -36,68 +36,70 @@
                                     <th>Saldo</th>
                                 </tr>
                             </thead>
-                            <tr>
-                                <td>{{$coa->code}}</td>
-                                <th colspan="7">{{$coa->name}}</th>
-                            </tr>
-                            <tr>
-                                <td class="text-center">
-                                    Select All <br />
-                                    <input type="checkbox" wire:click="select_all({{$coa->id}})" />
-                                </td>
-                                <th colspan="6">Saldo Awal</th>
-                                <td class="text-right">{{format_idr($coa->opening_balance)}}</td>
-                            </tr>
-                            @php($total_debit=0)
-                            @php($total_kredit=0)
-                            @php($total_saldo=$coa->opening_balance)
-                            @foreach($coas as $journal)
+                            @foreach(\App\Models\Coa::where('coa_group_id',$coa_group->id)->get() as $coa)
+                                <tr>
+                                    <td>{{$coa->code}}</td>
+                                    <th colspan="7">{{$coa->name}}</th>
+                                </tr>
                                 <tr>
                                     <td class="text-center">
-                                        <input type="checkbox" wire:model="journal_id.{{$journal->id}}" value="1" wire:click="set_status_general_ledger({{$journal->id}})" />
+                                        Select All <br />
+                                        <input type="checkbox" wire:click="select_all({{$coa->id}})" />
                                     </td>
-                                    <td>{{$journal->no_voucher}}</td>
-                                    <td>{{date('d-M-Y',strtotime($journal->date_journal))}}</td>
-                                    <td>{{isset($journal->coa->name)?$journal->coa->name : ''}}</td>
-                                    <td>{{$journal->description}}</td>
-                                    <td class="text-right">{{format_idr($journal->debit)}}</td>
-                                    <td class="text-right">{{format_idr($journal->kredit)}}</td>
-                                    <td class="text-right">{{format_idr($journal->saldo)}}</td>
+                                    <th colspan="6">Saldo Awal</th>
+                                    <td class="text-right">{{format_idr($coa->opening_balance)}}</td>
                                 </tr>
-                                @php($total_debit +=$journal->debit)
-                                @php($total_kredit +=$journal->kredit)
-                                @php($total_saldo -=$journal->saldo)
+                                @php($total_debit=0)
+                                @php($total_kredit=0)
+                                @php($total_saldo=$coa->opening_balance)
+                                @foreach(\App\Models\Journal::where(['coa_id'=>$coa->id])->whereNull('general_ledger_id')->get() as $journal)
+                                    <tr>
+                                        <td class="text-center">
+                                            <input type="checkbox" wire:model="journal_id.{{$journal->id}}" value="1" wire:click="set_status_general_ledger({{$journal->id}})" />
+                                        </td>
+                                        <td>{{$journal->no_voucher}}</td>
+                                        <td>{{date('d-M-Y',strtotime($journal->date_journal))}}</td>
+                                        <td>{{isset($journal->coa->name)?$journal->coa->name : ''}}</td>
+                                        <td>{{$journal->description}}</td>
+                                        <td class="text-right">{{format_idr($journal->debit)}}</td>
+                                        <td class="text-right">{{format_idr($journal->kredit)}}</td>
+                                        <td class="text-right">{{format_idr($journal->saldo)}}</td>
+                                    </tr>
+                                    @php($total_debit +=$journal->debit)
+                                    @php($total_kredit +=$journal->kredit)
+                                    @php($total_saldo -=$journal->saldo)
+                                @endforeach
+                                @if(\App\Models\Journal::where(['coa_id'=>$coa->id])->count()==0)
+                                    <tr>
+                                        <td>&nbsp;</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                @endif
+                                <thead style="background: #eee;">
+                                    <tr>
+                                        <th colspan="5" class="text-center">Total {{$coa->name}}</th>
+                                        <th class="text-right">{{format_idr($total_debit)}}</th>
+                                        <th class="text-right">{{format_idr($total_kredit)}}</th>
+                                        <th class="text-right">{{format_idr($total_saldo)}}</th>
+                                    </tr>
+                                </thead>
+                                <tr>
+                                    <td colspan="9" class="py-2" style="border-left:0;border-right:0;"></td>
+                                </tr>
                             @endforeach
-                            @if(\App\Models\Journal::where(['coa_id'=>$coa->id])->count()==0)
-                                <tr>
-                                    <td>&nbsp;</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                            @endif
-                            <thead style="background: #eee;">
-                                <tr>
-                                    <th colspan="5" class="text-center">Total {{$coa->name}}</th>
-                                    <th class="text-right">{{format_idr($total_debit)}}</th>
-                                    <th class="text-right">{{format_idr($total_kredit)}}</th>
-                                    <th class="text-right">{{format_idr($total_saldo)}}</th>
-                                </tr>
-                            </thead>
-                            <tr>
-                                <td colspan="9" class="py-2" style="border-left:0;border-right:0;"></td>
-                            </tr>
                     </table>
                 </div>
             </div>
         </div>
         <div class="modal fade" id="submit_or_preview" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg" style="max-width:90%;" role="document">
-                @livewire('general-ledger.create-preview',['coa'=>$coa->id])
+                @livewire('general-ledger.create-preview',['coa_group'=>$coa_group->id])
             </div>
         </div>
         <div wire:ignore.self class="modal fade" id="modal_download_report" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
