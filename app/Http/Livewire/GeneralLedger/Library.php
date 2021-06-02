@@ -38,7 +38,7 @@ class Library extends Component
         
             $num=5;
             $invalidCharacters = $objPHPExcel->getActiveSheet()->getInvalidCharacters();
-            $title = str_replace($invalidCharacters, '', $check->coa->name);
+            $title = str_replace($invalidCharacters, '', $check->coa_group->name);
             $title = substr($title, 0, 31);
 
             $objPHPExcel->setActiveSheetIndex(0)->setTitle($title);
@@ -58,7 +58,7 @@ class Library extends Component
             $objPHPExcel->getActiveSheet()->mergeCells('B3:H3');
             $objPHPExcel->getActiveSheet()
                 ->setCellValue('B1', 'PT ASURANSI JIWA RELIANCE INDONESIA')
-                ->setCellValue('B2', 'BUKU BESAR '.strtoupper($check->coa->name))
+                ->setCellValue('B2', 'BUKU BESAR '.strtoupper($check->coa_group->name))
                 ->setCellValue('B3', date('F', mktime(0, 0, 0, $check->month, 10)).' '.$check->year);
             $objPHPExcel->getActiveSheet()->getStyle("B1")->applyFromArray(['font' => ['bold' => true]]);
             $objPHPExcel->getActiveSheet()->getStyle("B2")->applyFromArray(['font' => ['bold' => true]]);
@@ -67,96 +67,95 @@ class Library extends Component
             $objPHPExcel->getActiveSheet()->getStyle("B2")->getAlignment()->setHorizontal('center');
             $objPHPExcel->getActiveSheet()->getStyle("B3")->getAlignment()->setHorizontal('center');
             
-            // Header
-            $objPHPExcel->getActiveSheet()
-                ->setCellValue('A'.$num, '')
-                ->setCellValue('B'.$num, 'No Voucher')
-                ->setCellValue('C'.$num, 'Date')
-                ->setCellValue('D'.$num, 'Account')
-                ->setCellValue('E'.$num, 'Description')
-                ->setCellValue('F'.$num, 'Debit')
-                ->setCellValue('G'.$num, 'Kredit')
-                ->setCellValue('H'.$num, 'Saldo');
+            foreach(Journal::where(['general_ledger_id'=>$check->id])->groupBy('coa_id')->get() as $coa){
+                // Header
+                $objPHPExcel->getActiveSheet()
+                    ->setCellValue('A'.$num, '')
+                    ->setCellValue('B'.$num, 'No Voucher')
+                    ->setCellValue('C'.$num, 'Date')
+                    ->setCellValue('D'.$num, 'Account')
+                    ->setCellValue('E'.$num, 'Description')
+                    ->setCellValue('F'.$num, 'Debit')
+                    ->setCellValue('G'.$num, 'Kredit')
+                    ->setCellValue('H'.$num, 'Saldo');
 
-            $objPHPExcel->getActiveSheet()->getStyle("B{$num}:H{$num}")->getAlignment()->setHorizontal('center');
-            $objPHPExcel->getActiveSheet()->getStyle("B{$num}:H{$num}")
-                        ->getFill()
-                        ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                        ->getStartColor()->setRGB('EEEEEE');
-            // Bold
-            $objPHPExcel->getActiveSheet()->getStyle("A{$num}:H{$num}")->applyFromArray(['font' => ['bold' => true]]);
-
-            $num++;
-            $objPHPExcel->getActiveSheet()
-                ->setCellValue('A'.$num, $check->coa->code)
-                ->setCellValue('B'.$num, $check->coa->name);
-            $objPHPExcel->getActiveSheet()->getStyle("B{$num}")->applyFromArray(['font' => ['bold' => true]]);
-
-            $num++;
-            $objPHPExcel->setActiveSheetIndex(0)
-                ->setCellValue('B'.$num, "Saldo Awal");
-            $objPHPExcel->getActiveSheet()->getStyle("B{$num}")->applyFromArray(['font' => ['bold' => true]]);
-        
-            // Journal
-            $num++;
-            $total_debit=0;$total_kredit=0;$total_saldo=0;
-            foreach(Journal::where(['general_ledger_id'=>$check->id])->get() as $journal){
-                $objPHPExcel->setActiveSheetIndex(0)
-                    ->setCellValue('B'.$num,$journal->no_voucher)
-                    ->setCellValue('C'.$num,date('d-M-Y',strtotime($journal->date_journal)))
-                    ->setCellValue('D'.$num,isset($journal->coa->name) ? $journal->coa->name : '')
-                    ->setCellValue('E'.$num,$journal->description)
-                    ->setCellValue('F'.$num,$journal->debit)
-                    ->setCellValue('G'.$num,$journal->kredit)
-                    ->setCellValue('H'.$num,$journal->saldo);
-                    $total_debit += $journal->debit;$total_kredit += $journal->kredit;$total_saldo += $journal->saldo;
-                
-                $objPHPExcel->getActiveSheet()->getStyle('F'.$num)->getNumberFormat()->setFormatCode('#,##0');
-                $objPHPExcel->getActiveSheet()->getStyle('G'.$num)->getNumberFormat()->setFormatCode('#,##0');
-                $objPHPExcel->getActiveSheet()->getStyle('H'.$num)->getNumberFormat()->setFormatCode('#,##0');
-                $objPHPExcel->getActiveSheet()->getStyle("B{$num}:C{$num}")->getAlignment()->setHorizontal('center');
+                $objPHPExcel->getActiveSheet()->getStyle("B{$num}:H{$num}")->getAlignment()->setHorizontal('center');
+                $objPHPExcel->getActiveSheet()->getStyle("B{$num}:H{$num}")
+                            ->getFill()
+                            ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                            ->getStartColor()->setRGB('EEEEEE');
+                // Bold
+                $objPHPExcel->getActiveSheet()->getStyle("A{$num}:H{$num}")->applyFromArray(['font' => ['bold' => true]]);
 
                 $num++;
+                $objPHPExcel->getActiveSheet()
+                    ->setCellValue('A'.$num, $coa->coa->code)
+                    ->setCellValue('B'.$num, $coa->coa->name);
+                $objPHPExcel->getActiveSheet()->getStyle("B{$num}")->applyFromArray(['font' => ['bold' => true]]);
+
+                $num++;
+                $objPHPExcel->setActiveSheetIndex(0)
+                    ->setCellValue('B'.$num, "Saldo Awal");
+                $objPHPExcel->getActiveSheet()->getStyle("B{$num}")->applyFromArray(['font' => ['bold' => true]]);
+            
+                // Journal
+                $num++;
+                $total_debit=0;$total_kredit=0;$total_saldo=0;
+                foreach(Journal::where(['general_ledger_id'=>$check->id,'coa_id'=>$coa->coa_id])->get() as $journal){
+                    $objPHPExcel->setActiveSheetIndex(0)
+                        ->setCellValue('B'.$num,$journal->no_voucher)
+                        ->setCellValue('C'.$num,date('d-M-Y',strtotime($journal->date_journal)))
+                        ->setCellValue('D'.$num,isset($journal->coa->name) ? $journal->coa->name : '')
+                        ->setCellValue('E'.$num,$journal->description)
+                        ->setCellValue('F'.$num,$journal->debit)
+                        ->setCellValue('G'.$num,$journal->kredit)
+                        ->setCellValue('H'.$num,$journal->saldo);
+                        $total_debit += $journal->debit;$total_kredit += $journal->kredit;$total_saldo += $journal->saldo;
+                    
+                    $objPHPExcel->getActiveSheet()->getStyle('F'.$num)->getNumberFormat()->setFormatCode('#,##0');
+                    $objPHPExcel->getActiveSheet()->getStyle('G'.$num)->getNumberFormat()->setFormatCode('#,##0');
+                    $objPHPExcel->getActiveSheet()->getStyle('H'.$num)->getNumberFormat()->setFormatCode('#,##0');
+                    $objPHPExcel->getActiveSheet()->getStyle("B{$num}:C{$num}")->getAlignment()->setHorizontal('center');
+                    $num++;
+                }
+                // Total
+                $objPHPExcel->getActiveSheet()->getStyle("B{$num}:H{$num}")->getFill()
+                            ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                            ->getStartColor()->setRGB('EEEEEE');
+                $objPHPExcel->getActiveSheet()->getStyle("B{$num}:H{$num}")->applyFromArray(['font' => ['bold' => true]]);
+                $objPHPExcel->getActiveSheet()->mergeCells("B{$num}:E{$num}");
+                $objPHPExcel->setActiveSheetIndex(0)
+                    ->setCellValue('B'.$num, "Total {$check->coa_group->name}")
+                    ->setCellValue('F'.$num, $total_debit)
+                    ->setCellValue('G'.$num, $total_kredit)
+                    ->setCellValue('H'.$num, $total_saldo);
+                $objPHPExcel->getActiveSheet()->getStyle("B{$num}")->getAlignment()->setHorizontal('center');
+                $objPHPExcel->getActiveSheet()->getStyle('D'.$num)->getNumberFormat()->setFormatCode('#,##0');
+                $objPHPExcel->getActiveSheet()->getStyle('F'.$num.':H'.$num)->getNumberFormat()->setFormatCode('#,##0');
+                
+                $num++;
+
+                $objPHPExcel->setActiveSheetIndex(0)
+                    ->setCellValue('A'.$num, '')
+                    ->setCellValue('B'.$num, '')
+                    ->setCellValue('C'.$num, '')
+                    ->setCellValue('D'.$num, '')
+                    ->setCellValue('E'.$num, '')
+                    ->setCellValue('F'.$num, '')
+                    ->setCellValue('G'.$num, '')
+                    ->setCellValue('H'.$num, '');
+                $num++;
+                $objPHPExcel->setActiveSheetIndex(0)
+                    ->setCellValue('A'.$num, '')
+                    ->setCellValue('B'.$num, '')
+                    ->setCellValue('C'.$num, '')
+                    ->setCellValue('D'.$num, '')
+                    ->setCellValue('E'.$num, '')
+                    ->setCellValue('F'.$num, '')
+                    ->setCellValue('G'.$num, '')
+                    ->setCellValue('H'.$num, '');
+                $num++;
             }
-
-            // Total
-            $objPHPExcel->getActiveSheet()->getStyle("B{$num}:H{$num}")->getFill()
-                        ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                        ->getStartColor()->setRGB('EEEEEE');
-            $objPHPExcel->getActiveSheet()->getStyle("B{$num}:H{$num}")->applyFromArray(['font' => ['bold' => true]]);
-            $objPHPExcel->getActiveSheet()->mergeCells("B{$num}:E{$num}");
-            $objPHPExcel->setActiveSheetIndex(0)
-                ->setCellValue('B'.$num, "Total {$check->coa->name}")
-                ->setCellValue('F'.$num, $total_debit)
-                ->setCellValue('G'.$num, $total_kredit)
-                ->setCellValue('H'.$num, $total_saldo);
-            $objPHPExcel->getActiveSheet()->getStyle("B{$num}")->getAlignment()->setHorizontal('center');
-            $objPHPExcel->getActiveSheet()->getStyle('D'.$num)->getNumberFormat()->setFormatCode('#,##0');
-            $objPHPExcel->getActiveSheet()->getStyle('F'.$num.':H'.$num)->getNumberFormat()->setFormatCode('#,##0');
-            
-            $num++;
-
-            $objPHPExcel->setActiveSheetIndex(0)
-                ->setCellValue('A'.$num, '')
-                ->setCellValue('B'.$num, '')
-                ->setCellValue('C'.$num, '')
-                ->setCellValue('D'.$num, '')
-                ->setCellValue('E'.$num, '')
-                ->setCellValue('F'.$num, '')
-                ->setCellValue('G'.$num, '')
-                ->setCellValue('H'.$num, '');
-            $num++;
-            $objPHPExcel->setActiveSheetIndex(0)
-                ->setCellValue('A'.$num, '')
-                ->setCellValue('B'.$num, '')
-                ->setCellValue('C'.$num, '')
-                ->setCellValue('D'.$num, '')
-                ->setCellValue('E'.$num, '')
-                ->setCellValue('F'.$num, '')
-                ->setCellValue('G'.$num, '')
-                ->setCellValue('H'.$num, '');
-            $num++;
-            
             
             // Rename worksheet
             //$objPHPExcel->getActiveSheet()->setTitle('Iuran-'. date('d-M-Y'));

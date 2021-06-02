@@ -57,7 +57,7 @@
                                 <th>Status</th>                                    
                                 <th>No Voucher</th>                                    
                                 <th>Payment Date</th>                                    
-                                <th>Voucher Date</th>         
+                                <th>Record Date</th>         
                                 <th>Debit Note / Kwitansi</th>
                                 <th>Policy Number / Policy Holder</th>                       
                                 <th>From Bank Account</th>
@@ -77,8 +77,8 @@
                                     @endif
                                 </td>
                                 <td><a href="{{route('expense.claim.detail',['id'=>$item->id])}}">{!!no_voucher($item)!!}</a></td>
-                                <td>{{date('d M Y', strtotime($item->created_at))}}</td>
                                 <td>{{date('d M Y', strtotime($item->payment_date))}}</td>
+                                <td>{{date('d M Y', strtotime($item->created_at))}}</td>
                                 <td>{{$item->reference_no ? $item->reference_no : '-'}}</td>
                                 <td>{{$item->recipient ? $item->recipient : '-'}}</td>
                                 <td>{{isset($item->from_bank_account->no_rekening) ? $item->from_bank_account->no_rekening .' - '.$item->from_bank_account->bank.' an '.$item->from_bank_account->owner : '-'}}</td>
