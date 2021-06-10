@@ -369,6 +369,11 @@ class Detail extends Component
         \LogActivity::add("Income - Premium Receivable Save {$this->data->id}");
 
         session()->flash('message-success',__('Data saved successfully'));
-        return redirect()->route('income.premium-receivable');
+        
+        if(session()->get('url_back')){
+            return redirect(session()->get('url_back'));
+        }else{
+            return redirect()->route('income.premium-receivable');
+        }
     }
 }

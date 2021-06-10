@@ -110,15 +110,11 @@
                                 @foreach ($data as $k => $item)
                                     <tr>
                                         <td style="width: 50px;">{{ $num }}</td>
-                                        <td><a
-                                                href="{{ route('income.premium-receivable.detail', ['id' => $item->id]) }}">{!! status_income($item->status) !!}</a>
-                                        </td>
                                         <td>
-                                            <a
-                                                href="{{ route('income.premium-receivable.detail', ['id' => $item->id]) }}">{!! no_voucher($item) !!}</a>
+                                            <a href="{{ route('income.premium-receivable.detail', ['id' => $item->id,'page'=>$page,'keyword'=>$keyword,'unit'=>$unit,'status'=>$status,'payment_date_from'=>$payment_date_from,'payment_date_to'=>$payment_date_to])}}">{!! status_income($item->status) !!}</a>
                                         </td>
-                                        <td>{{ $item->payment_date ? date('d M Y', strtotime($item->payment_date)) : '-' }}
-                                        </td>
+                                        <td><a href="{{ route('income.premium-receivable.detail', ['id' => $item->id,'page'=>$page,'keyword'=>$keyword,'unit'=>$unit,'status'=>$status,'payment_date_from'=>$payment_date_from,'payment_date_to'=>$payment_date_to])}}">{!! no_voucher($item) !!}</a></td>
+                                        <td>{{ $item->payment_date ? date('d M Y', strtotime($item->payment_date)) : '-' }}</td>
                                         <td>{{ date('d M Y', strtotime($item->created_at)) }}</td>
                                         <td>{{ date('d M Y', strtotime($item->reference_date)) }}</td>
                                         <td>{{ calculate_aging($item->reference_date) }}</td>
@@ -166,11 +162,16 @@
             <script type="text/javascript" src="{{ asset('assets/vendor/daterange/daterangepicker.js') }}"></script>
             <link rel="stylesheet" type="text/css" href="{{ asset('assets/vendor/daterange/daterangepicker.css') }}" />
             <script>
+                Livewire.on('update-url',(url)=>{
+                    setTimeout(function(){
+                        window.history.pushState('', '', url);
+                    });
+                })
                 $('.payment_date').daterangepicker({
                     opens: 'left'
                 }, function(start, end, label) {
                     @this.set("payment_date_from", start.format('YYYY-MM-DD'));
-                    @this.set("payment_date_to", end);
+                    @this.set("payment_date_to", end.format('YYYY-MM-DD'));
                 });
 
             </script>

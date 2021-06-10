@@ -9,7 +9,7 @@ class Index extends Component
 {
     use WithPagination;
     public $keyword,$unit,$status,$payment_date_from,$payment_date_to,$voucher_date;
-    protected $paginationTheme = 'bootstrap',$export_data;
+    protected $paginationTheme = 'bootstrap',$export_data,$queryString = ['page'];
     public function render()
     {
         $data = \App\Models\Income::orderBy('id','desc')->where('reference_type','Premium Receivable');
@@ -36,7 +36,29 @@ class Index extends Component
 
     public function mount()
     {
+        if(isset($_GET['keyword'])) $this->keyword = $_GET['keyword'];
+        if(isset($_GET['unit'])) $this->unit = $_GET['unit'];
+        if(isset($_GET['status'])) $this->status = $_GET['status'];
+        if(isset($_GET['payment_date_from'])) $this->status = $_GET['payment_date_from'];
+        if(isset($_GET['payment_date_to'])) $this->status = $_GET['payment_date_to'];
+
         \LogActivity::add('Income - Premium Receivable');
+    }
+
+    public function updated($propertyName="")
+    {
+        $query['keyword'] = $this->keyword;
+        $query['unit'] = $this->unit;
+        $query['status'] = $this->status;
+        $query['payment_date_from'] = $this->payment_date_from;
+        $query['payment_date_to'] = $this->payment_date_to;
+        
+        $query[$propertyName] = $this->$propertyName;
+        $query['page'] = $this->page;
+
+        session(['url_back'=>route('income.premium-receivable',$query)]);
+        
+        $this->emit('update-url',route('income.premium-receivable',$query));
     }
 
     public function downloadExcel()

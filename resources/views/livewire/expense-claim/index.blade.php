@@ -43,6 +43,7 @@
                     <div class="col-md-5">
                         <a href="{{route('expense.claim.insert')}}" class="btn btn-success"><i class="fa fa-plus"></i> Claim</a>
                         <a href="javascript:;" class="btn btn-info" wire:click="downloadExcel"><i class="fa fa-download"></i> Download</a>
+                        <a href="javascript:;" class="btn btn-warning" data-toggle="modal" data-target="#modal_upload_claim"><i class="fa fa-upload"></i> Upload</a>
                         <span wire:loading>
                             <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
                             <span class="sr-only">{{ __('Loading...') }}</span>
@@ -95,4 +96,5 @@
             </div>
         </div>
     </div>
+    @livewire('expense-claim.upload')
 </div>
