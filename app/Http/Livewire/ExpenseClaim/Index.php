@@ -3,10 +3,15 @@
 namespace App\Http\Livewire\ExpenseClaim;
 
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class Index extends Component
 {
+    use WithPagination;
+    protected $paginationTheme = 'bootstrap';
+
     public $keyword,$status,$type;
+    
     public function render()
     {
         $data = \App\Models\Expenses::orderBy('id','desc')->where('reference_type','Claim');
@@ -27,12 +32,14 @@ class Index extends Component
     {
         \LogActivity::add("Expense Claim");
     }
+
     public function delete($id)
     {
         \LogActivity::add("Expense Claim Delete {$id}");
         \App\Models\Expenses::find($id)->delete();
         \App\Models\ExpensePeserta::where('expense_id',$id)->delete();
     }
+
     public function downloadExcel()
     {
         $objPHPExcel = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
