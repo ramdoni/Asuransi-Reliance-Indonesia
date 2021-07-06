@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\ExpensePayment;
 use App\Models\Policy;
+use App\Models\ExpensePeserta;
 
 class Expenses extends Model
 {
@@ -13,6 +14,11 @@ class Expenses extends Model
     public function policy()
     {
         return $this->belongsTo(Policy::class,'policy_id');
+    }
+
+    public function pesertas()
+    {
+        return $this->hasMany(ExpensePeserta::class,'expense_id');
     }
 
     public function payment_fee_base()
