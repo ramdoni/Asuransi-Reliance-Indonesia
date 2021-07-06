@@ -4,6 +4,8 @@ namespace App\Http\Livewire\ExpenseClaim;
 
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Models\Expenses;
+use App\Models\ExpensePeserta;
 
 class Index extends Component
 {
@@ -12,19 +14,21 @@ class Index extends Component
 
     public $keyword,$status,$type;
     
-    public function render()
+    public function render() 
     {
-        $data = \App\Models\Expenses::orderBy('id','desc')->where('reference_type','Claim');
+        $data = Expenses::select('expenses.*')->orderBy('expenses.id','desc')->where('expenses.reference_type','Claim')->groupBy('expenses.id')
+                            ->leftJoin('expense_pesertas','expense_pesertas.expense_id','=','expenses.id');
         if($this->keyword) $data = $data->where(function($table){
-                                    $table->where('description','LIKE', "%{$this->keyword}%")
-                                            ->orWhere('no_voucher','LIKE',"%{$this->keyword}%")
-                                            ->orWhere('reference_no','LIKE',"%{$this->keyword}%")
-                                            ->orWhere('recipient','LIKE',"%{$this->keyword}%")
-                                            ->orWhere('reference_no','LIKE',"%{$this->keyword}%");
-                                        });
-        if($this->status) $data = $data->where('status',$this->status);
-        if($this->type) $data = $data->where('type',$this->type);
-        
+                                    $table->where('expenses.description','LIKE', "%{$this->keyword}%")
+                                        ->orWhere('expenses.no_voucher','LIKE',"%{$this->keyword}%")
+                                        ->orWhere('expenses.reference_no','LIKE',"%{$this->keyword}%")
+                                        ->orWhere('expense_pesertas.no_peserta','LIKE',"%{$this->keyword}%")
+                                        ->orWhere('expense_pesertas.nama_peserta','LIKE',"%{$this->keyword}%")
+                                        ;
+                                    });
+        if($this->status) $data = $data->where('expenses.status',$this->status);
+        if($this->type) $data = $data->where('expenses.type',$this->type);
+
         $total = clone $data;
 
         return view('livewire.expense-claim.index')->with(['data'=>$data->paginate(100),'payment_amount'=>$total->sum('payment_amount')]);
@@ -38,8 +42,8 @@ class Index extends Component
     public function delete($id)
     {
         \LogActivity::add("Expense Claim Delete {$id}");
-        \App\Models\Expenses::find($id)->delete();
-        \App\Models\ExpensePeserta::where('expense_id',$id)->delete();
+        Expenses::find($id)->delete();
+        ExpensePeserta::where('expense_id',$id)->delete();
     }
 
     public function downloadExcel()
@@ -89,7 +93,7 @@ class Index extends Component
         $objPHPExcel->getActiveSheet()->freezePane('A4');
         $objPHPExcel->getActiveSheet()->setAutoFilter('B3:K3');
         $num=4;
-        $data = \App\Models\Expenses::orderBy('id','desc')->where('reference_type','Claim');
+        $data = Expenses::orderBy('id','desc')->where('reference_type','Claim');
         if($this->keyword) $data = $data->where(function($data){
                                     $data->where('description','LIKE', "%{$this->keyword}%")
                                     ->orWhere('no_voucher','LIKE',"%{$this->keyword}%")

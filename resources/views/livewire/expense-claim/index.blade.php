@@ -61,6 +61,7 @@
                                 <th>Record Date</th>         
                                 <th>Debit Note / Kwitansi</th>
                                 <th>Policy Number / Policy Holder</th>                       
+                                <th>No / Nama Peserta</th>                       
                                 <th>From Bank Account</th>
                                 <th>To Bank Account</th>
                                 <th>Bank Charges</th>
@@ -78,10 +79,17 @@
                                     @endif
                                 </td>
                                 <td><a href="{{route('expense.claim.detail',['id'=>$item->id])}}">{!!no_voucher($item)!!}</a></td>
-                                <td>{{date('d M Y', strtotime($item->payment_date))}}</td>
+                                <td>{{$item->payment_date ? date('d M Y', strtotime($item->payment_date)) : '-'}}</td>
                                 <td>{{date('d M Y', strtotime($item->created_at))}}</td>
                                 <td>{{$item->reference_no ? $item->reference_no : '-'}}</td>
                                 <td>{{$item->recipient ? $item->recipient : '-'}}</td>
+                                <td>
+                                    @if(isset($item->pesertas))
+                                        @foreach($item->pesertas as $peserta)
+                                            <span>{{$peserta->no_peserta}} / {{$peserta->nama_peserta}}</span><br />
+                                        @endforeach
+                                    @endif
+                                </td>
                                 <td>{{isset($item->from_bank_account->no_rekening) ? $item->from_bank_account->no_rekening .' - '.$item->from_bank_account->bank.' an '.$item->from_bank_account->owner : '-'}}</td>
                                 <td>{{isset($item->bank_account->no_rekening) ? $item->bank_account->no_rekening .' - '.$item->bank_account->bank.' an '.$item->bank_account->owner : '-'}}</td>
                                 <td>{{isset($item->bank_charges) ? format_idr($item->bank_charges) : '-'}}</td>

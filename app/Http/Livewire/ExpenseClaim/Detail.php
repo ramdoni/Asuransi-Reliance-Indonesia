@@ -87,12 +87,15 @@ class Detail extends Component
     {
         $this->bank_charges = replace_idr($this->bank_charges);
         $this->nilai_klaim = replace_idr($this->nilai_klaim);
-        $this->validate([
+        
+        if($type !='Draft'){
+            $this->validate([
                 'no_polis' => 'required',
                 'nilai_klaim' => 'required',
                 'payment_date' => 'required',
                 'from_bank_account_id' => 'required'
             ]);
+        }
         $this->expense->policy_id = $this->data->id;
         $this->expense->from_bank_account_id = $this->from_bank_account_id;
         $this->expense->rekening_bank_id = $this->to_bank_account_id;
