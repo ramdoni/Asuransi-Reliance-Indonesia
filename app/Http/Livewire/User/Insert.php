@@ -19,7 +19,7 @@ class Insert extends Component
 
     protected $rules = [
         'name' => 'required|string',
-        'email' => 'required|email|unique:users',
+        'email' => 'required|unique:users',
         'password' => 'required|string',
         'telepon' => 'required',
         'user_access_id' => 'required',

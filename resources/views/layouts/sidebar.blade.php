@@ -100,6 +100,9 @@
                             <li class="{{ Request::segment(1) === 'dashboard' ? 'active' : null }}">
                                 <a href="/"><i class="fa fa-home"></i> <span>Dashboard</span></a>
                             </li>
+                            <li class="{{ Request::segment(1) === 'policy' ? 'active' : null }}">
+                                <a href="{{ route('policy') }}"><i class="fa fa-database"></i> <span>Polis</span></a>
+                            </li>
                             <li
                                 class="{{ Request::segment(1) === 'others-income' || Request::segment(1) === 'income-recovery-refund' || Request::segment(1) === 'income-recovery-claim' || Request::segment(1) === 'income-titipan-premi' || Request::segment(1) === 'income-premium-receivable' || Request::segment(1) === 'income-reinsurance' || Request::segment(1) === 'income-investment' ? 'active' : null }}">
                                 <a href="#" class="has-arrow"><i class="fa fa-database"></i> <span>Income</span></a>
