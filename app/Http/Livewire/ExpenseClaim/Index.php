@@ -14,7 +14,7 @@ class Index extends Component
 
     public $keyword,$status,$type;
     
-    public function render()
+    public function render() 
     {
         $data = Expenses::select('expenses.*')->orderBy('expenses.id','desc')->where('expenses.reference_type','Claim')->groupBy('expenses.id')
                             ->leftJoin('expense_pesertas','expense_pesertas.expense_id','=','expenses.id');
@@ -28,7 +28,7 @@ class Index extends Component
                                     });
         if($this->status) $data = $data->where('expenses.status',$this->status);
         if($this->type) $data = $data->where('expenses.type',$this->type);
-        
+
         $total = clone $data;
 
         return view('livewire.expense-claim.index')->with(['data'=>$data->paginate(100),'payment_amount'=>$total->sum('payment_amount')]);
