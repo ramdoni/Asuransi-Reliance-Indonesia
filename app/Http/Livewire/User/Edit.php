@@ -20,7 +20,7 @@ class Edit extends Component
 
     protected $rules = [
         'name' => 'required|string',
-        'email' => 'required|email',
+        'email' => 'required',
         //'password' => 'required|string',
         'telepon' => 'required',
         'user_access_id' => 'required',

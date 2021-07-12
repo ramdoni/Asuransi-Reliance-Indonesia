@@ -130,7 +130,7 @@
             $('.alert-error').show();
             $('.alert-error .message').html(msg);
         });
-
+        $('*').tooltip();
     </script>
     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
         {{ csrf_field() }}

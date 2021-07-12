@@ -30,8 +30,8 @@ class Index extends Component
         if($this->type) $data = $data->where('expenses.type',$this->type);
 
         $total = clone $data;
-
-        return view('livewire.expense-claim.index')->with(['data'=>$data->paginate(100),'payment_amount'=>$total->sum('payment_amount')]);
+        
+        return view('livewire.expense-claim.index')->with(['data'=>$data->paginate(100),'payment_amount'=>$total->get()->sum('payment_amount')]);
     }
     
     public function mount()

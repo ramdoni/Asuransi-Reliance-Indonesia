@@ -3,6 +3,10 @@
 namespace App\Http\Livewire\ExpenseClaim;
 
 use Livewire\Component;
+use App\Models\Income;
+use App\Models\Policy;
+use App\Models\Expenses;
+use App\Models\ExpensePeserta;
 
 class Detail extends Component
 {
@@ -17,7 +21,7 @@ class Detail extends Component
     }
     public function mount($id)
     {
-        $this->expense = \App\Models\Expenses::find($id);
+        $this->expense = Expenses::find($id);
         $this->no_polis = $this->expense->policy_id;
         $this->no_voucher = $this->expense->no_voucher;
         $this->type = $this->expense->type;
@@ -27,22 +31,32 @@ class Detail extends Component
         $this->bank_charges = $this->expense->bank_charges;
         $this->payment_date = $this->expense->payment_date;
         $this->reference_no = $this->expense->reference_no;
-        $this->data = \App\Models\Policy::find($this->expense->policy_id);
-        $premium = \App\Models\Income::select('income.*')->where(['income.reference_type'=>'Premium Receivable','income.transaction_table'=>'konven_underwriting'])
-                                            ->join('konven_underwriting','konven_underwriting.id','=','income.transaction_id')
-                                            ->where('konven_underwriting.no_polis',$this->data->no_polis);
-        $total_premium_receive = clone $premium;
-        $this->add_pesertas = \App\Models\ExpensePeserta::where('expense_id',$id)->get();
+        $this->description = $this->expense->description;
+        $this->data = Policy::find($this->expense->policy_id);
+        
+        $premium = '';
+        $this->add_pesertas = ExpensePeserta::where('expense_id',$id)->get();
         foreach($this->add_pesertas as $k => $i){
             $this->add_peserta_id[$k] = $i->id;
             $this->no_peserta[$k] = $i->no_peserta;
             $this->nama_peserta[$k] = $i->nama_peserta;
         }
-        if($total_premium_receive->where('income.status',2)->sum('income.payment_amount') > 0) $this->is_submit = true;
-        else $this->is_submit = false;
+        
+        if($this->data){
+            $premium = Income::select('income.*')->where(['income.reference_type'=>'Premium Receivable','income.transaction_table'=>'konven_underwriting'])
+                                            ->join('konven_underwriting','konven_underwriting.id','=','income.transaction_id')
+                                            ->where('konven_underwriting.no_polis',$this->data->no_polis);
+        
+            $total_premium_receive = clone $premium;
+            
+            if(isset($total_premium_receive) and $total_premium_receive->where('income.status',2)->sum('income.payment_amount') > 0) 
+                $this->is_submit = true;
+            else 
+                $this->is_submit = false;
 
-        if($this->expense->status==2) $this->is_readonly=true;
-        $this->premium_receivable = $premium->get();
+            if($this->expense->status==2) $this->is_readonly=true;
+            $this->premium_receivable = $premium->get();
+        }
     }
 
     public function emitAddBank($id)
@@ -88,7 +102,11 @@ class Detail extends Component
         $this->bank_charges = replace_idr($this->bank_charges);
         $this->nilai_klaim = replace_idr($this->nilai_klaim);
         
-        if($type !='Draft'){
+        if($type =='Draft'){
+            $this->validate([
+                'no_polis' => 'required',
+            ]);
+        }else{
             $this->validate([
                 'no_polis' => 'required',
                 'nilai_klaim' => 'required',
@@ -96,6 +114,9 @@ class Detail extends Component
                 'from_bank_account_id' => 'required'
             ]);
         }
+
+        $this->data = Policy::find($this->no_polis);
+
         $this->expense->policy_id = $this->data->id;
         $this->expense->from_bank_account_id = $this->from_bank_account_id;
         $this->expense->rekening_bank_id = $this->to_bank_account_id;
