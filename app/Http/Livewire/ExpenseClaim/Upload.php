@@ -27,6 +27,7 @@ class Upload extends Component
         $path = $this->file->getRealPath();
        
         $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+        $reader->setReadDataOnly(true);
         $data = $reader->load($path);
         $sheetData = $data->getActiveSheet()->toArray();
         
@@ -34,7 +35,7 @@ class Upload extends Component
             $countLimit = 1;
             foreach($sheetData as $key => $i){
                 if($key<1) continue; // skip header
-                
+                dd($i);
                 foreach($i as $k=>$a){$i[$k] = trim($a);}
 
                 $nomor_polis = $i[0];
