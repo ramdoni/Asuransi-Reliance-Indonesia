@@ -69,6 +69,7 @@ Route::group(['middleware' => ['auth','access:1']], function(){
     Route::get('syariah-underwriting',App\Http\Livewire\Syariah\Index::class)->name('syariah.underwriting');
     Route::get('syariah-reinsurance',App\Http\Livewire\Syariah\Reinsurance::class)->name('syariah.reinsurance');
     Route::get('log-activity',App\Http\Livewire\LogActivity\Index::class)->name('log-activity');
+    Route::get('migration',App\Http\Livewire\Migration\Index::class)->name('migration.index');
 });
 
 // Accounting
