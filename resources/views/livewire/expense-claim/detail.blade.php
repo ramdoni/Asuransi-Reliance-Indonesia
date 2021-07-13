@@ -74,7 +74,7 @@
                         <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                         @enderror
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" wire:ignore>
                         <label>{{ __('To Bank Account') }}</label>
                         <select class="form-control select_to_bank" id="to_bank_account_id" {{$is_readonly?'disabled':''}} wire:model="to_bank_account_id">
                             <option value=""> --- None --- </option>
@@ -119,7 +119,7 @@
                     <button type="submit" class="ml-3 btn btn-primary" {{!$is_submit?'disabled':''}}><span title="{{!$is_submit? "Claim tidak bisa dilanjutkan karna belum ada premi yang masuk" : ''}}"><i class="fa fa-save"></i> {{ __('Submit') }}</span></button>
                     <button type="button" class="ml-3 btn btn-info float-right" wire:click="save('Draft')"><i class="fa fa-save"></i> {{ __('Save as Draft') }}</button>
                     @endif
-                    <div wire:loading>
+                    <div wire:loading wire:target="save">
                         <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
                         <span class="sr-only">Loading...</span>
                     </div>
