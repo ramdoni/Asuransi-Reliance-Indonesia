@@ -27,6 +27,7 @@ class Upload extends Component
         $path = $this->file->getRealPath();
        
         $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+        $reader->setReadDataOnly(true);
         $data = $reader->load($path);
         $sheetData = $data->getActiveSheet()->toArray();
         
@@ -47,8 +48,8 @@ class Upload extends Component
                 $status = $i[7];
 
                 $policy = Policy::where('no_polis',$nomor_polis)->first();
-                //if(!$policy) continue;
-                
+                if(!$policy) continue;
+
                 $partisipan = KonvenClaim::where(['nomor_partisipan'=>$nomor_partisipan,'nomor_polis'=>$nomor_polis])->first();
                 if($partisipan){
                     $partisipan->nilai_klaim = $nilai_klaim;

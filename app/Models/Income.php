@@ -11,10 +11,18 @@ class Income extends Model
     protected $guarded = [];
 
     protected $table="income";
+    
+    public function migration()
+    {
+        return $this->belongsTo(MigrationData::class,'transaction_id');
+    }
+
     public function expense()
     {
         return $this->belongsTo(\App\Models\Expenses::class,'transaction_id');
     }
+
+    
     public function policys()
     {
         return $this->hasOne('\App\Models\Policy','id','policy_id');

@@ -119,7 +119,7 @@
                                         <td>{{ date('d M Y', strtotime($item->reference_date)) }}</td>
                                         <td>{{ calculate_aging($item->reference_date) }}</td>
                                         <td>{{ $item->due_date ? date('d M Y', strtotime($item->due_date)) : '' }}</td>
-                                        <td>{{ $item->reference_no ? $item->reference_no : '-' }}</td>
+                                        <td class="text-info" title="Source  From : {{$item->transaction_table}}">{{ $item->reference_no ? $item->reference_no : '-' }}</td>
                                         <td>{{ $item->client ? $item->client : '-' }}</td>
                                         <td>
                                             @if ($item->type == 1)
