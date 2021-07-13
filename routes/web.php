@@ -152,8 +152,8 @@ Route::group(['middleware' => ['auth','access:2']], function(){
     Route::get('others-income',App\Http\Livewire\OthersIncome\Index::class)->name('others-income.index');
     Route::get('others-income/insert',App\Http\Livewire\OthersIncome\Insert::class)->name('others-income.insert');
     Route::get('others-income/detail/{id}',App\Http\Livewire\OthersIncome\Detail::class)->name('others-income.detail');
-    Route::get('policy',App\Http\Livewire\Policy\Index::class)->name('policy');
-    Route::get('policy/insert',App\Http\Livewire\Policy\Insert::class)->name('policy.insert');
+    // Route::get('policy',App\Http\Livewire\Policy\Index::class)->name('policy');
+    // Route::get('policy/insert',App\Http\Livewire\Policy\Insert::class)->name('policy.insert');
 });
 // Treasury
 Route::group(['middleware' => ['auth','access:4']], function(){ 

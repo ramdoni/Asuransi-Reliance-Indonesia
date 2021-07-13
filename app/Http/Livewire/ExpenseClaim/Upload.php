@@ -47,6 +47,9 @@ class Upload extends Component
                 $reas = $i[6];
                 $status = $i[7];
 
+                $policy = Policy::where('no_polis',$nomor_polis)->first();
+                if(!$policy) continue;
+
                 $claim = new KonvenClaim();
                 $claim->nomor_polis = $nomor_polis;
                 $claim->nama_pemegang = $nama_pemegang;
@@ -58,8 +61,13 @@ class Upload extends Component
                 $claim->status = $status;
                 $claim->save();
                 
-                $policy = Policy::where('no_polis',$nomor_polis)->first();
-
+                // $policy = Policy::where('no_polis',$nomor_polis)->first();
+                // if(!$policy){
+                //     $policy = new Policy();
+                //     $policy->no_polis = $nomor_polis;
+                //     $policy->pemegang_polis = $nama_pemegang;
+                //     $policy->save();
+                // }
                 $data = new Expenses();
                 $data->policy_id = isset($policy->id) ? $policy->id : 0;
                 $data->reference_type = 'Claim';

@@ -12,7 +12,7 @@ class Login extends Component
     public $message;
 
     protected $rules = [
-        'email' => 'required|email',
+        'email' => 'required',
         'password' => 'required',
     ];
 

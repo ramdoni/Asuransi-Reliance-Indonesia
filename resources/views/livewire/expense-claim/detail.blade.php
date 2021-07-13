@@ -116,7 +116,7 @@
                     <hr />
                     <a href="javascript:void0()" onclick="history.back()"><i class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
                     @if(!$is_readonly)
-                    <button type="submit" class="ml-3 btn btn-primary" {{!$is_submit?'disabled':''}}><i class="fa fa-save"></i> {{ __('Submit') }}</button>
+                    <button type="submit" class="ml-3 btn btn-primary" {{!$is_submit?'disabled':''}}><span title="{{!$is_submit? "Claim tidak bisa dilanjutkan karna belum ada premi yang masuk" : ''}}"><i class="fa fa-save"></i> {{ __('Submit') }}</span></button>
                     <button type="button" class="ml-3 btn btn-info float-right" wire:click="save('Draft')"><i class="fa fa-save"></i> {{ __('Save as Draft') }}</button>
                     @endif
                     <div wire:loading>
