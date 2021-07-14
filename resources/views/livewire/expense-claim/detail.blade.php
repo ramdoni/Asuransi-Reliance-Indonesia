@@ -71,20 +71,13 @@
                             @endforeach
                         </select>
                         @error('from_bank_account_id')
-                        <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                            <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                         @enderror
                     </div>
-                    <div class="form-group" wire:ignore>
-                        <label>{{ __('To Bank Account') }}</label>
-                        <select class="form-control select_to_bank" id="to_bank_account_id" {{$is_readonly?'disabled':''}} wire:model="to_bank_account_id">
-                            <option value=""> --- None --- </option>
-                            @foreach (\App\Models\BankAccount::where('is_client',1)->orderBy('owner','ASC')->get() as $bank)
-                                <option value="{{ $bank->id }}">{{ $bank->bank}} - {{ $bank->no_rekening}} - {{ $bank->owner }}</option>
-                            @endforeach
-                        </select>
-                        <a href="#" data-toggle="modal" data-target="#modal_add_bank"><i class="fa fa-plus"></i> Add Bank</a>
+                    <livewire:expense-claim.select-to-bank />
+                    <div class="form-group">
                         @error('to_bank_account_id')
-                        <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                            <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                         @enderror
                     </div>
                     <div class="row">
@@ -270,13 +263,8 @@
         </div>
     </div>
 </div>
-<div wire:ignore.self class="modal fade" id="modal_add_bank" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <livewire:expense-claim.add-bank />
-    </div>
-</div>
+<livewire:expense-claim.add-bank />
 @push('after-scripts')
-<script src="{{ asset('assets/js/jquery.priceformat.min.js') }}"></script>
 <link rel="stylesheet" href="{{ asset('assets/vendor/select2/css/select2.min.css') }}"/>
 <script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
 <style>
@@ -285,6 +273,7 @@
     .select2-container--default .select2-selection--single .select2-selection__arrow{top:4px;right:10px;}
     .select2-container {width: 100% !important;}
 </style>
+<script src="{{ asset('assets/js/jquery.priceformat.min.js') }}"></script>
 @endpush
 @section('page-script')
     Livewire.on('emit-add-bank',()=>{
@@ -311,6 +300,9 @@
         var selected__ = $('.select_no_polis').find(':selected').val();
         if(selected__ !="") select__2.val(selected__);
 
+    }
+
+    function init_bank(){
         select_to_bank = $('.select_to_bank').select2();
         $('.select_to_bank').on('change', function (e) {
             let elementName = $(this).attr('id');
@@ -318,9 +310,17 @@
             @this.set(elementName, data);
         });
         var selected_to_bank = $('.select_to_bank').find(':selected').val();
-        if(selected_to_bank !="") select_to_bank.val(selected_to_bank);
+        if(selected_to_bank !="") select_to_bank.val(selected_to_bank);   
     }
+    
+    Livewire.on('init-bank', () =>{
+        setTimeout(function(){
+            init_bank();  
+        },500);
+    });
+
     setTimeout(function(){
-        init_form()
-    })
+        init_form();
+        init_bank();
+    });
 @endsection

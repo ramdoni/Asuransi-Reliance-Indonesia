@@ -62,7 +62,7 @@ class Detail extends Component
     public function emitAddBank($id)
     {
         $this->to_bank_account_id = $id;
-        $this->emit('init-form');
+        $this->emit('init-bank');
     }
     
     public function delete_peserta($k)
