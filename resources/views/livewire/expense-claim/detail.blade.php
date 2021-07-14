@@ -21,7 +21,7 @@
                         @endif
                         <hr />
                     </div>
-                    <div class="form-group" wire:ignore>
+                    <div class="form-group">
                         <label>{{ __('No Polis') }}</label>
                         <select class="form-control select_no_polis" wire:model="no_polis" id="no_polis" {{$is_readonly?'disabled' : ''}}>
                             <option value=""> --- Select --- </option>
