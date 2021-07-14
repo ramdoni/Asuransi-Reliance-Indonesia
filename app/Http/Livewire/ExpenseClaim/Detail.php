@@ -102,13 +102,15 @@ class Detail extends Component
         $this->bank_charges = replace_idr($this->bank_charges);
         $this->nilai_klaim = replace_idr($this->nilai_klaim);
         
+        $this->emit('init-form');
+        
         if($type =='Draft'){
             $this->validate([
-                'no_polis' => 'required',
+                'no_polis' => 'required|not_in:0',
             ]);
         }else{
             $this->validate([
-                'no_polis' => 'required',
+                'no_polis' => 'required|not_in:0',
                 'nilai_klaim' => 'required',
                 'payment_date' => 'required',
                 'from_bank_account_id' => 'required'
