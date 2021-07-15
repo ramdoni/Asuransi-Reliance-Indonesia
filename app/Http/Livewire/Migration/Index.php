@@ -154,7 +154,7 @@ class Index extends Component
                 $income->due_date = $migration->jatuh_tempo;
                 $income->policy_id = $policy->id;
                 $income->payment_date = $migration->tanggal_pendapatan;
-                $income->type = 1;
+                $income->type = 2; // syariah
                 $income->rekening_bank_id = $rekening_bank->id;
                 $income->status = 2;
                 $income->save();
