@@ -16,7 +16,7 @@ class Index extends Component
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
 
-    public $file,$keyword;
+    public $file,$keyword,$file_syariah;
 
     public function render()
     {
@@ -27,6 +27,143 @@ class Index extends Component
             }
         });
         return view('livewire.migration.index')->with(['data'=>$data->paginate(100)]);
+    }
+
+    public function upload_syariah()
+    {
+        $this->validate([
+            'file_syariah'=>'required|mimes:xls,xlsx|max:51200' // 50MB maksimal
+        ]);
+
+        $path = $this->file_syariah->getRealPath();
+       
+        $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+        $reader->setReadDataOnly(true);
+        $data = $reader->load($path);
+        $sheetData = $data->getActiveSheet()->toArray();
+        
+        if(count($sheetData) > 0){
+            $countLimit = 1;
+            foreach($sheetData as $key => $i){
+                if($key<5) continue; // skip header
+                
+                foreach($i as $k=>$a){$i[$k] = trim($a);}
+                
+                if($i[1]=="" || $i[29] == "") continue; // skip
+
+                $no_register = $i[1];
+                $nomor_invoice = $i[2];
+                $nomor_polis = $i[3];
+                $nama_pemegang_polis = $i[4];
+                $jenis_produk = $i[5];
+                $tanggal_terbit = $i[6] ? @\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[6]) : '';
+                $jatuh_tempo = $i[7] ? @\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[7]) : '';
+                $aging = $i[8];
+                $premi_bruto = $i[9];
+                $extra_premi = $i[10];
+                $manajemen_fee = $i[11];
+                $fee_base = $i[13];
+                $lain_lain = $i[14];
+                $pajak_ppn = $i[15];
+                $pajak_pph = $i[16];
+                $pajak_lain = $i[17];
+                $biaya_administrasi = $i[18];
+                $biaya_polis = $i[19]; 
+                $biaya_sertifikat = $i[20];
+                $biaya_materai = $i[21];
+                $premi_netto = $i[22];
+                $jumlah_bayar = $i[23];
+                $tanggal_pendapatan = $i[24] ? @\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[24]) : '';
+                $no_rekening = $i[25];
+                $bank = $i[26];
+                $amount = $i[27];
+                $pembayaran = $i[28];
+                $piutang = $i[29];
+                $status = $i[30];
+                $jumlah_peserta = $i[31];
+                $period = $i[32];
+
+                $migration = MigrationData::where('no_register',$no_register)->first();
+                
+                if($migration) continue;
+                
+                $migration = new MigrationData();
+                $migration->no_register = $no_register;
+                $migration->nomor_invoice = $nomor_invoice;
+                $migration->nomor_polis = $nomor_polis;
+                $migration->nama_pemegang_polis = $nama_pemegang_polis;
+                $migration->jenis_produk = $jenis_produk;
+                if($tanggal_terbit) $migration->tanggal_terbit = date('Y-m-d',$tanggal_terbit);
+                if($jatuh_tempo) $migration->jatuh_tempo = date('Y-m-d',$jatuh_tempo);
+                $migration->aging = $aging;
+                $migration->premi_bruto = $premi_bruto;
+                $migration->extra_premi = $extra_premi;
+                $migration->fee_base = $fee_base;
+                $migration->lain_lain = $lain_lain;
+                $migration->pajak_ppn = $pajak_ppn;
+                $migration->pajak_pph = $pajak_pph;
+                $migration->pajak_lain = $pajak_lain;
+                $migration->biaya_administrasi = $biaya_administrasi;
+                $migration->biaya_polis = $biaya_polis;
+                $migration->biaya_sertifikat = $biaya_sertifikat;
+                $migration->biaya_materai = $biaya_materai;
+                $migration->premi_netto = $premi_netto;
+                $migration->jumlah_bayar = $jumlah_bayar;
+                if($tanggal_pendapatan) $migration->tanggal_pendapatan = date('Y-m-d',$tanggal_pendapatan);
+                $migration->no_rekening = $no_rekening;
+                $migration->bank = $bank;
+                $migration->amount = $amount;
+                $migration->pembayaran = $pembayaran;
+                $migration->piutang = $piutang;
+                $migration->status = $status;
+                $migration->jumlah_peserta = $jumlah_peserta;
+                $migration->period = $period;
+                $migration->manajemen_fee = $manajemen_fee;
+                $migration->save();
+
+                $policy = Policy::where('no_polis',$nomor_polis)->first();
+                if(!$policy){
+                    $policy = new Policy();
+                    $policy->no_polis = $nomor_polis;
+                    $policy->pemegang_polis = $nama_pemegang_polis;
+                    $policy->save();
+                }
+
+                $rekening_bank = BankAccount::where(['no_rekening'=>$no_rekening])->first();
+                if(!$rekening_bank){
+                    $rekening_bank = new BankAccount();
+                    $rekening_bank->no_rekening = $no_rekening;
+                    $rekening_bank->owner = $nama_pemegang_polis;
+                    $rekening_bank->bank = $bank; 
+                    $rekening_bank->is_client = 1; 
+                    $rekening_bank->save();
+                }
+
+                // insert income premium receivable
+                $income = new Income();
+                $income->user_id = \Auth::user()->id;
+                $income->no_voucher = generate_no_voucher_income();
+                $income->reference_no = $migration->nomor_invoice;
+                $income->reference_date = $migration->tanggal_terbit;
+                $income->nominal = $amount;
+                $income->payment_amount = $pembayaran;
+                $income->client = $nomor_polis .' / '. $nama_pemegang_polis;
+                $income->reference_type = 'Premium Receivable';
+                $income->transaction_table = 'Migration';
+                $income->transaction_id = $migration->id;
+                $income->due_date = $migration->jatuh_tempo;
+                $income->policy_id = $policy->id;
+                $income->payment_date = $migration->tanggal_pendapatan;
+                $income->type = 1;
+                $income->rekening_bank_id = $rekening_bank->id;
+                $income->status = 2;
+                $income->save();
+            }
+        }
+        
+        session()->flash('message-success','Upload success !');   
+        
+        return redirect()->route('migration.index');
     }
 
     public function upload()
