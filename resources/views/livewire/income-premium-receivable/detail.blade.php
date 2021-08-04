@@ -216,7 +216,7 @@
                     <button type="submit" class="ml-3 btn btn-primary btn-sm"><i class="fa fa-save"></i> {{ __('Receive') }}</button>
                     <button type="button" class="float-right ml-3 btn btn-danger btn-sm" wire:click="$emit('emit-cancel',{{$data->id}})" data-target="#modal_cancel" data-toggle="modal""><i class="fa fa-times"></i> {{ __('Premi tidak tertagih') }}</button>
                     @endif
-                    @if($data->status==2 and $is_otp_editable==false)
+                    @if($data->status==2 and $is_otp_editable==false and $data->transaction_table !='Migration')
                         <a href="javascript:;" class="btn btn-danger ml-3" data-toggle="modal" data-target="#modal_konfirmasi_otp"><i class="fa fa-edit"></i> Edit </a>
                     @endif
                 </form>
