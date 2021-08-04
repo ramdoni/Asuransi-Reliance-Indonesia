@@ -47,10 +47,11 @@ class Upload extends Component
                 $reas = $i[6];
                 $status = $i[7];
 
+                if(empty($nomor_polis)) continue;
                 $policy = Policy::where('no_polis',$nomor_polis)->first();
                 if(!$policy) continue;
 
-                $partisipan = KonvenClaim::where(['nomor_partisipan'=>$nomor_partisipan,'nomor_polis'=>$nomor_polis])->first();
+                $partisipan = KonvenClaim::where(['nomor_partisipan'=>$nomor_partisipan,'nomor_polis'=>$nomor_polis,'nama_partisipan'=>$nama_partisipan])->first();
                 if($partisipan){
                     $partisipan->nilai_klaim = $nilai_klaim;
                     $partisipan->or = $or;
