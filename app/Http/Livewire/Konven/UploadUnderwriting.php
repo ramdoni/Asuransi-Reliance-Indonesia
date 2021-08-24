@@ -4,7 +4,9 @@ namespace App\Http\Livewire\Konven;
 
 use Livewire\Component;
 use Livewire\WithFileUploads;
-use Illuminate\Support\Facades\Storage;
+use App\Models\KonvenUnderwriting;
+use App\Models\Policy;
+use App\Models\Income;
 
 class UploadUnderwriting extends Component
 {
@@ -18,6 +20,7 @@ class UploadUnderwriting extends Component
 
     public function save()
     {
+        ini_set('memory_limit', '10024M'); // or you could use 1G
         $this->validate([
             'file'=>'required|mimes:xls,xlsx|max:51200' // 50MB maksimal
         ]);
@@ -28,12 +31,12 @@ class UploadUnderwriting extends Component
         $reader->setReadDataOnly(true);
         $data = $reader->load($path);
         $sheetData = $data->getActiveSheet()->toArray();
-        
+        $total_double = 0;
+        $countLimit = 1;
+        $total_success = 0;
         if(count($sheetData) > 0){
-            $countLimit = 1;
-            $total_double = 0;
-            $total_success = 0;
-            \App\Models\KonvenUnderwriting::where('is_temp',1)->delete(); // delete data temp
+            
+            KonvenUnderwriting::where('is_temp',1)->delete(); // delete data temp
             foreach($sheetData as $key => $i){
                 if($key<1) continue; // skip header
                 
@@ -93,14 +96,14 @@ class UploadUnderwriting extends Component
                 $grace_periode = $i[52];
                 $tgl_jatuh_tempo = $i[53]?@\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[53]):'';
                 $extend_tgl_jatuh_tempo = $i[54]?@\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[54]):'';
-                $tgl_lunas = $i[55]?@\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[5]):'';
+                $tgl_lunas = $i[55]?@\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[55]):'';
                 $ket_lampiran = $i[56];
                 $line_bussines = $i[68];
                 if(empty($no_polis))continue; // skip data
                 // cek no polis
-                $polis = \App\Models\Policy::where('no_polis',$no_polis)->first();
+                $polis = Policy::where('no_polis',$no_polis)->first();
                 if(!$polis){
-                    $polis = new \App\Models\Policy();
+                    $polis = new Policy();
                     $polis->no_polis = $no_polis;
                     $polis->no_polis_sistem = $no_polis_sistem;
                     $polis->pemegang_polis = $pemegang_polis;
@@ -113,14 +116,14 @@ class UploadUnderwriting extends Component
 
                 $total_success++;
 
-                $check = \App\Models\KonvenUnderwriting::where('no_kwitansi_debit_note',$no_kwitansi_debit_note)->first();
+                $check = KonvenUnderwriting::where('no_kwitansi_debit_note',$no_kwitansi_debit_note)->first();
                 if(!$check)
-                    $data = new \App\Models\KonvenUnderwriting();
+                    $data = new KonvenUnderwriting();
                 else{
-                    $income = \App\Models\Income::where(['transaction_table'=>'konven_underwriting','transaction_id'=>$check->id])->first();
+                    $income = Income::where(['transaction_table'=>'konven_underwriting','transaction_id'=>$check->id])->first();
                     if(isset($income) and $income->status==2) continue; // skip jika data sudah di receive
                     
-                    $data = new \App\Models\KonvenUnderwriting();
+                    $data = new KonvenUnderwriting();
                     $data->is_temp = 1;
                     $data->parent_id = $check->id;
                     $total_double++;
