@@ -248,7 +248,7 @@ class Detail extends Component
                 }
 
                 $journal->coa_id = $coa_premium_receivable;
-                $journal->date_journal = date('Y-m-d');
+                $journal->date_journal = $this->payment_date;
                 $journal->description = $this->description;
                 $journal->transaction_id = $this->data->id;
                 $journal->transaction_table = 'income';
@@ -273,7 +273,7 @@ class Detail extends Component
                     }
 
                     $journal->coa_id = 206;//Other Payable
-                    $journal->date_journal = date('Y-m-d');
+                    $journal->date_journal = $this->payment_date;
                     $journal->description = $this->description;
                     $journal->transaction_id = $this->data->id;
                     $journal->transaction_table = 'income';
@@ -299,7 +299,7 @@ class Detail extends Component
                     }
 
                     $journal->coa_id = 347; // Bank Charges
-                    $journal->date_journal = date('Y-m-d');
+                    $journal->date_journal = $this->payment_date;
                     $journal->description = $this->description;
                     $journal->transaction_id = $this->data->id;
                     $journal->transaction_table = 'income';
@@ -326,7 +326,7 @@ class Detail extends Component
                     }
 
                     $journal->coa_id = get_coa(406000); // premium suspend
-                    $journal->date_journal = date('Y-m-d');
+                    $journal->date_journal = $this->payment_date;
                     $journal->description = $this->description;
                     $journal->transaction_id = $this->data->id;
                     $journal->transaction_table = 'income';
@@ -355,7 +355,7 @@ class Detail extends Component
                         }
                         
                         $journal->coa_id = $coa_bank_account->coa_id;
-                        $journal->date_journal = date('Y-m-d');
+                        $journal->date_journal = $this->payment_date;
                         $journal->description = $this->description;
                         $journal->transaction_id = $this->data->id;
                         $journal->transaction_table = 'income';
