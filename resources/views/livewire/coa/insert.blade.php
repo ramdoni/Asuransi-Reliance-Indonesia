@@ -10,7 +10,7 @@
                         <label>{{ __('COA Group') }}</label>
                         <select class="form-control" wire:model="coa_group_id">
                             <option value=""> --- Select --- </option>
-                            @foreach(\App\Models\CoaGroup::orderBy('id','ASC')->get() as $k =>$i)
+                            @foreach(\App\Models\CoaGroup::orderBy('name','ASC')->get() as $k =>$i)
                             <option value="{{$i->id}}">{{$i->name}} / {{$i->code}}</option>
                             @endforeach
                         </select>

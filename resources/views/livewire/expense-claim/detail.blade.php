@@ -74,7 +74,7 @@
                             <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                         @enderror
                     </div>
-                    <livewire:expense-claim.select-to-bank />
+                    @livewire('expense-claim.select-to-bank', ['is_readonly'=> $is_readonly,'to_bank_account_id'=> $expense->rekening_bank_id ? $expense->rekening_bank_id : 0])
                     <div class="form-group">
                         @error('to_bank_account_id')
                             <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
