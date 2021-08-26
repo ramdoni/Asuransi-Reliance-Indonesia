@@ -117,8 +117,12 @@
                                 <label>{{ __('Transaction Type') }}</label>
                                 <select class="form-control select_transaction_type" id="add_payment_transaction_type.{{$k}}" wire:model="add_payment_transaction_type.{{$k}}">
                                     <option value=""> --- Select --- </option>
-                                    @foreach(\App\Models\Coa::where('is_others_expense',1)->get() as $coa)
-                                    <option value="{{$coa->id}}">{{$coa->name}}</option>
+                                    @foreach(\App\Models\Coa::where('is_others_expense',1)->groupBy('coa_group_id')->get() as $group)
+                                        <optgroup label="{{isset($group->group->name) ? $group->group->name : ''}}">
+                                            @foreach(\App\Models\Coa::where(['is_others_expense'=>1,'coa_group_id'=>$group->coa_group_id])->get() as $coa)
+                                                <option value="{{$coa->id}}">{{$coa->name}} ({{$coa->code}})</option>
+                                            @endforeach
+                                        </optgroup>
                                     @endforeach
                                 </select>
                                 @error('add_payment_transaction_type.'.$k)
