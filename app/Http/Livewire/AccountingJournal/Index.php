@@ -16,7 +16,10 @@ class Index extends Component
     {
         $data = \App\Models\Journal::orderBy('id','DESC');
         
-        if($this->keyword) $data = $data->where('no_voucher','LIKE',"%{$this->keyword}%");
+        if($this->keyword) $data->where(function($table){
+            $table->where('no_voucher','LIKE',"%{$this->keyword}%")
+                ->orWhere('description','LIKE',"%{$this->keyword}%");
+        });
         if($this->year) $data = $data->whereYear('date_journal',$this->year);
         if($this->month) $data = $data->whereMonth('date_journal',$this->month);
         if($this->coa_id) $data = $data->where('coa_id',$this->coa_id);
