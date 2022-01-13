@@ -23,8 +23,8 @@ class Insert extends Component
             'bank'=>'required',
             'no_rekening'=>'required',
             'cabang'=>'required',
-            'open_balance'=>'required',
-            'coa_id'=>'required'
+            // 'open_balance'=>'required',
+            // 'coa_id'=>'required'
         ]);
         $data = new \App\Models\BankAccount();
         $data->owner = $this->owner;
