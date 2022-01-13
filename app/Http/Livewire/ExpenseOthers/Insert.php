@@ -54,7 +54,7 @@ class Insert extends Component
                 'nominal' => 'required',
                 'payment_date'=>'required',
                 'from_bank_account_id'=>'required',
-                'to_bank_account_id'=>'required',
+                //'to_bank_account_id'=>'required',
             ]
         );
         $this->nominal = replace_idr($this->nominal);

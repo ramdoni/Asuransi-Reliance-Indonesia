@@ -96,7 +96,7 @@ class Detail extends Component
         $this->data->rekening_bank_id = $this->to_bank_account_id;
         $this->data->from_bank_account_id = $this->from_bank_account_id;
         $this->data->save();
-
+        
         foreach($this->add_payment as $k =>$i){
             $ex_payment = \App\Models\ExpensePayment::find($this->add_payment_id[$k]);
             $ex_payment->payment_date = $this->payment_date;
@@ -116,7 +116,7 @@ class Detail extends Component
         }
         if($status==2){
             // insert Journal
-            if(isset($data->from_bank_account->coa->id)){
+            if(isset($this->data->from_bank_account->coa->id)){
                 $journal_no_voucher = generate_no_voucher($this->data->from_bank_account->coa->id,$this->data->id);
 
                 $new  = new \App\Models\Journal();

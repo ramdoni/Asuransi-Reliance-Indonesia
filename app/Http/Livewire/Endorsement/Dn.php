@@ -23,9 +23,11 @@ class Dn extends Component
             if($this->reas=='Reas') $data = $data->where('reference_type','Endorsement DN Reas');
             if($this->reas=='Ajri') $data = $data->where('reference_type','Endorsement DN');
         }
-        if($this->keyword) $data = $data->where('description','LIKE', "%{$this->keyword}%")
+        if($this->keyword) $data = $data->where(function($table){
+                                    $table->where('description','LIKE', "%{$this->keyword}%")
                                         ->orWhere('no_voucher','LIKE',"%{$this->keyword}%")
                                         ->orWhere('reference_no','LIKE',"%{$this->keyword}%");
+                                    });
         if($this->status) $data = $data->where('status',$this->status);
         if($this->type) $data = $data->where('type',$this->type);
 

@@ -70,7 +70,7 @@
                                 <select class="form-control" wire:model="from_bank_account_id">
                                     <option value=""> --- Select --- </option>
                                     @foreach (\App\Models\BankAccount::where('is_client',0)->orderBy('bank','ASC')->get() as $bank)
-                                        <option value="{{ $bank->id}}">{{ $bank->no_rekening}} {{ $bank->bank}} an {{$bank->owner}}</option>
+                                        <option value="{{ $bank->id}}">{{ $bank->no_rekening}} {{ $bank->bank}} {{!empty($bank->owner) ? ' an '. $bank->owner:''}}</option>
                                     @endforeach
                                 </select>
                                 @error('from_bank_account_id')
