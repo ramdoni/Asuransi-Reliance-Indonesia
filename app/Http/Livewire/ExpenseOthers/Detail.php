@@ -69,7 +69,7 @@ class Detail extends Component
             [
                 'recipient' => 'required',
                 'reference_type' => 'required',
-                'reference_no' => 'required',
+                //'reference_no' => 'required',
                 'reference_date' => 'required',
                 'nominal' => 'required',
                 'payment_amount' => 'required',

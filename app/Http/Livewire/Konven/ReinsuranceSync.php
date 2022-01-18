@@ -70,7 +70,7 @@ class ReinsuranceSync extends Component
                     $new->debit = 0;
                     $new->kredit = $item->komisi_reinsurance;
                     $new->saldo = $item->komisi_reinsurance;
-                    $new->description = $item->kirim_reas."({$item->keterangan})";
+                    $new->description = $item->kirim_reas." {$item->keterangan} ";
                     $new->save();
                     // insert Income - Reinsurance Commision
                     $income = new \App\Models\Income();
@@ -97,7 +97,7 @@ class ReinsuranceSync extends Component
                     $new->debit = 0;
                     $new->kredit = $item->premi_reas_netto;
                     $new->saldo = $item->premi_reas_netto;
-                    $new->description = $item->kirim_reas."({$item->keterangan})";
+                    $new->description = $item->kirim_reas." {$item->keterangan}";
                     $new->save();
                     // insert Income
                     // $income = new \App\Models\Income();

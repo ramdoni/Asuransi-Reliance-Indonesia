@@ -3,6 +3,11 @@
 namespace App\Http\Livewire\ExpenseClaim;
 
 use Livewire\Component;
+use App\Models\Expenses;
+use App\Models\BankAccount;
+use App\Models\Journal;
+use App\Models\ExpensePeserta;
+use App\Models\BankAccountBalance;
 
 class Insert extends Component
 {
@@ -65,7 +70,7 @@ class Insert extends Component
                 'payment_date' => 'required',
                 'from_bank_account_id' => 'required'
             ]);
-        $data = new \App\Models\Expenses();
+        $data = new Expenses();
         $data->policy_id = $this->data->id;
         $data->from_bank_account_id = $this->from_bank_account_id;
         $data->rekening_bank_id = $this->to_bank_account_id;
@@ -85,7 +90,7 @@ class Insert extends Component
         if($this->add_pesertas){
             foreach($this->add_pesertas as $k=>$v){
                 if(!empty($this->no_peserta[$k]) and !empty($this->nama_peserta[$k])){
-                    $peserta = new \App\Models\ExpensePeserta();
+                    $peserta = new ExpensePeserta();
                     $peserta->expense_id = $data->id;
                     $peserta->no_peserta = $this->no_peserta[$k];
                     $peserta->nama_peserta = $this->nama_peserta[$k];
@@ -97,13 +102,61 @@ class Insert extends Component
         }
 
         if($type=='Submit'){
+            // insert coa
+            $coa_bank_charges = 347;
+            // Bank
+            $coa_bank_account = BankAccount::find($this->from_bank_account_id);
+            $no_voucher = generate_no_voucher($coa_bank_account->coa_id,$this->data->id);
+            if($coa_bank_account->coa_id){
+                $journal = new Journal();
+                $journal->coa_id = $coa_bank_account->coa_id;
+                $journal->no_voucher = $no_voucher;
+                $journal->date_journal = date('Y-m-d');
+                $journal->kredit = $this->bank_charges + $this->payment_amount;
+                $journal->debit = 0;
+                $journal->saldo = $this->bank_charges + $this->payment_amount;
+                $journal->description = $this->description ? $this->description : 'Pembayaran Klaim '.$reas->broker_re.' ('.$reas->keterangan.')';
+                $journal->transaction_id = $this->data->id;
+                $journal->transaction_table = 'expenses';
+                $journal->transaction_number = isset($reas->uw->no_kwitansi_debit_note)?$reas->uw->no_kwitansi_debit_note:'';
+                $journal->save();
+            } 
+            // Bank Charges
+            if(!empty($this->bank_charges)){
+                $journal = new Journal();
+                $journal->coa_id = $coa_bank_charges;
+                $journal->no_voucher = $no_voucher;
+                $journal->date_journal = date('Y-m-d');
+                $journal->debit = replace_idr($this->bank_charges);
+                $journal->kredit = 0;
+                $journal->saldo = replace_idr($this->bank_charges);
+                $journal->description = $this->description ? $this->description : 'Pembayaran Klaim '.$reas->broker_re.' ('.$reas->keterangan.')';
+                $journal->transaction_id = $this->data->id;
+                $journal->transaction_table = 'expenses';
+                $journal->transaction_number = isset($reas->uw->no_kwitansi_debit_note)?$reas->uw->no_kwitansi_debit_note:'';
+                $journal->save();
+            }
+            // Reinsurance Premium Payable
+            $journal = new Journal();
+            $journal->coa_id = $coa_reinsurance_premium_payable;
+            $journal->no_voucher = $no_voucher;
+            $journal->date_journal = date('Y-m-d');
+            $journal->debit = $this->payment_amount;
+            $journal->kredit = 0;
+            $journal->saldo = $this->payment_amount;
+            $journal->description = $this->description ? $this->description : 'Pembayaran Premi Reas '.$reas->broker_re.' ('.$reas->keterangan.')';
+            $journal->transaction_id = $this->data->id;
+            $journal->transaction_table = 'expenses';
+            $journal->transaction_number = isset($reas->uw->no_kwitansi_debit_note)?$reas->uw->no_kwitansi_debit_note:'';
+            $journal->save();
+
             // set balance
-            $bank_balance = \App\Models\BankAccount::find($data->from_bank_account_id);
+            $bank_balance = BankAccount::find($data->from_bank_account_id);
             if($bank_balance){
                 $bank_balance->open_balance = $bank_balance->open_balance - $this->nilai_klaim;
                 $bank_balance->save();
 
-                $balance = new \App\Models\BankAccountBalance();
+                $balance = new BankAccountBalance();
                 $balance->debit = $this->nilai_klaim;
                 $balance->bank_account_id = $bank_balance->id;
                 $balance->status = 1;

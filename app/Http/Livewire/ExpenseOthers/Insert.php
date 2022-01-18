@@ -48,7 +48,7 @@ class Insert extends Component
         $this->validate(
             [
                 'recipient' => 'required',
-                'reference_no' => 'required',
+                // 'reference_no' => 'required',
                 'reference_date' => 'required',
                 'reference_type' => 'required',
                 'nominal' => 'required',

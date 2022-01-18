@@ -102,11 +102,12 @@ class Detail extends Component
             }
             $coa_bank_charges = 347;
             // Bank
-            $coa_bank_account = \App\Models\BankAccount::find($this->bank_account_id);
+            $coa_bank_account = \App\Models\BankAccount::find($this->from_bank_account_id);
+            $no_voucher = generate_no_voucher($coa_bank_account->coa_id,$this->data->id);
             if($coa_bank_account->coa_id){
                 $journal = new \App\Models\Journal();
                 $journal->coa_id = $coa_bank_account->coa_id;
-                $journal->no_voucher = generate_no_voucher($coa_bank_account->coa_id,$this->data->id);
+                $journal->no_voucher = $no_voucher;
                 $journal->date_journal = date('Y-m-d');
                 $journal->kredit = $this->bank_charges + $this->payment_amount;
                 $journal->debit = 0;
@@ -116,12 +117,12 @@ class Detail extends Component
                 $journal->transaction_table = 'expenses';
                 $journal->transaction_number = isset($reas->uw->no_kwitansi_debit_note)?$reas->uw->no_kwitansi_debit_note:'';
                 $journal->save();
-            }
+            } 
             // Bank Charges
             if(!empty($this->bank_charges)){
                 $journal = new \App\Models\Journal();
                 $journal->coa_id = $coa_bank_charges;
-                $journal->no_voucher = generate_no_voucher($coa_bank_charges,$this->data->id);
+                $journal->no_voucher = $no_voucher;
                 $journal->date_journal = date('Y-m-d');
                 $journal->debit = replace_idr($this->bank_charges);
                 $journal->kredit = 0;
@@ -135,7 +136,7 @@ class Detail extends Component
             // Reinsurance Premium Payable
             $journal = new \App\Models\Journal();
             $journal->coa_id = $coa_reinsurance_premium_payable;
-            $journal->no_voucher = generate_no_voucher($coa_reinsurance_premium_payable,$this->data->id);
+            $journal->no_voucher = $no_voucher;
             $journal->date_journal = date('Y-m-d');
             $journal->debit = $this->payment_amount;
             $journal->kredit = 0;
