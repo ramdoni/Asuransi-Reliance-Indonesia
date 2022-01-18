@@ -192,11 +192,11 @@
                                     </li>
                                 </ul> --}}
                             </li>
-                            <li class="{{ Request::segment(1) === 'dashboard' ? 'active' : null }}">
-                                <a href="#"><i class="fa fa-database"></i> <span>Cashflow</span></a>
+                            <li class="{{ Request::segment(1) === 'cashflow' ? 'active' : null }}">
+                                <a href="{{route('cashflow.index')}}"><i class="fa fa-database"></i> <span>Cashflow</span></a>
                             </li>
-                            <li class="{{ Request::segment(1) === 'dashboard' ? 'active' : null }}">
-                                <a href="#"><i class="fa fa-database"></i> <span>Trial Balance</span></a>
+                            <li class="{{ Request::segment(1) === 'trial-balance' ? 'active' : null }}">
+                                <a href="{{route('trial-balance.index')}}"><i class="fa fa-database"></i> <span>Trial Balance</span></a>
                             </li>
                             <li class="{{ Request::segment(1) === 'dashboard' ? 'active' : null }}">
                                 <a href="#"><i class="fa fa-database"></i> <span>Income Statement</span></a>

@@ -1,15 +1,19 @@
 <div>
     <div class="px-0 pt-0 header row">
         <div class="col-md-2">
-            <select class="form-control" wire:model="year">
+            <select class="form-control" wire:model="year" wire:ignore>
                 <option value=""> -- Year -- </option>
                 @foreach(\App\Models\Journal::select( DB::raw( 'YEAR(date_journal) AS year' ))->groupBy('year')->get() as $i)
                 <option>{{$i->year}}</option>
                 @endforeach
             </select>
         </div>
-        <div class="px-0 col-md-4">
+        <div class="px-0 col-md-10">
             <a href="javascript:void(0)" class="btn btn-info" wire:click="downloadExcel"><i class="fa fa-download"></i> Download Excel</a>
+            <span wire:loading>
+                <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                <span class="sr-only">Loading...</span>
+            </span>
         </div>
     </div>
     <div class="px-0 table-responsive">

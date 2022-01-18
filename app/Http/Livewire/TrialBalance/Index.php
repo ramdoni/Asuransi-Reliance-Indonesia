@@ -4,6 +4,7 @@ namespace App\Http\Livewire\TrialBalance;
 
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Models\Coa;
 
 class Index extends Component
 {
@@ -12,12 +13,13 @@ class Index extends Component
     protected $paginationTheme = 'bootstrap';
     public function render()
     {
-        $data = \App\Models\Journal::paginate(20);
+        $data = Coa::with('journal')->get();
         
         return view('livewire.trial-balance.index')->with(['data'=>$data]);
     }
 
     public function mount()
     {
+
     }
 }

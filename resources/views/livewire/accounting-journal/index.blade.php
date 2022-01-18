@@ -8,9 +8,9 @@
                     <div class="col-md-3" wire:ignore>
                         <select class="form-control coa_id" id="coa_id" wire:model="coa_id">
                             <option value=""> -- COA -- </option>
-                            @foreach(\App\Models\CoaGroup::orderBy('name')->get() as $group)
+                            @foreach(\App\Models\CoaGroup::with('coa')->orderBy('name')->get() as $group)
                                 <optgroup label="{{$group->name}}">
-                                @foreach(\App\Models\Coa::where('coa_group_id',$group->id)->get() as $k => $coa)
+                                @foreach($group->coa as $k => $coa)
                                 <option value="{{$coa->id}}">{{$coa->code}} {{$coa->name}}</option>
                                 @endforeach
                                 </optgroup>
@@ -102,13 +102,11 @@
                                     <td class="text-right">{{format_idr($item->kredit)}}</td>
                                     <td class="text-right">{{format_idr($item->saldo)}}</td>
                                     <td style="text-align:center;">
-                                        @if(isset($item->code_cashflow->code))
-                                            <span>{{$item->code_cashflow->code}}</span>
-                                        @elseif($set_multiple_cashflow)
+                                        @if($set_multiple_cashflow)
                                             <input type="checkbox" wire:model="value_multiple_cashflow.{{$key_code_cashflow}}" value="{{$item->id}}" />
                                             @php($key_code_cashflow++)
                                         @else
-                                            <a href="javascript:void(0)" title="{{isset($item->code_cashflow->code)?$item->code_cashflow->name : ''}}" class="{{isset($item->code_cashflow->code) ? 'btn btn-warning btn-sm' :''}}" wire:click="setCodeCashflow({{$item->id}})"><i class="fa fa-edit"></i> Set</a>
+                                            <a href="javascript:void(0)" title="{{isset($item->code_cashflow->code)?$item->code_cashflow->name : ''}}" class="{{isset($item->code_cashflow->code) ? 'btn btn-warning btn-sm' :''}}" wire:click="setCodeCashflow({{$item->id}})">{!!isset($item->code_cashflow->code)?$item->code_cashflow->code:'<i class="fa fa-edit"></i>  Set'!!}</a>
                                         @endif
                                     </td>
                                 </tr>

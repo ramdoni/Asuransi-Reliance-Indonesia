@@ -24,6 +24,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/main.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/color_skins.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}?v={{ date('YmdHis') }}">
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.8.2/dist/alpine.min.js" defer></script>
     @stack('after-styles')
 
     @if (trim($__env->yieldContent('page-styles')))
@@ -76,29 +77,6 @@
                                 aria-hidden="true">&times;</span></button>
                         <i class="fa fa-check-circle"></i> <span class="message"></span>
                     </div>
-
-                    {{-- <div class="row">
-                        <div class="col-lg-5 col-md-8 col-sm-12">
-                            <h2><a href="javascript:void(0);" class="btn btn-xs btn-link btn-toggle-fullwidth"><i
-                                        class="fa fa-arrow-left"></i></a> @yield('title')</h2>
-                            @if (trim($__env->yieldContent('parentPageTitle')) and trim($__env->yieldContent('title')))
-                                <ul class="breadcrumb">
-                                    <li class="breadcrumb-item"><a href="/"><i class="icon-home"></i></a></li>
-                                    @if (trim($__env->yieldContent('parentPageTitle')))
-                                        <li class="breadcrumb-item">@yield('parentPageTitle')</li>
-                                    @endif
-                                    @if (trim($__env->yieldContent('title')))
-                                        <li class="breadcrumb-item active">@yield('title')</li>
-                                    @endif
-                                </ul>
-                            @endif
-                        </div>
-                        <div class="text-right col-lg-7 col-md-4 col-sm-12">
-                            @if (trim($__env->yieldContent('title-right')))
-                                @yield('title-right')
-                            @endif
-                        </div>
-                    </div> --}}
                 </div>
                 @yield('content')
                 {{ $slot }}

@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\AccountingJournal;
 
 use Livewire\Component;
+use App\Models\Journal;
 
 class SetCodeCashflow extends Component
 {
@@ -14,11 +15,13 @@ class SetCodeCashflow extends Component
     }
     public function mount()
     {
-        \LogActivity::add("Accounting - Journal Set Code Cahs Flow {$this->active_id}");
     }
     public function modalEdit($id)
     {
-        $this->active_id = $id;
+        $this->active_id = Journal::find($id);
+        $this->code_cashflow_id = $this->active_id->code_cashflow_id;
+
+        \LogActivity::add("Accounting - Journal Set Code Cahs Flow {$this->active_id->id}");
     }
     public function save()
     {
@@ -26,9 +29,8 @@ class SetCodeCashflow extends Component
             'code_cashflow_id'=>'required'
         ]);
 
-        $data = \App\Models\Journal::find($this->active_id);
-        $data->code_cashflow_id = $this->code_cashflow_id;
-        $data->save();
+        $this->active_id->code_cashflow_id = $this->code_cashflow_id;
+        $this->active_id->save();
 
         $this->emit('modalEditHide');
         $this->code_cashflow_id = '';
