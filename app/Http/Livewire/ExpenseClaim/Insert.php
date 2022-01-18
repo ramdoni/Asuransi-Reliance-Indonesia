@@ -3,11 +3,11 @@
 namespace App\Http\Livewire\ExpenseClaim;
 
 use Livewire\Component;
-use App\Models\Expenses;
-use App\Models\BankAccount;
 use App\Models\Journal;
+use App\Models\Expenses;
+use App\Models\Policy;
+use App\Models\Income;
 use App\Models\ExpensePeserta;
-use App\Models\BankAccountBalance;
 
 class Insert extends Component
 {
@@ -37,8 +37,8 @@ class Insert extends Component
     public function updated($propertyName)
     {
         if($propertyName=='no_polis'){
-            $this->data = \App\Models\Policy::find($this->no_polis);
-            $premium = \App\Models\Income::select('income.*')->where(['income.reference_type'=>'Premium Receivable','income.transaction_table'=>'konven_underwriting'])
+            $this->data = Policy::find($this->no_polis);
+            $premium = Income::select('income.*')->where(['income.reference_type'=>'Premium Receivable','income.transaction_table'=>'konven_underwriting'])
                                             ->join('konven_underwriting','konven_underwriting.id','=','income.transaction_id')
                                             ->where('konven_underwriting.no_polis',$this->data->no_polis);
             $total_premium_receive = clone $premium;
@@ -165,6 +165,74 @@ class Insert extends Component
                 $balance->transaction_date = $this->payment_date;
                 $balance->save();
             }
+
+            // $coa_claim_payable = 0;
+            // switch($this->data->uw->line_bussines){
+            //     case "JANGKAWARSA":
+            //         $coa_claim_payable = 155; //Claim Payable Jangkawarsa
+            //     break;
+            //     case "EKAWARSA":
+            //         $coa_claim_payable = 156; //Claim Payable Ekawarsa
+            //     break;
+            //     case "DWIGUNA":
+            //         $coa_claim_payable = 157; //Claim Payable  Dwiguna
+            //     break;
+            //     case "DWIGUNA KOMBINASI":
+            //         $coa_claim_payable = 158; //Claim Payable Dwiguna Kombinasi
+            //     break;
+            //     case "KECELAKAAN":
+            //         $coa_claim_payable = 159; //Claim Payable Kecelakaan Diri
+            //     break;
+            //     case "TRADISIONAL":
+            //         $coa_claim_payable = 154; //Claim Payable Kecelakaan Diri
+            //     break;
+            //     default: 
+            //         $coa_claim_payable = 160; //CLaim Payable Other Tradisional
+            //     break;
+            // }        
+            // $no_voucher = generate_no_voucher($coa_claim_payable,$data->id);
+            // // Premium Receivable
+            // $journal = new Journal();
+            // $journal->coa_id = $coa_claim_payable;
+            // $journal->no_voucher = $no_voucher;
+            // $journal->date_journal = date('Y-m-d');
+            // $journal->kredit = $this->payment_amount;
+            // $journal->debit = 0;
+            // $journal->saldo = $this->payment_amount;
+            // $journal->description = $this->description;
+            // $journal->transaction_id = $this->data->id;
+            // $journal->transaction_table = 'expenses';
+            // $journal->transaction_number = isset($data->uw->no_kwitansi_debit_note)?$this->data->uw->no_kwitansi_debit_note:'';
+            // $journal->save();
+
+            // $journal = new Journal();
+            // $journal->coa_id = 206;//Other Payable
+            // $journal->no_voucher = $no_voucher;
+            // $journal->date_journal = date('Y-m-d');
+            // $journal->kredit = $this->payment_amount - $this->data->nominal;
+            // $journal->debit = 0;
+            // $journal->saldo = $this->payment_amount - $this->data->nominal;
+            // $journal->description = $this->description;
+            // $journal->transaction_id = $this->data->id;
+            // $journal->transaction_table = 'expenses';
+            // $journal->transaction_number = isset($this->data->uw->no_kwitansi_debit_note)?$this->data->uw->no_kwitansi_debit_note:'';
+            // $journal->save();
+            
+            // // Bank Charges
+            // if(!empty($this->bank_charges)){
+            //     $journal = new Journal();
+            //     $journal->coa_id = 347; // Bank Charges
+            //     $journal->no_voucher = $no_voucher;
+            //     $journal->date_journal = date('Y-m-d');
+            //     $journal->kredit = replace_idr($this->bank_charges);
+            //     $journal->debit = 0;
+            //     $journal->saldo = replace_idr($this->bank_charges);
+            //     $journal->description = $this->description;
+            //     $journal->transaction_id = $this->data->id;
+            //     $journal->transaction_table = 'expenses';
+            //     $journal->transaction_number = isset($this->data->uw->no_kwitansi_debit_note)?$this->data->uw->no_kwitansi_debit_note:'';
+            //     $journal->save();
+            // }
         }
 
         session()->flash('message-success',__('Claim data has been successfully saved'));

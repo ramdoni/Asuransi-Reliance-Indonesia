@@ -263,7 +263,11 @@
         </div>
     </div>
 </div>
-<livewire:expense-claim.add-bank />
+<div wire:ignore.self class="modal fade" id="modal_add_bank" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <livewire:expense-claim.add-bank />
+    </div>
+</div>
 @push('after-scripts')
 <link rel="stylesheet" href="{{ asset('assets/vendor/select2/css/select2.min.css') }}"/>
 <script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
@@ -282,7 +286,7 @@
     Livewire.on('init-form', () =>{
         setTimeout(function(){
             init_form();
-        },500);
+        },1000);
     });
     function init_form(){
         $('.format_number').priceFormat({

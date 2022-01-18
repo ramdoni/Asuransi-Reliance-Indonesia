@@ -90,12 +90,14 @@ Route::group(['middleware' => ['auth','access:3']], function(){
     Route::get('general-ledger-konven',App\Http\Livewire\GeneralLedger\Konven::class)->name('general-ledger.konven');
     Route::get('general-ledger-konven/detail/{gl}',App\Http\Livewire\GeneralLedger\KonvenDetail::class)->name('general-ledger.konven-detail');
     Route::get('general-ledger-konven/create',App\Http\Livewire\GeneralLedger\KonvenCreate::class)->name('general-ledger.konven-create');
+    Route::get('cash-flow',App\Http\Livewire\CashFlow\Index::class)->name('cashflow.index');
+    Route::get('trial-balance',App\Http\Livewire\TrialBalance\Index::class)->name('trial-balance.index');
 });
 
 // Finance
 Route::group(['middleware' => ['auth','access:2']], function(){    
-    Route::get('trial-balance',App\Http\Livewire\TrialBalance\Index::class)->name('trial-balance');
-    Route::get('cash-flow',App\Http\Livewire\CashFlow\Index::class)->name('cash-flow');
+    // Route::get('trial-balance',App\Http\Livewire\TrialBalance\Index::class)->name('trial-balance');
+    // Route::get('cash-flow',App\Http\Livewire\CashFlow\Index::class)->name('cash-flow');
     Route::get('income-statement',App\Http\Livewire\IncomeStatement\Index::class)->name('income-statement');
     Route::get('balance-sheet',App\Http\Livewire\BalanceSheet\Index::class)->name('balance-sheet');
     Route::get('konven',App\Http\Livewire\Konven\Index::class)->name('konven');

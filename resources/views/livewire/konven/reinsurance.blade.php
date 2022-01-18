@@ -67,20 +67,20 @@
                                     </td>
                                     <td>{{$item->no_polis}}</td>
                                     <td>{{$item->pemegang_polis}}</td>
-                                    <td>{{$item->peserta}}</td>
-                                    <td>{{format_idr($item->uang_pertanggungan)}}</td>
-                                    <td>{{format_idr($item->uang_pertanggungan_reas)}}</td>
-                                    <td>{{format_idr($item->premi_gross_ajri)}}</td>
-                                    <td>{{format_idr($item->premi_reas)}}</td>
-                                    <td>{{format_idr($item->komisi_reinsurance)}}</td>
-                                    <td>{{format_idr($item->premi_reas_netto)}}</td>
-                                    <td>{{$item->keterangan}}</td>
-                                    <td>{{$item->kirim_reas}}</td>
-                                    <td>{{$item->broker_re}}</td>
-                                    <td>{{$item->reasuradur}}</td>
-                                    <td>{{$item->bulan}}</td>
-                                    <td>{{$item->ekawarsa_jangkawarsa}}</td>
-                                    <td>{{$item->produk}}</td>
+                                    <td>@livewire('konven.reinsurance-editable',['data'=>$item,'field'=>'peserta'],key((int)$item->id+10))</td>
+                                    <td>@livewire('konven.reinsurance-editable',['data'=>$item,'field'=>'uang_pertanggungan'],key((int)$item->id+10))</td>
+                                    <td>@livewire('konven.reinsurance-editable',['data'=>$item,'field'=>'uang_pertanggungan_reas'],key((int)$item->id+10))</td>
+                                    <td>@livewire('konven.reinsurance-editable',['data'=>$item,'field'=>'premi_gross_ajri'],key((int)$item->id+10))</td>
+                                    <td>@livewire('konven.reinsurance-editable',['data'=>$item,'field'=>'premi_reas'],key((int)$item->id+10))</td>
+                                    <td>@livewire('konven.reinsurance-editable',['data'=>$item,'field'=>'komisi_reinsurance'],key((int)$item->id+10))</td>
+                                    <td>@livewire('konven.reinsurance-editable',['data'=>$item,'field'=>'premi_reas_netto'],key((int)$item->id+10))</td>
+                                    <td>@livewire('konven.reinsurance-editable',['data'=>$item,'field'=>'keterangan'],key((int)$item->id+10))</td>
+                                    <td>@livewire('konven.reinsurance-editable',['data'=>$item,'field'=>'kirim_reas'],key((int)$item->id+11))</td>
+                                    <td>@livewire('konven.reinsurance-editable',['data'=>$item,'field'=>'broker_re'],key((int)$item->id+12))</td>
+                                    <td>@livewire('konven.reinsurance-editable',['data'=>$item,'field'=>'reasuradur'],key((int)$item->id+13))</td>
+                                    <td>@livewire('konven.reinsurance-editable',['data'=>$item,'field'=>'bulan'],key((int)$item->id+14))</td>
+                                    <td>@livewire('konven.reinsurance-editable',['data'=>$item,'field'=>'ekawarsa_jangkawarsa'],key((int)$item->id+15))</td>
+                                    <td>@livewire('konven.reinsurance-editable',['data'=>$item,'field'=>'produk'],key((int)$item->id+16))</td>
                                 </tr>
                                 @php($num++)
                                 @endforeach

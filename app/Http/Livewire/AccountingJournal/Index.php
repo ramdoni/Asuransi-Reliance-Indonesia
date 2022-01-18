@@ -4,6 +4,7 @@ namespace App\Http\Livewire\AccountingJournal;
 
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Models\Journal;
 
 class Index extends Component
 {
@@ -14,7 +15,7 @@ class Index extends Component
     public $set_multiple_cashflow = false,$value_multiple_cashflow=[],$check_all=false;
     public function render()
     {
-        $data = \App\Models\Journal::orderBy('id','DESC');
+        $data = Journal::with('coa','code_cashflow')->orderBy('id','DESC');
         
         if($this->keyword) $data->where(function($table){
             $table->where('no_voucher','LIKE',"%{$this->keyword}%")
