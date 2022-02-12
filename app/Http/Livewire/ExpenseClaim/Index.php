@@ -16,7 +16,9 @@ class Index extends Component
     
     public function render() 
     {
-        $data = Expenses::select('expenses.*')->orderBy('expenses.id','desc')->where('expenses.reference_type','Claim')->groupBy('expenses.id')
+        $data = Expenses::select('expenses.*')
+                            ->with(['pesertas'])
+                            ->orderBy('expenses.id','desc')->where('expenses.reference_type','Claim')->groupBy('expenses.id')
                             ->leftJoin('expense_pesertas','expense_pesertas.expense_id','=','expenses.id');
         if($this->keyword) $data = $data->where(function($table){
                                     $table->where('expenses.description','LIKE', "%{$this->keyword}%")
