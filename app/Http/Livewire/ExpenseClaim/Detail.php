@@ -118,7 +118,6 @@ class Detail extends Component
         }
 
         $this->data = Policy::find($this->no_polis);
-
         $this->expense->policy_id = $this->data->id;
         $this->expense->from_bank_account_id = $this->from_bank_account_id;
         $this->expense->rekening_bank_id = $this->to_bank_account_id;

@@ -4,6 +4,7 @@ namespace App\Http\Livewire\IncomePremiumReceivable;
 
 use Livewire\Component;
 use App\Models\Income;
+use App\Models\Expenses;
 use App\Models\IncomeTitipanPremi;
 use App\Models\KonvenMemo;
 use App\Models\SyariahCancel;
@@ -18,8 +19,8 @@ class Detail extends Component
     public $payment_date,$tax_amount,$total_payment_amount,$is_readonly=false,$due_date;
     public $bank_charges,$showDetail='underwriting',$cancelation;
     public $titipan_premi,$temp_titipan_premi=[],$temp_arr_titipan_id=[],$total_titipan_premi=0;
-    public $is_otp_editable=false,$otp,$is_submit;
-    protected $listeners = ['emit-add-bank'=>'emitAddBank','set-titipan-premi'=>'setTitipanPremi','refresh-page'=>'$refresh','otp-editable'=>'otpEditable'];
+    public $is_otp_editable=false,$otp,$is_submit,$is_from_claim=false,$temp_arr_claim=[],$temp_arr_claim_id=[];
+    protected $listeners = ['emit-add-bank'=>'emitAddBank','set-titipan-premi'=>'setTitipanPremi','refresh-page'=>'$refresh','otp-editable'=>'otpEditable','set-claim'=>'setClaim'];
     public function render()
     {
         return view('livewire.income-premium-receivable.detail');
@@ -44,10 +45,24 @@ class Detail extends Component
         $this->emit('init-form');
     }
 
+    public function delete_claim($id)
+    {
+        foreach($this->temp_arr_claim_id as $k=>$val) {
+            if($val==$id) unset($this->temp_arr_claim_id[$k]);
+        }
+        $this->temp_arr_claim = Expenses::whereIn('id',$this->temp_arr_claim_id)->get();
+    }
+
+    public function setClaim($id)
+    {
+        $this->temp_arr_claim_id[] = $id;
+        $this->temp_arr_claim = Expenses::whereIn('id',$this->temp_arr_claim_id)->get();
+    }
+
     public function setTitipanPremi($id)
     {
         $this->temp_arr_titipan_id[] = $id;
-        $this->temp_titipan_premi = \App\Models\Income::whereIn('id',$this->temp_arr_titipan_id)->get();
+        $this->temp_titipan_premi = Income::whereIn('id',$this->temp_arr_titipan_id)->get();
         $this->total_titipan_premi = 0;
         foreach($this->temp_titipan_premi as $titipan){
             $this->total_titipan_premi += $titipan->outstanding_balance;
@@ -317,7 +332,7 @@ class Detail extends Component
                         $journal->saldo = 0; 
                         $journal->journal_no_voucher = $find_journal->no_voucher;
                         $journal->no_voucher = generate_no_voucher(get_coa(406000), $count_journal_penyesuaian);
-                    } else {
+                    }else{
                         $journal = new Journal();
                         $journal->debit = $this->bank_charges + $this->payment_amount;
                         $journal->kredit = 0;
@@ -332,9 +347,7 @@ class Detail extends Component
                     $journal->transaction_table = 'income';
                     $journal->transaction_number = $no_kwitansi_debit_note;
                     $journal->save();
-                }
-                else
-                {
+                }else{
                     # jika penerimaan premi dari transfer maka tercreate coa berdasarkan banknya
                     $coa_bank_account = BankAccount::find($this->bank_account_id);
                     if($coa_bank_account and !empty($coa_bank_account->coa_id)){
@@ -370,10 +383,9 @@ class Detail extends Component
 
         session()->flash('message-success',__('Data saved successfully'));
         
-        if(session()->get('url_back')){
+        if(session()->get('url_back'))
             return redirect(session()->get('url_back'));
-        }else{
+        else
             return redirect()->route('income.premium-receivable');
-        }
     }
 }

@@ -155,7 +155,7 @@
                         @elseif($item->status_sync==1)
                             <span class="badge badge-success">Sync</span>
                         @elseif($item->status_sync==2)
-                            <span class="badge badge-danger">Invalid</span>
+                            <span class="badge badge-danger" tile="{{$item->note_invalid}}">Invalid</span>
                         @endif
                     </td>
                     <td>{{$item->bulan}}</td>

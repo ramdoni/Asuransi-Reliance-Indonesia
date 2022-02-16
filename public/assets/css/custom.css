@@ -60,3 +60,8 @@
 .select2-selection__rendered {
     white-space: break-spaces !important;
 }
+.badge.badge-success.badge-active {background:#22af46;color:white}
+.badge.badge-danger.badge-active {background:#DE484C;color:white}
+.badge.badge-warning.badge-active {background:#f3ad06;color:white}
+.badge.badge-info.badge-active {background:#3C89DA;color:white}
+.badge.badge-primary.badge-active {background:#007bff;color:white}

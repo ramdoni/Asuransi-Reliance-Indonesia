@@ -1,7 +1,6 @@
 <div class="modal-content">
     <form wire:submit.prevent="save">
         <div class="row p-3">
-            {{-- <h5 class="modal-title ml-3" id="exampleModalLabel"><i class="fa fa-plus"></i> Add Titipan Premi</h5> --}}
             <div class="col-md-3">
                 <input type="text" class="form-control" wire:model="keyword" placeholder="Searching..." />
             </div>
@@ -23,36 +22,44 @@
                 <table class="table table-striped table-hover m-b-0 c_list">
                     <thead>
                         <tr>
-                            <th></th>                                    
-                            <th>No Voucher</th>                                    
-                            <th>Payment Date</th>                                    
-                            <th>Voucher Date</th>                                    
-                            <th>Reference Date</th>
-                            <th>Reference No</th>                                      
+                            <th></th>                                          
+                            <th>No Voucher</th>                                      
+                            <th>Record Date</th>         
+                            <th>Debit Note / Kwitansi</th>
+                            <th>Policy Number / Policy Holder</th>                       
+                            <th>No / Nama Peserta</th>                       
                             <th>From Bank Account</th>
                             <th>To Bank Account</th>
-                            <th>Balance</th>
+                            <th>Bank Charges</th>
+                            <th>Payment Amount</th>
                         </tr>
                     </thead>
                     <tbody>
-                    @foreach($data as $k => $item)
+                    @foreach($claim as $k => $item)
                         <tr>
-                            <td><a href="javascript:void(0)" class="badge badge-success badge-active" wire:click="$emit('set-titipan-premi',{{$item->id}})"><i class="fa fa-check"></i> choose</a></td>
-                            <td><a href="{{route('income.titipan-premi.detail',$item->id)}}" target="_blank">{!! no_voucher($item) !!}</a></td>
-                            <td>{{$item->payment_date?date('d M Y', strtotime($item->payment_date)):'-'}}</td>
+                            <td><a href="javascript:void(0)" class="badge badge-success badge-active" wire:click="$emit('set-claim',{{$item->id}})"><i class="fa fa-check-circle"></i> choose</a></td>
+                            <td><a href="{{route('expense.claim.detail',['id'=>$item->id])}}" target="_blank">{!!no_voucher($item)!!}</a></td>
                             <td>{{date('d M Y', strtotime($item->created_at))}}</td>
-                            <td>{{date('d M Y', strtotime($item->reference_date))}}</td>
                             <td>{{$item->reference_no ? $item->reference_no : '-'}}</td>
-                            <td>{{isset($item->from_bank_account->no_rekening) ? $item->from_bank_account->no_rekening .'- '.$item->from_bank_account->bank.' an '. $item->from_bank_account->owner : '-'}}</td>
-                            <td>{{isset($item->bank_account->no_rekening) ? $item->bank_account->no_rekening .' - '.$item->bank_account->bank.' an '. $item->bank_account->owner : '-'}}</td>
-                            <td>{{format_idr($item->nominal - $item->titipan_premi->sum('nominal'))}}</td>
+                            <td>{{$item->recipient ? $item->recipient : '-'}}</td>
+                            <td>
+                                @if(isset($item->pesertas))
+                                    @foreach($item->pesertas as $peserta)
+                                        <span>{{$peserta->no_peserta}} / {{$peserta->nama_peserta}}</span><br />
+                                    @endforeach
+                                @endif
+                            </td>
+                            <td>{{isset($item->from_bank_account->no_rekening) ? $item->from_bank_account->no_rekening .' - '.$item->from_bank_account->bank.' an '.$item->from_bank_account->owner : '-'}}</td>
+                            <td>{{isset($item->bank_account->no_rekening) ? $item->bank_account->no_rekening .' - '.$item->bank_account->bank.' an '.$item->bank_account->owner : '-'}}</td>
+                            <td>{{isset($item->bank_charges) ? format_idr($item->bank_charges) : '-'}}</td>
+                            <td>{{isset($item->payment_amount) ? format_idr($item->payment_amount) : '-'}}</td>
                         </tr>
                     @endforeach
                     </tbody>
                 </table>
             </div>
             <br />
-            {{$data->links()}}
+            {{$claim->links()}}
         </div>
         <div class="modal-footer">
             <a href="#" data-dismiss="modal"><i class="fa fa-times"></i> Close</a>

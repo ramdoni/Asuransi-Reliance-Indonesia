@@ -111,20 +111,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th>{{ __('Outstanding')}}</th>
-                                    <td>{{format_idr($outstanding_balance)}}</td>
-                                </tr>
-                                <tr>
-                                    <th>{{__('Payment Date')}}*<small>{{__('Default today')}}</small></th>
-                                    <td>
-                                        <input type="date" class="form-control col-md-6" {{$is_readonly?'disabled':''}} wire:model="payment_date" />
-                                        @error('payment_date')
-                                        <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                                        @enderror
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>Titipan Premi</th>
+                                    <th>Premium Deposit</th>
                                     <td>
                                         @if($titipan_premi)
                                             @foreach($titipan_premi as $item)
@@ -154,8 +141,36 @@
                                             @endforeach
                                         @endif
                                         @if($total_titipan_premi <= $data->nominal and !$is_readonly)
-                                        <a href="javascript:void(0)" data-target="#modal_add_titipan_premi" data-toggle="modal"><i class="fa fa-plus"></i> Titipan Premi</a>
+                                        <a href="javascript:void(0)" data-target="#modal_add_titipan_premi" data-toggle="modal"><i class="fa fa-plus"></i> Premium Deposit</a>
                                         @endif
+                                    </td>
+                                </tr>
+                                {{-- <tr>
+                                    <th>Claim Payable</th>
+                                    <td>
+                                        @if(isset($temp_arr_claim))
+                                            @foreach($temp_arr_claim as $item_claim)
+                                                <p>
+                                                    <strong>No Voucher</strong> : <a href="{{route('expense.claim.detail',['id'=>$item_claim->id])}}" target="_blank">{{$item_claim->no_voucher}}</a>
+                                                    <a href="javascript:void(0)" wire:click="delete_claim({{$item_claim->id}})" class="text-danger"><i class="fa fa-times"></i></a><br />
+                                                    <strong>Amount</strong> : Rp. {{format_idr($item_claim->payment_amount)}}
+                                                </p>
+                                            @endforeach
+                                        @endif
+                                        <a href="javascript:void(0)" data-target="#modal_add_claim_payable" data-toggle="modal"><i class="fa fa-plus"></i> Claim Payable</a>
+                                    </td>
+                                </tr> --}}
+                                <tr>
+                                    <th>{{ __('Outstanding')}}</th>
+                                    <td>{{format_idr($outstanding_balance)}}</td>
+                                </tr>
+                                <tr>
+                                    <th>{{__('Payment Date')}}*<small>{{__('Default today')}}</small></th>
+                                    <td>
+                                        <input type="date" class="form-control col-md-6" {{$is_readonly?'disabled':''}} wire:model="payment_date" />
+                                        @error('payment_date')
+                                        <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                                        @enderror
                                     </td>
                                 </tr>
                                 <tr>
@@ -554,6 +569,9 @@
 Livewire.on('otp-editable',()=>{
     $("#modal_konfirmasi_otp").modal('hide');
 });
+Livewire.on('set-claim',(id)=>{
+    $(".modal").modal("hide");
+});
 Livewire.on('set-titipan-premi',(id)=>{
     $("#modal_add_titipan_premi").modal("hide");
 });
@@ -599,12 +617,17 @@ Livewire.on('emit-add-bank',id=>{
 </script>
 @endpush
 <div wire:ignore.self class="modal fade" id="modal_add_titipan_premi" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" style="min-width:90%; role="document">
+    <div class="modal-dialog modal-lg" style="min-width:90%;" role="document">
         <livewire:income-premium-receivable.add-titipan-premi />
     </div>
 </div>
 <div wire:ignore.self class="modal fade" id="modal_cancel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <livewire:income-premium-receivable.cancel />
+    </div>
+</div>
+<div wire:ignore.self class="modal fade" id="modal_add_claim_payable" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="min-width:90%;">
+        <livewire:income-premium-receivable.add-claim-payable :data="$data"/>
     </div>
 </div>

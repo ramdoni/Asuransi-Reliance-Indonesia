@@ -11,6 +11,7 @@ use App\Models\Income;
 use App\Models\IncomeEndorsement;
 use App\Models\Expenses;
 use App\Models\IncomeCancel;
+use App\Models\Journal;
 
 class MemoPosSync extends Component
 {
@@ -33,19 +34,28 @@ class MemoPosSync extends Component
         $this->emit('is_sync_memo');
         foreach(KonvenMemo::where(['status_sync'=>0,'is_temp'=>0])->get() as $key => $item){
             $this->data = $item->no_kwitansi_finance .'/'. $item->no_kwitansi_finance2."<br />";
+            $note_failed = '';
             // find data UW
-            $uw = KonvenUnderwriting::where('no_kwitansi_debit_note',($item->no_kwitansi_finance ? $item->no_kwitansi_finance : $item->no_kwitansi_finance2))->first();   
+            $kwitansi = ($item->no_kwitansi_finance ? $item->no_kwitansi_finance : $item->no_kwitansi_finance2);
+            $uw = KonvenUnderwriting::where('no_kwitansi_debit_note',$kwitansi)->first();   
             if($uw){
-                if($uw->status==1) continue; // jika data UW belum di sinkron
+                if($uw->status==1) $note_failed = "Data Konven Underwriting dengan no kwitansi {$kwitansi} belum di sync";  // jika data UW belum di sinkron
                 $item->status_sync=1; //sync
                 $item->konven_underwriting_id = $uw->id;
                 $this->total_success++;
-            }else{
+            }else
+                $note_failed = "Data Konven Underwriting dengan no kwitansi {$kwitansi} tidak ditemukan";
+            
+            if($kwitansi=="") $note_failed = "No kwitansi {$kwitansi} harus diisi";
+            if($note_failed){
                 $this->total_failed++;
                 $item->status_sync=2;//Invalid
+                $item->note_failed = $note_failed;
+                $item->save();
+                continue;
             }
-            $item->save();
 
+            $item->save();
             // cek no polis
             $polis = Policy::where('no_polis',$item->no_polis)->first();
             if(!$polis){
@@ -117,7 +127,7 @@ class MemoPosSync extends Component
                     }
                 }
             }
-            if($item->jenis_po =='RFND'){ // Refund
+            if(strtoupper($item->jenis_po) =='RFND' || strtoupper($item->jenis_po)=='REFUND'){ // Refund
                 $this->data = '<strong>Refund </strong> : '.format_idr($item->refund);
                 $expense = new Expenses();
                 $expense->user_id = \Auth::user()->id;
@@ -134,6 +144,48 @@ class MemoPosSync extends Component
                 $expense->type = 1;
                 $expense->policy_id  = $polis->id;
                 $expense->save();
+
+                if($uw){
+                    $coa_id = 268; // Refund Premium Other Tradisional
+                    $coa_id_payable = 167; // Refund Premium Payable Other Tradisional
+                    switch($uw->line_bussines){
+                        case 'DWIGUNA':
+                            $coa_id = 265; // Refund Premium Dwiguna
+                            $coa_id_payable = 164; // Refund Premium Payable Dwiguna
+                            break;
+                        case 'JANGKAWARSA':
+                            $coa_id = 263; // Refund Premium Jangkawarsa
+                            $coa_id_payable = 162; // Refund Premium Payable Jangkawarsa
+                            break;
+                        case 'EKAWARSA':
+                            $coa_id = 264; // Refund Premium Ekawarsa
+                            $coa_id_payable = 163; // Refund Premium Payable Ekawarsa
+                            break;
+                    }
+                    // Refund Premium
+                    $new  = new Journal();
+                    $new->transaction_number = $item->no_dn_cn;
+                    $new->transaction_id = $item->id;
+                    $new->transaction_table = 'konven_memo_pos'; 
+                    $new->coa_id = $coa_id;
+                    $new->no_voucher = generate_no_voucher($coa_id,$expense->id);
+                    $new->date_journal = date('Y-m-d');
+                    $new->debit = $item->refund;
+                    $new->description = "Refund {$item->pemegang_polis}";
+                    $new->save();
+
+                    // Refund Premium Payable
+                    $new  = new Journal();
+                    $new->transaction_number = $item->no_dn_cn;
+                    $new->transaction_id = $item->id;
+                    $new->transaction_table = 'konven_memo_pos'; 
+                    $new->coa_id = $coa_id_payable;
+                    $new->no_voucher = generate_no_voucher($coa_id,$expense->id);
+                    $new->date_journal = date('Y-m-d');
+                    $new->kredit = $item->refund;
+                    $new->description = "Refund {$item->pemegang_polis}";
+                    $new->save();
+                }
             }
             if($item->jenis_po =='CNCL'){ // Cancel
                 $this->data = '<strong>Cancelation </strong> : '.format_idr($item->refund);
