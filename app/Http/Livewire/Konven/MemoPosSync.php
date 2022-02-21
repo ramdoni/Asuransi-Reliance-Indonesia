@@ -42,7 +42,6 @@ class MemoPosSync extends Component
                 if($uw->status==1) $note_failed = "Data Konven Underwriting dengan no kwitansi {$kwitansi} belum di sync";  // jika data UW belum di sinkron
                 $item->status_sync=1; //sync
                 $item->konven_underwriting_id = $uw->id;
-                $this->total_success++;
             }else
                 $note_failed = "Data Konven Underwriting dengan no kwitansi {$kwitansi} tidak ditemukan";
             
@@ -50,11 +49,12 @@ class MemoPosSync extends Component
             if($note_failed){
                 $this->total_failed++;
                 $item->status_sync=2;//Invalid
-                $item->note_failed = $note_failed;
+                $item->note_invalid = $note_failed;
                 $item->save();
                 continue;
             }
-
+            
+            $this->total_success++;
             $item->save();
             // cek no polis
             $polis = Policy::where('no_polis',$item->no_polis)->first();

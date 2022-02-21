@@ -145,7 +145,7 @@
                                         @endif
                                     </td>
                                 </tr>
-                                {{-- <tr>
+                                <!-- <tr>
                                     <th>Claim Payable</th>
                                     <td>
                                         @if(isset($temp_arr_claim))
@@ -159,7 +159,7 @@
                                         @endif
                                         <a href="javascript:void(0)" data-target="#modal_add_claim_payable" data-toggle="modal"><i class="fa fa-plus"></i> Claim Payable</a>
                                     </td>
-                                </tr> --}}
+                                </tr> -->
                                 <tr>
                                     <th>{{ __('Outstanding')}}</th>
                                     <td>{{format_idr($outstanding_balance)}}</td>
