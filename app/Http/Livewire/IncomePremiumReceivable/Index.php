@@ -4,6 +4,7 @@ namespace App\Http\Livewire\IncomePremiumReceivable;
 
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Models\Income;
 
 class Index extends Component
 {
@@ -12,7 +13,9 @@ class Index extends Component
     protected $paginationTheme = 'bootstrap',$export_data,$queryString = ['page'];
     public function render()
     {
-        $data = \App\Models\Income::orderBy('id','desc')->where('reference_type','Premium Receivable');
+        $data = Income::orderBy('id','desc')
+                        ->with(['policys','cancelation_konven','cancelation_syariah','endorsement_konven','endorsement_syariah','from_bank_account','bank_account'])
+                        ->where('reference_type','Premium Receivable');
         
         if($this->keyword) $data = $data->where('description','LIKE', "%{$this->keyword}%")
                                         ->orWhere('no_voucher','LIKE',"%{$this->keyword}%")
@@ -41,7 +44,7 @@ class Index extends Component
         if(isset($_GET['status'])) $this->status = $_GET['status'];
         if(isset($_GET['payment_date_from'])) $this->status = $_GET['payment_date_from'];
         if(isset($_GET['payment_date_to'])) $this->status = $_GET['payment_date_to'];
-
+        
         \LogActivity::add('Income - Premium Receivable');
     }
 
@@ -55,6 +58,7 @@ class Index extends Component
         
         $query[$propertyName] = $this->$propertyName;
         $query['page'] = $this->page;
+        $this->resetPage();
 
         session(['url_back'=>route('income.premium-receivable',$query)]);
         

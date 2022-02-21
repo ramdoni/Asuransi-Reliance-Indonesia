@@ -120,7 +120,7 @@
                                         <td>{{ calculate_aging($item->due_date) }}</td>
                                         <td>{{ $item->due_date ? date('d M Y', strtotime($item->due_date)) : '' }}</td>
                                         <td class="text-info" title="Source  From : {{$item->transaction_table}}">{{ $item->reference_no ? $item->reference_no : '-' }}</td>
-                                        <td>{{ $item->client ? $item->client : '-' }}</td>
+                                        <td>{{ isset($item->policys->no_polis) ? $item->policys->no_polis .'-' .$item->policys->pemegang_polis : '-' }}</td>
                                         <td>
                                             @if ($item->type == 1)
                                                 {{ isset($item->cancelation_konven) ? format_idr($item->cancelation_konven->sum('nominal')) : 0 }}
@@ -130,9 +130,9 @@
                                         </td>
                                         <td>
                                             @if ($item->type == 1)
-                                                {{ isset($item->endorsemement_konven) ? format_idr($item->endorsement_konven->sum('nominal')) : 0 }}
+                                                {{ isset($item->endorsement_konven) ? format_idr($item->endorsement_konven->sum('nominal')) : 0 }}
                                             @else
-                                                {{ isset($item->endorsemement_syariah) ? format_idr($item->endorsement_syariah->sum('nominal')) : 0 }}
+                                                {{ isset($item->endorsement_syariah) ? format_idr($item->endorsement_syariah->sum('nominal')) : 0 }}
                                             @endif
                                         </td>
                                         <td>{{ isset($item->nominal) ? format_idr($item->nominal) : '-' }}</td>

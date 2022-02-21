@@ -145,21 +145,29 @@
                                         @endif
                                     </td>
                                 </tr>
-                                <!-- <tr>
-                                    <th>Claim Payable</th>
+                                <tr>
+                                    <th>Offset Claim Payable</th>
                                     <td>
                                         @if(isset($temp_arr_claim))
+                                            @php($total_claim=0)
                                             @foreach($temp_arr_claim as $item_claim)
                                                 <p>
                                                     <strong>No Voucher</strong> : <a href="{{route('expense.claim.detail',['id'=>$item_claim->id])}}" target="_blank">{{$item_claim->no_voucher}}</a>
                                                     <a href="javascript:void(0)" wire:click="delete_claim({{$item_claim->id}})" class="text-danger"><i class="fa fa-times"></i></a><br />
                                                     <strong>Amount</strong> : Rp. {{format_idr($item_claim->payment_amount)}}
                                                 </p>
+                                                @php($total_claim+=$item_claim->payment_amount)
                                             @endforeach
+                                            @if($total_claim)
+                                                <hr />
+                                                <p><label>Total : </label>Rp. {{format_idr($total_claim)}}</p>
+                                            @endif
                                         @endif
-                                        <a href="javascript:void(0)" data-target="#modal_add_claim_payable" data-toggle="modal"><i class="fa fa-plus"></i> Claim Payable</a>
+                                        @if(in_array($data->status,[1,3]))
+                                            <a href="javascript:void(0)" data-target="#modal_add_claim_payable" data-toggle="modal"><i class="fa fa-plus"></i> Claim Payable</a>
+                                        @endif
                                     </td>
-                                </tr> -->
+                                </tr>
                                 <tr>
                                     <th>{{ __('Outstanding')}}</th>
                                     <td>{{format_idr($outstanding_balance)}}</td>

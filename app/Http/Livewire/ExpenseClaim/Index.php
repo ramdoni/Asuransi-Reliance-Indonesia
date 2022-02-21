@@ -19,18 +19,20 @@ class Index extends Component
         $data = Expenses::select('expenses.*')
                             ->with(['pesertas'])
                             ->orderBy('expenses.id','desc')->where('expenses.reference_type','Claim')->groupBy('expenses.id')
-                            ->leftJoin('expense_pesertas','expense_pesertas.expense_id','=','expenses.id');
+                            ->leftJoin('expense_pesertas','expense_pesertas.expense_id','=','expenses.id')
+                            ->leftJoin('policys','policys.id','=','expenses.policy_id');
         if($this->keyword) $data = $data->where(function($table){
                                     $table->where('expenses.description','LIKE', "%{$this->keyword}%")
                                         ->orWhere('expenses.no_voucher','LIKE',"%{$this->keyword}%")
                                         ->orWhere('expenses.reference_no','LIKE',"%{$this->keyword}%")
                                         ->orWhere('expense_pesertas.no_peserta','LIKE',"%{$this->keyword}%")
                                         ->orWhere('expense_pesertas.nama_peserta','LIKE',"%{$this->keyword}%")
-                                        ;
+                                        ->orWhere('policys.no_polis','LIKE',"%{$this->keyword}%")
+                                        ->orWhere('policys.pemegang_polis','LIKE',"%{$this->keyword}%");
                                     });
         if($this->status) $data = $data->where('expenses.status',$this->status);
         if($this->type) $data = $data->where('expenses.type',$this->type);
-
+        
         $total = clone $data;
         
         return view('livewire.expense-claim.index')->with(['data'=>$data->paginate(100),'payment_amount'=>$total->get()->sum('payment_amount')]);
@@ -39,6 +41,11 @@ class Index extends Component
     public function mount()
     {
         \LogActivity::add("Expense Claim");
+    }
+
+    public function updated()
+    {
+        $this->resetPage();
     }
 
     public function delete($id)
