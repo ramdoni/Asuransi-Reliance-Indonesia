@@ -8,6 +8,7 @@ use App\Models\KonvenUnderwritingCoa;
 use App\Models\Income;
 use App\Models\Expenses;
 use App\Models\Journal;
+use App\Models\Policy;
 
 class UnderwritingSync extends Component
 {
@@ -29,9 +30,33 @@ class UnderwritingSync extends Component
         if($this->is_sync==false) return false;
         $this->emit('is_sync');
         foreach(KonvenUnderwriting::where('status',1)->get() as $key => $item){
-            //if($key > 1) continue;
+            $note_invalid = '';
+            if($item->no_polis=="") $note_invalid = "No Polis harus diisi";
+            if($item->line_bussines=="") $note_invalid = "Line Bussiness harus diisi";
+            if($item->premi_netto=="") $note_invalid = "Premi Netto harus diisi";
+            if($item->no_kwitansi_debit_note=="") $note_invalid = "No Kwitansi / Debit Note harus diisi";
+            
+            if($note_invalid){
+                $item->note_invalid = $note_invalid;
+                $item->status = 3;
+                $item->save();
+                continue;
+            }
+
             $item->status=2;
-            $item->save();            
+            $item->save();  
+
+            $policy = Policy::where('no_polis',$item->no_polis)->first(); 
+            if(!$policy){
+                $policy = new Policy();
+                $policy->no_polis = $item->no_polis;
+                $policy->pemegang_polis = $item->pemegang_polis;
+                $policy->alamat = $item->alamat;
+                $policy->cabang = $item->cabang;
+                $policy->produk = $item->produk;
+                $policy->save();
+            }
+            
             //$this->data = $item->no_kwitansi_debit_note.'<br />'.$item->no_polis.' / '.$item->pemegang_polis;
             if($item->line_bussines=='DWIGUNA'){
                 $coa_premi_netto = 60;
@@ -84,9 +109,8 @@ class UnderwritingSync extends Component
                 $income->transaction_id = $item->id;
                 $income->due_date = $item->tgl_jatuh_tempo;
                 $income->type = 1;
+                $income->policy_id = $policy->id;
                 $income->save();
-
-                //$this->data .= '<br /> Premium Receivable : <strong>'.format_idr($item->premi_netto).'</strong>';
             }
             if(!empty($item->ppn) and !empty($item->jumlah_discount)){
                 // Expense -  Commision Payable
@@ -101,9 +125,9 @@ class UnderwritingSync extends Component
                 $expense->transaction_id = $item->id;
                 $expense->transaction_table = 'konven_underwriting';
                 $expense->type = 1;
+                $expense->policy_id = $policy->id;
                 $expense->save();
                 $ordering++;
-                //$this->data .= '<br /> Handling Fee : <strong>'.format_idr($item->jumlah_discount + $item->jumlah_ppn).'</strong>';
             }elseif(!empty($item->jumlah_discount)){
                 $new = new KonvenUnderwritingCoa();
                 $new->coa_id = $discount_coa; // Discount Jangkawarsa
@@ -114,7 +138,6 @@ class UnderwritingSync extends Component
                 $new->description = $item->pemegang_polis;
                 $new->save();
                 $ordering++;
-                //$this->data .= '<br /> Commision Paid : <strong>'.format_idr($item->jumlah_discount).'</strong>';
             }
             if(!empty($item->premi_gross) or !empty($item->extra_premi)){
                 $new = new KonvenUnderwritingCoa();

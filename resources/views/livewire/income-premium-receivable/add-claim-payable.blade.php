@@ -1,20 +1,18 @@
 <div class="modal-content">
     <form wire:submit.prevent="save">
         <div class="row p-3">
-            <div class="col-md-3">
-                <input type="text" class="form-control" wire:model="keyword" placeholder="Searching..." />
+            <div class="col-md-2">
+                <input type="number" class="form-control" wire:model="keyword" placeholder="Searching Amount" />
             </div>
-            <div class="col-md-3 px-0" wire:ignore>
-                <select class="form-control titipan_from_bank_account" wire:model="from_bank_account_id">
-                    <option value=""> --- {{__('From Bank Account')}} --- </option>
-                    @foreach (\App\Models\BankAccount::where('is_client',1)->orderBy('owner','ASC')->get() as $bank)
-                        <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
-                    @endforeach
-                </select>
+            <div class="col-md-2">
+                <input type="text" class="form-control" wire:model="peserta" placeholder="Peserta" />
             </div>
-            <div wire:loading class="mt-1 ml-3">
-                <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
-                <span class="sr-only">Loading...</span>
+            <div class="col-md-7">
+                <label class="mt-2">Total : Rp. {{format_idr($total)}}</label>
+                <div wire:loading class="mt-1 ml-3">
+                    <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                    <span class="sr-only">Loading...</span>
+                </div>
             </div>
         </div>
         <div class="modal-body">
@@ -25,23 +23,25 @@
                             <th></th>                                          
                             <th>No Voucher</th>                                      
                             <th>Record Date</th>         
-                            <th>Debit Note / Kwitansi</th>
-                            <th>Policy Number / Policy Holder</th>                       
-                            <th>No / Nama Peserta</th>                       
-                            <th>From Bank Account</th>
-                            <th>To Bank Account</th>
-                            <th>Bank Charges</th>
-                            <th>Payment Amount</th>
+                            <th>Debit Note / Kwitansi</th>           
+                            <th>No / Nama Peserta</th>
+                            <th>Amount</th>
                         </tr>
                     </thead>
                     <tbody>
                     @foreach($claim as $k => $item)
                         <tr>
-                            <td><a href="javascript:void(0)" class="badge badge-success badge-active" wire:click="$emit('set-claim',{{$item->id}})"><i class="fa fa-check-circle"></i> choose</a></td>
+                            <td>
+                                <div class="form-group mb-0">
+                                    <label class="fancy-checkbox">
+                                        <input type="checkbox" wire:model="check_id" value="{{$item->id}}" required data-parsley-errors-container="#error-checkbox">
+                                        <span></span>
+                                    </label>
+                                </div>
+                            </td>
                             <td><a href="{{route('expense.claim.detail',['id'=>$item->id])}}" target="_blank">{!!no_voucher($item)!!}</a></td>
                             <td>{{date('d M Y', strtotime($item->created_at))}}</td>
                             <td>{{$item->reference_no ? $item->reference_no : '-'}}</td>
-                            <td>{{$item->recipient ? $item->recipient : '-'}}</td>
                             <td>
                                 @if(isset($item->pesertas))
                                     @foreach($item->pesertas as $peserta)
@@ -49,9 +49,6 @@
                                     @endforeach
                                 @endif
                             </td>
-                            <td>{{isset($item->from_bank_account->no_rekening) ? $item->from_bank_account->no_rekening .' - '.$item->from_bank_account->bank.' an '.$item->from_bank_account->owner : '-'}}</td>
-                            <td>{{isset($item->bank_account->no_rekening) ? $item->bank_account->no_rekening .' - '.$item->bank_account->bank.' an '.$item->bank_account->owner : '-'}}</td>
-                            <td>{{isset($item->bank_charges) ? format_idr($item->bank_charges) : '-'}}</td>
                             <td>{{isset($item->payment_amount) ? format_idr($item->payment_amount) : '-'}}</td>
                         </tr>
                     @endforeach
@@ -61,7 +58,10 @@
             <br />
             {{$claim->links()}}
         </div>
-        <div class="modal-footer">
+        <div class="modal-footer text-left" style="justify-content:left">
+            @if($total!=0)
+                <a href="javascript:void(0)" class="btn btn-info float-left" wire:click="submit">Submit</a>
+            @endif
             <a href="#" data-dismiss="modal"><i class="fa fa-times"></i> Close</a>
         </div>
     </form>

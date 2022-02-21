@@ -104,10 +104,13 @@
                                             <td>{{$num}}</td>
                                             <td>
                                                 @if($item->status==1)
-                                                <span class="badge text-warning">Draft</span>
+                                                    <span class="badge text-warning">Draft</span>
                                                 @endif
                                                 @if($item->status==2)
-                                                <span class="badge text-success">Sync</span>
+                                                    <span class="badge text-success">Sync</span>
+                                                @endif
+                                                @if($item->status==3)
+                                                    <span class="badge text-danger" title="{{$item->note_invalid}}">Failed</span>
                                                 @endif
                                             </td>
                                             <td>{{$item->bulan}}</td>

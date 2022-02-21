@@ -4,6 +4,7 @@ namespace App\Http\Livewire\IncomePremiumReceivable;
 
 use Livewire\Component;
 use App\Models\Income;
+use App\Models\IncomeClaim;
 use App\Models\Expenses;
 use App\Models\IncomeTitipanPremi;
 use App\Models\KonvenMemo;
@@ -55,7 +56,7 @@ class Detail extends Component
 
     public function setClaim($id)
     {
-        $this->temp_arr_claim_id[] = $id;
+        $this->temp_arr_claim_id = $id;
         $this->temp_arr_claim = Expenses::whereIn('id',$this->temp_arr_claim_id)->get();
     }
 
@@ -135,7 +136,7 @@ class Detail extends Component
             }
         }
         
-        if(!$this->temp_titipan_premi and $this->titipan_premi->count()==0) $validate['bank_account_id']='required';
+        // if(!$this->temp_titipan_premi and $this->titipan_premi->count()==0) $validate['bank_account_id']='required';
 
         $this->validate($validate,$validate_message);
         $this->payment_amount = replace_idr($this->payment_amount);
@@ -184,6 +185,13 @@ class Detail extends Component
         }
 
         if($this->data->status==2){
+            if($this->temp_arr_claim){
+                foreach($this->temp_arr_claim as $claim){
+                    $claim->status = 2;
+                    $claim->save();
+                }
+            }
+
             $coa_premium_receivable = 0;
             if($this->data->type==1){
                 $line_bussines = isset($this->data->uw->line_bussines) ? $this->data->uw->line_bussines : '';
