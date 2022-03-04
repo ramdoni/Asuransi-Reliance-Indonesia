@@ -26,7 +26,6 @@
     <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}?v={{ date('YmdHis') }}">
     <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.8.2/dist/alpine.min.js" defer></script>
     @stack('after-styles')
-
     @if (trim($__env->yieldContent('page-styles')))
         @yield('page-styles')
     @endif
@@ -100,6 +99,9 @@
         </script>
     @endif
     <script>
+        Livewire.on('modal', (act) => {
+            if(act=='hide') $('.modal').modal('hide');
+        });
         Livewire.on('message-success', (msg) => {
             $('.alert-success').show();
             $('.alert-success .message').html(msg);
@@ -108,7 +110,6 @@
             $('.alert-error').show();
             $('.alert-error .message').html(msg);
         });
-        $('*').tooltip();
     </script>
     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
         {{ csrf_field() }}

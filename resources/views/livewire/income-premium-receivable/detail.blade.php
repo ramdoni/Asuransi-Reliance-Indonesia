@@ -1,7 +1,7 @@
 @section('title', 'Premium Receivable '.$data->no_voucher)
 @section('parentPageTitle', 'Income')
 <div class="clearfix row">
-    <div class="col-md-7">
+    <div class="col-md-8">
         <div class="card">
             <div class="body">
                 <form id="basic-form" method="post" wire:submit.prevent="save">
@@ -10,15 +10,123 @@
                             @error('is_submit')
                             <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                             @enderror
-                            <table class="table pl-0 mb-0 table-striped table-nowrap">
+                            <table class="table pl-0 mb-0 table-nowrap">
                                 <tr>
-                                    <th style="width: 40%;">{{ __('Voucher Number')}}</th>
-                                    <td style="width: 60%;">{!!no_voucher($data)!!}</td>
+                                    <th>Payment Type</th>
+                                    <td>
+                                        <select class="form-control" wire:model="payment_type">
+                                            <option value="">-- Select Payment --</option>
+                                            <option value="1">Voucher</option>
+                                            <option value="2">Premium Deposit</option>
+                                            <option value="3">Offset Claim Payable</option>
+                                        </select>
+                                        @error('payment_type')
+                                            <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                                        @enderror
+                                    </td>
                                 </tr>
-                                <tr>
-                                    <th>{{ __('Voucher Date')}}</th>
-                                    <td>{{date('d M Y',strtotime($data->created_at))}}</td>
-                                </tr>
+                                @if($payment_type==1)
+                                    <tr>
+                                        <th style="width: 40%;">{{ __('Voucher Number')}}</th>
+                                        <td style="width: 60%;">
+                                            @if($arr_voucher_ids)
+                                                <ul class="list-unstyled feeds_widget">
+                                                    @php($total_voucher=0)
+                                                    @foreach($arr_voucher_ids as $item)
+                                                        <p>
+                                                            No Voucher <strong>{{$item->no_voucher}}</strong><br />
+                                                            {{isset($item->from_bank->no_rekening) ? $item->from_bank->no_rekening .'- '.$item->from_bank->bank.' an '. $item->from_bank->owner : '-'}} <br />
+                                                            <strong>{{format_idr($item->amount)}}</strong>
+                                                            @if(!$is_readonly)
+                                                            <a href="javascript:void(0)" wire:click="deleteVoucher({{$item->id}})" class="text-danger"><i class="fa fa-trash"></i></a>
+                                                            @endif
+                                                        </p>
+                                                        @php($total_voucher += $item->amount)
+                                                    @endforeach
+                                                </ul>
+                                            @endif
+                                            @if(isset($data->vouchers))
+                                                <ul class="list-unstyled feeds_widget">
+                                                    @foreach($data->vouchers as $item)
+                                                    <p>
+                                                        No Voucher :{{$item->bank_book->no_voucher}}<br />
+                                                        {{isset($item->bank_book->from_bank->no_rekening) ? $item->bank_book->from_bank->no_rekening .'- '.$item->bank_book->from_bank->bank.' an '. $item->bank_book->from_bank->owner : '-'}} <br />
+                                                        <strong>{{format_idr($item->amount)}}</strong>
+                                                        @if(!$is_readonly)
+                                                        {{-- <a href="javascript:void(0)" wire:click="clearTitipanPremi" class="text-danger"><i class="fa fa-trash"></i></a> --}}
+                                                        @endif
+                                                    </p>
+                                                    @endforeach
+                                                </ul>
+                                            @endif
+                                            @if(!$is_readonly)
+                                                <a href="javascript:void(0)" data-toggle="modal" data-target="#modal_add_voucher"><i class="fa fa-plus"></i> Voucher</a>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endif
+                                @if($payment_type==2)
+                                    <tr>
+                                        <th>Premium Deposit</th>
+                                        <td>
+                                            @if($titipan_premi)
+                                                @foreach($titipan_premi as $item)
+                                                @php($titipan = $item->titipan)
+                                                <p>
+                                                    No Voucher : <a href="{{route('income.titipan-premi.detail',$titipan->id)}}" target="_blank">{{$titipan->no_voucher}}</a> <br />
+                                                    {{isset($titipan->from_bank_account->no_rekening) ? $titipan->from_bank_account->no_rekening .'- '.$titipan->from_bank_account->bank.' an '. $titipan->from_bank_account->owner : '-'}} <br />
+                                                    <strong>{{format_idr($item->nominal)}}</strong>
+                                                    @if(!$is_readonly)
+                                                    <a href="javascript:void(0)" wire:click="clearTitipanPremi" class="text-danger"><i class="fa fa-trash"></i></a>
+                                                    @endif
+                                                </p>
+                                                @endforeach
+                                            @endif
+
+                                            @if($temp_titipan_premi)
+                                                @foreach($temp_titipan_premi as $titipan)
+                                                <p>
+                                                    No Voucher : <a href="{{route('income.titipan-premi.detail',$titipan->id)}}" target="_blank">{{$titipan->no_voucher}}</a> <br />
+                                                    {{isset($titipan->from_bank_account->no_rekening) ? $titipan->from_bank_account->no_rekening .'- '.$titipan->from_bank_account->bank.' an '. $titipan->from_bank_account->owner : '-'}} <br />
+                                                    <strong>{{format_idr($titipan->outstanding_balance)}}</strong>
+                                                    @if(!$is_readonly)
+                                                    <a href="javascript:void(0)" wire:click="clearTitipanPremi" class="text-danger"><i class="fa fa-trash"></i></a>
+                                                    @endif
+                                                </p>
+                                                <hr />
+                                                @endforeach
+                                            @endif
+                                            @if($total_titipan_premi <= $data->nominal and !$is_readonly)
+                                            <a href="javascript:void(0)" data-target="#modal_add_titipan_premi" data-toggle="modal"><i class="fa fa-plus"></i> Premium Deposit</a>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endif
+                                @if($payment_type==3)
+                                    <tr>
+                                        <th>Offset Claim Payable</th>
+                                        <td>
+                                            @if(isset($temp_arr_claim))
+                                                @php($total_claim=0)
+                                                @foreach($temp_arr_claim as $item_claim)
+                                                    <p>
+                                                        <strong>No Voucher</strong> : <a href="{{route('expense.claim.detail',['id'=>$item_claim->id])}}" target="_blank">{{$item_claim->no_voucher}}</a>
+                                                        <a href="javascript:void(0)" wire:click="delete_claim({{$item_claim->id}})" class="text-danger"><i class="fa fa-times"></i></a><br />
+                                                        <strong>Amount</strong> : Rp. {{format_idr($item_claim->payment_amount)}}
+                                                    </p>
+                                                    @php($total_claim+=$item_claim->payment_amount)
+                                                @endforeach
+                                                @if($total_claim)
+                                                    <hr />
+                                                    <p><label>Total : </label>Rp. {{format_idr($total_claim)}}</p>
+                                                @endif
+                                            @endif
+                                            @if(in_array($data->status,[1,3]))
+                                                <a href="javascript:void(0)" data-target="#modal_add_claim_payable" data-toggle="modal"><i class="fa fa-plus"></i> Claim Payable</a>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endif
                                 <tr>
                                     <th>{{ __('Policy Number / Policy Holder')}}</th>
                                     <td>{{$data->client}}</td>
@@ -39,6 +147,7 @@
                                         @if($data->status==4)
                                             <span class="badge badge-danger" title="Premi Cancel">Cancel</span>
                                         @endif
+                                        {!!flag($data)!!}
                                     </td>
                                 </tr>
                                 <tr>
@@ -104,74 +213,12 @@
                                     </tr> 
                                     @endif
                                 @endif
-                                <tr>
-                                    <th>{{ __('Payment Amount')}}</th>
-                                    <td>
-                                        <input type="text" class="form-control format_number col-md-6" {{$is_readonly?'disabled':''}} wire:model="payment_amount" />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>Premium Deposit</th>
-                                    <td>
-                                        @if($titipan_premi)
-                                            @foreach($titipan_premi as $item)
-                                            @php($titipan = $item->titipan)
-                                            <p>
-                                                No Voucher : <a href="{{route('income.titipan-premi.detail',$titipan->id)}}" target="_blank">{{$titipan->no_voucher}}</a> <br />
-                                                {{isset($titipan->from_bank_account->no_rekening) ? $titipan->from_bank_account->no_rekening .'- '.$titipan->from_bank_account->bank.' an '. $titipan->from_bank_account->owner : '-'}} <br />
-                                                 <strong>{{format_idr($item->nominal)}}</strong>
-                                                @if(!$is_readonly)
-                                                 <a href="javascript:void(0)" wire:click="clearTitipanPremi" class="text-danger"><i class="fa fa-trash"></i></a>
-                                                @endif
-                                            </p>
-                                            @endforeach
-                                        @endif
-
-                                        @if($temp_titipan_premi)
-                                            @foreach($temp_titipan_premi as $titipan)
-                                            <p>
-                                                No Voucher : <a href="{{route('income.titipan-premi.detail',$titipan->id)}}" target="_blank">{{$titipan->no_voucher}}</a> <br />
-                                                {{isset($titipan->from_bank_account->no_rekening) ? $titipan->from_bank_account->no_rekening .'- '.$titipan->from_bank_account->bank.' an '. $titipan->from_bank_account->owner : '-'}} <br />
-                                                 <strong>{{format_idr($titipan->outstanding_balance)}}</strong>
-                                                @if(!$is_readonly)
-                                                 <a href="javascript:void(0)" wire:click="clearTitipanPremi" class="text-danger"><i class="fa fa-trash"></i></a>
-                                                @endif
-                                            </p>
-                                            <hr />
-                                            @endforeach
-                                        @endif
-                                        @if($total_titipan_premi <= $data->nominal and !$is_readonly)
-                                        <a href="javascript:void(0)" data-target="#modal_add_titipan_premi" data-toggle="modal"><i class="fa fa-plus"></i> Premium Deposit</a>
-                                        @endif
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>Offset Claim Payable</th>
-                                    <td>
-                                        @if(isset($temp_arr_claim))
-                                            @php($total_claim=0)
-                                            @foreach($temp_arr_claim as $item_claim)
-                                                <p>
-                                                    <strong>No Voucher</strong> : <a href="{{route('expense.claim.detail',['id'=>$item_claim->id])}}" target="_blank">{{$item_claim->no_voucher}}</a>
-                                                    <a href="javascript:void(0)" wire:click="delete_claim({{$item_claim->id}})" class="text-danger"><i class="fa fa-times"></i></a><br />
-                                                    <strong>Amount</strong> : Rp. {{format_idr($item_claim->payment_amount)}}
-                                                </p>
-                                                @php($total_claim+=$item_claim->payment_amount)
-                                            @endforeach
-                                            @if($total_claim)
-                                                <hr />
-                                                <p><label>Total : </label>Rp. {{format_idr($total_claim)}}</p>
-                                            @endif
-                                        @endif
-                                        @if(in_array($data->status,[1,3]))
-                                            <a href="javascript:void(0)" data-target="#modal_add_claim_payable" data-toggle="modal"><i class="fa fa-plus"></i> Claim Payable</a>
-                                        @endif
-                                    </td>
-                                </tr>
+                                
                                 <tr>
                                     <th>{{ __('Outstanding')}}</th>
                                     <td>{{format_idr($outstanding_balance)}}</td>
                                 </tr>
+                                {{--
                                 <tr>
                                     <th>{{__('Payment Date')}}*<small>{{__('Default today')}}</small></th>
                                     <td>
@@ -224,6 +271,7 @@
                                     <th>{{__('Bank Charges')}}</th>
                                     <td><input type="text" {{$is_readonly?'disabled':''}} class="form-control format_number col-md-6" wire:model="bank_charges" /></td>
                                 </tr>
+                                 --}}
                                 <tr>
                                     <th>{{__('Description')}}</th>
                                     <td>
@@ -238,6 +286,10 @@
                     @if(!$is_readonly)
                     <button type="submit" class="ml-3 btn btn-primary btn-sm"><i class="fa fa-save"></i> {{ __('Receive') }}</button>
                     <button type="button" class="float-right ml-3 btn btn-danger btn-sm" wire:click="$emit('emit-cancel',{{$data->id}})" data-target="#modal_cancel" data-toggle="modal""><i class="fa fa-times"></i> {{ __('Premi tidak tertagih') }}</button>
+                    <span wire:loading wire:target="save">
+                        <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                        <span class="sr-only">Loading...</span>
+                    </span>
                     @endif
                     @if($data->status==2 and $is_otp_editable==false and $data->transaction_table !='Migration')
                         <a href="javascript:;" class="btn btn-danger ml-3" data-toggle="modal" data-target="#modal_konfirmasi_otp"><i class="fa fa-edit"></i> Edit </a>
@@ -246,7 +298,7 @@
             </div>
         </div>
     </div>
-    <div class="px-0 col-md-5">
+    {{-- <div class="px-0 col-md-5">
         @if($showDetail=='cancelation')
         <div class="mt-0 card">
             <div wire:loading style="position:absolute;right:0;">
@@ -300,7 +352,6 @@
                             <tr>
                                 <th>{{ucfirst($column)}}</th>
                                 <td>{{ isset($data->migration->$column) ? $data->migration->$column : '' }}</td>
-                                {{-- <td>{{ in_array($column,['manfaat_Kepesertaan_tertunda','kontribusi_kepesertaan_tertunda','jml_kepesertaan','nilai_manfaat','dana_tabbaru','dana_ujrah','kontribusi','ektra_kontribusi','total_kontribusi','pot_langsung','jumlah_diskon','handling_fee','jumlah_fee','jumlah_pph','jumlah_ppn','biaya_polis','biaya_sertifikat','extpst','net_kontribusi','pembayaran','piutang','pengeluaran_ujroh']) ? format_idr($data->uw_syariah->$column) : $data->uw_syariah->$column }}</td> --}}
                             </tr>
                             @endforeach
                         </table>
@@ -545,8 +596,8 @@
             </div>
         </div>
         @endif
-        
-    </div>
+    </div> --}}
+
     <div wire:ignore.self class="modal fade" id="modal_konfirmasi_otp" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <livewire:income-premium-receivable.konfirmasi-otp />
@@ -637,5 +688,10 @@ Livewire.on('emit-add-bank',id=>{
 <div wire:ignore.self class="modal fade" id="modal_add_claim_payable" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document" style="min-width:90%;">
         <livewire:income-premium-receivable.add-claim-payable :data="$data"/>
+    </div>
+</div>
+<div wire:ignore.self class="modal fade" id="modal_add_voucher" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="min-width:90%;">
+        <livewire:income-premium-receivable.add-voucher :data="$data"/>
     </div>
 </div>

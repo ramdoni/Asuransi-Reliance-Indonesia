@@ -39,14 +39,14 @@
                                         <tr>
                                             <th>No</th>
                                             <th>Status</th>                                    
-                                            <th>Bulan</th>                                    
+                                            {{-- <th>Bulan</th>                                    
                                             <th>User Memo</th>                                    
                                             <th>User Akseptasi</th>                                    
                                             <th>Transaksi ID</th>     
                                             <th>Berkas Akseptasi</th>
                                             <th>Tgl Pengajuan Email</th>
                                             <th>Tgl Produksi</th>
-                                            <th>No Reg</th>
+                                            <th>No Reg</th> --}}
                                             <th>No Polis</th>
                                             <th>No Polis Sistem</th>
                                             <th>Pemegang Polis</th>
@@ -113,14 +113,14 @@
                                                     <span class="badge text-danger" title="{{$item->note_invalid}}">Failed</span>
                                                 @endif
                                             </td>
-                                            <td>{{$item->bulan}}</td>
+                                            {{-- <td>{{$item->bulan}}</td>
                                             <td>{{$item->user_memo}}</td>
                                             <td>{{$item->user_akseptasi}}</td>
                                             <td>{{$item->transaksi_id}}</td>
                                             <td>{{$item->berkas_akseptasi}}</td>
                                             <td>{{$item->tanggal_pengajuan_email}}</td>
                                             <td>{{$item->tanggal_produksi}}</td>
-                                            <td>{{$item->no_reg}}</td>
+                                            <td>{{$item->no_reg}}</td> --}}
                                             <td>{{$item->no_polis}}</td>
                                             <td>{{$item->no_polis_sistem}}</td>
                                             <td>{{$item->pemegang_polis}}</td>

@@ -16,6 +16,11 @@ class Expenses extends Model
         return $this->belongsTo(Policy::class,'policy_id');
     }
 
+    public function vouchers_claim()
+    {
+        return $this->hasMany(BankBookPairing::class,'transaction_id','id')->where('transaction_table','claim payable');
+    }
+    
     public function pesertas()
     {
         return $this->hasMany(ExpensePeserta::class,'expense_id');

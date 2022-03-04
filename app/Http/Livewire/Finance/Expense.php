@@ -3,10 +3,14 @@
 namespace App\Http\Livewire\Finance;
 
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class Expense extends Component
 {
     public $keyword,$unit,$status,$payment_date_from,$payment_date_to;
+    use WithPagination;
+    protected $paginationTheme = 'bootstrap';
+
     public function render()
     {
         $data = \App\Models\Expenses::orderBy('id','DESC')->where('status',2);

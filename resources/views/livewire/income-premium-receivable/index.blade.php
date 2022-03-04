@@ -95,14 +95,12 @@
                                 <th>Due Date</th>
                                 <th>Debit Note / Kwitansi</th>
                                 <th>Policy Number / Policy Holder</th>
-                                <th>Cancelation</th>
-                                <th>Endorsement</th>
-                                <th>Total</th>
-                                <th>From Bank Account</th>
-                                <th>To Bank Account</th>
-                                <th>Outstanding Balance</th>
-                                <th>Bank Charges</th>
-                                <th>Payment Amount</th>
+                                <th class="text-right">Cancelation</th>
+                                <th class="text-right">Endorsement</th>
+                                <th class="text-right">Total</th>
+                                <th class="text-right">Outstanding Balance</th>
+                                {{-- <th class="text-right">Bank Charges</th> --}}
+                                <th class="text-right">Payment Amount</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -113,38 +111,40 @@
                                         <td>
                                             <a href="{{ route('income.premium-receivable.detail', ['id' => $item->id,'page'=>$page,'keyword'=>$keyword,'unit'=>$unit,'status'=>$status,'payment_date_from'=>$payment_date_from,'payment_date_to'=>$payment_date_to])}}">{!! status_income($item->status) !!}</a>
                                         </td>
-                                        <td><a href="{{ route('income.premium-receivable.detail', ['id' => $item->id,'page'=>$page,'keyword'=>$keyword,'unit'=>$unit,'status'=>$status,'payment_date_from'=>$payment_date_from,'payment_date_to'=>$payment_date_to])}}">{!! no_voucher($item) !!}</a></td>
+                                        <td>
+                                            @if(isset($item->vouchers))
+                                                @foreach($item->vouchers as $voucher)
+                                                    <a href="javascript:void(0)" data-toggle="modal" data-target="#modal_detail_voucher" wire:click="$emit('set-voucher',{{$voucher->bank_book_id}})">{{$voucher->bank_book->no_voucher}}</a><br />
+                                                @endforeach
+                                            @endif
+                                        </td>
                                         <td>{{ $item->payment_date ? date('d M Y', strtotime($item->payment_date)) : '-' }}</td>
                                         <td>{{ date('d M Y', strtotime($item->created_at)) }}</td>
                                         <td>{{ date('d M Y', strtotime($item->reference_date)) }}</td>
                                         <td>{{ calculate_aging($item->due_date) }}</td>
                                         <td>{{ $item->due_date ? date('d M Y', strtotime($item->due_date)) : '' }}</td>
-                                        <td class="text-info" title="Source  From : {{$item->transaction_table}}">{{ $item->reference_no ? $item->reference_no : '-' }}</td>
+                                        <td class="text-info" title="Source  From : {{$item->transaction_table}}"><a href="{{ route('income.premium-receivable.detail', ['id' => $item->id,'page'=>$page,'keyword'=>$keyword,'unit'=>$unit,'status'=>$status,'payment_date_from'=>$payment_date_from,'payment_date_to'=>$payment_date_to])}}">{{ $item->reference_no ? $item->reference_no : '-' }}</a></td>
                                         <td>{{ isset($item->policys->no_polis) ? $item->policys->no_polis .'-' .$item->policys->pemegang_polis : '-' }}</td>
-                                        <td>
+                                        <td class="text-right">
                                             @if ($item->type == 1)
                                                 {{ isset($item->cancelation_konven) ? format_idr($item->cancelation_konven->sum('nominal')) : 0 }}
                                             @else
                                                 {{ isset($item->cancelation_syariah) ? format_idr($item->cancelation_syariah->sum('nominal')) : 0 }}
                                             @endif
                                         </td>
-                                        <td>
+                                        <td class="text-right">
                                             @if ($item->type == 1)
                                                 {{ isset($item->endorsement_konven) ? format_idr($item->endorsement_konven->sum('nominal')) : 0 }}
                                             @else
                                                 {{ isset($item->endorsement_syariah) ? format_idr($item->endorsement_syariah->sum('nominal')) : 0 }}
                                             @endif
                                         </td>
-                                        <td>{{ isset($item->nominal) ? format_idr($item->nominal) : '-' }}</td>
-                                        <td>{{ isset($item->from_bank_account->no_rekening) ? $item->from_bank_account->no_rekening . '- ' . $item->from_bank_account->bank . ' an ' . $item->from_bank_account->owner : '-' }}
-                                        </td>
-                                        <td>{{ isset($item->bank_account->no_rekening) ? $item->bank_account->no_rekening . ' - ' . $item->bank_account->bank . ' an ' . $item->bank_account->owner : '-' }}
-                                        </td>
-                                        <td>{{ isset($item->outstanding_balance) ? format_idr($item->outstanding_balance) : '-' }}
-                                        </td>
-                                        <td>{{ isset($item->bank_charges) ? format_idr($item->bank_charges) : '-' }}</td>
-                                        <td>{{ isset($item->payment_amount) ? format_idr($item->payment_amount) : '-' }}
-                                        </td>
+                                        <td class="text-right">{{ isset($item->nominal) ? format_idr($item->nominal) : '-' }}</td>
+                                        {{-- <td>{{ isset($item->from_bank_account->no_rekening) ? $item->from_bank_account->no_rekening . '- ' . $item->from_bank_account->bank . ' an ' . $item->from_bank_account->owner : '-' }}</td>
+                                        <td>{{ isset($item->bank_account->no_rekening) ? $item->bank_account->no_rekening . ' - ' . $item->bank_account->bank . ' an ' . $item->bank_account->owner : '-' }}</td> --}}
+                                        <td class="text-right">{{ isset($item->outstanding_balance) ? format_idr($item->outstanding_balance) : '-' }}</td>
+                                        {{-- <td class="text-right">{{ isset($item->bank_charges) ? format_idr($item->bank_charges) : '-' }}</td> --}}
+                                        <td class="text-right">{{ isset($item->payment_amount) ? format_idr($item->payment_amount) : '-' }}</td>
                                     </tr>
                                     @php($num++)
                                     @endforeach
@@ -157,22 +157,28 @@
                 </div>
             </div>
         </div>
-        @push('after-scripts')
-            <script type="text/javascript" src="{{ asset('assets/vendor/daterange/moment.min.js') }}"></script>
-            <script type="text/javascript" src="{{ asset('assets/vendor/daterange/daterangepicker.js') }}"></script>
-            <link rel="stylesheet" type="text/css" href="{{ asset('assets/vendor/daterange/daterangepicker.css') }}" />
-            <script>
-                Livewire.on('update-url',(url)=>{
-                    setTimeout(function(){
-                        window.history.pushState('', '', url);
-                    });
-                })
-                $('.payment_date').daterangepicker({
-                    opens: 'left'
-                }, function(start, end, label) {
-                    @this.set("payment_date_from", start.format('YYYY-MM-DD'));
-                    @this.set("payment_date_to", end.format('YYYY-MM-DD'));
-                });
-
-            </script>
-        @endpush
+    </div>
+</div>
+@push('after-scripts')
+    <script type="text/javascript" src="{{ asset('assets/vendor/daterange/moment.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('assets/vendor/daterange/daterangepicker.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/vendor/daterange/daterangepicker.css') }}" />
+    <script>
+        Livewire.on('update-url',(url)=>{
+            setTimeout(function(){
+                window.history.pushState('', '', url);
+            });
+        })
+        $('.payment_date').daterangepicker({
+            opens: 'left'
+        }, function(start, end, label) {
+            @this.set("payment_date_from", start.format('YYYY-MM-DD'));
+            @this.set("payment_date_to", end.format('YYYY-MM-DD'));
+        });
+    </script>
+@endpush
+<div wire:ignore.self class="modal fade" id="modal_detail_voucher" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="min-width:90%;">
+        @livewire('income-premium-receivable.detail-voucher')
+    </div>
+</div>

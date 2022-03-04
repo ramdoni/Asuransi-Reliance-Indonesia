@@ -20,7 +20,9 @@
         <!-- Custom Css -->
         <link rel="stylesheet" href="{{ asset('assets/css/main.css') }}">
         <link rel="stylesheet" href="{{ asset('assets/css/color_skins.css') }}">
-
+        <style>
+            .auth-main:after {background:none;}
+        </style>
         @stack('after-styles')
         @livewireStyles
     </head>

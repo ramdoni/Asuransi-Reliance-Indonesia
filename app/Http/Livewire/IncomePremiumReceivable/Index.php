@@ -13,7 +13,7 @@ class Index extends Component
     protected $paginationTheme = 'bootstrap',$export_data,$queryString = ['page'];
     public function render()
     {
-        $data = Income::orderBy('id','desc')
+        $data = Income::orderBy('updated_at','desc')
                         ->with(['policys','cancelation_konven','cancelation_syariah','endorsement_konven','endorsement_syariah','from_bank_account','bank_account'])
                         ->where('reference_type','Premium Receivable');
         

@@ -154,9 +154,13 @@ Route::group(['middleware' => ['auth','access:2']], function(){
     Route::get('others-income',App\Http\Livewire\OthersIncome\Index::class)->name('others-income.index');
     Route::get('others-income/insert',App\Http\Livewire\OthersIncome\Insert::class)->name('others-income.insert');
     Route::get('others-income/detail/{id}',App\Http\Livewire\OthersIncome\Detail::class)->name('others-income.detail');
+    Route::get('bank-book-teknik',App\Http\Livewire\BankBook\Teknik::class)->name('bank-book.teknik');
+    Route::get('bank-book-teknik/insert',App\Http\Livewire\BankBook\TeknikInsert::class)->name('bank-book.teknik.insert');
+    Route::get('bank-book-non-teknik',App\Http\Livewire\BankBook\NonTeknik::class)->name('bank-book.non-teknik');
     // Route::get('policy',App\Http\Livewire\Policy\Index::class)->name('policy');
     // Route::get('policy/insert',App\Http\Livewire\Policy\Insert::class)->name('policy.insert');
 });
+
 // Treasury
 Route::group(['middleware' => ['auth','access:4']], function(){ 
     Route::get('treasury/index',App\Http\Livewire\Treasury\Index::class)->name('treasury.index');
@@ -164,4 +168,32 @@ Route::group(['middleware' => ['auth','access:4']], function(){
     Route::get('bank-account-company',App\Http\Livewire\Treasury\BankAccountCompany\Index::class)->name('bank-account-company');
     Route::get('bank-account-company/insert',App\Http\Livewire\Treasury\BankAccountCompany\Insert::class)->name('bank-account-company.insert');
     Route::get('bank-account-company/edit/{id}',App\Http\Livewire\Treasury\BankAccountCompany\Edit::class)->name('bank-account-company.edit');
+    Route::get('bank-book',App\Http\Livewire\BankBook\Index::class)->name('bank-book.index');
+    Route::get('expense-reinsurance-premium',App\Http\Livewire\ExpenseReinsurance\Index::class)->name('expense.reinsurance-premium');
+    Route::get('expense-reinsurance-premium/detail/{id}',App\Http\Livewire\ExpenseReinsurance\Detail::class)->name('expense.reinsurance-premium.detail');
+    Route::get('expense-claim',App\Http\Livewire\ExpenseClaim\Index::class)->name('expense.claim');
+    Route::get('expense-claim/detail/{id}',App\Http\Livewire\ExpenseClaim\Detail::class)->name('expense.claim.detail');
+    Route::get('expense-claim/insert',App\Http\Livewire\ExpenseClaim\Insert::class)->name('expense.claim.insert');
+    Route::get('expense-others',App\Http\Livewire\ExpenseOthers\Index::class)->name('expense.others');
+    Route::get('expense-others/detail/{id}',App\Http\Livewire\ExpenseOthers\Detail::class)->name('expense.others.detail');
+    Route::get('expense-others/insert',App\Http\Livewire\ExpenseOthers\Insert::class)->name('expense.others.insert');
+    Route::get('expense-commision-payable',App\Http\Livewire\ExpenseCommisionPayable\Index::class)->name('expense.commision-payable');
+    Route::get('expense-commision-payable/insert',App\Http\Livewire\ExpenseCommisionPayable\Insert::class)->name('expense.commision-payable.insert');
+    Route::get('expense-commision-payable/detail/{id}',App\Http\Livewire\ExpenseCommisionPayable\Detail::class)->name('expense.commision-payable.detail');
+    Route::get('expense-endorsement',App\Http\Livewire\ExpenseEndorsement\Index::class)->name('expense-endorsement');
+    Route::get('expense-endorsement/detail/{id}',App\Http\Livewire\ExpenseEndorsement\Detail::class)->name('expense-endorsement.detail');
+    Route::get('expense-cancelation',App\Http\Livewire\ExpenseCancelation\Index::class)->name('expense-cancelation');
+    Route::get('expense-cancelation/detail/{id}',App\Http\Livewire\ExpenseCancelation\Detail::class)->name('expense-cancelation.detail');
+    Route::get('expense-refund',App\Http\Livewire\ExpenseRefund\Index::class)->name('expense-refund');
+    Route::get('expense-refund/detail/{id}',App\Http\Livewire\ExpenseRefund\Detail::class)->name('expense-refund.detail');
+    Route::get('expense-handling-fee',App\Http\Livewire\ExpenseHandlingFee\Index::class)->name('expense-handling-fee');
+    Route::get('expense-handling-fee/detail/{id}',App\Http\Livewire\ExpenseHandlingFee\Detail::class)->name('expense-handling-fee.detail');
+});
+// Teknis
+Route::group(['middleware' => ['auth','access:5']], function(){
+    Route::get('konven-underwriting',App\Http\Livewire\Konven\Underwriting::class)->name('konven.underwriting');
+    Route::get('konven-reinsurance',App\Http\Livewire\Konven\Reinsurance::class)->name('konven.reinsurance');
+    Route::get('konven-claim',App\Http\Livewire\Konven\Claim::class)->name('konven.claim');
+    Route::get('syariah-underwriting',App\Http\Livewire\Syariah\Index::class)->name('syariah.underwriting');
+    Route::get('syariah-reinsurance',App\Http\Livewire\Syariah\Reinsurance::class)->name('syariah.reinsurance');
 });

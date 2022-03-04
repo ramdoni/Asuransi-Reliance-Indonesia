@@ -28,6 +28,9 @@ class UnderwritingSync extends Component
     public function uw_sync()
     {
         if($this->is_sync==false) return false;
+
+        $is_teknis = \Auth::uset()->user_access_id ==5?true:false;
+
         $this->emit('is_sync');
         foreach(KonvenUnderwriting::where('status',1)->get() as $key => $item){
             $note_invalid = '';
@@ -110,6 +113,7 @@ class UnderwritingSync extends Component
                 $income->due_date = $item->tgl_jatuh_tempo;
                 $income->type = 1;
                 $income->policy_id = $policy->id;
+                if($is_teknis) $income->status = 2; // otomatis paid ketika Administrator yang melakukan upload
                 $income->save();
             }
             if(!empty($item->ppn) and !empty($item->jumlah_discount)){
@@ -172,20 +176,28 @@ class UnderwritingSync extends Component
                 $new->save();
                 $ordering++;
             }
-            foreach($item->coaDesc as $k => $coa){
-                $new  = new Journal();
-                $new->transaction_number = $item->no_kwitansi_debit_note;
-                $new->transaction_id = $item->id;
-                $new->transaction_table = 'konven_underwriting'; 
-                $new->coa_id = $coa->coa_id;
-                $new->no_voucher = generate_no_voucher($coa->coa_id,$item->id);
-                $new->date_journal = date('Y-m-d');
-                $new->debit = $coa->debit;
-                $new->kredit = $coa->kredit;
-                $new->description = $coa->description;
-                $new->saldo = replace_idr($coa->debit!=0 ? $coa->debit : ($coa->kredit!=0?$coa->kredit : 0));
-                $new->save();
+
+            /**
+             * jika teknis yang upload
+             * maka otomatis ter journal 
+             * */             
+            if($is_teknis){
+                foreach($item->coaDesc as $k => $coa){
+                    $new  = new Journal();
+                    $new->transaction_number = $item->no_kwitansi_debit_note;
+                    $new->transaction_id = $item->id;
+                    $new->transaction_table = 'konven_underwriting'; 
+                    $new->coa_id = $coa->coa_id;
+                    $new->no_voucher = generate_no_voucher($coa->coa_id,$item->id);
+                    $new->date_journal = date('Y-m-d');
+                    $new->debit = $coa->debit;
+                    $new->kredit = $coa->kredit;
+                    $new->description = $coa->description;
+                    $new->saldo = replace_idr($coa->debit!=0 ? $coa->debit : ($coa->kredit!=0?$coa->kredit : 0));
+                    $new->save();
+                }
             }
+            
             $this->total_success++;
             $this->total_finish++;
         }

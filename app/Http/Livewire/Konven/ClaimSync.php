@@ -23,7 +23,7 @@ class ClaimSync extends Component
     {
         if($this->is_sync==false) return false;
         $this->emit('is_sync');
-
+        $is_teknis = \Auth::uset()->user_access_id ==5?true:false;
         foreach(\App\Models\KonvenClaim::where('status_claim',1)->get() as $key => $item){
             if($key > 1) continue;
             // find at table Underwriting
@@ -50,6 +50,7 @@ class ClaimSync extends Component
                 $data->transaction_table = 'konven_claim';
                 $data->transaction_id = $item->id;
                 $data->type = 1;
+                if(!$is_teknis) $data->status = 2; // otomatis paid ketika yang upload adalah administrator
                 $data->save();
             }
             $item->save();

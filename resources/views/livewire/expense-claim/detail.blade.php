@@ -21,8 +21,17 @@
                         @endif
                         <hr />
                     </div>
-                    <div class="form-group">
-                        <label>{{ __('No Polis') }}</label>
+                    <table class="table table-striped table-hover m-b-0 c_list">
+                        <tbody>
+                            <tr>
+                                <th>{{ __('No Polis') }}</th>
+                                <td>{{isset($expense->policy->no_polis)?$expense->policy->no_polis:'-'}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <br />
+                    {{-- <div class="form-group">
+                        <label></label> : 
                         <select class="form-control select_no_polis" wire:model="no_polis" id="no_polis" {{$is_readonly?'disabled' : ''}}>
                             <option value=""> --- Select --- </option>
                             @foreach(\App\Models\Policy::orderBy('pemegang_polis','ASC')->get() as $item)
@@ -32,7 +41,7 @@
                         @error('no_polis')
                         <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                         @enderror
-                    </div>
+                    </div> --}}
                     <div class="form-group">
                         <label>{{__('Peserta')}}</label>
                         @foreach($add_pesertas as $k => $v)
@@ -121,7 +130,7 @@
         </div>
     </div>
     <div class="col-md-7">
-        <div class="card">
+        {{-- <div class="card">
             <div class="body">
                 <table class="table table-striped table-hover m-b-0 c_list table-nowrap">
                     <tr>
@@ -198,7 +207,7 @@
                     @endif
                 </table>
             </div>
-        </div>
+        </div> --}}
         <div class="card">
             <div class="body">
                 <div class="row">

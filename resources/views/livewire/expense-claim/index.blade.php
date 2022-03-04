@@ -41,7 +41,7 @@
                         </select>
                     </div>
                     <div class="col-md-5">
-                        <a href="{{route('expense.claim.insert')}}" class="btn btn-success"><i class="fa fa-plus"></i> Claim</a>
+                        {{-- <a href="{{route('expense.claim.insert')}}" class="btn btn-success"><i class="fa fa-plus"></i> Claim</a> --}}
                         <a href="javascript:;" class="btn btn-info" wire:click="downloadExcel"><i class="fa fa-download"></i> Download</a>
                         <a href="javascript:;" class="btn btn-warning" data-toggle="modal" data-target="#modal_upload_claim"><i class="fa fa-upload"></i> Upload</a>
                         <span wire:loading>
@@ -73,12 +73,18 @@
                             <tr>
                                 <td style="width: 50px;">{{$k+1}}</td>
                                 <td>
-                                    <a href="{{route('expense.claim.detail',['id'=>$item->id])}}">{!!status_expense($item->status)!!}</a>
+                                    <a href="{{route('expense.claim.detail',['id'=>$item->id])}}" style="cursor:pointer;">{!!status_expense($item->status)!!}</a>
                                     @if($item->status==4)
                                     <a href="javascript:;" title="Delete Claim" class="text-danger" wire:click="delete({{$item->id}})"><i class="fa fa-trash"></i></a>
                                     @endif
                                 </td>
-                                <td><a href="{{route('expense.claim.detail',['id'=>$item->id])}}">{!!no_voucher($item)!!}</a></td>
+                                <td>
+                                    @if(isset($item->vouchers_claim))
+                                        @foreach($item->vouchers_claim as $voucher)
+                                            <a href="javascript:void(0)" data-toggle="modal" data-target="#modal_detail_voucher" wire:click="$emit('set-voucher',{{$voucher->bank_book_id}})">{{$voucher->bank_book->no_voucher}}</a>
+                                        @endforeach
+                                    @endif
+                                </td>
                                 <td>{{$item->payment_date ? date('d M Y', strtotime($item->payment_date)) : '-'}}</td>
                                 <td>{{date('d M Y', strtotime($item->created_at))}}</td>
                                 <td>{{$item->reference_no ? $item->reference_no : '-'}}</td>

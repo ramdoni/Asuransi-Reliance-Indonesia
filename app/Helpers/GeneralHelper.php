@@ -82,6 +82,13 @@ function send_wa($param)
     curl_close($curl);
 }
 
+function flag($item)
+{
+    $flag = " <span class=\"badge badge-info\" title=\"".($item->type==1?'Konven':'Syariah').".\">".($item->type==1?'K':'S')."</span>";
+
+    return $flag;
+}
+
 function no_voucher($item)
 {
     $flag = " <span class=\"badge badge-info\" title=\"".($item->type==1?'Konven':'Syariah').".\">".($item->type==1?'K':'S')."</span>";

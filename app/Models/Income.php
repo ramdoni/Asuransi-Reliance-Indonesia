@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\BankBookPairing;
 
 class Income extends Model
 {
@@ -22,6 +23,10 @@ class Income extends Model
         return $this->belongsTo(\App\Models\Expenses::class,'transaction_id');
     }
 
+    public function vouchers()
+    {
+        return $this->hasMany(BankBookPairing::class,'transaction_id','id')->where('transaction_table','premium receivable');
+    }
     
     public function policys()
     {

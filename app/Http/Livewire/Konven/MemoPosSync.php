@@ -32,6 +32,7 @@ class MemoPosSync extends Component
     {
         if($this->is_sync_memo==false) return false;
         $this->emit('is_sync_memo');
+        $is_teknis = \Auth::uset()->user_access_id ==5?true:false;
         foreach(KonvenMemo::where(['status_sync'=>0,'is_temp'=>0])->get() as $key => $item){
             $this->data = $item->no_kwitansi_finance .'/'. $item->no_kwitansi_finance2."<br />";
             $note_failed = '';
@@ -107,6 +108,7 @@ class MemoPosSync extends Component
                         $income->rekening_bank_id = $bank->id;
                         $income->type = 1;
                         $income->policy_id  = $polis->id;
+                        if(!$is_teknis) $income->status = 2; // otomatis paid ketika yang upload adalah administrator
                         $income->save();
                     }else{
                         $expense = new Expenses();
@@ -123,6 +125,7 @@ class MemoPosSync extends Component
                         $expense->rekening_bank_id = $bank->id;
                         $expense->type = 1;
                         $expense->policy_id  = $polis->id;
+                        if(!$is_teknis) $expense->status = 2; // otomatis paid ketika yang upload adalah administrator
                         $expense->save();
                     }
                 }
@@ -143,6 +146,7 @@ class MemoPosSync extends Component
                 $expense->rekening_bank_id = $bank->id;
                 $expense->type = 1;
                 $expense->policy_id  = $polis->id;
+                if(!$is_teknis) $expense->status = 2; // otomatis paid ketika yang upload adalah administrator
                 $expense->save();
 
                 if($uw){
@@ -162,29 +166,35 @@ class MemoPosSync extends Component
                             $coa_id_payable = 163; // Refund Premium Payable Ekawarsa
                             break;
                     }
-                    // Refund Premium
-                    $new  = new Journal();
-                    $new->transaction_number = $item->no_dn_cn;
-                    $new->transaction_id = $item->id;
-                    $new->transaction_table = 'konven_memo_pos'; 
-                    $new->coa_id = $coa_id;
-                    $new->no_voucher = generate_no_voucher($coa_id,$expense->id);
-                    $new->date_journal = date('Y-m-d');
-                    $new->debit = $item->refund;
-                    $new->description = "Refund {$item->pemegang_polis}";
-                    $new->save();
 
-                    // Refund Premium Payable
-                    $new  = new Journal();
-                    $new->transaction_number = $item->no_dn_cn;
-                    $new->transaction_id = $item->id;
-                    $new->transaction_table = 'konven_memo_pos'; 
-                    $new->coa_id = $coa_id_payable;
-                    $new->no_voucher = generate_no_voucher($coa_id,$expense->id);
-                    $new->date_journal = date('Y-m-d');
-                    $new->kredit = $item->refund;
-                    $new->description = "Refund {$item->pemegang_polis}";
-                    $new->save();
+                    /**
+                     * jika yang upload teknis maka langsung tercreate journal otomatis
+                     */
+                    if($is_teknis){
+                        // Refund Premium
+                        $new  = new Journal();
+                        $new->transaction_number = $item->no_dn_cn;
+                        $new->transaction_id = $item->id;
+                        $new->transaction_table = 'konven_memo_pos'; 
+                        $new->coa_id = $coa_id;
+                        $new->no_voucher = generate_no_voucher($coa_id,$expense->id);
+                        $new->date_journal = date('Y-m-d');
+                        $new->debit = $item->refund;
+                        $new->description = "Refund {$item->pemegang_polis}";
+                        $new->save();
+
+                        // Refund Premium Payable
+                        $new  = new Journal();
+                        $new->transaction_number = $item->no_dn_cn;
+                        $new->transaction_id = $item->id;
+                        $new->transaction_table = 'konven_memo_pos'; 
+                        $new->coa_id = $coa_id_payable;
+                        $new->no_voucher = generate_no_voucher($coa_id,$expense->id);
+                        $new->date_journal = date('Y-m-d');
+                        $new->kredit = $item->refund;
+                        $new->description = "Refund {$item->pemegang_polis}";
+                        $new->save();
+                    }
                 }
             }
             if($item->jenis_po =='CNCL'){ // Cancel
@@ -217,6 +227,7 @@ class MemoPosSync extends Component
                         $expense->rekening_bank_id = $bank->id;
                         $expense->type = 1;
                         $expense->policy_id  = $polis->id;
+                        if(!$is_teknis) $expense->status = 2; // otomatis paid ketika yang upload adalah administrator
                         $expense->save();
                     }
                 }

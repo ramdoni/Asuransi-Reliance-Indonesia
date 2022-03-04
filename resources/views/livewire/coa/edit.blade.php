@@ -23,7 +23,7 @@
                             <label>{{ __('Code') }}</label>
                             <input type="text" class="form-control" wire:model="code" disabled>
                             @error('code')
-                            <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                                <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                             @enderror
                         </div>
                         <div class="form-group col-md-4">

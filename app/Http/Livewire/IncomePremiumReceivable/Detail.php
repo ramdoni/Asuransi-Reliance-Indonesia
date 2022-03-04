@@ -13,6 +13,8 @@ use App\Models\Journal;
 use App\Models\JournalPenyesuaian;
 use App\Models\BankAccount;
 use App\Models\BankAccountBalance;
+use App\Models\BankBook;
+use App\Models\BankBookPairing;
 
 class Detail extends Component
 {
@@ -21,7 +23,8 @@ class Detail extends Component
     public $bank_charges,$showDetail='underwriting',$cancelation;
     public $titipan_premi,$temp_titipan_premi=[],$temp_arr_titipan_id=[],$total_titipan_premi=0;
     public $is_otp_editable=false,$otp,$is_submit,$is_from_claim=false,$temp_arr_claim=[],$temp_arr_claim_id=[];
-    protected $listeners = ['emit-add-bank'=>'emitAddBank','set-titipan-premi'=>'setTitipanPremi','refresh-page'=>'$refresh','otp-editable'=>'otpEditable','set-claim'=>'setClaim'];
+    public $voucher_ids,$arr_voucher_ids=[],$payment_type;
+    protected $listeners = ['set-voucher'=>'setVoucher','emit-add-bank'=>'emitAddBank','set-titipan-premi'=>'setTitipanPremi','refresh-page'=>'$refresh','otp-editable'=>'otpEditable','set-claim'=>'setClaim'];
     public function render()
     {
         return view('livewire.income-premium-receivable.detail');
@@ -124,9 +127,8 @@ class Detail extends Component
     public function save()
     {   
         $this->emit('init-form');
-        $validate = ['payment_amount'=>'required'];
+        $validate = ['payment_type'=>'required'];
         $validate_message= [];
-
         if($this->is_otp_editable){
             $cek = \Otp::check($this->otp);
             if($cek['status']==false){
@@ -139,20 +141,83 @@ class Detail extends Component
         // if(!$this->temp_titipan_premi and $this->titipan_premi->count()==0) $validate['bank_account_id']='required';
 
         $this->validate($validate,$validate_message);
-        $this->payment_amount = replace_idr($this->payment_amount);
-        $this->bank_charges = replace_idr($this->bank_charges);
-        if($this->payment_amount==$this->data->nominal || $this->payment_amount > $this->data->nominal) $this->data->status=2;//paid
-        if($this->payment_amount<$this->data->nominal) $this->data->status=3;//outstanding
-        $this->data->outstanding_balance = replace_idr($this->outstanding_balance);
-        $this->data->payment_amount = $this->payment_amount;
+        //$this->payment_amount = replace_idr($this->payment_amount);
+        //$this->bank_charges = replace_idr($this->bank_charges);
+        //if($this->payment_amount==$this->data->nominal || $this->payment_amount > $this->data->nominal) $this->data->status=2;//paid
+        //if($this->payment_amount<$this->data->nominal) $this->data->status=3;//outstanding
+        // $this->data->outstanding_balance = replace_idr($this->outstanding_balance);
+        // $this->data->payment_amount = $this->payment_amount;
         $this->data->rekening_bank_id = $this->bank_account_id;
         $this->data->payment_date = $this->payment_date;
         $this->data->description = $this->description;
         $this->data->from_bank_account_id = $this->from_bank_account_id;
         $this->data->bank_charges = $this->bank_charges;
         $this->data->user_id = \Auth::user()->id;
+        $this->data->payment_type = $this->payment_type;
         $this->data->save();
         
+        if($this->voucher_ids){
+            $temp_payment_amount = $this->data->nominal;
+            $total_amount_voucher = 0;
+            if(isset($this->data->vouchers)){
+                foreach($this->data->vouchers as $item) $total_amount_voucher += $item->amount;
+            }
+            foreach($this->arr_voucher_ids as $voucher){
+                $amount_voucher = ($voucher->balance_usage ? $voucher->balance_usage : $voucher->amount);
+                $total_amount_voucher += $amount_voucher;
+                if(($temp_payment_amount - $amount_voucher)>0){
+                    $voucher->date_pairing = date('Y-m-d');
+                    $voucher->balance_usage = ($voucher->balance_usage ? $voucher->balance_usage : $voucher->amount);
+                    $voucher->balance_remain = 0;
+                    $voucher->status =  1;// change status settle 
+                    $voucher->save();
+                    
+                    $pair = new BankBookPairing();
+                    $pair->no_debit_note = $this->data->reference_no;
+                    $pair->bank_book_id = $voucher->id;
+                    $pair->transaction_id = $this->data->id;
+                    $pair->amount = ($voucher->balance_usage ? $voucher->balance_usage : $voucher->amount);
+                    $pair->transaction_table = 'premium receivable';
+                    $pair->save();
+                    $temp_payment_amount = $temp_payment_amount - ($voucher->balance_usage ? $voucher->balance_usage : $voucher->amount);
+                }else{
+                    $voucher->date_pairing = date('Y-m-d');
+                    $voucher->balance_usage = $voucher->balance_usage + $temp_payment_amount;;
+                    $voucher->balance_remain = ($amount_voucher - $temp_payment_amount);
+                    $voucher->status =  2;// change status settle partial 
+                    $voucher->save();
+
+                    $pair = new BankBookPairing();
+                    $pair->no_debit_note = $this->data->reference_no;
+                    $pair->bank_book_id = $voucher->id;
+                    $pair->transaction_id = $this->data->id;
+                    $pair->amount = $temp_payment_amount;
+                    $pair->transaction_table = 'premium receivable';
+                    $pair->save();
+
+                    $temp_payment_amount = $temp_payment_amount - ($voucher->balance_usage ? $voucher->balance_usage : $voucher->amount);
+                }
+            }
+            
+            /**
+             * sudah terbayarkan maka statusnya menjadi paid
+             * jika masih belum 0 maka masih outstanding
+             */
+            if($total_amount_voucher >= $this->data->nominal) {
+                $this->payment_amount = $this->data->nominal;
+                $this->data->payment_amount = $this->data->nominal;
+                $this->data->outstanding_balance = 0;
+                $this->data->status = 2; 
+                $this->data->save();
+            }else{
+                $this->payment_amount = $total_amount_voucher;
+                $this->data->payment_amount = $total_amount_voucher;
+                $this->data->outstanding_balance = $this->data->nominal - $total_amount_voucher;
+                $this->data->status = 3; 
+                $this->data->save();
+            }
+        }
+
         if($this->temp_titipan_premi){
             $total_titipan_premi = 0;
             $nominal_titipan = 0;
@@ -395,5 +460,19 @@ class Detail extends Component
             return redirect(session()->get('url_back'));
         else
             return redirect()->route('income.premium-receivable');
+    }
+
+    public function setVoucher($id)
+    {
+        $this->voucher_ids = $id;
+        $this->arr_voucher_ids = BankBook::whereIn('id',$this->voucher_ids)->orderBy('amount','asc')->get();
+        $this->emit('modal','hide');
+    }
+
+    public function deleteVoucher($id)
+    {
+        foreach($this->voucher_ids as $k=>$val) if($val==$id) unset($this->voucher_ids[$k]);
+
+        $this->arr_voucher_ids = BankBook::whereIn('id',$this->voucher_ids)->orderBy('amount','asc')->get();
     }
 }
