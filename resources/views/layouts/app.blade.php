@@ -32,7 +32,7 @@
     @livewireStyles
 </head>
 
-<body class="theme-blue">
+<body class="theme-blue layout-fullwidth">
     <!-- Page Loader -->
     <div class="page-loader-wrapper">
         <div class="loader">
@@ -51,6 +51,17 @@
         <div id="main-content">
             <div class="container-fluid">
                 <div class="block-header">
+                    <div class="col-lg-5 col-md-8 col-sm-12">      
+                        @if (trim($__env->yieldContent('parentPageTitle')))
+                            <h2><a href="javascript:void(0);" class="btn btn-xs btn-link btn-toggle-fullwidth"><i class="fa fa-arrow-left"></i></a> @yield('parentPageTitle')</h2>
+                        @endif                  
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href="/"><i class="icon-home"></i></a>
+                            </li>
+                            <li class="breadcrumb-item">@yield('title')</li>
+                        </ul>
+                    </div> 
                     @if (session()->has('message-success'))
                         <div class="alert alert-success alert-dismissible" role="alert">
                             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span

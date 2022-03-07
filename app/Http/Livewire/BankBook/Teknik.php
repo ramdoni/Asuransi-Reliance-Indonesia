@@ -11,12 +11,12 @@ class Teknik extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
-    public $check_id=[],$type,$transaction_id,$premium_receivable=[];
+    public $check_id=[],$type,$transaction_id,$filter_status;
 
     public function render()
     {
         $data = BankBook::orderBy('id','desc');
-
+        if($this->filter_status!="") $data->where('status',$this->filter_status);
         return view('livewire.bank-book.teknik')->with(['data'=>$data->paginate(100)]);
     }
 
@@ -30,5 +30,7 @@ class Teknik extends Component
         if($propertyName=='type'){
             $this->emit('select-premium-receivable');
         }
+
+        if($propertyName=='check_id') $this->emit('set_bank_book',$this->check_id);
     }
 }

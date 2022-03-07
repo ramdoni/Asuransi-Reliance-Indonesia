@@ -6,11 +6,10 @@
             <div class="body">
                 <div class="row mb-2">
                     <div class="col-md-1">
-                        <select class="form-control" wire:model="filter_type">
-                            <option value=""> - Type - </option>
-                            <option value="P">P - Payable</option>
-                            {{-- <option value="R">R - Receivable</option> --}}
-                            <option value="A">A - Ajust</option>
+                        <select class="form-control" wire:model="filter_status">
+                            <option value=""> - Status - </option>
+                            <option value="0">Unidentity</option>
+                            <option value="1">Settle</option>
                         </select>
                     </div>
                     <div class="col-md-2">
@@ -18,7 +17,7 @@
                     </div>
                     <div class="col-md-9">
                         @if($check_id)
-                            <a href="javascript:void(0)" class="btn btn-info" data-toggle="modal" data-target="#modal_add"><i class="fa fa-plus"></i></a>
+                            <a href="javascript:void(0)" class="btn btn-info" data-toggle="modal" data-target="#modal_add"><i class="fa fa-plus"></i> Settle</a>
                         @endif
                         <span wire:loading>
                             <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
@@ -82,48 +81,7 @@
     </div>
 
     <div wire:ignore.self class="modal fade" id="modal_add" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content modal-lg">
-                <form wire:submit.prevent="save">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel"><i class="fa fa-plus"></i> Add Teknik</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true close-btn">×</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label>Type</label>
-                            <select class="form-control" wire:model="type">
-                                <option value="">-- select --</option>
-                                <option>Premium Receivable</option>
-                                <option>Reinsurance Premium</option>
-                                <option>Recovery Claim</option>
-                                <option>Recovery Refund</option>
-                            </select>
-                            @error('type')
-                                <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                            @enderror
-                        </div>
-                        @if($type=='Premium Receivable')
-                            <div class="form-group">
-                                <label>Debit Note / Kwitansi</label>
-                                <select class="form-control" id="select-premi">
-                                    <option value="">-- select --</option>
-                                    @foreach($premium_receivable as $item)
-                                        <option value="{{$item->id}}">{{$item->reference_no}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        @endif
-                    </div>
-                    <div class="modal-footer">
-                        <a href="#" data-dismiss="modal"><i class="fa fa-times"></i> Cancel</a>
-                        <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-save"></i> Save</button>
-                    </div>
-                </form>
-            </div>
-        </div>
+        @livewire('bank-book.insert-settle')
     </div>
     @push('after-scripts')
         <link rel="stylesheet" href="{{ asset('assets/vendor/select2/css/select2.min.css') }}"/>
