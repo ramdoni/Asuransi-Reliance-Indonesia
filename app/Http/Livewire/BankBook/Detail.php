@@ -8,7 +8,7 @@ use App\Models\BankBook;
 class Detail extends Component
 {
     public $active,$data,$generate_no_voucher;
-    public $type="P",$to_bank_account_id,$amount,$note,$opening_balance=0;
+    public $type="P",$to_bank_account_id,$amount,$note,$opening_balance=0,$status;
     public $filter_type,$filter_amount;
     protected $listeners = ['refresh'=>'$refresh'];
     public function render()
@@ -16,6 +16,7 @@ class Detail extends Component
         $data = BankBook::where('from_bank_id',$this->data->id)->orderBy('id','DESC');
 
         if($this->filter_type) $data->where('type',$this->filter_type);
+        if($this->status) $data->where('status',$this->status);
         if($this->filter_amount) $data->where(function($table){
                 $max = (int)(0.1*$this->filter_amount)+$this->filter_amount;
                 $min = $this->filter_amount - (int)(0.1*$this->filter_amount);

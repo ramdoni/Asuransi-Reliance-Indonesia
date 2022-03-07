@@ -4,11 +4,10 @@
             <select class="form-control" wire:model="filter_type">
                 <option value=""> - Type - </option>
                 <option value="P">P - Payable</option>
-                {{-- <option value="R">R - Receivable</option> --}}
-                <option value="A">A - Ajust</option>
+                <option value="R">R - Receivable</option>
             </select>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-1">
             <input type="number" class="form-control" wire:model="filter_amount" placeholder="Amount" />
         </div>
         <div class="col-md-9">
@@ -19,17 +18,16 @@
             </span>
         </div>
     </div>
-    <div class="mt-5">
-        <span class="alert alert-info" title="Unidentity">Unidentity : {{$total_unidentity}}</span> 
-        <span class="alert alert-info" title="Unidentity">Settle : {{$total_settle}}</span> 
-        <span class="alert alert-info" title="Opening Balance">OB : {{format_idr($opening_balance)}}</span>
-        <span class="alert alert-info" title="Payable">P : {{format_idr($total_payable)}}</span>
-        <span class="alert alert-success" title="Receivable">R : {{format_idr($total_receivable)}}</span>
-        <span class="alert alert-warning" title="Ajust">U: {{format_idr($unidentity)}}</span>
+    <div class="mt-3">
+        <span class="alert alert-info" title="Unidentity" wire:click="$set('status',0)">Unidentity : {{$total_unidentity}}</span> 
+        <span class="alert alert-info" title="Unidentity" wire:click="$set('status',1)">Settle : {{$total_settle}}</span> 
+        <span class="alert alert-info" title="Opening Balance">Opening Balance : {{format_idr($opening_balance)}}</span>
+        <span class="alert alert-info" title="Payable">Payable : {{format_idr($total_payable)}}</span>
+        <span class="alert alert-success" title="Receivable">Receivable : {{format_idr($total_receivable)}}</span>
         <span class="alert alert-secondary" title="Balance">Balance : {{format_idr($total)}}</span> 
     </div>
     <div class="table-responsive">
-        <table class="table table-striped m-b-0 c_list">
+        <table class="table table-striped m-b-0 c_list mt-3">
             <thead>
                 <tr x-show="insert" @click.away="insert = false" style="background:#d4edda">
                     <td></td>
@@ -38,9 +36,8 @@
                     <td>
                         <select class="form-control" wire:model="type">
                             <option value=""> -- Type -- </option>
-                            {{-- <option value="P">P - Payable</option> --}}
                             <option value="R">R - Receivable</option>
-                            <option value="A">A - Ajust</option>
+                            <option value="P">P - Payable</option>
                         </select>
                         @error('type')
                             <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
