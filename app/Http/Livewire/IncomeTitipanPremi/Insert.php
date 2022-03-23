@@ -3,10 +3,11 @@
 namespace App\Http\Livewire\IncomeTitipanPremi;
 
 use Livewire\Component;
+use App\Models\BankBook;
 
 class Insert extends Component
 {
-    public $no_voucher,$reference_no,$type,$payment_amount,$payment_date,$reference_type,$description,$data,$nominal,$from_bank_account_id,$to_bank_account_id,$is_readonly=false;
+    public $no_voucher,$vouchers,$reference_no,$type,$payment_amount,$payment_date,$reference_type,$description,$data,$nominal,$from_bank_account_id,$to_bank_account_id,$is_readonly=false;
     protected $listeners = ['emit-add-bank'=>'emitAddBank'];
     public function render()
     {
@@ -15,6 +16,7 @@ class Insert extends Component
     public function mount()
     { 
         $this->no_voucher = generate_no_voucher_income();
+        $this->vouchers =  BankBook::where('type','R')->get();
     }
     public function updated()
     {

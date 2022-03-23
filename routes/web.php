@@ -20,6 +20,9 @@ Route::get('login', App\Http\Livewire\Login::class)->name('login');
 Route::group(['middleware' => ['auth']], function(){    
     Route::get('profile',App\Http\Livewire\Profile::class)->name('profile');
     Route::get('back-to-admin',[App\Http\Controllers\IndexController::class,'backtoadmin'])->name('back-to-admin');
+    Route::get('get-premium-receivable',[App\Http\Controllers\PremiumReceivableController::class,'data'])->name('ajax.get-premium-receivable');
+    Route::get('get-reinsurance',[App\Http\Controllers\ReinsuranceController::class,'data'])->name('ajax.get-reinsurance');
+    Route::get('get-voucher-payable',[App\Http\Controllers\VoucherController::class,'data'])->name('ajax.get-voucher-payable');
 });
 
 // Administrator
@@ -69,6 +72,7 @@ Route::group(['middleware' => ['auth','access:1']], function(){
     Route::get('syariah-reinsurance',App\Http\Livewire\Syariah\Reinsurance::class)->name('syariah.reinsurance');
     Route::get('log-activity',App\Http\Livewire\LogActivity\Index::class)->name('log-activity');
     Route::get('migration',App\Http\Livewire\Migration\Index::class)->name('migration.index');
+    Route::get('distribution-channel',App\Http\Livewire\DistributionChannel\Index::class)->name('distribution-channel.index');
 });
 
 // Accounting
@@ -91,6 +95,9 @@ Route::group(['middleware' => ['auth','access:3']], function(){
     Route::get('general-ledger-konven/create',App\Http\Livewire\GeneralLedger\KonvenCreate::class)->name('general-ledger.konven-create');
     Route::get('cash-flow',App\Http\Livewire\CashFlow\Index::class)->name('cashflow.index');
     Route::get('trial-balance',App\Http\Livewire\TrialBalance\Index::class)->name('trial-balance.index');
+    Route::get('accounting/others',App\Http\Livewire\Accounting\Others::class)->name('accounting.others');
+    Route::get('account/others/payable/{id}',App\Http\Livewire\Accounting\Others\Payable\Edit::class)->name('accounting.others.payable');
+    Route::get('account/others/receivable/{id}',App\Http\Livewire\Accounting\Others\Receivable\Edit::class)->name('accounting.others.receivable');
 });
 
 // Finance
@@ -110,17 +117,7 @@ Route::group(['middleware' => ['auth','access:2']], function(){
     Route::get('operation/expense/edit/{id}',App\Http\Livewire\Operation\ExpenseEdit::class)->name('operation.expense.edit');
     Route::get('operation/income/insert',App\Http\Livewire\Operation\IncomeInsert::class)->name('operation.income.insert');
     Route::get('operation/income/edit/{id}',App\Http\Livewire\Operation\IncomeEdit::class)->name('operation.income.edit');
-    Route::get('income-premium-receivable',App\Http\Livewire\IncomePremiumReceivable\Index::class)->name('income.premium-receivable');
-    Route::get('income-premium-receivable/detail/{id}',App\Http\Livewire\IncomePremiumReceivable\Detail::class)->name('income.premium-receivable.detail');
-    Route::get('income-reinsurance',App\Http\Livewire\IncomeReinsurance\Index::class)->name('income.reinsurance');
-    Route::get('income-reinsurance/detail/{id}',App\Http\Livewire\IncomeReinsurance\Detail::class)->name('income.reinsurance.detail');
-    Route::get('income-investment',App\Http\Livewire\IncomeInvesment\Index::class)->name('income.investment');
-    Route::get('income-recovery-claim',App\Http\Livewire\IncomeRecoveryClaim\Index::class)->name('income.recovery-claim');
-    Route::get('income-recovery-claim/insert',App\Http\Livewire\IncomeRecoveryClaim\Insert::class)->name('income.recovery-claim.insert');
-    Route::get('income-recovery-claim/detail/{id}',App\Http\Livewire\IncomeRecoveryClaim\Detail::class)->name('income.recovery-claim.detail');
-    Route::get('income-recovery-refund',App\Http\Livewire\IncomeRecoveryRefund\Index::class)->name('income.recovery-refund');
-    Route::get('income-recovery-refund/insert',App\Http\Livewire\IncomeRecoveryRefund\Insert::class)->name('income.recovery-refund.insert');
-    Route::get('income-recovery-refund/detail/{id}',App\Http\Livewire\IncomeRecoveryRefund\Detail::class)->name('income.recovery-refund.detail');
+    
     Route::get('expense-reinsurance-premium',App\Http\Livewire\ExpenseReinsurance\Index::class)->name('expense.reinsurance-premium');
     Route::get('expense-reinsurance-premium/detail/{id}',App\Http\Livewire\ExpenseReinsurance\Detail::class)->name('expense.reinsurance-premium.detail');
     Route::get('expense-claim',App\Http\Livewire\ExpenseClaim\Index::class)->name('expense.claim');
@@ -147,15 +144,7 @@ Route::group(['middleware' => ['auth','access:2']], function(){
     Route::get('endorsement/cn-detail/{id}',App\Http\Livewire\Endorsement\CnDetail::class)->name('endorsement.cn-detail');
     Route::get('endorsement/cn-insert-reas',App\Http\Livewire\Endorsement\CnInsertReas::class)->name('endorsement.cn-insert-reas');
     Route::get('endorsement/cn-detail-reas/{id}',App\Http\Livewire\Endorsement\CnDetailReas::class)->name('endorsement.cn-detail-reas');
-    Route::get('income-titipan-premi',App\Http\Livewire\IncomeTitipanPremi\Index::class)->name('income.titipan-premi');
-    Route::get('income-titipan-premi/insert',App\Http\Livewire\IncomeTitipanPremi\Insert::class)->name('income.titipan-premi.insert');
-    Route::get('income-titipan-premi/detail/{id}',App\Http\Livewire\IncomeTitipanPremi\Detail::class)->name('income.titipan-premi.detail');
     Route::get('finance',App\Http\Livewire\Finance\Index::class)->name('finance.index');
-    Route::get('others-income',App\Http\Livewire\OthersIncome\Index::class)->name('others-income.index');
-    Route::get('others-income/insert',App\Http\Livewire\OthersIncome\Insert::class)->name('others-income.insert');
-    Route::get('others-income/detail/{id}',App\Http\Livewire\OthersIncome\Detail::class)->name('others-income.detail');
-    Route::get('bank-book-teknik',App\Http\Livewire\BankBook\Teknik::class)->name('bank-book.teknik');
-    Route::get('bank-book-teknik/insert',App\Http\Livewire\BankBook\TeknikInsert::class)->name('bank-book.teknik.insert');
     Route::get('bank-book-non-teknik',App\Http\Livewire\BankBook\NonTeknik::class)->name('bank-book.non-teknik');
     // Route::get('policy',App\Http\Livewire\Policy\Index::class)->name('policy');
     // Route::get('policy/insert',App\Http\Livewire\Policy\Insert::class)->name('policy.insert');
@@ -169,6 +158,19 @@ Route::group(['middleware' => ['auth','access:4']], function(){
     Route::get('bank-account-company/insert',App\Http\Livewire\Treasury\BankAccountCompany\Insert::class)->name('bank-account-company.insert');
     Route::get('bank-account-company/edit/{id}',App\Http\Livewire\Treasury\BankAccountCompany\Edit::class)->name('bank-account-company.edit');
     Route::get('bank-book',App\Http\Livewire\BankBook\Index::class)->name('bank-book.index');
+});
+
+// Teknis
+Route::group(['middleware' => ['auth','access:5']], function(){
+    Route::get('konven-underwriting',App\Http\Livewire\Konven\Underwriting::class)->name('konven.underwriting');
+    Route::get('konven-reinsurance',App\Http\Livewire\Konven\Reinsurance::class)->name('konven.reinsurance');
+    Route::get('konven-claim',App\Http\Livewire\Konven\Claim::class)->name('konven.claim');
+    Route::get('syariah-underwriting',App\Http\Livewire\Syariah\Index::class)->name('syariah.underwriting');
+    Route::get('syariah-reinsurance',App\Http\Livewire\Syariah\Reinsurance::class)->name('syariah.reinsurance');
+});
+
+// Account Payable
+Route::group(['middleware' => ['auth','access:6']], function(){
     Route::get('expense-reinsurance-premium',App\Http\Livewire\ExpenseReinsurance\Index::class)->name('expense.reinsurance-premium');
     Route::get('expense-reinsurance-premium/detail/{id}',App\Http\Livewire\ExpenseReinsurance\Detail::class)->name('expense.reinsurance-premium.detail');
     Route::get('expense-claim',App\Http\Livewire\ExpenseClaim\Index::class)->name('expense.claim');
@@ -189,11 +191,26 @@ Route::group(['middleware' => ['auth','access:4']], function(){
     Route::get('expense-handling-fee',App\Http\Livewire\ExpenseHandlingFee\Index::class)->name('expense-handling-fee');
     Route::get('expense-handling-fee/detail/{id}',App\Http\Livewire\ExpenseHandlingFee\Detail::class)->name('expense-handling-fee.detail');
 });
-// Teknis
-Route::group(['middleware' => ['auth','access:5']], function(){
-    Route::get('konven-underwriting',App\Http\Livewire\Konven\Underwriting::class)->name('konven.underwriting');
-    Route::get('konven-reinsurance',App\Http\Livewire\Konven\Reinsurance::class)->name('konven.reinsurance');
-    Route::get('konven-claim',App\Http\Livewire\Konven\Claim::class)->name('konven.claim');
-    Route::get('syariah-underwriting',App\Http\Livewire\Syariah\Index::class)->name('syariah.underwriting');
-    Route::get('syariah-reinsurance',App\Http\Livewire\Syariah\Reinsurance::class)->name('syariah.reinsurance');
-});
+
+// Account Receivable
+Route::group(['middleware' => ['auth','access:7']], function(){
+    Route::get('income-premium-receivable',App\Http\Livewire\IncomePremiumReceivable\Index::class)->name('income.premium-receivable');
+    Route::get('income-premium-receivable/detail/{id}',App\Http\Livewire\IncomePremiumReceivable\Detail::class)->name('income.premium-receivable.detail');
+    Route::get('income-reinsurance',App\Http\Livewire\IncomeReinsurance\Index::class)->name('income.reinsurance');
+    Route::get('income-reinsurance/detail/{id}',App\Http\Livewire\IncomeReinsurance\Detail::class)->name('income.reinsurance.detail');
+    Route::get('income-investment',App\Http\Livewire\IncomeInvesment\Index::class)->name('income.investment');
+    Route::get('income-recovery-claim',App\Http\Livewire\IncomeRecoveryClaim\Index::class)->name('income.recovery-claim');
+    Route::get('income-recovery-claim/insert',App\Http\Livewire\IncomeRecoveryClaim\Insert::class)->name('income.recovery-claim.insert');
+    Route::get('income-recovery-claim/detail/{id}',App\Http\Livewire\IncomeRecoveryClaim\Detail::class)->name('income.recovery-claim.detail');
+    Route::get('income-recovery-refund',App\Http\Livewire\IncomeRecoveryRefund\Index::class)->name('income.recovery-refund');
+    Route::get('income-recovery-refund/insert',App\Http\Livewire\IncomeRecoveryRefund\Insert::class)->name('income.recovery-refund.insert');
+    Route::get('income-recovery-refund/detail/{id}',App\Http\Livewire\IncomeRecoveryRefund\Detail::class)->name('income.recovery-refund.detail');
+    Route::get('income-titipan-premi',App\Http\Livewire\IncomeTitipanPremi\Index::class)->name('income.titipan-premi');
+    Route::get('income-titipan-premi/insert',App\Http\Livewire\IncomeTitipanPremi\Insert::class)->name('income.titipan-premi.insert');
+    Route::get('income-titipan-premi/detail/{id}',App\Http\Livewire\IncomeTitipanPremi\Detail::class)->name('income.titipan-premi.detail');
+    Route::get('others-income',App\Http\Livewire\OthersIncome\Index::class)->name('others-income.index');
+    Route::get('others-income/insert',App\Http\Livewire\OthersIncome\Insert::class)->name('others-income.insert');
+    Route::get('others-income/detail/{id}',App\Http\Livewire\OthersIncome\Detail::class)->name('others-income.detail');
+    Route::get('bank-book-teknik',App\Http\Livewire\BankBook\Teknik::class)->name('bank-book.teknik');
+    Route::get('bank-book-teknik/insert',App\Http\Livewire\BankBook\TeknikInsert::class)->name('bank-book.teknik.insert');
+}); 

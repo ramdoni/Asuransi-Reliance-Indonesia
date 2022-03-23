@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\BankBookPairing;
+use App\Models\IncomeSettle;
 
 class Income extends Model
 {
@@ -13,6 +14,11 @@ class Income extends Model
 
     protected $table="income";
     
+    public function settle()
+    {
+        return $this->hasMany(IncomeSettle::class,'income_id');
+    }
+
     public function migration()
     {
         return $this->belongsTo(MigrationData::class,'transaction_id');

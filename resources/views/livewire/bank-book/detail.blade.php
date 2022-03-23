@@ -29,10 +29,16 @@
     <div class="table-responsive">
         <table class="table table-striped m-b-0 c_list mt-3">
             <thead>
-                <tr x-show="insert" @click.away="insert = false" style="background:#d4edda">
+                <tr x-show="insert" style="background:#d4edda">
                     <td></td>
                     <td>{{$generate_no_voucher}}</td>
                     <td>{{date('d-M-Y')}}</td>
+                    <td>
+                        <input type="date" class="form-control" wire:model="payment_date" />
+                        @error('payment_date')
+                            <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                        @enderror
+                    </td>
                     <td>
                         <select class="form-control" wire:model="type">
                             <option value=""> -- Type -- </option>
@@ -43,10 +49,10 @@
                             <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                         @enderror
                     </td>
-                    <td>
-                        <select class="form-control" wire:model="to_bank_account_id">
+                    <td wire:ignore>
+                        <select class="form-control select-bank" wire:model="to_bank_account_id">
                             <option value=""> -- Bank -- </option>
-                            @foreach (\App\Models\BankAccount::where('is_client',1)->orderBy('owner','ASC')->get() as $bank)
+                            @foreach (\App\Models\BankAccount::orderBy('owner','ASC')->get() as $bank)
                                 <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
                             @endforeach
                         </select>
@@ -55,7 +61,7 @@
                         @enderror
                     </td>
                     <td>
-                        <input type="text" class="form-control" wire:model="amount" placeholder="Amount" wire:keydown.enter="save" />
+                        <input type="number" class="form-control" wire:model="amount" placeholder="Amount" wire:keydown.enter="save" />
                         @error('amount')
                             <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                         @enderror
@@ -75,10 +81,12 @@
                     <th>No</th>
                     <th>Voucher Number</th>
                     <th>Voucher Date</th>
+                    <th>Payment Date</th>
                     <th>Aging</th>
                     <th>Status</th>
                     <th class="text-center">Type</th>
-                    <th>From Bank Account</th>
+                    {{-- <th>Bank Company</th>
+                    <th>Bank Client</th> --}}
                     <th>Amount</th>
                     <th>Note</th>
                     <th></th>
@@ -91,6 +99,7 @@
                         <td>{{$num}}</td>
                         <td>{{$item->no_voucher}}</td>
                         <td>{{date('d-m-Y',strtotime($item->created_at))}}</td>
+                        <td>{{$item->payment_date ? date('d-m-Y',strtotime($item->payment_date)) : '-'}}</td>
                         <td>{{$item->date_pairing?calculate_aging($item->date_pairing):calculate_aging(date('Y-m-d',strtotime($item->created_at)))}}</td>
                         <td>
                             @if($item->status==0)
@@ -100,7 +109,8 @@
                             @endif
                         </td>
                         <td class="text-center">{{$item->type}}</td>
-                        <td>{{isset($item->to_bank->no_rekening) ? $item->to_bank->no_rekening .'- '.$item->to_bank->bank.' an '. $item->to_bank->owner : '-'}}</td>
+                        {{-- <td>{{isset($item->from_bank->no_rekening) ? $item->from_bank->no_rekening .'- '.$item->from_bank->bank.' an '. $item->from_bank->owner : '-'}}</td>
+                        <td>{{isset($item->to_bank->no_rekening) ? $item->to_bank->no_rekening .'- '.$item->to_bank->bank.' an '. $item->to_bank->owner : '-'}}</td> --}}
                         <td>{{format_idr($item->amount)}}</td>
                         <td>{{$item->note}}</td>
                         <td></td>
@@ -110,4 +120,26 @@
             </tbody>
         </table>
     </div>
+    {{-- @push('after-scripts')
+        <link rel="stylesheet" href="{{ asset('assets/vendor/select2/css/select2.min.css') }}"/>
+        <script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
+        <style>
+            .select2-container .select2-selection--single {height:36px;padding-left:10px;}
+            .select2-container .select2-selection--single .select2-selection__rendered{padding-top:3px;}
+            .select2-container--default .select2-selection--single .select2-selection__arrow{top:4px;right:10px;}
+            .select2-container {width: 100% !important;}
+        </style>
+        <script>
+            var select__2 = $('.select-bank').select2();
+            Livewire.on('init-form',()=>{
+                select__2 = $('.select-bank').select2();
+                $('.select-bank').on('change', function (e) {
+                    var data = $(this).select2("val");
+                    @this.set('to_bank_account_id', data);
+                });
+                var selected__ = $('.select-bank').find(':selected').val();
+                if(selected__ !="") select__2.val(selected__);
+            });
+        </script>
+    @endpush --}}
 </div>

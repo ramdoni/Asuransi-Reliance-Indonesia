@@ -81,14 +81,10 @@
                                 <th>Payment Date</th>                                    
                                 <th>Voucher Date</th>                                    
                                 <th>Reference Date</th>
-                                <th>Debit Note / Kwitansi</th>
+                                <th>Credit Note / Kwitansi</th>
                                 <th>Recipient</th>                    
                                 <th>Description</th>                    
                                 <th>Amount</th>     
-                                <th>From Bank Account</th>
-                                <th>To Bank Account</th>
-                                <th>Outstanding Balance</th>
-                                <th>Payment Amount</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -101,17 +97,15 @@
                                     <a href="javascript:;" class="text-danger" wire:click="delete({{$item->id}})"><i class="fa fa-trash"></i></a>
                                     @endif
                                 </td>
-                                <td><a href="{{route('expense.others.detail',['id'=>$item->id])}}">{!!no_voucher($item)!!}</a></td>
+                                <td>
+
+                                </td>
                                 <td>{{date('d M Y', strtotime($item->created_at))}}</td>
                                 <td>{{date('d M Y', strtotime($item->payment_date))}}</td>
                                 <td>{{date('d M Y', strtotime($item->reference_date))}}</td>
                                 <td>{{$item->reference_no ? $item->reference_no : '-'}}</td>
                                 <td>{{$item->recipient ? $item->recipient : '-'}}</td>
                                 <td>{{$item->description}}</td>
-                                <td>{{isset($item->nominal) ? format_idr($item->nominal) : '-'}}</td>
-                                <td>{{isset($item->from_bank_account->no_rekening) ? $item->from_bank_account->no_rekening .'- '.$item->from_bank_account->bank.' an '. $item->from_bank_account->owner : '-'}}</td>
-                                <td>{{isset($item->bank_account->no_rekening) ? $item->bank_account->no_rekening .' - '.$item->bank_account->bank.' an '. $item->bank_account->owner : '-'}}</td>
-                                <td>{{isset($item->outstanding_balance) ? format_idr($item->outstanding_balance) : '-'}}</td>
                                 <td>{{isset($item->payment_amount) ? format_idr($item->payment_amount) : '-'}}</td>
                             </tr>
                         @endforeach

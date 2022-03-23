@@ -55,9 +55,8 @@
                         <thead>
                             <tr>
                                 <th>No</th>                                    
-                                <th>Status</th>                                    
-                                <th>No Voucher</th>                                    
-                                <th>Payment Date</th>                                    
+                                <th>Status</th>                                        
+                                <th>Settle Date</th>                                    
                                 <th>Record Date</th>         
                                 <th>Debit Note / Kwitansi</th>
                                 <th>Policy Number / Policy Holder</th>                       
@@ -78,13 +77,13 @@
                                     <a href="javascript:;" title="Delete Claim" class="text-danger" wire:click="delete({{$item->id}})"><i class="fa fa-trash"></i></a>
                                     @endif
                                 </td>
-                                <td>
+                                {{-- <td>
                                     @if(isset($item->vouchers_claim))
                                         @foreach($item->vouchers_claim as $voucher)
                                             <a href="javascript:void(0)" data-toggle="modal" data-target="#modal_detail_voucher" wire:click="$emit('set-voucher',{{$voucher->bank_book_id}})">{{$voucher->bank_book->no_voucher}}</a>
                                         @endforeach
                                     @endif
-                                </td>
+                                </td> --}}
                                 <td>{{$item->payment_date ? date('d M Y', strtotime($item->payment_date)) : '-'}}</td>
                                 <td>{{date('d M Y', strtotime($item->created_at))}}</td>
                                 <td>{{$item->reference_no ? $item->reference_no : '-'}}</td>

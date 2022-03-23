@@ -7,10 +7,22 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\ExpensePayment;
 use App\Models\Policy;
 use App\Models\ExpensePeserta;
+use App\Models\DistributionChannel;
 
 class Expenses extends Model
 {
     use HasFactory;
+
+    public function settle()
+    {
+        return $this->hasMany(ExpenseSettle::class,'expense_id');
+    }
+
+    public function distribution_channel()
+    {
+        return $this->belongsTo(DistributionChannel::class,'distribution_channel_id');
+    }
+
     public function policy()
     {
         return $this->belongsTo(Policy::class,'policy_id');

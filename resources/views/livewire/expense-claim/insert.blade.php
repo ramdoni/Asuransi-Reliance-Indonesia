@@ -71,7 +71,7 @@
                         </select>
                         <a href="#" data-toggle="modal" data-target="#modal_add_bank"><i class="fa fa-plus"></i> Add Bank</a>
                         @error('to_bank_account_id')
-                        <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                            <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                         @enderror
                     </div>
                     <div class="row">
@@ -79,14 +79,14 @@
                             <label>{{ __('Nilai Klaim') }}</label>
                             <input type="text" class="form-control format_number text-right" wire:model="nilai_klaim">
                             @error('nilai_klaim')
-                            <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                                <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                             @enderror
                         </div>
                         <div class="form-group col-md-6">
                             <label>{{ __('Bank Charges') }}</label>
                             <input type="text" class="form-control format_number text-right" wire:model="bank_charges">
                             @error('bank_charges')
-                            <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                                <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                             @enderror
                         </div>
                     </div>
@@ -94,7 +94,7 @@
                         <label>{{ __('Payment Date') }}</label>
                         <input type="date" class="form-control col-md-6" wire:model="payment_date">
                         @error('payment_date')
-                        <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                            <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                         @enderror
                     </div>
                     <div class="form-group">

@@ -10,7 +10,14 @@
                             <table class="table pl-0 mb-0 table-striped">
                                 <tr>
                                     <th>{{ __('Voucher Number')}}</th>
-                                    <td>{{$no_voucher}}</td>
+                                    <td>
+                                        <select class="form-control" wire:model="voucher_id">
+                                            <opton value="">-- Select --</opton>
+                                            @foreach($vouchers as $item)
+                                                <option value="{{$item->id}}">{{$item->no_voucher}}</option>
+                                            @endforeach
+                                        </select>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <th>{{ __('Voucher Date')}}</th>

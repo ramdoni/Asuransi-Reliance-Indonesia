@@ -87,7 +87,7 @@
                             <tr>
                                 <th>No</th>
                                 <th>Status</th>
-                                <th>No Voucher</th>
+                                {{-- <th>No Voucher</th> --}}
                                 <th>Payment Date</th>
                                 <th>Voucher Date</th>
                                 <th>Reference Date</th>
@@ -97,9 +97,16 @@
                                 <th>Policy Number / Policy Holder</th>
                                 <th class="text-right">Cancelation</th>
                                 <th class="text-right">Endorsement</th>
-                                <th class="text-right">Total</th>
+                                <th class="text-right">
+                                    Total 
+                                    @if($ordering_nominal=='ASC' || $ordering_nominal=='')
+                                        <a href="javascript:void(0)" class="px-2" wire:click="$set('ordering_nominal', 'DESC')" style="float:right;"><i class="fa fa-arrow-up"></i></a>
+                                    @endif
+                                    @if($ordering_nominal=='DESC')
+                                        <a href="javascript:void(0)" class="px-2" wire:click="$set('ordering_nominal', 'ASC')" style="float:right;"><i class="fa fa-arrow-down"></i></a>
+                                    @endif
+                                </th>
                                 <th class="text-right">Outstanding Balance</th>
-                                {{-- <th class="text-right">Bank Charges</th> --}}
                                 <th class="text-right">Payment Amount</th>
                             </tr>
                         </thead>
@@ -111,13 +118,13 @@
                                         <td>
                                             <a href="{{ route('income.premium-receivable.detail', ['id' => $item->id,'page'=>$page,'keyword'=>$keyword,'unit'=>$unit,'status'=>$status,'payment_date_from'=>$payment_date_from,'payment_date_to'=>$payment_date_to])}}">{!! status_income($item->status) !!}</a>
                                         </td>
-                                        <td>
+                                        {{-- <td>
                                             @if(isset($item->vouchers))
                                                 @foreach($item->vouchers as $voucher)
                                                     <a href="javascript:void(0)" data-toggle="modal" data-target="#modal_detail_voucher" wire:click="$emit('set-voucher',{{$voucher->bank_book_id}})">{{$voucher->bank_book->no_voucher}}</a><br />
                                                 @endforeach
                                             @endif
-                                        </td>
+                                        </td> --}}
                                         <td>{{ $item->payment_date ? date('d M Y', strtotime($item->payment_date)) : '-' }}</td>
                                         <td>{{ date('d M Y', strtotime($item->created_at)) }}</td>
                                         <td>{{ date('d M Y', strtotime($item->reference_date)) }}</td>

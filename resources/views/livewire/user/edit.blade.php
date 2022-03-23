@@ -35,10 +35,10 @@
                     </div>
                     <div class="form-group">
                         <label>{{ __('User Access') }}</label>
-                        <select class="form-control" name="user_access_id">
+                        <select class="form-control" wire:model="user_access_id">
                             <option value="">{{__('--- User Access --- ')}} </option>
                             @foreach($access as $item)
-                            <option value="{{$item->id}}" {{$item->id==$data->user_access_id?'selected':''}}>{{$item->name}}</option>
+                                <option value="{{$item->id}}">{{$item->name}}</option>
                             @endforeach
                         </select>
                         @error('password')

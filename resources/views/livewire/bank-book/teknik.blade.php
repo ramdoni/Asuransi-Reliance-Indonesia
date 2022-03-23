@@ -1,19 +1,47 @@
-@section('title', __('Bank Book'))
-@section('parentPageTitle', __('Teknik'))
+@section('title', __('Income'))
+@section('parentPageTitle', __('Bank Book'))
 <div class="clearfix row">
     <div class="col-lg-12">
         <div class="card">
             <div class="body">
                 <div class="row mb-2">
                     <div class="col-md-1">
-                        <select class="form-control" wire:model="filter_status">
-                            <option value=""> - Status - </option>
-                            <option value="0">Unidentity</option>
-                            <option value="1">Settle</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <input type="number" class="form-control" wire:model="filter_amount" placeholder="Amount" />
+                        <div class="pl-3 py-2 form-group" x-data="{open_dropdown:false}" @click.away="open_dropdown = false">
+                            <a href="javascript:void(0)" x-on:click="open_dropdown = ! open_dropdown" class="dropdown-toggle">
+                                 Filter <i class="fa fa-search-plus"></i>
+                            </a>
+                            <div class="dropdown-menu show-form-filter" x-show="open_dropdown">
+                                <form class="p-2">
+                                    <div class="from-group my-2">
+                                        <select class="form-control" wire:model="filter_status">
+                                            <option value=""> - Status - </option>
+                                            <option value="0">Unidentity</option>
+                                            <option value="1">Settle</option>
+                                        </select>
+                                    </div>
+                                    <div class="from-group my-2">
+                                        <input type="number" class="form-control" wire:model="filter_amount" placeholder="Amount" />
+                                    </div>
+                                    <div class="from-group my-2" wire:ignore>
+                                        <select class="form-control filter_from_bank">
+                                            <option value=""> -- Bank Company -- </option>
+                                            @foreach(\App\Models\BankAccount::where('is_client',0)->get() as $k=>$item)
+                                                <option value="{{$item->id}}">{{isset($item->no_rekening) ? $item->no_rekening .'- '.$item->bank.' an '. $item->owner : '-'}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="from-group my-2" wire:ignore>
+                                        <select class="form-control filter_to_bank">
+                                            <option value=""> -- Bank Client -- </option>
+                                            @foreach(\App\Models\BankAccount::where('is_client',1)->get() as $k=>$item)
+                                                <option value="{{$item->id}}">{{isset($item->no_rekening) ? $item->no_rekening .'- '.$item->bank.' an '. $item->owner : '-'}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <a href="javascript:void(0)" wire:click="clear_filter()"><small>Clear filter</small></a>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-md-9">
                         @if($check_id)
@@ -30,13 +58,13 @@
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th></th>
-                                <th>Status</th>
+                                <th class="text-center">Settle</th>
+                                <th class="text-center">Status</th>
                                 <th>Voucher Number</th>
                                 <th>Voucher Date</th>
-                                <th class="text-center">Type</th>
-                                <th>From Bank Account</th>
-                                <th>Amount</th>
+                                <th class="text-right">Amount</th>
+                                <th>Bank Company</th>
+                                <th>Bank Policy</th>
                                 <th>Note</th>
                                 <th></th>
                             </tr>
@@ -46,28 +74,25 @@
                             @foreach($data as $item)
                                 <tr>
                                     <td>{{$num}}</td>
-                                    <td>
+                                    <td class="text-center">
                                         @if($item->status==0)
-                                            <div class="form-group mb-0">
-                                                <label class="fancy-checkbox">
-                                                    <input type="checkbox" wire:model="check_id" value="{{$item->id}}">
-                                                    <span></span>
-                                                </label>
-                                            </div>
+                                            <input type="checkbox" wire:model="check_id" value="{{$item->id}}">
+                                        @else
+                                            {{date('d-M-Y',strtotime($item->date_pairing))}}
                                         @endif
                                     </td>
-                                    <td>
+                                    <td class="text-center">
                                         @if($item->status==0)
                                             <span class="badge badge-warning">Unidentity</span>
                                         @else
-                                            <span class="badge badge-success">Settle</span>
+                                            <a href="javascript:void(0)" data-toggle="modal" wire:click="$emit('setid',{{$item->id}})" data-target="#modal_detail_transaction" class="badge badge-success">Settle</a>
                                         @endif
                                     </td>
                                     <td>{{$item->no_voucher}}</td>
                                     <td>{{date('d-m-Y',strtotime($item->created_at))}}</td>
-                                    <td class="text-center">{{$item->type}}</td>
+                                    <td class="text-right">{{format_idr($item->amount)}}</td>
+                                    <td>{{isset($item->from_bank->no_rekening) ? $item->from_bank->no_rekening .'- '.$item->from_bank->bank.' an '. $item->from_bank->owner : '-'}}</td>
                                     <td>{{isset($item->to_bank->no_rekening) ? $item->to_bank->no_rekening .'- '.$item->to_bank->bank.' an '. $item->to_bank->owner : '-'}}</td>
-                                    <td>{{format_idr($item->amount)}}</td>
                                     <td>{{$item->note}}</td>
                                     <td></td>
                                 </tr>
@@ -79,29 +104,36 @@
             </div>
         </div>
     </div>
-
-    <div wire:ignore.self class="modal fade" id="modal_add" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        @livewire('bank-book.insert-settle')
-    </div>
-    @push('after-scripts')
-        <link rel="stylesheet" href="{{ asset('assets/vendor/select2/css/select2.min.css') }}"/>
-        <script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
-        <style>
-            .select2-container .select2-selection--single {height:36px;padding-left:10px;}
-            .select2-container .select2-selection--single .select2-selection__rendered{padding-top:3px;}
-            .select2-container--default .select2-selection--single .select2-selection__arrow{top:4px;right:10px;}
-            .select2-container {width: 100% !important;}
-        </style>
-        <script>
-            select__2 = $('#select-premi').select2();
-            $('#select-premi').on('change', function (e) {
-                let elementName = $(this).attr('id');
-                var data = $(this).select2("val");
-                @this.set(elementName, data);
-            });
-            var selected__ = $('#select-premi').find(':selected').val();
-            if(selected__ !="") select__2.val(selected__);
-        </script>
-    @endpush
-
+</div>
+@push('after-scripts')
+    <link rel="stylesheet" href="{{ asset('assets/vendor/select2/css/select2.min.css') }}"/>
+    <script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
+    <style>
+        .select2-container .select2-selection--single {height:36px;padding-left:10px;}
+        .select2-container .select2-selection--single .select2-selection__rendered{padding-top:3px;}
+        .select2-container--default .select2-selection--single .select2-selection__arrow{top:4px;right:10px;}
+        .select2-container {width: 100% !important;}
+    </style>
+    <script>
+        $('.filter_from_bank').select2();
+        $('.filter_from_bank').on('change', function (e) {
+            var data = $(this).select2("val");
+            @this.set('filter_from_bank', data);
+        });
+        $('.filter_to_bank').select2();
+        $('.filter_to_bank').on('change', function (e) {
+            var data = $(this).select2("val");
+            @this.set('filter_to_bank', data);
+        });
+        Livewire.on('clear-filter',()=>{
+            $('.filter_from_bank').val(null).trigger('change');
+            $('.filter_to_bank').val(null).trigger('change');
+        })
+    </script>
+@endpush
+<div wire:ignore.self class="modal fade" id="modal_detail_transaction" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    @livewire('bank-book.detail-settle')
+</div>
+<div wire:ignore.self class="modal fade" id="modal_add" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    @livewire('bank-book.insert-settle')
 </div>

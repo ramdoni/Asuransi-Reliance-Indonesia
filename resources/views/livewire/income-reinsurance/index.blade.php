@@ -83,9 +83,9 @@
                             <tr>
                                 <th>No</th>                                    
                                 <th>Status</th>                                    
-                                <th>No Voucher</th>                                    
+                                {{-- <th>No Voucher</th>                                     --}}
                                 <th>Payment Date</th>                                    
-                                <th>Voucher Date</th>                                    
+                                {{-- <th>Voucher Date</th>                                     --}}
                                 <th>Reference Date</th>
                                 <th>Debit Note / Kwitansi</th>
                                 <th>Policy Number / Policy Holder</th>                    
@@ -102,8 +102,8 @@
                             <tr>
                                 <td style="width: 50px;">{{$k+1}}</td>
                                 <td><a href="{{route('income.reinsurance.detail',['id'=>$item->id])}}">{!!status_income($item->status)!!}</a></td>
-                                <td><a href="{{route('income.reinsurance.detail',['id'=>$item->id])}}">{!!no_voucher($item)!!}</a></td>
-                                <td>{{date('d M Y', strtotime($item->created_at))}}</td>
+                                {{-- <td><a href="{{route('income.reinsurance.detail',['id'=>$item->id])}}">{!!no_voucher($item)!!}</a></td> --}}
+                                {{-- <td>{{date('d M Y', strtotime($item->created_at))}}</td> --}}
                                 <td>{{$item->payment_date?date('d M Y', strtotime($item->payment_date)):'-'}}</td>
                                 <td>{{$item->reference_date?date('d M Y', strtotime($item->reference_date)):'-'}}</td>
                                 <td>{{$item->reference_no ? $item->reference_no : '-'}}</td>

@@ -1,603 +1,277 @@
 @section('title', 'Premium Receivable '.$data->no_voucher)
 @section('parentPageTitle', 'Income')
-<div class="clearfix row">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="body">
-                <form id="basic-form" method="post" wire:submit.prevent="save">
-                    <div class="row">
-                        <div class="col-md-12">
-                            @error('is_submit')
-                            <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                            @enderror
-                            <table class="table pl-0 mb-0 table-nowrap">
+<div class="clearfix">
+    <div class="card">
+        <div class="body">
+            <form id="basic-form" method="post" wire:submit.prevent="save">
+                <div class="row">
+                    <div class="col-md-6">
+                        @error('is_submit')
+                        <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                        @enderror
+                        <table class="table pl-0 mb-0 table-nowrap">
+                            <tr>
+                                <th style="width:30%">{{ __('Policy Number / Policy Holder')}}</th>
+                                <td style="width:70%">{{$data->client}}</td>
+                            </tr>
+                            <tr>
+                                <th>{{ __('Debit Note / Kwitansi Number')}}</th>
+                                <td>
+                                    <a href="#"  wire:click="$set('showDetail','underwriting')" title="Detail Debit Note / Kwitansi Number">{{$data->reference_no}}</a>
+                                    @if($data->status==1)
+                                        <span class="badge badge-warning" title="Handling Fee belum bisa di proses sebelum Status Premi diterima.">Unpaid</span>
+                                    @endif
+                                    @if($data->status==2)
+                                        <span class="badge badge-success" title="Premi Paid">Paid</span>
+                                    @endif
+                                    @if($data->status==3)
+                                        <span class="badge badge-warning" title="Outstanding">Outstanding</span>
+                                    @endif
+                                    @if($data->status==4)
+                                        <span class="badge badge-danger" title="Premi Cancel">Cancel</span>
+                                    @endif
+                                    {!!flag($data)!!}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>{{ __('Due Date')}}</th>
+                                <td>
+                                    {{date('d M Y', strtotime($data->due_date))}} 
+                                    @if(!$is_readonly)
+                                        <a href="javascript:;" data-toggle="modal" data-target="#modal_extend_due_date"><i class="fa fa-plus"></i> Extend due date</a>
+                                    @endif
+                                </td>
+                                    
+                            </tr>
+                            <tr>
+                                <th>{{ __('Reference Date')}}</th>
+                                <td>{{$data->reference_date}}</td>
+                            </tr>
+                            <tr>
+                                <th>{{ __('Premium Receivable')}}</th>
+                                <td>{{format_idr($data->nominal)}}</td>
+                            </tr>
+
+                            @if($data->type==1)
+                                @if($data->cancelation_konven->count())
                                 <tr>
-                                    <th>Payment Type</th>
+                                    <th>{{ __('Cancelation')}}</th>
                                     <td>
-                                        <select class="form-control" wire:model="payment_type">
-                                            <option value="">-- Select Payment --</option>
-                                            <option value="1">Voucher</option>
-                                            <option value="2">Premium Deposit</option>
-                                            <option value="3">Offset Claim Payable</option>
-                                        </select>
-                                        @error('payment_type')
-                                            <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                                        @enderror
+                                        @foreach($data->cancelation_konven as $cancel)
+                                        <p>{!!format_idr($cancel->nominal).' - <a href="javascript:void(0);" class="text-danger" title="Klik Detail" wire:click="showDetailCancelation('.$cancel->id.')">'.$cancel->konven->no_credit_note.'</a>'!!}</p> 
+                                        @endforeach
+                                    </td>
+                                </tr> 
+                                @endif
+                                @if($data->endorsement_konven->count())
+                                <tr>
+                                    <th>{{ __('Endorsement')}}</th>
+                                    <td>
+                                        @foreach($data->endorsement_konven as $cancel)
+                                        <p>{!!format_idr($cancel->nominal).' - <a href="javascript:void(0);" class="text-danger" title="Klik Detail" wire:click="showDetailCancelation('.$cancel->id.')">'.$cancel->konven->no_credit_note.'</a>'!!}</p> 
+                                        @endforeach
+                                    </td>
+                                </tr> 
+                                @endif
+                            @endif
+                            @if($data->type==2)
+                                @if($data->cancelation_syariah->count())
+                                <tr>
+                                    <th>{{ __('Cancelation')}}</th>
+                                    <td>
+                                        @foreach($data->cancelation_syariah as $cancel)
+                                        <p>{!!format_idr($cancel->nominal).' - <a href="javascript:void(0);" class="text-danger" title="Klik Detail" wire:click="showDetailCancelation('.$cancel->transaction_id.')">'.$cancel->syariah->no_credit_note.'</a>'!!}</p> 
+                                        @endforeach
+                                    </td>
+                                </tr> 
+                                @endif
+                                @if($data->endorsement_syariah->count())
+                                <tr>
+                                    <th>{{ __('Endorsement')}}</th>
+                                    <td>
+                                        @foreach($data->endorsement_syariah as $endors)
+                                        <p>{!!format_idr($endors->nominal).' - <a href="javascript:void(0);" class="text-danger" title="Klik Detail" wire:click="showDetailCancelation('.$endors->transaction_id.')">'.$endors->syariah->no_dn_cn.'</a>'!!}</p> 
+                                        @endforeach
+                                    </td>
+                                </tr> 
+                                @endif
+                            @endif
+                            <tr>
+                                <th>{{ __('Outstanding')}}</th>
+                                <td>{{format_idr($outstanding_balance)}}</td>
+                            </tr>
+                            <tr>
+                                <th>{{__('Description')}}</th>
+                                <td>
+                                    <textarea style="height:100px;" {{$is_readonly?'disabled':''}} class="form-control" wire:model="description"></textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <tr>
+                                    <th>Distribution Channel</th>
+                                    <td>
+                                        <div class="form-group">
+                                            <label>Distribution Channel</label>
+                                            <select class="form-control" wire:model="distribution_channel_id">
+                                                <option value="">-- Select -- </option>
+                                                @foreach($distribution_channel as $item)
+                                                    <option value="{{$item->id}}">{{$item->name}}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('distribution_channel_id')
+                                                <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                                            @enderror
+                                        </div>
                                     </td>
                                 </tr>
-                                @if($payment_type==1)
-                                    <tr>
-                                        <th style="width: 40%;">{{ __('Voucher Number')}}</th>
-                                        <td style="width: 60%;">
-                                            @if($arr_voucher_ids)
-                                                <ul class="list-unstyled feeds_widget">
-                                                    @php($total_voucher=0)
-                                                    @foreach($arr_voucher_ids as $item)
-                                                        <p>
-                                                            No Voucher <strong>{{$item->no_voucher}}</strong><br />
-                                                            {{isset($item->from_bank->no_rekening) ? $item->from_bank->no_rekening .'- '.$item->from_bank->bank.' an '. $item->from_bank->owner : '-'}} <br />
-                                                            <strong>{{format_idr($item->amount)}}</strong>
-                                                            @if(!$is_readonly)
-                                                            <a href="javascript:void(0)" wire:click="deleteVoucher({{$item->id}})" class="text-danger"><i class="fa fa-trash"></i></a>
-                                                            @endif
-                                                        </p>
-                                                        @php($total_voucher += $item->amount)
-                                                    @endforeach
-                                                </ul>
-                                            @endif
-                                            @if(isset($data->vouchers))
-                                                <ul class="list-unstyled feeds_widget">
-                                                    @foreach($data->vouchers as $item)
-                                                    <p>
-                                                        No Voucher :{{$item->bank_book->no_voucher}}<br />
-                                                        {{isset($item->bank_book->from_bank->no_rekening) ? $item->bank_book->from_bank->no_rekening .'- '.$item->bank_book->from_bank->bank.' an '. $item->bank_book->from_bank->owner : '-'}} <br />
-                                                        <strong>{{format_idr($item->amount)}}</strong>
-                                                        @if(!$is_readonly)
-                                                        {{-- <a href="javascript:void(0)" wire:click="clearTitipanPremi" class="text-danger"><i class="fa fa-trash"></i></a> --}}
-                                                        @endif
-                                                    </p>
-                                                    @endforeach
-                                                </ul>
-                                            @endif
-                                            @if(!$is_readonly)
-                                                <a href="javascript:void(0)" data-toggle="modal" data-target="#modal_add_voucher"><i class="fa fa-plus"></i> Voucher</a>
-                                            @endif
-                                        </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Settle</h6>
+                        @if($error_settle)
+                            <div class="alert alert-danger alert-dismissible" role="alert">
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <i class="fa fa-times-circle"></i> {{$error_settle}}
+                            </div>
+                        @endif
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr style="background:#eee">
+                                        <th style="width:50px;">No</th>
+                                        <th>Type</th>
+                                        <th>Debit Note / Kwitansi</th>
+                                        <th>Description</th>
+                                        <th>Amount</th>
+                                        <th></th>
                                     </tr>
-                                @endif
-                                @if($payment_type==2)
-                                    <tr>
-                                        <th>Premium Deposit</th>
-                                        <td>
-                                            @if($titipan_premi)
-                                                @foreach($titipan_premi as $item)
-                                                @php($titipan = $item->titipan)
-                                                <p>
-                                                    No Voucher : <a href="{{route('income.titipan-premi.detail',$titipan->id)}}" target="_blank">{{$titipan->no_voucher}}</a> <br />
-                                                    {{isset($titipan->from_bank_account->no_rekening) ? $titipan->from_bank_account->no_rekening .'- '.$titipan->from_bank_account->bank.' an '. $titipan->from_bank_account->owner : '-'}} <br />
-                                                    <strong>{{format_idr($item->nominal)}}</strong>
-                                                    @if(!$is_readonly)
-                                                    <a href="javascript:void(0)" wire:click="clearTitipanPremi" class="text-danger"><i class="fa fa-trash"></i></a>
-                                                    @endif
-                                                </p>
-                                                @endforeach
-                                            @endif
+                                </thead>
+                                <tbody>
+                                    @if($data->status==2 and $data->settle)
+                                        @foreach($data->settle as $num => $item)
+                                            <tr>
+                                                <td>{{$num+1}}</td>
+                                                <td>
+                                                    {{$item->type==2?'Premim Deposit':''}}
+                                                    {{$item->type==3?'Offset Claim Payable':''}}
+                                                    {{$item->type==4?'Error Suspense Account':''}}
+                                                </td>
+                                                <td></td>
+                                                <td></td>
+                                                <td class="text-right">{{format_idr($item->amount)}}</td>
+                                            </tr>
+                                            @php($total_payment_amount += $item->amount)
+                                        @endforeach
+                                    @endif
 
-                                            @if($temp_titipan_premi)
-                                                @foreach($temp_titipan_premi as $titipan)
-                                                <p>
-                                                    No Voucher : <a href="{{route('income.titipan-premi.detail',$titipan->id)}}" target="_blank">{{$titipan->no_voucher}}</a> <br />
-                                                    {{isset($titipan->from_bank_account->no_rekening) ? $titipan->from_bank_account->no_rekening .'- '.$titipan->from_bank_account->bank.' an '. $titipan->from_bank_account->owner : '-'}} <br />
-                                                    <strong>{{format_idr($titipan->outstanding_balance)}}</strong>
-                                                    @if(!$is_readonly)
-                                                    <a href="javascript:void(0)" wire:click="clearTitipanPremi" class="text-danger"><i class="fa fa-trash"></i></a>
-                                                    @endif
-                                                </p>
-                                                <hr />
-                                                @endforeach
-                                            @endif
-                                            @if($total_titipan_premi <= $data->nominal and !$is_readonly)
-                                            <a href="javascript:void(0)" data-target="#modal_add_titipan_premi" data-toggle="modal"><i class="fa fa-plus"></i> Premium Deposit</a>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @endif
-                                @if($payment_type==3)
-                                    <tr>
-                                        <th>Offset Claim Payable</th>
-                                        <td>
-                                            @if(isset($temp_arr_claim))
-                                                @php($total_claim=0)
-                                                @foreach($temp_arr_claim as $item_claim)
-                                                    <p>
-                                                        <strong>No Voucher</strong> : <a href="{{route('expense.claim.detail',['id'=>$item_claim->id])}}" target="_blank">{{$item_claim->no_voucher}}</a>
-                                                        <a href="javascript:void(0)" wire:click="delete_claim({{$item_claim->id}})" class="text-danger"><i class="fa fa-times"></i></a><br />
-                                                        <strong>Amount</strong> : Rp. {{format_idr($item_claim->payment_amount)}}
-                                                    </p>
-                                                    @php($total_claim+=$item_claim->payment_amount)
-                                                @endforeach
-                                                @if($total_claim)
-                                                    <hr />
-                                                    <p><label>Total : </label>Rp. {{format_idr($total_claim)}}</p>
+                                    @foreach($payment_ids as $k => $item)
+                                        <tr>
+                                            <td>{{$k+1}}</td>
+                                            <td>
+                                                <select class="form-control" wire:model="payment_type.{{$k}}">
+                                                    <option value=""> -- Type -- </option>
+                                                    <option value="2">Premium Deposit</option>
+                                                    <option value="3">Offset Claim Payable</option>
+                                                    <option value="4">Error Suspense Account</option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                @if($payment_type[$k]==2)
+                                                    <select class="form-control" wire:model="payment_ids.{{$k}}">
+                                                        <option value=""> -- Select Premium Deposit -- </option>
+                                                        @foreach($premium_deposits as $premium)
+                                                            <option value="{{$premium->id}}">{{$premium->reference_no}} - {{format_idr($premium->nominal)}}</option>
+                                                        @endforeach
+                                                    </select>
                                                 @endif
-                                            @endif
-                                            @if(in_array($data->status,[1,3]))
-                                                <a href="javascript:void(0)" data-target="#modal_add_claim_payable" data-toggle="modal"><i class="fa fa-plus"></i> Claim Payable</a>
-                                            @endif
-                                        </td>
+                                                @if($payment_type[$k]==3)
+                                                    <select class="form-control" wire:model="payment_ids.{{$k}}">
+                                                        <option value=""> -- Select Offset Claim Payable -- </option>
+                                                        @foreach($claims as $claim)
+                                                            <option value="{{$claim->id}}">{{$claim->reference_no}} - {{format_idr($claim->outstanding_balance=="" ? $claim->payment_amount : $claim->outstanding_balance)}}</option>
+                                                        @endforeach
+                                                    </select>
+                                                @endif
+                                                <span wire:loading wire:target="payment_type.{{$k}}">
+                                                    <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                                                    <span class="sr-only">Loading...</span>
+                                                </span>
+                                            </td>
+                                            <td>
+                                                @if($payment_type[$k]==2  and $payment_ids[$k])
+                                                    {{isset($payment_rows[$k]->description) ? $payment_rows[$k]->description:'-'}}
+                                                @endif
+                                                @if($payment_type[$k]==3 and $payment_ids[$k])
+                                                    @php($claim_peserta = \App\Models\ExpensePeserta::where('expense_id',$payment_ids[$k])->get())
+                                                    @foreach($claim_peserta as $peserta)
+                                                        <span>{{$peserta->no_peserta}} / {{$peserta->nama_peserta}}</span><br />
+                                                    @endforeach
+                                                @endif
+                                                @if($payment_type[$k]==4)
+                                                    <textarea class="form-control" wire:model="payment_ids.{{$k}}" placeholder="Debit Note / Kwitansi / Description"></textarea>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if($payment_type[$k]==2 and $payment_ids[$k])
+                                                    {{isset($payment_rows[$k]->nominal) ? format_idr($payment_rows[$k]->nominal):'-'}}
+                                                @endif
+                                                @if($payment_type[$k]==3 and $payment_ids[$k])
+                                                    {{isset($payment_rows[$k]->payment_amount) ? format_idr($payment_rows[$k]->payment_amount?$payment_rows[$k]->outstanding_balance:$payment_rows[$k]->payment_amount):'-'}}
+                                                @endif
+                                                @if($payment_type[$k]==4)
+                                                    <input type="number" class="form-control" wire:model="payment_amounts.{{$k}}" placeholder="Amount" />
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <span wire:loading wire:target="delete_payment_type">
+                                                    <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                                                    <span class="sr-only">Loading...</span>
+                                                </span>
+                                                <a href="javascript:void(0)" wire:loading.remove wire:target="delete_payment_type" class="text-danger" wire:click="delete_payment_type({{$k}})"><i class="fa fa-trash"></i></a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                    @if(!$is_readonly)
+                                        <tr>
+                                            <td colspan="6" class="text-center">
+                                                <span wire:loading wire:target="add_payment">
+                                                    <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                                                    <span class="sr-only">Loading...</span>
+                                                </span>
+                                                <a href="javascript:void(0)" wire:loading.remove wire:target="add_payment" wire:click="add_payment"><i class="fa fa-plus"></i> Add Row</a></td>
+                                        </tr>
+                                    @endif
+                                </tbody>
+                                <tfoot>
+                                    <tr style="background:#eee">
+                                        <th colspan="4" class="text-right">Total</th>
+                                        <th class="text-right">{{format_idr($total_payment_amount)}}</th>
+                                        <th></th>
                                     </tr>
-                                @endif
-                                <tr>
-                                    <th>{{ __('Policy Number / Policy Holder')}}</th>
-                                    <td>{{$data->client}}</td>
-                                </tr>
-                                <tr>
-                                    <th>{{ __('Debit Note / Kwitansi Number')}}</th>
-                                    <td>
-                                        <a href="#"  wire:click="$set('showDetail','underwriting')" title="Detail Debit Note / Kwitansi Number">{{$data->reference_no}}</a>
-                                        @if($data->status==1)
-                                            <span class="badge badge-warning" title="Handling Fee belum bisa di proses sebelum Status Premi diterima.">Unpaid</span>
-                                        @endif
-                                        @if($data->status==2)
-                                            <span class="badge badge-success" title="Premi Paid">Paid</span>
-                                        @endif
-                                        @if($data->status==3)
-                                            <span class="badge badge-warning" title="Outstanding">Outstanding</span>
-                                        @endif
-                                        @if($data->status==4)
-                                            <span class="badge badge-danger" title="Premi Cancel">Cancel</span>
-                                        @endif
-                                        {!!flag($data)!!}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>{{ __('Due Date')}}</th>
-                                    <td>
-                                        {{date('d M Y', strtotime($data->due_date))}} 
-                                        @if(!$is_readonly)
-                                            <a href="javascript:;" data-toggle="modal" data-target="#modal_extend_due_date"><i class="fa fa-plus"></i> Extend due date</a>
-                                        @endif
-                                    </td>
-                                        
-                                </tr>
-                                <tr>
-                                    <th>{{ __('Reference Date')}}</th>
-                                    <td>{{$data->reference_date}}</td>
-                                </tr>
-                                <tr>
-                                    <th>{{ __('Premium Receivable')}}</th>
-                                    <td>{{format_idr($data->nominal)}}</td>
-                                </tr>
-
-                                @if($data->type==1)
-                                    @if($data->cancelation_konven->count())
-                                    <tr>
-                                        <th>{{ __('Cancelation')}}</th>
-                                        <td>
-                                            @foreach($data->cancelation_konven as $cancel)
-                                            <p>{!!format_idr($cancel->nominal).' - <a href="javascript:void(0);" class="text-danger" title="Klik Detail" wire:click="showDetailCancelation('.$cancel->id.')">'.$cancel->konven->no_credit_note.'</a>'!!}</p> 
-                                            @endforeach
-                                        </td>
-                                    </tr> 
-                                    @endif
-                                    @if($data->endorsement_konven->count())
-                                    <tr>
-                                        <th>{{ __('Endorsement')}}</th>
-                                        <td>
-                                            @foreach($data->endorsement_konven as $cancel)
-                                            <p>{!!format_idr($cancel->nominal).' - <a href="javascript:void(0);" class="text-danger" title="Klik Detail" wire:click="showDetailCancelation('.$cancel->id.')">'.$cancel->konven->no_credit_note.'</a>'!!}</p> 
-                                            @endforeach
-                                        </td>
-                                    </tr> 
-                                    @endif
-                                @endif
-                                @if($data->type==2)
-                                    @if($data->cancelation_syariah->count())
-                                    <tr>
-                                        <th>{{ __('Cancelation')}}</th>
-                                        <td>
-                                            @foreach($data->cancelation_syariah as $cancel)
-                                            <p>{!!format_idr($cancel->nominal).' - <a href="javascript:void(0);" class="text-danger" title="Klik Detail" wire:click="showDetailCancelation('.$cancel->transaction_id.')">'.$cancel->syariah->no_credit_note.'</a>'!!}</p> 
-                                            @endforeach
-                                        </td>
-                                    </tr> 
-                                    @endif
-                                    @if($data->endorsement_syariah->count())
-                                    <tr>
-                                        <th>{{ __('Endorsement')}}</th>
-                                        <td>
-                                            @foreach($data->endorsement_syariah as $endors)
-                                            <p>{!!format_idr($endors->nominal).' - <a href="javascript:void(0);" class="text-danger" title="Klik Detail" wire:click="showDetailCancelation('.$endors->transaction_id.')">'.$endors->syariah->no_dn_cn.'</a>'!!}</p> 
-                                            @endforeach
-                                        </td>
-                                    </tr> 
-                                    @endif
-                                @endif
-                                
-                                <tr>
-                                    <th>{{ __('Outstanding')}}</th>
-                                    <td>{{format_idr($outstanding_balance)}}</td>
-                                </tr>
-                                {{--
-                                <tr>
-                                    <th>{{__('Payment Date')}}*<small>{{__('Default today')}}</small></th>
-                                    <td>
-                                        <input type="date" class="form-control col-md-6" {{$is_readonly?'disabled':''}} wire:model="payment_date" />
-                                        @error('payment_date')
-                                        <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                                        @enderror
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>{{__('From Bank Account')}}</th>
-                                    <td>
-                                        @if($is_readonly)
-                                            {{isset($data->from_bank_account->owner) ? $data->from_bank_account->bank .' - '. $data->from_bank_account->no_rekening . ' - '. $data->from_bank_account->owner : ''}}
-                                        @else
-                                            <select class="form-control from_bank_account" id="from_bank_account_id" wire:model="from_bank_account_id" {{$is_readonly?'disabled':''}}>
-                                                <option value=""> --- {{__('None')}} --- </option>
-                                                @foreach (\App\Models\BankAccount::where('is_client',1)->orderBy('owner','ASC')->get() as $bank)
-                                                    <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
-                                                @endforeach
-                                            </select>
-                                            @error('from_bank_account_id')
-                                            <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                                            @enderror
-                                            @if(!$is_readonly)
-                                            <a href="#" data-toggle="modal" data-target="#modal_add_bank"><i class="fa fa-plus"></i> Add Bank</a>
-                                            @endif
-                                        @endif
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>{{__('To Bank Account')}}</th>
-                                    <td>
-                                        @if($is_readonly)
-                                            {{isset($data->bank_account->owner) ? $data->bank_account->bank .' - '. $data->bank_account->no_rekening . ' - '. $data->bank_account->owner : ''}}
-                                        @else
-                                            <select class="form-control" wire:model="bank_account_id" {{$is_readonly?'disabled':''}}>
-                                                <option value=""> --- {{__('Select')}} --- </option>
-                                                @foreach (\App\Models\BankAccount::where('is_client',0)->orderBy('owner','ASC')->get() as $bank)
-                                                    <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
-                                                @endforeach
-                                            </select>
-                                            @error('bank_account_id')
-                                            <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                                            @enderror
-                                        @endif
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>{{__('Bank Charges')}}</th>
-                                    <td><input type="text" {{$is_readonly?'disabled':''}} class="form-control format_number col-md-6" wire:model="bank_charges" /></td>
-                                </tr>
-                                 --}}
-                                <tr>
-                                    <th>{{__('Description')}}</th>
-                                    <td>
-                                        <textarea style="height:100px;" {{$is_readonly?'disabled':''}} class="form-control" wire:model="description"></textarea>
-                                    </td>
-                                </tr>
+                                </tfoot>
                             </table>
                         </div>
                     </div>
-                    <hr />
-                    <a href="javascript:void0()" onclick="history.back()"><i class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
-                    @if(!$is_readonly)
-                    <button type="submit" class="ml-3 btn btn-primary btn-sm"><i class="fa fa-save"></i> {{ __('Receive') }}</button>
-                    <button type="button" class="float-right ml-3 btn btn-danger btn-sm" wire:click="$emit('emit-cancel',{{$data->id}})" data-target="#modal_cancel" data-toggle="modal""><i class="fa fa-times"></i> {{ __('Premi tidak tertagih') }}</button>
+                </div>
+                <hr />
+                <a href="javascript:void0()" onclick="history.back()"><i class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
+                @if(!$is_readonly)
+                    @if($data->nominal == $total_payment_amount)
+                        <button type="submit" class="ml-3 float-right btn btn-primary btn-sm"><i class="fa fa-save"></i> {{ __('Settle') }}</button>
+                    @endif
+                    <button type="button" class=" ml-3 btn btn-danger btn-sm" wire:click="$emit('emit-cancel',{{$data->id}})" data-target="#modal_cancel" data-toggle="modal""><i class="fa fa-times"></i> {{ __('Premi tidak tertagih') }}</button>
                     <span wire:loading wire:target="save">
                         <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
                         <span class="sr-only">Loading...</span>
                     </span>
-                    @endif
-                    @if($data->status==2 and $is_otp_editable==false and $data->transaction_table !='Migration')
-                        <a href="javascript:;" class="btn btn-danger ml-3" data-toggle="modal" data-target="#modal_konfirmasi_otp"><i class="fa fa-edit"></i> Edit </a>
-                    @endif
-                </form>
-            </div>
+                @endif
+                @if($data->status==2 and $is_otp_editable==false and $data->transaction_table !='Migration')
+                    <a href="javascript:;" class="btn btn-danger ml-3" data-toggle="modal" data-target="#modal_konfirmasi_otp"><i class="fa fa-edit"></i> Edit </a>
+                @endif
+            </form>
         </div>
     </div>
-    {{-- <div class="px-0 col-md-5">
-        @if($showDetail=='cancelation')
-        <div class="mt-0 card">
-            <div wire:loading style="position:absolute;right:0;">
-                <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
-                <span class="sr-only">Loading...</span>
-            </div>
-            <div class="body" style="max-height:700px;overflow-y:scroll">
-                @if($data->type==1)
-                <h6 class="text-danger">{{$cancelation->konven_memo_pos->no_dn_cn}}</h6>
-                <hr />
-                <table class="table pl-0 mb-0 table-striped table-nowrap"> 
-                    @foreach(\Illuminate\Support\Facades\Schema::getColumnListing('konven_memo_pos') as $column)
-                    @if($column=='id' || $column=='created_at'||$column=='updated_at') @continue @endif
-                    <tr>
-                        <th style="width:40%;">{{ ucfirst($column) }}</th>
-                        <td style="width:60%;">{{$cancelation->konven_memo_pos->$column }}</td>
-                    </tr>
-                    @endforeach
-                </table>
-                @endif
-                @if($data->type==2)
-                <h6 class="text-danger">{{$cancelation->no_credit_note}}</h6>
-                <hr />
-                <table class="table pl-0 mb-0 table-striped table-nowrap"> 
-                    @foreach(\Illuminate\Support\Facades\Schema::getColumnListing('syariah_cancel') as $column)
-                    @if($column=='id' || $column=='created_at'||$column=='updated_at') @continue @endif
-                    <tr>
-                        <th style="width:40%;">{{ ucfirst($column) }}</th>
-                        <td style="width:60%;">{{$cancelation->$column }}</td>
-                    </tr>
-                    @endforeach
-                </table>
-                @endif
-            </div>
-        </div>
-        @endif
-        @if($showDetail=='underwriting')
-        <div class="mt-0 card">
-            <div wire:loading style="position:absolute;right:0;">
-                <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
-                <span class="sr-only">Loading...</span>
-            </div>
-            <div class="body" style="max-height:700px;overflow-y:scroll">
-                <h6 style="color:#007bff">{{$data->reference_no}}</h6>
-                <hr />
-                @if($data->transaction_table =='Migration')
-                    <div class="mt-0 card">
-                        <table class="table pl-0 mb-0 table-striped table-nowrap"> 
-                            @foreach(\Illuminate\Support\Facades\Schema::getColumnListing('migration_data') as $column)
-                            @if(in_array($column,['created_at','id']))@continue @endif
-                            <tr>
-                                <th>{{ucfirst($column)}}</th>
-                                <td>{{ isset($data->migration->$column) ? $data->migration->$column : '' }}</td>
-                            </tr>
-                            @endforeach
-                        </table>
-                    </div>
-                @endif
-                @if($data->type==2 and $data->uw_syariah)
-                <table class="table pl-0 mb-0 table-striped table-nowrap"> 
-                    @foreach(\Illuminate\Support\Facades\Schema::getColumnListing('syariah_underwritings') as $column)
-                    @if(in_array($column,['created_at','updated_at','id','status','is_temp','parent_id','user_id','type_transaksi']))@continue @endif
-                    <tr>
-                        <th>{{ucfirst($column)}}</th>
-                        <td>{{ in_array($column,['manfaat_Kepesertaan_tertunda','kontribusi_kepesertaan_tertunda','jml_kepesertaan','nilai_manfaat','dana_tabbaru','dana_ujrah','kontribusi','ektra_kontribusi','total_kontribusi','pot_langsung','jumlah_diskon','handling_fee','jumlah_fee','jumlah_pph','jumlah_ppn','biaya_polis','biaya_sertifikat','extpst','net_kontribusi','pembayaran','piutang','pengeluaran_ujroh']) ? format_idr($data->uw_syariah->$column) : $data->uw_syariah->$column }}</td>
-                    </tr>
-                    @endforeach
-                </table>    
-                @endif
-                
-                @if($data->type==1 and $data->uw)
-                <table class="table pl-0 mb-0 table-striped table-nowrap"> 
-                    <tr>
-                        <th style="width:40%;">Bulan</th>
-                        <td style="width:60%;">{{$data->uw->bulan }}</td>
-                    </tr>
-                    <tr>
-                        <th>User Memo</th>
-                        <td>{{$data->uw->user_memo }}</td>
-                    </tr>
-                    <tr>
-                        <th>User Akseptasi</th>
-                        <td>{{$data->uw->user_akseptasi }}</td>
-                    </tr>
-                    <tr>
-                        <th>Transaksi ID</th>
-                        <td>{{$data->uw->transaksi_id }}</td>
-                    </tr>
-                    <tr>
-                        <th>Berkas Akseptasi</th>
-                        <td>{{$data->uw->berkas_akseptasi }}</td>
-                    </tr>
-                    <tr>
-                        <th>Tgl Pengajuan Email</th>
-                        <td>{{$data->uw->tanggal_pengajuan_email }}</td>
-                    </tr>
-                    <tr>
-                        <th>Tgl Produksi</th>
-                        <td>{{$data->uw->tanggal_produksi}}</td>
-                    </tr>
-                    <tr>
-                        <th>No Reg</th>
-                        <td>{{$data->uw->no_reg}}</td>
-                    </tr>
-                    <tr>
-                        <th>No Polis</th>
-                        <td>{{$data->uw->no_polis}}</td>
-                    </tr>
-                    <tr>
-                        <th>Polis Sistem</th>
-                        <td>{{$data->uw->no_polis_sistem}}</td>
-                    </tr>
-                    <tr>
-                        <th>Pemegang Polis</th>
-                        <td>{{$data->uw->pemegang_polis}}</td>
-                    </tr>
-                    <tr>
-                        <th>Alamat</th>
-                        <td>{{$data->uw->alamat}}</td>
-                    </tr>
-                    <tr>
-                        <th>Cabang</th>
-                        <td>{{$data->uw->cabang}}</td>
-                    </tr>
-                    <tr>
-                        <th>Produk</th>
-                        <td>{{$data->uw->produk}}</td>
-                    </tr>
-                    <tr>
-                        <th>Jumlah Peserta Pending</th>
-                        <td>{{$data->uw->jumlah_peserta_pending}}</td>
-                    </tr>
-                    <tr>
-                        <th>UP Peserta Pending</th>
-                        <td>{{format_idr($data->uw->up_peserta_pending)}}</td>
-                    </tr>
-                    <tr>
-                        <th>Premi Peserta Pending</th>
-                        <td>{{format_idr($data->uw->premi_peserta_pending)}}</td>
-                    </tr>
-                    <tr>
-                        <th>Jml Peserta</th>
-                        <td>{{$data->uw->jumlah_peserta}}</td>
-                    </tr>
-                    <tr>
-                        <th>No Peserta</th>
-                        <td>{{$data->uw->no_peserta_awal}} sd {{$data->uw->no_peserta_akhir}}</td>
-                    </tr>
-                    <tr>
-                        <th>Periode Awal</th>
-                        <td>{{$data->uw->periode_awal}}</td>
-                    </tr>
-                    <tr>
-                        <th>Periode Akhir</th>
-                        <td>{{$data->uw->periode_akhir}}</td>
-                    </tr>
-                    <tr>
-                        <th>UP</th>
-                        <td>{{format_idr($data->uw->up)}}</td>
-                    </tr>
-                    <tr>
-                        <th>Premi Gross</th>
-                        <td>{{format_idr($data->uw->premi_gross)}}</td>
-                    </tr>
-                    <tr>
-                        <th>Extra Premi</th>
-                        <td>{{format_idr($data->uw->extra_premi)}}</td>
-                    </tr>
-                    <tr>
-                        <th>Discount</th>
-                        <td>{{$data->uw->discount}}</td>
-                    </tr>
-                    <tr>
-                        <th>Jumlah Discount</th>
-                        <td>{{format_idr($data->uw->jumlah_discount)}}</td>
-                    </tr>
-                    <tr>
-                        <th>Jumlah CAD Klaim</th>
-                        <td>{{$data->uw->jumlah_cad_klaim}}</td>
-                    </tr>
-                    <tr>
-                        <th>Ext Diskon</th>
-                        <td>{{$data->uw->ext_diskon}}</td>
-                    </tr>
-                    <tr>
-                        <th>Cad Klaim</th>
-                        <td>{{$data->uw->cad_klaim}}</td>
-                    </tr>
-                    <tr>
-                        <th>Handling Fee</th>
-                        <td>{{$data->uw->handling_fee}}</td>
-                    </tr>
-                    <tr>
-                        <th>Jumlah Fee</th>
-                        <td>{{$data->uw->jumlah_fee}}</td>
-                    </tr>
-                    <tr>
-                        <th>PPH</th>
-                        <td>{{$data->uw->pph}}</td>
-                    </tr>
-                    <tr>
-                        <th>Jumlah PPH</th>
-                        <td>{{$data->uw->jumlah_pph}}</td>
-                    </tr>
-                    <tr>
-                        <th>PPN</th>
-                        <td>{{$data->uw->ppn}}</td>
-                    </tr>
-                    <tr>
-                        <th>Jumlah PPN</th>
-                        <td>{{format_idr($data->uw->jumlah_ppn)}}</td>
-                    </tr>
-                    <tr>
-                        <th>Biaya Polis</th>
-                        <td>{{format_idr($data->uw->biaya_polis)}}</td>
-                    </tr>
-                    <tr>
-                        <th>Biaya Sertifikat</th>
-                        <td>{{$data->uw->biaya_sertifikat}}</td>
-                    </tr>
-                    <tr>
-                        <th>Extsertifikat</th>
-                        <td>{{$data->uw->extsertifikat}}</td>
-                    </tr>
-                    <tr>
-                        <th>Premi Netto</th>
-                        <td>{{$data->uw->extra_premi}}</td>
-                    </tr>
-                    <tr>
-                        <th>Terbilang</th>
-                        <td>{{$data->uw->terbilang}}</td>
-                    </tr>
-                    <tr>
-                        <th>Tgl Update Database</th>
-                        <td>{{$data->uw->tgl_update_database}}</td>
-                    </tr>
-                    <tr>
-                        <th>Tgl Update Sistem</th>
-                        <td>{{$data->uw->tgl_update_sistem}}</td>
-                    </tr>
-                    <tr>
-                        <th>No Berkas Sistem</th>
-                        <td>{{$data->uw->no_berkas_sistem}}</td>
-                    </tr>
-                    <tr>
-                        <th>Tgl Posting Sistem</th>
-                        <td>{{$data->uw->tgl_posting_sistem}}</td>
-                    </tr>
-                    <tr>
-                        <th>Ket Posting</th>
-                        <td>{{$data->uw->ket_posting}}</td>
-                    </tr>
-                    <tr>
-                        <th>Tgl Invoice</th>
-                        <td>{{$data->uw->tgl_invoice}}</td>
-                    </tr>
-                    <tr>
-                        <th>No Kwitansi / Debit Note</th>
-                        <td>{{$data->uw->no_kwitansi_debit_note}}</td>
-                    </tr>
-                    <tr>
-                        <th>Total Gross Kwitansi</th>
-                        <td>{{format_idr($data->uw->total_gross_kwitansi)}}</td>
-                    </tr>
-                    <tr>
-                        <th>Grace Periode Terbilang</th>
-                        <td>{{$data->uw->grace_periode_terbilang}}</td>
-                    </tr>
-                    <tr>
-                        <th>Grace Periode</th>
-                        <td>{{$data->uw->grace_periode}}</td>
-                    </tr>
-                    <tr>
-                        <th>Tgl Jatuh Tempo</th>
-                        <td>{{$data->uw->tgl_jatuh_tempo}}</td>
-                    </tr>
-                    <tr>
-                        <th>Extend Tgl Jatuh Tempo</th>
-                        <td>{{$data->uw->extend_tgl_jatuh_tempo}}</td>
-                    </tr>
-                    <tr>
-                        <th>Tgl Lunas</th>
-                        <td>{{$data->uw->tgl_lunas}}</td>
-                    </tr>
-                    <tr>
-                        <th>Ket Lampiran</th>
-                        <td>{{$data->uw->ket_lampiran}}</td>
-                    </tr>
-                    <tr>
-                        <th>Line Bussines</th>
-                        <td>{{$data->uw->line_bussines}}</td>
-                    </tr>
-                </table>
-                @endif
-            </div>
-        </div>
-        @endif
-    </div> --}}
-
     <div wire:ignore.self class="modal fade" id="modal_konfirmasi_otp" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <livewire:income-premium-receivable.konfirmasi-otp />

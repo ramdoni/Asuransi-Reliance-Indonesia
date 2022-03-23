@@ -4,8 +4,10 @@ namespace App\Http\Livewire\IncomePremiumReceivable;
 
 use Livewire\Component;
 use App\Models\Income;
-use App\Models\IncomeClaim;
 use App\Models\Expenses;
+use App\Models\IncomeClaim;
+use App\Models\IncomeSettle;
+use App\Models\IncomeErrorSuspend;
 use App\Models\IncomeTitipanPremi;
 use App\Models\KonvenMemo;
 use App\Models\SyariahCancel;
@@ -23,11 +25,21 @@ class Detail extends Component
     public $bank_charges,$showDetail='underwriting',$cancelation;
     public $titipan_premi,$temp_titipan_premi=[],$temp_arr_titipan_id=[],$total_titipan_premi=0;
     public $is_otp_editable=false,$otp,$is_submit,$is_from_claim=false,$temp_arr_claim=[],$temp_arr_claim_id=[];
-    public $voucher_ids,$arr_voucher_ids=[],$payment_type;
+    public $voucher_ids,$arr_voucher_ids=[],$payment_type=[],$payment_ids=[],$payment_amounts=[],$payment_rows=[];
+    public $claims=[],$premium_deposits=[],$error_settle=null,$distribution_channel_id,$distribution_channel=[];
+
     protected $listeners = ['set-voucher'=>'setVoucher','emit-add-bank'=>'emitAddBank','set-titipan-premi'=>'setTitipanPremi','refresh-page'=>'$refresh','otp-editable'=>'otpEditable','set-claim'=>'setClaim'];
     public function render()
     {
         return view('livewire.income-premium-receivable.detail');
+    }
+
+    public function add_payment()
+    {
+        if($this->total_payment_amount >= $this->data->nominal) {
+            $this->error_settle = "Nominal has exceeded the limit!";
+        }else
+            $this->payment_ids[] = null;$this->payment_type[] = null;$this->payment_amounts[]=null;
     }
 
     public function otpEditable($otp)
@@ -45,8 +57,33 @@ class Detail extends Component
 
     public function updated($propertyName)
     {
+        $this->reset('error_settle');
         $this->outstanding_balance = abs(replace_idr($this->payment_amount) - $this->data->nominal);
+        $this->total_payment_amount = 0;
+
+        foreach($this->payment_type as $k => $type){
+            if($type==2 and $this->payment_ids[$k]){
+                $this->payment_rows[$k] = Income::find($this->payment_ids[$k]);
+                if($this->payment_rows[$k]) {
+                    $this->payment_amounts[$k] = $this->payment_rows[$k]->nominal;
+                }
+            }
+            if($type==3 and $this->payment_ids[$k]){
+                $this->payment_rows[$k] = Expenses::find($this->payment_ids[$k]);
+                if($this->payment_rows[$k]){
+                    $this->payment_amounts[$k] = $this->payment_rows[$k]->outstanding_balance ? $this->payment_rows[$k]->outstanding_balance : $this->payment_rows[$k]->payment_amount;
+                }
+            }
+        }
+
+        foreach($this->payment_amounts as $amount) $this->total_payment_amount += $amount?$amount:0;
+
         $this->emit('init-form');
+    }
+
+    public function delete_payment_type($k)
+    {
+        unset($this->payment_type[$k],$this->payment_ids[$k]);
     }
 
     public function delete_claim($id)
@@ -90,6 +127,7 @@ class Detail extends Component
     public function mount($id)
     {
         \LogActivity::add("Income - Premium Receivable Edit {$id}");
+
         $this->data = Income::find($id);
         $this->no_voucher = $this->data->no_voucher;
         $this->payment_date = $this->data->payment_date?$this->data->payment_date : date('Y-m-d');
@@ -114,6 +152,12 @@ class Detail extends Component
             foreach($this->data->endorsement_syariah as $endors) $this->payment_amount -= $endors->nominal;
         }    
         $this->payment_amount = format_idr($this->payment_amount);
+        $this->claims = Expenses::select('expenses.*')
+        ->with(['pesertas'])
+        ->orderBy('expenses.id','desc')->where('expenses.reference_type','Claim')->groupBy('expenses.id')
+        ->leftJoin('expense_pesertas','expense_pesertas.expense_id','=','expenses.id')
+        ->where('expenses.policy_id',$this->data->policy_id)->where('expenses.status',4)->get(); // hanya statusnya draft saja
+        $this->premium_deposits = Income::orderBy('id','desc')->where(['reference_type' => 'Titipan Premi','status'=>1])->get();
     }
     
     public function showDetailCancelation($id)
@@ -126,7 +170,13 @@ class Detail extends Component
 
     public function save()
     {   
+        if($this->total_payment_amount < $this->data->nominal) {
+            $this->error_settle = 'Payment amount must be fulfilled';
+            return false;
+        }
+        
         $this->emit('init-form');
+
         $validate = ['payment_type'=>'required'];
         $validate_message= [];
         if($this->is_otp_editable){
@@ -138,15 +188,7 @@ class Detail extends Component
             }
         }
         
-        // if(!$this->temp_titipan_premi and $this->titipan_premi->count()==0) $validate['bank_account_id']='required';
-
         $this->validate($validate,$validate_message);
-        //$this->payment_amount = replace_idr($this->payment_amount);
-        //$this->bank_charges = replace_idr($this->bank_charges);
-        //if($this->payment_amount==$this->data->nominal || $this->payment_amount > $this->data->nominal) $this->data->status=2;//paid
-        //if($this->payment_amount<$this->data->nominal) $this->data->status=3;//outstanding
-        // $this->data->outstanding_balance = replace_idr($this->outstanding_balance);
-        // $this->data->payment_amount = $this->payment_amount;
         $this->data->rekening_bank_id = $this->bank_account_id;
         $this->data->payment_date = $this->payment_date;
         $this->data->description = $this->description;
@@ -156,107 +198,93 @@ class Detail extends Component
         $this->data->payment_type = $this->payment_type;
         $this->data->save();
         
-        if($this->voucher_ids){
-            $temp_payment_amount = $this->data->nominal;
-            $total_amount_voucher = 0;
-            if(isset($this->data->vouchers)){
-                foreach($this->data->vouchers as $item) $total_amount_voucher += $item->amount;
-            }
-            foreach($this->arr_voucher_ids as $voucher){
-                $amount_voucher = ($voucher->balance_usage ? $voucher->balance_usage : $voucher->amount);
-                $total_amount_voucher += $amount_voucher;
-                if(($temp_payment_amount - $amount_voucher)>0){
-                    $voucher->date_pairing = date('Y-m-d');
-                    $voucher->balance_usage = ($voucher->balance_usage ? $voucher->balance_usage : $voucher->amount);
-                    $voucher->balance_remain = 0;
-                    $voucher->status =  1;// change status settle 
-                    $voucher->save();
-                    
-                    $pair = new BankBookPairing();
-                    $pair->no_debit_note = $this->data->reference_no;
-                    $pair->bank_book_id = $voucher->id;
-                    $pair->transaction_id = $this->data->id;
-                    $pair->amount = ($voucher->balance_usage ? $voucher->balance_usage : $voucher->amount);
-                    $pair->transaction_table = 'premium receivable';
-                    $pair->save();
-                    $temp_payment_amount = $temp_payment_amount - ($voucher->balance_usage ? $voucher->balance_usage : $voucher->amount);
-                }else{
-                    $voucher->date_pairing = date('Y-m-d');
-                    $voucher->balance_usage = $voucher->balance_usage + $temp_payment_amount;;
-                    $voucher->balance_remain = ($amount_voucher - $temp_payment_amount);
-                    $voucher->status =  2;// change status settle partial 
-                    $voucher->save();
-
-                    $pair = new BankBookPairing();
-                    $pair->no_debit_note = $this->data->reference_no;
-                    $pair->bank_book_id = $voucher->id;
-                    $pair->transaction_id = $this->data->id;
-                    $pair->amount = $temp_payment_amount;
-                    $pair->transaction_table = 'premium receivable';
-                    $pair->save();
-
-                    $temp_payment_amount = $temp_payment_amount - ($voucher->balance_usage ? $voucher->balance_usage : $voucher->amount);
-                }
-            }
+        $temp_payment_amount = $this->data->nominal;
+        foreach($this->payment_type as $k=>$i){
+            // insert to income_settle
+            $income_settle = new IncomeSettle();
+            $income_settle->income_id = $this->data->id;
+            $income_settle->amount = $this->payment_amounts[$k];
+            $income_settle->type = $i;
+            if($i==4)
+                $income_settle->description = $this->payment_ids[$k];
+            else
+                $income_settle->transaction_id = $this->payment_ids[$k];
             
-            /**
-             * sudah terbayarkan maka statusnya menjadi paid
-             * jika masih belum 0 maka masih outstanding
-             */
-            if($total_amount_voucher >= $this->data->nominal) {
-                $this->payment_amount = $this->data->nominal;
-                $this->data->payment_amount = $this->data->nominal;
-                $this->data->outstanding_balance = 0;
-                $this->data->status = 2; 
-                $this->data->save();
-            }else{
-                $this->payment_amount = $total_amount_voucher;
-                $this->data->payment_amount = $total_amount_voucher;
-                $this->data->outstanding_balance = $this->data->nominal - $total_amount_voucher;
-                $this->data->status = 3; 
-                $this->data->save();
+            if($i==2){ // Premium suspend / titipan premi
+                $income_titipan_premi = Income::find($this->payment_ids[$k]);
+                if($income_titipan_premi->outstanding_balance > $temp_payment_amount){
+                    IncomeTitipanPremi::create([
+                        'income_premium_id' => $this->data->id,
+                        'income_titipan_id' => $income_titipan_premi->id,
+                        'nominal' => $income_titipan_premi->nominal,
+                        'transaction_type'=>'Premium Receive'
+                    ]);
+                    $income_titipan_premi->outstanding_balance = $income_titipan_premi->outstanding_balance - $income_titipan_premi->nominal;
+                    $income_titipan_premi->save();
+
+                    $income_settle->amount = $temp_payment_amount;
+                    $temp_payment_amount -= $income_titipan_premi->nominal;
+                }else{
+                    IncomeTitipanPremi::create([
+                        'income_premium_id' => $this->data->id,
+                        'income_titipan_id' => $income_titipan_premi->id,
+                        'nominal' => $income_titipan_premi->nominal,
+                        'transaction_type'=>'Premium Receive'
+                    ]);
+                    $income_titipan_premi->payment_amount = $income_titipan_premi->nominal;
+                    $income_titipan_premi->outstanding_balance = 0;
+                    $income_titipan_premi->status = 2;
+                    $income_titipan_premi->save();
+
+                    $income_settle->amount = $income_titipan_premi->nominal;
+                    $temp_payment_amount -= $income_titipan_premi->nominal;
+                }
             }
+
+            if($i==3){ // Claim Payable
+                $claim = Expenses::find($this->payment_ids[$k]);
+                if($claim){
+                    if($claim->payment_amount<$temp_payment_amount){
+                        $income_settle->amount = $claim->payment_amount;
+                        $claim->status = 2;
+                        $claim->save();
+                        $temp_payment_amount -= $claim->payment_amount;
+                    }else{
+                        $balance = $claim->outstanding_balance;
+                        if($balance=="") $balance = $claim->payment_amount;
+
+                        $claim->outstanding_balance = $balance - $temp_payment_amount;
+                        $claim->save();
+
+                        $income_settle->amount = $temp_payment_amount;
+                        $temp_payment_amount -= $claim->payment_amount;
+                    }
+                }
+            }
+
+            if($i==4){ // Error suspend account
+                $temp_payment_amount -= $this->payment_amounts[$k];
+
+                $suspend = new IncomeErrorSuspend();
+                $suspend->income_id = $this->data->id;
+                $suspend->amount = $this->payment_amounts[$k];
+                $suspend->description = $this->payment_ids[$k];
+                $suspend->save();
+            }
+
+            $income_settle->save();
         }
 
-        if($this->temp_titipan_premi){
-            $total_titipan_premi = 0;
-            $nominal_titipan = 0;
-            foreach($this->temp_arr_titipan_id as $k => $val){
-                $item = Income::find($val);
-                $total_titipan_premi += $item->outstanding_balance;            
-                if($total_titipan_premi < $this->data->nominal){
-                    IncomeTitipanPremi::create([
-                        'income_premium_id' => $this->data->id,
-                        'income_titipan_id' => $item->id,
-                        'nominal' => $item->nominal,
-                        'transaction_type'=>'Premium Receive'
-                    ]);
-                    $item->payment_amount = $item->nominal;
-                    $item->outstanding_balance = $item->outstanding_balance - $item->nominal;
-                    $item->status = 2;
-                }elseif($total_titipan_premi > $this->data->nominal){ // jika sudah melebihi nominal premi, maka status titipan premi jadi completed
-                    $total_titipan_premi -= $item->outstanding_balance;
-                    IncomeTitipanPremi::create([
-                        'income_premium_id' => $this->data->id,
-                        'income_titipan_id' => $item->id,
-                        'nominal' => ($this->data->nominal - $total_titipan_premi),
-                        'transaction_type'=>'Premium Receive'
-                    ]);
-                    $item->outstanding_balance = $item->outstanding_balance - ($this->data->nominal - $total_titipan_premi);
-                    $item->payment_amount = $item->payment_amount + ($this->data->nominal - $total_titipan_premi);
-                }
-                $item->save();
-            }
-        }
+        /**
+         * jika amount / nominal sudah 0 maka status menjadi paid = 2 
+         */
+        if($temp_payment_amount<=0) {
+            $this->data->status=2;
+            $this->payment_amount = $this->data->nominal;
+            $this->data->save();
+        } 
 
         if($this->data->status==2){
-            if($this->temp_arr_claim){
-                foreach($this->temp_arr_claim as $claim){
-                    $claim->status = 2;
-                    $claim->save();
-                }
-            }
-
             $coa_premium_receivable = 0;
             if($this->data->type==1){
                 $line_bussines = isset($this->data->uw->line_bussines) ? $this->data->uw->line_bussines : '';

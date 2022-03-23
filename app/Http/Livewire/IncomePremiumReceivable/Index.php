@@ -11,10 +11,10 @@ class Index extends Component
     use WithPagination;
     public $keyword,$unit,$status,$payment_date_from,$payment_date_to,$voucher_date;
     protected $paginationTheme = 'bootstrap',$export_data,$queryString = ['page'];
+    public $ordering_nominal;
     public function render()
     {
-        $data = Income::orderBy('updated_at','desc')
-                        ->with(['policys','cancelation_konven','cancelation_syariah','endorsement_konven','endorsement_syariah','from_bank_account','bank_account'])
+        $data = Income::with(['policys','cancelation_konven','cancelation_syariah','endorsement_konven','endorsement_syariah','from_bank_account','bank_account'])
                         ->where('reference_type','Premium Receivable');
         
         if($this->keyword) $data = $data->where('description','LIKE', "%{$this->keyword}%")
@@ -25,9 +25,11 @@ class Index extends Component
         if($this->status) $data = $data->where('status',$this->status);
         if($this->payment_date_from and $this->payment_date_to) $data = $data->whereBetween('payment_date',[$this->payment_date_from,$this->payment_date_to]);
         if($this->voucher_date) $data = $data->whereDate('created_at',$this->voucher_date);
-        
+        if($this->ordering_nominal) $data->orderBy('nominal',$this->ordering_nominal);
         $received = clone $data;
         $outstanding = clone $data;
+        
+        if(!$this->ordering_nominal) $data->orderBy('updated_at','desc');
 
         return view('livewire.income-premium-receivable.index')->with([
             'data'=>$data->paginate(100),
@@ -44,6 +46,7 @@ class Index extends Component
         if(isset($_GET['status'])) $this->status = $_GET['status'];
         if(isset($_GET['payment_date_from'])) $this->status = $_GET['payment_date_from'];
         if(isset($_GET['payment_date_to'])) $this->status = $_GET['payment_date_to'];
+        if(isset($_GET['ordering_nominal'])) $this->ordering_nominal = $_GET['ordering_nominal'];
         
         \LogActivity::add('Income - Premium Receivable');
     }
@@ -55,6 +58,7 @@ class Index extends Component
         $query['status'] = $this->status;
         $query['payment_date_from'] = $this->payment_date_from;
         $query['payment_date_to'] = $this->payment_date_to;
+        $query['ordering_nominal'] = $this->ordering_nominal;
         
         $query[$propertyName] = $this->$propertyName;
         $query['page'] = $this->page;
