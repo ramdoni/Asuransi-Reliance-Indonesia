@@ -88,7 +88,9 @@
                         <td>{{$num}}</td>
                         <td>{{$item->no_voucher}}</td>
                         <td>{{date('d-m-Y',strtotime($item->created_at))}}</td>
-                        <td>{{$item->payment_date ? date('d-m-Y',strtotime($item->payment_date)) : '-'}}</td>
+                        <td>
+                            @livewire('bank-book.editable',['data'=> $item,'field'=>'payment_date'])
+                        </td>
                         <td>{{$item->date_pairing?calculate_aging($item->date_pairing):calculate_aging(date('Y-m-d',strtotime($item->created_at)))}}</td>
                         <td>
                             @if($item->status==0)
@@ -97,11 +99,9 @@
                                 <span class="badge badge-success">Settle</span>
                             @endif
                         </td>
-                        <td class="text-center">{{$item->type}}</td>
-                        {{-- <td>{{isset($item->from_bank->no_rekening) ? $item->from_bank->no_rekening .'- '.$item->from_bank->bank.' an '. $item->from_bank->owner : '-'}}</td>
-                        <td>{{isset($item->to_bank->no_rekening) ? $item->to_bank->no_rekening .'- '.$item->to_bank->bank.' an '. $item->to_bank->owner : '-'}}</td> --}}
-                        <td>{{format_idr($item->amount)}}</td>
-                        <td>{{$item->note}}</td>
+                        <td class="text-center">@livewire('bank-book.editable',['data'=> $item,'field'=>'type'])</td>
+                        <td>@livewire('bank-book.editable',['data'=> $item,'field'=>'amount'])</td>
+                        <td>@livewire('bank-book.editable',['data'=> $item,'field'=>'note'])</td>
                         <td></td>
                     </tr>
                     @php($num++)
