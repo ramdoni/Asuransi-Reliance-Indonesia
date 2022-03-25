@@ -1,12 +1,12 @@
-@section('title', __('Income'))
+@section('title', __('Account Receivable'))
 @section('parentPageTitle', __('Bank Book'))
 <div class="clearfix row">
     <div class="col-lg-12">
         <div class="card">
             <div class="body">
-                <div class="row mb-2">
+                <div class="row">
                     <div class="col-md-1">
-                        <div class="pl-3 py-2 form-group" x-data="{open_dropdown:false}" @click.away="open_dropdown = false">
+                        <div class="pl-3 pt-2 form-group" x-data="{open_dropdown:false}" @click.away="open_dropdown = false">
                             <a href="javascript:void(0)" x-on:click="open_dropdown = ! open_dropdown" class="dropdown-toggle">
                                  Filter <i class="fa fa-search-plus"></i>
                             </a>
@@ -25,15 +25,7 @@
                                     <div class="from-group my-2" wire:ignore>
                                         <select class="form-control filter_from_bank">
                                             <option value=""> -- Bank Company -- </option>
-                                            @foreach(\App\Models\BankAccount::where('is_client',0)->get() as $k=>$item)
-                                                <option value="{{$item->id}}">{{isset($item->no_rekening) ? $item->no_rekening .'- '.$item->bank.' an '. $item->owner : '-'}}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="from-group my-2" wire:ignore>
-                                        <select class="form-control filter_to_bank">
-                                            <option value=""> -- Bank Client -- </option>
-                                            @foreach(\App\Models\BankAccount::where('is_client',1)->get() as $k=>$item)
+                                            @foreach(\App\Models\BankAccount::where('is_client',0)->where('status',1)->get() as $k=>$item)
                                                 <option value="{{$item->id}}">{{isset($item->no_rekening) ? $item->no_rekening .'- '.$item->bank.' an '. $item->owner : '-'}}</option>
                                             @endforeach
                                         </select>
@@ -54,17 +46,17 @@
                     </div>
                 </div>
                 <div class="table-responsive">
-                    <table class="table table-striped m-b-0 c_list">
+                    <table class="table hovered m-b-0 c_list">
                         <thead>
-                            <tr>
+                            <tr style="background:#eee">
                                 <th>No</th>
                                 <th class="text-center">Settle</th>
                                 <th class="text-center">Status</th>
                                 <th>Voucher Number</th>
+                                <th>Payment Date</th>
                                 <th>Voucher Date</th>
                                 <th class="text-right">Amount</th>
-                                <th>Bank Company</th>
-                                <th>Bank Policy</th>
+                                <th>Bank</th>
                                 <th>Note</th>
                                 <th></th>
                             </tr>
@@ -89,10 +81,10 @@
                                         @endif
                                     </td>
                                     <td>{{$item->no_voucher}}</td>
+                                    <td>{{date('d-m-Y',strtotime($item->payment_date))}}</td>
                                     <td>{{date('d-m-Y',strtotime($item->created_at))}}</td>
                                     <td class="text-right">{{format_idr($item->amount)}}</td>
                                     <td>{{isset($item->from_bank->no_rekening) ? $item->from_bank->no_rekening .'- '.$item->from_bank->bank.' an '. $item->from_bank->owner : '-'}}</td>
-                                    <td>{{isset($item->to_bank->no_rekening) ? $item->to_bank->no_rekening .'- '.$item->to_bank->bank.' an '. $item->to_bank->owner : '-'}}</td>
                                     <td>{{$item->note}}</td>
                                     <td></td>
                                 </tr>

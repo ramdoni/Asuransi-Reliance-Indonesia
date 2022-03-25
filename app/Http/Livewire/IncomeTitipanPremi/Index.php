@@ -20,8 +20,7 @@ class Index extends Component
 
         if($this->unit) $data = $data->where('type',$this->unit);
         if($this->status) $data = $data->where('status',$this->status);
-        if($this->payment_date_from and $this->payment_date_to) $data = $data->whereBetween('payment_date',[$this->payment_date_from,$this->payment_date_to]);
-        if($this->to_bank_account_id) $data = $data->where('rekening_bank_id',$this->to_bank_account_id);
+        if($this->payment_date_from and $this->payment_date_to) $data = $data->whereBetween('created_at',[$this->payment_date_from,$this->payment_date_to]);
         
         $total = clone  $data;
  

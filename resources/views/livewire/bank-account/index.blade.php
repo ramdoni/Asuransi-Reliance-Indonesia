@@ -25,6 +25,7 @@
                                 <th>Cabang</th>
                                 <th>Open Balance</th>
                                 <th>Chart of Account</th>
+                                <th>Status</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -39,6 +40,13 @@
                                 <td>{{$item->cabang}}</td>
                                 <td>{{format_idr($item->open_balance)}}</td>
                                 <td>{{isset($item->coa->name)?$item->coa->code.' - '.$item->coa->name : ''}}</td>
+                                <td>
+                                    @if($item->status==0 || $item->status=="")
+                                        <a href="javascript:void(0)" class="badge badge-danger">Inactive</a>
+                                    @else
+                                        <a href="javascript:void(0)" class="badge badge-success">Active</a>
+                                    @endif
+                                </td>
                                 <td><a href="javascript:void(0)" wire:click="delete({{$item->id}})" class="text-danger"><i class="fa fa-trash"></i></a></td>
                             </tr>
                             @endforeach

@@ -191,6 +191,14 @@ function generate_no_voucher_konven_underwriting($coa_id)
 
     return '';
 }
+
+function generate_no_voucer_journal($type="AP"){
+
+    $count = \App\Models\Journal::count();
+    
+    return "{$type}-".str_pad($count,3, '0', STR_PAD_LEFT).'/'.date('m').'/'.date('Y');
+}
+
 function generate_no_voucher($coa_id="",$count="")
 {
     $coa = \App\Models\Coa::find($coa_id);

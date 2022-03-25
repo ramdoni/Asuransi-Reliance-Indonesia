@@ -49,26 +49,23 @@
                             </tr>
                             @php($total_incomes=0)
                             @php($num=1)
-                            @foreach($incomes as $item)
+                            @foreach($items as $item)
                                 <tr>
                                     <td>{{$num}}</td>
-                                    <td>{{$item->reference_type}}</td>
-                                    <td>{{$item->reference_no}}<br />{{$item->client}}</td>
-                                    <td class="text-right">{{format_idr($item->nominal)}}</td>
-                                </tr>
-                                @php($total_incomes += $item->nominal)
-                                @php($num++)
-                            @endforeach
-                            @foreach($error_suspend as $k => $item)
-                                <tr>
-                                    <td>{{$num}}</td>
-                                    <td>Error Suspense Account</td>
-                                    <td>{{$item->note}}</td>
+                                    <td>{{$item->type}}</td>
+                                    <td>
+                                        @if($item->type=='Error Suspense Account' || $item->type =='Premium Deposit')
+                                            {{$item->description}}
+                                        @else
+                                            {{$item->dn}}
+                                        @endif
+                                    </td>
                                     <td class="text-right">{{format_idr($item->amount)}}</td>
                                 </tr>
                                 @php($total_incomes += $item->amount)
                                 @php($num++)
                             @endforeach
+                            
                             
                             <tr style="background:#eee">
                                 <td></td>

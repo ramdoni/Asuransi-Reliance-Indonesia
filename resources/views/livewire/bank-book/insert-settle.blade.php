@@ -9,7 +9,7 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col-md-5">
+                    <div class="col-md-5 table-responsive">
                         <div class="form-group">
                             <table class="table table-bordered">
                                 <tr style="background:#eee">
@@ -27,7 +27,6 @@
                                         <td>{{$item->note}}</td>
                                         <td class="text-right">{{format_idr($item->amount)}}</td>
                                     </tr>
-                                    @php($total_voucher +=$item->amount)
                                 @endforeach
                                 <tr style="background:#eee">
                                     <td></td>
@@ -39,7 +38,13 @@
                             </table>
                         </div>
                     </div>
-                    <div class="col-md-7">
+                    <div class="col-md-7 table-responsive">
+                        @if($error_settle)
+                            <div class="alert alert-danger alert-dismissible" role="alert">
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <i class="fa fa-times-circle"></i> {{$error_settle}}
+                            </div>
+                        @endif
                         <table class="table table-bordered mb-0">
                             <tr style="background:#eee">
                                 <th>No</th>
@@ -59,16 +64,13 @@
                                             <option>Recovery Claim</option>
                                             <option>Recovery Refund</option>
                                             <option>Error Suspense Account</option>
+                                            <option>Premium Deposit</option>
                                         </select>
                                         @error('type.'.$k)
                                             <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                                         @enderror
                                     </td>
                                     <td>
-                                        <span wire:loading wire:target="types.{{$k}}">
-                                            <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
-                                            <span class="sr-only">Loading...</span>
-                                        </span>
                                         @if($types[$k]=='Premium Receivable')
                                             <select wire:ignore class="form-control select-premi" id="transaction_ids.{{$k}}">
                                                 <option value="">-- select --</option>
@@ -79,25 +81,31 @@
                                                 <option value="">-- select --</option>
                                             </select>
                                         @endif
-                                        @if($types[$k]=='Error Suspense Account')
+                                        @if($types[$k]=='Recovery Claim')
+                                            <select wire:ignore class="form-control select-recovery" id="transaction_ids.{{$k}}">
+                                                <option value="">-- select --</option>
+                                            </select>
+                                        @endif
+                                        @if($types[$k]=='Error Suspense Account' || $types[$k]=='Premium Deposit' )
                                             <input type="text" class="form-control" placeholder="Description" wire:model="transaction_ids.{{$k}}" />
                                         @endif
+                                        <span wire:loading wire:target="types.{{$k}}">
+                                            <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                                            <span class="sr-only">Loading...</span>
+                                        </span>
                                     </td>
                                     <td class="text-right">
-                                        @if($types[$k]=='Premium Receivable' || $types[$k]=='Reinsurance Premium')
-                                            @php($premi = \App\Models\Income::find($transaction_ids[$k]))
-                                            @if($premi)
-                                                {{format_idr($premi->nominal)}}
-                                                @php($amounts[$k] = $premi->nominal)
-                                                @php($total_payment += $premi->nominal) 
-                                            @endif
-                                        @endif
-                                        @if($types[$k]=='Error Suspense Account')
+                                        @if($types[$k]=='Premium Receivable')
                                             <input type="number" class="form-control text-right" wire:model="amounts.{{$k}}" />
-                                            @php($total_payment += $amounts[$k]==""?0:$amounts[$k])
+                                        @endif
+                                        @if($types[$k]=='Reinsurance Premium')
+                                            {{format_idr($amounts[$k])}}
+                                        @endif
+                                        @if($types[$k]=='Error Suspense Account' || $types[$k]=='Premium Deposit')
+                                            <input type="number" class="form-control text-right" wire:model="amounts.{{$k}}" />
                                         @endif
                                     </td>
-                                    <td class="text-center"><a href="javascript:void(0)" wire:click="delete_payment({{$k}})" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a></td>
+                                    <td class="text-center"><a href="javascript:void(0)" wire:click="delete_payment({{$k}})" class="text-danger"><i class="fa fa-trash"></i></a></td>
                                 </tr>
                             @endforeach
                             <tr>
@@ -128,8 +136,6 @@
                     <span class="sr-only">{{ __('Loading...') }}</span>
                 </span>
                 <a href="#" data-dismiss="modal"><i class="fa fa-times"></i> Cancel</a>
-                {{-- <button type="submit" class="btn btn-primary btn-sm ml-4"><i class="fa fa-save"></i> Submit</button> --}}
-
                 @if($total_voucher==$total_payment)
                     <button type="submit" class="btn btn-primary btn-sm ml-4"><i class="fa fa-save"></i> Submit</button>
                 @endif
@@ -176,7 +182,7 @@
                     return {
                         results:  $.map(data, function (item) {
                             return {
-                                text: item.reference_no + " - " + item.client,
+                                text: item.reference_no + " - " + item.client +" / Rp. "+item.nominal,
                                 id: item.id
                             }
                         })

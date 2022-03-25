@@ -49,17 +49,6 @@
                             <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                         @enderror
                     </td>
-                    <td wire:ignore>
-                        <select class="form-control select-bank" wire:model="to_bank_account_id">
-                            <option value=""> -- Bank -- </option>
-                            @foreach (\App\Models\BankAccount::orderBy('owner','ASC')->get() as $bank)
-                                <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
-                            @endforeach
-                        </select>
-                        @error('to_bank_account_id')
-                            <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                        @enderror
-                    </td>
                     <td>
                         <input type="number" class="form-control" wire:model="amount" placeholder="Amount" wire:keydown.enter="save" />
                         @error('amount')

@@ -12,12 +12,21 @@ class ReinsuranceController extends Controller
         $data = Income::select('income.*')->where('reference_type','Reinsurance Commision')
                         //->where('status',1)
                         ->orderBy('income.id','DESC')
-                        ->join('policys','policys.id','=','income.policy_id');
+                        // ->join('policys','policys.id','=','income.policy_id')
+                        ;
         if(isset($_GET['term']))$data->where(function($table){
                 $table->where('reference_no','LIKE',"%{$_GET['term']}%")
                         ->orWhere('client','LIKE',"%{$_GET['term']}%")
-                        ->orWhere('no_polis','LIKE',"%{$_GET['term']}%");
+                        ->orWhere('no_polis','LIKE',"%{$_GET['term']}%")
+                        ->orWhere('nominal','LIKE',"%{$_GET['term']}%")
+                        ;
             });
-        return response()->json($data->offset(0)->limit(10)->get(), 200);
+
+        $temp = [];
+        foreach($data->offset(0)->limit(10)->get() as $k => $item){
+            $temp[$k] = $item;
+            $temp[$k]['nominal'] = format_idr($item->nominal);
+        }
+        return response()->json($temp, 200);
     }
 }

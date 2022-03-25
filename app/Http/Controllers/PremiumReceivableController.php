@@ -23,7 +23,7 @@ class PremiumReceivableController extends Controller
         $temp = [];
         foreach($data->offset(0)->limit(10)->get() as $k => $item){
             $temp[$k] = $item;
-            $temp[$k]['nominal'] = format_idr($item->nominal);
+            $temp[$k]['nominal'] = $item->outstanding_balance ? format_idr($item->outstanding_balance) : format_idr($item->nominal);
         }
         return response()->json($temp, 200);
     }

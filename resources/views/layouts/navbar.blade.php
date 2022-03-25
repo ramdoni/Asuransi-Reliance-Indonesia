@@ -16,7 +16,7 @@
                 @endif --}}
                 <div id="navbar-menu float-left">
                     <ul class="nav navbar-nav">
-                        <li><a href="" class="px-1 text-info icon-menu">Dashboard</a></li>
+                        {{-- <li><a href="" class="px-1 text-info icon-menu">Dashboard</a></li> --}}
                         {{-- Administrator --}}
                         @if (\Auth::user()->user_access_id == 1)
                             <li class="dropdown">
@@ -110,12 +110,8 @@
                             <li class="dropdown">
                                 <a href="#" class="text-info dropdown-toggle icon-menu px-1" data-toggle="dropdown">Konven</a>
                                 <ul class="dropdown-menu user-menu menu-icon">
-                                    <li>
-                                        <a href="{{ route('konven.underwriting') }}">Underwriting</a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('konven.reinsurance') }}">Reinsurance</a>
-                                    </li>
+                                    <li><a href="{{ route('konven.underwriting') }}">Underwriting</a></li>
+                                    <li><a href="{{ route('konven.reinsurance') }}">Reinsurance</a></li>
                                 </ul>
                             </li>
                             <li  class="dropdown">
@@ -143,7 +139,7 @@
                             <li><a href="{{ route('income.premium-receivable') }}" class="text-info px-1 icon-menu"> Premium Receivable</a></li>
                             <li><a href="{{ route('income.reinsurance') }}" class="text-info px-1 icon-menu"> Reinsurance Commision</a></li>
                             <li class="dropdown">
-                                <a href="#" class="text-info dropdown-toggle icon-menu px-1 icon-menu" data-toggle="dropdown" style="padding-top:12px;">Recovery</a>
+                                <a href="#" class="text-info dropdown-toggle icon-menu px-1 icon-menu" data-toggle="dropdown">Recovery</a>
                                 <ul class="dropdown-menu user-menu menu-icon">
                                     <li><a href="{{ route('income.recovery-claim') }}"> Recovery Claim</a></li>
                                     <li><a href="{{ route('income.recovery-refund') }}"> Recovery Refund</a></li>
