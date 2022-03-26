@@ -27,7 +27,7 @@ class InsertSettle extends Component
         $this->reset(['error_settle','total_payment']);
 
         foreach($this->types as $k =>$type){
-            if($type=="Premium Receivable" || $type=="Reinsurance Commision"){
+            if($type=="Premium Receivable" || $type=="Reinsurance Commision" || $type=="Recovery Claim"){
                 $premi = Income::find($this->transaction_ids[$k]);
                 if($premi){
                     $this->payment_rows[$k] = $premi;
@@ -101,7 +101,7 @@ class InsertSettle extends Component
             $transaction_item->transaction_id = $this->transaction_ids[$k];
             $transaction_item->description = $this->transaction_ids[$k];
 
-            if($item=='Premium Receivable' || $item=='Reinsurance Commision'){
+            if($item=='Premium Receivable' || $item=='Reinsurance Commision' || $item=='Recovery Claim'){
                $income = Income::find($this->transaction_ids[$k]);
                if($income){
                     $transaction_item->dn = $income->reference_no;
@@ -161,6 +161,30 @@ class InsertSettle extends Component
                             break;
                             default: 
                                 $coa_id = 249; //Reinsurance Commission Fee Other Tradisional
+                            break;
+                        }        
+                    }
+
+                    if($item=='Recovery Claim'){
+                        $coa_id = 0;
+                        switch($line_bussines){
+                            case "JANGKAWARSA":
+                                $coa_id = 250; //Reinsurance Commission Fee Jangkawarsa
+                            break;
+                            case "EKAWARSA":
+                                $coa_id = 251; //Reinsurance Commission Fee Ekawarsa
+                            break;
+                            case "DWIGUNA":
+                                $coa_id = 252; //Reinsurance Commission Fee Dwiguna
+                            break;
+                            case "DWIGUNA KOMBINASI":
+                                $coa_id = 253; //Reinsurance Commission Fee Dwiguna Kombinasi
+                            break;
+                            case "KECELAKAAN":
+                                $coa_id = 254; //Reinsurance Commission Fee Kecelakaan Diri
+                            break;
+                            default: 
+                                $coa_id = 255; //Reinsurance Commission Fee Other Tradisional
                             break;
                         }        
                     }

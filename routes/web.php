@@ -23,6 +23,7 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('get-premium-receivable',[App\Http\Controllers\PremiumReceivableController::class,'data'])->name('ajax.get-premium-receivable');
     Route::get('get-reinsurance',[App\Http\Controllers\ReinsuranceController::class,'data'])->name('ajax.get-reinsurance');
     Route::get('get-voucher-payable',[App\Http\Controllers\VoucherController::class,'data'])->name('ajax.get-voucher-payable');
+    Route::get('get-recovery-claim',[App\Http\Controllers\RecoveryController::class,'claim'])->name('ajax.get-recovery-claim');
 });
 
 // Administrator

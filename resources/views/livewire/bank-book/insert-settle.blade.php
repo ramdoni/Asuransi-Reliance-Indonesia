@@ -82,7 +82,7 @@
                                             </select>
                                         @endif
                                         @if($types[$k]=='Recovery Claim')
-                                            <select wire:ignore class="form-control select-recovery" id="transaction_ids.{{$k}}">
+                                            <select wire:ignore class="form-control select-recovery-claim" id="transaction_ids.{{$k}}">
                                                 <option value="">-- select --</option>
                                             </select>
                                         @endif
@@ -98,7 +98,7 @@
                                         @if($types[$k]=='Premium Receivable')
                                             <input type="number" class="form-control text-right" wire:model="amounts.{{$k}}" />
                                         @endif
-                                        @if($types[$k]=='Reinsurance Commision')
+                                        @if($types[$k]=='Reinsurance Commision' || $types[$k]=='Recovery Claim')
                                             {{format_idr($amounts[$k])}}
                                         @endif
                                         @if($types[$k]=='Error Suspense Account' || $types[$k]=='Premium Deposit')
@@ -191,7 +191,32 @@
                     cache: true
                 }
             });
-            $('.select-reinsurance').on('change', function (e) {
+            $('.select-recovery-claim').on('change', function (e) {
+                let elementName = $(this).attr('id');
+                var data = $(this).select2("val");
+                @this.set(elementName, data);
+            });
+
+            select_reinsurance = $('.select-recovery-claim').select2({
+                placeholder: " -- select -- ",
+                ajax: {
+                    url: '{{route('ajax.get-recovery-claim')}}',
+                    dataType: 'json',
+                    delay: 250,
+                    processResults: function (data) {
+                    return {
+                        results:  $.map(data, function (item) {
+                            return {
+                                text: item.reference_no + " - " + item.client +" / Rp. "+item.nominal,
+                                id: item.id
+                            }
+                        })
+                    };
+                    },
+                    cache: true
+                }
+            });
+            $('.select-recovery-claim').on('change', function (e) {
                 let elementName = $(this).attr('id');
                 var data = $(this).select2("val");
                 @this.set(elementName, data);
