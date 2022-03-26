@@ -61,9 +61,9 @@
                                 <th>Debit Note / Kwitansi</th>
                                 <th>Policy Number / Policy Holder</th>                       
                                 <th>No / Nama Peserta</th>                       
-                                <th>From Bank Account</th>
+                                {{-- <th>From Bank Account</th>
                                 <th>To Bank Account</th>
-                                <th>Bank Charges</th>
+                                <th>Bank Charges</th> --}}
                                 <th>Payment Amount</th>
                             </tr>
                         </thead>
@@ -95,9 +95,9 @@
                                         @endforeach
                                     @endif
                                 </td>
-                                <td>{{isset($item->from_bank_account->no_rekening) ? $item->from_bank_account->no_rekening .' - '.$item->from_bank_account->bank.' an '.$item->from_bank_account->owner : '-'}}</td>
+                                {{-- <td>{{isset($item->from_bank_account->no_rekening) ? $item->from_bank_account->no_rekening .' - '.$item->from_bank_account->bank.' an '.$item->from_bank_account->owner : '-'}}</td>
                                 <td>{{isset($item->bank_account->no_rekening) ? $item->bank_account->no_rekening .' - '.$item->bank_account->bank.' an '.$item->bank_account->owner : '-'}}</td>
-                                <td>{{isset($item->bank_charges) ? format_idr($item->bank_charges) : '-'}}</td>
+                                <td>{{isset($item->bank_charges) ? format_idr($item->bank_charges) : '-'}}</td> --}}
                                 <td>{{isset($item->payment_amount) ? format_idr($item->payment_amount) : '-'}}</td>
                             </tr>
                         @endforeach

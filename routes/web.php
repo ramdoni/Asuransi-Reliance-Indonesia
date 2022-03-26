@@ -24,6 +24,9 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('get-reinsurance',[App\Http\Controllers\ReinsuranceController::class,'data'])->name('ajax.get-reinsurance');
     Route::get('get-voucher-payable',[App\Http\Controllers\VoucherController::class,'data'])->name('ajax.get-voucher-payable');
     Route::get('get-recovery-claim',[App\Http\Controllers\RecoveryController::class,'claim'])->name('ajax.get-recovery-claim');
+    Route::get('get-recovery-refund',[App\Http\Controllers\RecoveryController::class,'refund'])->name('ajax.get-recovery-refund');
+    Route::get('get-claim-payable',[App\Http\Controllers\ClaimController::class,'payable'])->name('ajax.get-claim-payable');
+    Route::get('get-reinsurance-premium',[App\Http\Controllers\ReinsuranceController::class,'premium'])->name('ajax.get-reinsurance-premium');
 });
 
 // Administrator
@@ -191,6 +194,7 @@ Route::group(['middleware' => ['auth','access:6']], function(){
     Route::get('expense-refund/detail/{id}',App\Http\Livewire\ExpenseRefund\Detail::class)->name('expense-refund.detail');
     Route::get('expense-handling-fee',App\Http\Livewire\ExpenseHandlingFee\Index::class)->name('expense-handling-fee');
     Route::get('expense-handling-fee/detail/{id}',App\Http\Livewire\ExpenseHandlingFee\Detail::class)->name('expense-handling-fee.detail');
+    Route::get('bank-book/payable',App\Http\Livewire\BankBook\Payable::class)->name('bank-book.payable');
 });
 
 // Account Receivable

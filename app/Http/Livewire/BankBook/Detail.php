@@ -45,12 +45,6 @@ class Detail extends Component
 
     public function updated($propertyName)
     {
-        if($propertyName=='amount') {
-            if($this->amount=="") $this->amount = 0;
-            $this->amount = str_replace(',','',$this->amount);
-            $this->amount = number_format($this->amount);
-        }
-
         $this->generate_no_voucher = $this->type.str_pad((BankBook::count()+1),8, '0', STR_PAD_LEFT);
         $this->emit('init-form');
     }

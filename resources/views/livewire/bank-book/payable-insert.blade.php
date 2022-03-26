@@ -52,7 +52,7 @@
                             <tr style="background:#eee">
                                 <th>No</th>
                                 <th>Type</th>
-                                <th>Debit Note / Kwitansi</th>
+                                <th>Credit Note / Kwitansi</th>
                                 <th class="text-right">Amount</th>
                                 <th></th>
                             </tr>
@@ -62,24 +62,21 @@
                                     <td>
                                         <select class="form-control" wire:model="types.{{$k}}">
                                             <option value="">-- select --</option>
-                                            <option>Premium Receivable</option>
-                                            <option>Reinsurance Commision</option>
-                                            <option>Recovery Claim</option>
-                                            <option>Recovery Refund</option>
+                                            <option>Claim Payable</option>
+                                            <option>Reinsurance</option>
                                             <option>Error Suspense Account</option>
-                                            <option>Premium Deposit</option>
                                         </select>
                                         @error('type.'.$k)
                                             <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                                         @enderror
                                     </td>
                                     <td>
-                                        @if($types[$k]=='Premium Receivable')
-                                            <select wire:ignore class="form-control select-premi" id="transaction_ids.{{$k}}">
+                                        @if($types[$k]=='Claim Payable')
+                                            <select wire:ignore class="form-control select-claim" id="transaction_ids.{{$k}}">
                                                 <option value="">-- select --</option>
                                             </select>
                                         @endif
-                                        @if($types[$k]=='Reinsurance Commision')
+                                        @if($types[$k]=='Reinsurance')
                                             <select wire:ignore class="form-control select-reinsurance" id="transaction_ids.{{$k}}">
                                                 <option value="">-- select --</option>
                                             </select>
@@ -94,7 +91,7 @@
                                                 <option value="">-- select --</option>
                                             </select>
                                         @endif
-                                        @if($types[$k]=='Error Suspense Account' || $types[$k]=='Premium Deposit' )
+                                        @if($types[$k]=='Error Suspense Account')
                                             <input type="text" class="form-control" placeholder="Description" wire:model="transaction_ids.{{$k}}" />
                                         @endif
                                         <span wire:loading wire:target="types.{{$k}}">
@@ -103,13 +100,10 @@
                                         </span>
                                     </td>
                                     <td class="text-right">
-                                        @if($types[$k]=='Premium Receivable')
-                                            <input type="number" class="form-control text-right" wire:model="amounts.{{$k}}" />
-                                        @endif
-                                        @if($types[$k]=='Reinsurance Commision' || $types[$k]=='Recovery Claim' || $types[$k]=='Recovery Refund')
+                                        @if($types[$k]=='Claim Payable' || $types[$k]=='Reinsurance' )
                                             {{format_idr($amounts[$k])}}
                                         @endif
-                                        @if($types[$k]=='Error Suspense Account' || $types[$k]=='Premium Deposit')
+                                        @if($types[$k]=='Error Suspense Account')
                                             <input type="number" class="form-control text-right" wire:model="amounts.{{$k}}" />
                                         @endif
                                     </td>
@@ -153,19 +147,19 @@
 </div>
 @push('after-scripts')
     <script>
-        var select_premi,select_reinsurance,recovery_claim,recovery_refund;
+        var select_claim,select_reinsurance;
         Livewire.on('select-type',()=>{
-            select_premi = $('.select-premi').select2({
+            select_premi = $('.select-claim').select2({
                 placeholder: " -- select -- ",
                 ajax: {
-                    url: '{{route('ajax.get-premium-receivable')}}',
+                    url: '{{route('ajax.get-claim-payable')}}',
                     dataType: 'json',
                     delay: 250,
                     processResults: function (data) {
                     return {
                         results:  $.map(data, function (item) {
                             return {
-                                text: item.reference_no + " - " + item.client+" - "+ item.nominal,
+                                text: item.reference_no + " - " + item.recipient+" - "+ item.nominal,
                                 id: item.id
                             }
                         })
@@ -174,25 +168,24 @@
                     cache: true
                 }
             });
-            $('.select-premi').on('change', function (e) {
+            $('.select-claim').on('change', function (e) {
                 let elementName = $(this).attr('id');
                 var data = $(this).select2("val");
                 @this.set(elementName, data);
             });
 
-
-            // select reinsurance
+            // Reinsurance
             select_reinsurance = $('.select-reinsurance').select2({
                 placeholder: " -- select -- ",
                 ajax: {
-                    url: '{{route('ajax.get-reinsurance')}}',
+                    url: '{{route('ajax.get-reinsurance-premium')}}',
                     dataType: 'json',
                     delay: 250,
                     processResults: function (data) {
                     return {
                         results:  $.map(data, function (item) {
                             return {
-                                text: item.reference_no + " - " + item.client +" / Rp. "+item.nominal,
+                                text: item.reference_no + " - " + item.recipient+" - "+ item.nominal,
                                 id: item.id
                             }
                         })
@@ -202,58 +195,6 @@
                 }
             });
             $('.select-reinsurance').on('change', function (e) {
-                let elementName = $(this).attr('id');
-                var data = $(this).select2("val");
-                @this.set(elementName, data);
-            });
-
-            // select recovery claim
-            select_recovery_claim = $('.select-recovery-claim').select2({
-                placeholder: " -- select -- ",
-                ajax: {
-                    url: '{{route('ajax.get-recovery-claim')}}',
-                    dataType: 'json',
-                    delay: 250,
-                    processResults: function (data) {
-                    return {
-                        results:  $.map(data, function (item) {
-                            return {
-                                text: item.reference_no + " - " + item.client +" / Rp. "+item.nominal,
-                                id: item.id
-                            }
-                        })
-                    };
-                    },
-                    cache: true
-                }
-            });
-            $('.select-recovery-claim').on('change', function (e) {
-                let elementName = $(this).attr('id');
-                var data = $(this).select2("val");
-                @this.set(elementName, data);
-            });
-
-            // select recovery refund
-            select_recovery_refund = $('.select-recovery-refund').select2({
-                placeholder: " -- select -- ",
-                ajax: {
-                    url: '{{route('ajax.get-recovery-refund')}}',
-                    dataType: 'json',
-                    delay: 250,
-                    processResults: function (data) {
-                    return {
-                        results:  $.map(data, function (item) {
-                            return {
-                                text: item.reference_no + " - " + item.client +" / Rp. "+item.nominal,
-                                id: item.id
-                            }
-                        })
-                    };
-                    },
-                    cache: true
-                }
-            });
-            $('.select-recovery-refund').on('change', function (e) {
                 let elementName = $(this).attr('id');
                 var data = $(this).select2("val");
                 @this.set(elementName, data);

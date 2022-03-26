@@ -124,7 +124,7 @@
                         @endif
                         @if (\Auth::user()->user_access_id == 6) 
                             <!--Account Payable-->
-                            <li><a href="#" class="text-info px-1 icon-menu">Bank Book</a></li>
+                            <li><a href="{{route('bank-book.payable')}}" class="text-info px-1 icon-menu">Bank Book</a></li>
                             <li><a href="{{ route('expense.reinsurance-premium') }}" class="text-info px-1 icon-menu"> Reinsurance</a></li>
                             <li><a href="{{ route('expense.commision-payable') }}" class="text-info px-1 icon-menu"> Commision</a></li>
                             <li><a href="{{ route('expense-cancelation') }}" class="text-info px-1 icon-menu"> Cancelation</a></li>

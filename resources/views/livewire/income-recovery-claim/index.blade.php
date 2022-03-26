@@ -74,7 +74,7 @@
                         @foreach($data as $k => $item)
                             <tr>
                                 <td style="width: 50px;">{{$k+1}}</td>
-                                <td><a href="{{route('income.recovery-claim.detail',['id'=>$item->id])}}">{!!status_income($item->status)!!}</a></td>
+                                <td>{!!status_income($item->status)!!}</td>
                                 <td>{{date('d M Y', strtotime($item->created_at))}}</td>
                                 <td>{{$item->settle_date?date('d M Y', strtotime($item->settle_date)):'-'}}</td>
                                 <td>{{$item->reference_date?date('d M Y', strtotime($item->reference_date)):'-'}}</td>

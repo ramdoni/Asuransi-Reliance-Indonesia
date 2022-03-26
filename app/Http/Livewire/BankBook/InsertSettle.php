@@ -27,7 +27,7 @@ class InsertSettle extends Component
         $this->reset(['error_settle','total_payment']);
 
         foreach($this->types as $k =>$type){
-            if($type=="Premium Receivable" || $type=="Reinsurance Commision" || $type=="Recovery Claim"){
+            if($type=="Premium Receivable" || $type=="Reinsurance Commision" || $type=="Recovery Claim" || $type=="Recovery Refund"){
                 $premi = Income::find($this->transaction_ids[$k]);
                 if($premi){
                     $this->payment_rows[$k] = $premi;
@@ -70,6 +70,7 @@ class InsertSettle extends Component
     public function delete_payment($k)
     {
         unset($this->payment_ids[$k],$this->types[$k],$this->transaction_ids[$k],$this->amounts[$k],$this->payment_rows[$k]);
+        $this->updated('amounts');
         $this->emit('select-type');
     }
 
@@ -91,7 +92,7 @@ class InsertSettle extends Component
             $bank_book->save();
         }
 
-        $no_voucher = generate_no_voucer_journal("AP");
+        $no_voucher = generate_no_voucer_journal("AR");
 
         foreach($this->types as $k => $item){
             $transaction_item = new BankBookTransactionItem();
@@ -101,7 +102,7 @@ class InsertSettle extends Component
             $transaction_item->transaction_id = $this->transaction_ids[$k];
             $transaction_item->description = $this->transaction_ids[$k];
 
-            if($item=='Premium Receivable' || $item=='Reinsurance Commision' || $item=='Recovery Claim'){
+            if($item=='Premium Receivable' || $item=='Reinsurance Commision' || $item=='Recovery Claim' || $item=='Recovery Refund'){
                $income = Income::find($this->transaction_ids[$k]);
                if($income){
                     $transaction_item->dn = $income->reference_no;
@@ -115,7 +116,7 @@ class InsertSettle extends Component
                     $income->settle_date = date('Y-m-d');
                     $income->save();
 
-                    $line_bussines = $line_bussines = isset($income->uw_syariah->line_bussines) ? $income->uw_syariah->line_bussines : '';
+                    $line_bussines = $line_bussines = isset($income->uw->line_bussines) ? $income->uw->line_bussines : '';
                     $coa_id = 0;
                     if($item=='Premium Receivable'){
                         $coa_id = 63;
@@ -185,6 +186,30 @@ class InsertSettle extends Component
                             break;
                             default: 
                                 $coa_id = 255; //Reinsurance Commission Fee Other Tradisional
+                            break;
+                        }        
+                    }
+
+                    if($item=='Recovery Refund'){
+                        $coa_id = 0;
+                        switch($line_bussines){
+                            case "JANGKAWARSA":
+                                $coa_id = 263; //Reinsurance Commission Fee Jangkawarsa
+                            break;
+                            case "EKAWARSA":
+                                $coa_id = 264; //Reinsurance Commission Fee Ekawarsa
+                            break;
+                            case "DWIGUNA":
+                                $coa_id = 265; //Reinsurance Commission Fee Dwiguna
+                            break;
+                            case "DWIGUNA KOMBINASI":
+                                $coa_id = 266; //Reinsurance Commission Fee Dwiguna Kombinasi
+                            break;
+                            case "KECELAKAAN":
+                                $coa_id = 267; //Reinsurance Commission Fee Kecelakaan Diri
+                            break;
+                            default: 
+                                $coa_id = 268; //Reinsurance Commission Fee Other Tradisional
                             break;
                         }        
                     }
@@ -263,7 +288,6 @@ class InsertSettle extends Component
             $journal->save();
         }
         
-
         session()->flash('message-success',__('Settle successfully'));
 
         return redirect()->route('bank-book.teknik');
