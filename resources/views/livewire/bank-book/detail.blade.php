@@ -50,7 +50,7 @@
                         @enderror
                     </td>
                     <td>
-                        <input type="number" class="form-control" wire:model="amount" placeholder="Amount" wire:keydown.enter="save" />
+                        <input type="text" class="form-control text-right" wire:model="amount" placeholder="Amount" wire:keydown.enter="save" />
                         @error('amount')
                             <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                         @enderror
@@ -72,10 +72,8 @@
                     <th>Voucher Date</th>
                     <th>Payment Date</th>
                     <th>Aging</th>
-                    <th>Status</th>
+                    <th class="text-center">Status</th>
                     <th class="text-center">Type</th>
-                    {{-- <th>Bank Company</th>
-                    <th>Bank Client</th> --}}
                     <th>Amount</th>
                     <th>Note</th>
                     <th></th>
@@ -89,46 +87,33 @@
                         <td>{{$item->no_voucher}}</td>
                         <td>{{date('d-m-Y',strtotime($item->created_at))}}</td>
                         <td>
-                            @livewire('bank-book.editable',['data'=> $item,'field'=>'payment_date'])
+                            @livewire('bank-book.editable',['data'=> $item,'field'=>'payment_date'],key($data->id.$item->id))
                         </td>
                         <td>{{$item->date_pairing?calculate_aging($item->date_pairing):calculate_aging(date('Y-m-d',strtotime($item->created_at)))}}</td>
-                        <td>
+                        <td class="text-center">
                             @if($item->status==0)
                                 <span class="badge badge-warning">Unidentity</span>
                             @else
                                 <span class="badge badge-success">Settle</span>
                             @endif
                         </td>
-                        <td class="text-center">@livewire('bank-book.editable',['data'=> $item,'field'=>'type'])</td>
-                        <td>@livewire('bank-book.editable',['data'=> $item,'field'=>'amount'])</td>
-                        <td>@livewire('bank-book.editable',['data'=> $item,'field'=>'note'])</td>
-                        <td></td>
+                        <td class="text-center">@livewire('bank-book.editable',['data'=> $item,'field'=>'type'],key($data->id.$item->id))</td>
+                        <td>@livewire('bank-book.editable',['data'=> $item,'field'=>'amount'],key($data->id.$item->id))</td>
+                        <td>@livewire('bank-book.editable',['data'=> $item,'field'=>'note'],key($data->id.$item->id))</td>
+                        <td>
+                            @if($item->status==0)
+                                <span wire:loading wire:target="delete({{$item->id}})">
+                                    <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                                    <span class="sr-only">{{ __('Loading...') }}</span>
+                                </span>
+                                <a href="javascript:void(0)" wire:loading.remove wire:target="delete" wire:click="delete({{$item->id}})" class="text-danger"><i class="fa fa-trash"></i></a>
+                            @endif
+                        </td>
                     </tr>
                     @php($num++)
                 @endforeach
             </tbody>
         </table>
+        {{$lists->links()}}
     </div>
-    {{-- @push('after-scripts')
-        <link rel="stylesheet" href="{{ asset('assets/vendor/select2/css/select2.min.css') }}"/>
-        <script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
-        <style>
-            .select2-container .select2-selection--single {height:36px;padding-left:10px;}
-            .select2-container .select2-selection--single .select2-selection__rendered{padding-top:3px;}
-            .select2-container--default .select2-selection--single .select2-selection__arrow{top:4px;right:10px;}
-            .select2-container {width: 100% !important;}
-        </style>
-        <script>
-            var select__2 = $('.select-bank').select2();
-            Livewire.on('init-form',()=>{
-                select__2 = $('.select-bank').select2();
-                $('.select-bank').on('change', function (e) {
-                    var data = $(this).select2("val");
-                    @this.set('to_bank_account_id', data);
-                });
-                var selected__ = $('.select-bank').find(':selected').val();
-                if(selected__ !="") select__2.val(selected__);
-            });
-        </script>
-    @endpush --}}
 </div>

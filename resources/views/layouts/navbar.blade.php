@@ -102,7 +102,7 @@
                         @if (\Auth::user()->user_access_id == 4)
                             <!--Treasury-->
                             <li><a href="{{ route('bank-book.index') }}" class="text-info px-1">Bank Book</a></li>
-                            <li><a href="{{ route('inhouse-transfer.index') }}" class="text-info px-1">Inhouse Transfer</span></a></li>
+                            {{-- <li><a href="{{ route(/'inhouse-transfer.index') }}" class="text-info px-1">Inhouse Transfer</span></a></li> --}}
                             <li><a href="{{ route('bank-account-company') }}" class="text-info px-1">Bank Account</span></a></li>
                         @endif
                         @if (\Auth::user()->user_access_id == 5)

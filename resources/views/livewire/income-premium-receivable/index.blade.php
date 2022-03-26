@@ -86,11 +86,10 @@
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th>Status</th>
-                                {{-- <th>No Voucher</th> --}}
-                                <th>Payment Date</th>
-                                <th>Voucher Date</th>
-                                <th>Reference Date</th>
+                                <th class="text-center">Status</th>
+                                <th>Voucher Number</th>
+                                <th>Settle Date</th>
+                                <th>Upload Date</th>
                                 <th>Aging</th>
                                 <th>Due Date</th>
                                 <th>Debit Note / Kwitansi</th>
@@ -115,19 +114,20 @@
                                 @foreach ($data as $k => $item)
                                     <tr>
                                         <td style="width: 50px;">{{ $num }}</td>
+                                        <td class="text-center"><a href="{{ route('income.premium-receivable.detail', ['id' => $item->id,'page'=>$page,'keyword'=>$keyword,'unit'=>$unit,'status'=>$status,'payment_date_from'=>$payment_date_from,'payment_date_to'=>$payment_date_to])}}">{!! status_income($item->status) !!}</a></td>
                                         <td>
-                                            <a href="{{ route('income.premium-receivable.detail', ['id' => $item->id,'page'=>$page,'keyword'=>$keyword,'unit'=>$unit,'status'=>$status,'payment_date_from'=>$payment_date_from,'payment_date_to'=>$payment_date_to])}}">{!! status_income($item->status) !!}</a>
-                                        </td>
-                                        {{-- <td>
-                                            @if(isset($item->vouchers))
-                                                @foreach($item->vouchers as $voucher)
-                                                    <a href="javascript:void(0)" data-toggle="modal" data-target="#modal_detail_voucher" wire:click="$emit('set-voucher',{{$voucher->bank_book_id}})">{{$voucher->bank_book->no_voucher}}</a><br />
+                                            @if(isset($item->bank_books))
+                                                @foreach($item->bank_books as $k => $bank_book)
+                                                    @if($k>0) @continue @endif
+                                                    @if($bank_book->bank_books->no_voucher) 
+                                                        <a href="javascript:void(0)" wire:click="$emit('set-voucher',{{$item->id}})" data-toggle="modal" data-target="#modal_detail_voucher">{{$bank_book->bank_books->no_voucher}}</a>
+                                                    @endif
                                                 @endforeach
+                                                @if($item->bank_books->count()>1) <a href="javascript:void(0)" wire:click="$emit('set-voucher',{{$item->id}})" data-toggle="modal" data-target="#modal_detail_voucher"><i class="fa fa-plus"></i></a> @endif
                                             @endif
-                                        </td> --}}
-                                        <td>{{ $item->payment_date ? date('d M Y', strtotime($item->payment_date)) : '-' }}</td>
+                                        </td>
+                                        <td>{{ $item->settle_date ? date('d M Y', strtotime($item->settle_date)) : '-' }}</td>
                                         <td>{{ date('d M Y', strtotime($item->created_at)) }}</td>
-                                        <td>{{ date('d M Y', strtotime($item->reference_date)) }}</td>
                                         <td>{{ calculate_aging($item->due_date) }}</td>
                                         <td>{{ $item->due_date ? date('d M Y', strtotime($item->due_date)) : '' }}</td>
                                         <td class="text-info" title="Source  From : {{$item->transaction_table}}"><a href="{{ route('income.premium-receivable.detail', ['id' => $item->id,'page'=>$page,'keyword'=>$keyword,'unit'=>$unit,'status'=>$status,'payment_date_from'=>$payment_date_from,'payment_date_to'=>$payment_date_to])}}">{{ $item->reference_no ? $item->reference_no : '-' }}</a></td>
@@ -147,10 +147,7 @@
                                             @endif
                                         </td>
                                         <td class="text-right">{{ isset($item->nominal) ? format_idr($item->nominal) : '-' }}</td>
-                                        {{-- <td>{{ isset($item->from_bank_account->no_rekening) ? $item->from_bank_account->no_rekening . '- ' . $item->from_bank_account->bank . ' an ' . $item->from_bank_account->owner : '-' }}</td>
-                                        <td>{{ isset($item->bank_account->no_rekening) ? $item->bank_account->no_rekening . ' - ' . $item->bank_account->bank . ' an ' . $item->bank_account->owner : '-' }}</td> --}}
                                         <td class="text-right">{{ isset($item->outstanding_balance) ? format_idr($item->outstanding_balance) : '-' }}</td>
-                                        {{-- <td class="text-right">{{ isset($item->bank_charges) ? format_idr($item->bank_charges) : '-' }}</td> --}}
                                         <td class="text-right">{{ isset($item->payment_amount) ? format_idr($item->payment_amount) : '-' }}</td>
                                     </tr>
                                     @php($num++)
@@ -161,10 +158,16 @@
                         <br />
                         {{ $data->links() }}
                     </div>
+                    @if(isset($selected_data_))
+                        {{var_dump($selected_data_->reference_no)}}
+                    @endif
                 </div>
             </div>
         </div>
     </div>
+</div>
+<div class="modal fade" wire:ignore.self id="modal_detail_voucher" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    @livewire('income-premium-receivable.detail-voucher')
 </div>
 @push('after-scripts')
     <script type="text/javascript" src="{{ asset('assets/vendor/daterange/moment.min.js') }}"></script>
@@ -184,8 +187,3 @@
         });
     </script>
 @endpush
-<div wire:ignore.self class="modal fade" id="modal_detail_voucher" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document" style="min-width:90%;">
-        @livewire('income-premium-receivable.detail-voucher')
-    </div>
-</div>

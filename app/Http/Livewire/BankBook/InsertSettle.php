@@ -27,17 +27,17 @@ class InsertSettle extends Component
         $this->reset(['error_settle','total_payment']);
 
         foreach($this->types as $k =>$type){
-            if($type=="Premium Receivable" || $type=="Reinsurance Premium"){
+            if($type=="Premium Receivable" || $type=="Reinsurance Commision"){
                 $premi = Income::find($this->transaction_ids[$k]);
                 if($premi){
+                    $this->payment_rows[$k] = $premi;
                     $amount = $premi->outstanding_balance ? $premi->outstanding_balance : $premi->nominal;
-                    if($this->amounts[$k]==0){
+                    if($this->amounts[$k]==0 and $type=="Premium Receivable")
                         $this->amounts[$k] = $amount;
-                        $this->payment_rows[$k] = $premi;
-                    }
-                    if($this->amounts[$k] > $amount){
-                        $this->error_settle = $premi->reference_no ." Nominal has exceeded the limit!";
-                    }
+                    else
+                        $this->amounts[$k] = $amount;
+
+                    if($this->amounts[$k] > $amount) $this->error_settle = $premi->reference_no ." Nominal has exceeded the limit!";
                 }
             }
         
@@ -101,10 +101,9 @@ class InsertSettle extends Component
             $transaction_item->transaction_id = $this->transaction_ids[$k];
             $transaction_item->description = $this->transaction_ids[$k];
 
-            if($item=='Premium Receivable' || $item=='Reinsurance Premium'){
+            if($item=='Premium Receivable' || $item=='Reinsurance Commision'){
                $income = Income::find($this->transaction_ids[$k]);
                if($income){
-
                     $transaction_item->dn = $income->reference_no;
                     $transaction_item->description = $income->description;
             
@@ -113,7 +112,7 @@ class InsertSettle extends Component
                     $income->payment_amount = $income->payment_amount ? ($this->amounts[$k] + $income->payment_amount) : $this->amounts[$k];
                     $income->status = ($income->outstanding_balance != 0 ? 3 : 2);
                     $income->bank_book_transaction_id = $transaction->id;
-                    $income->payment_date = $bank_book->payment_date;
+                    $income->settle_date = date('Y-m-d');
                     $income->save();
 
                     $line_bussines = $line_bussines = isset($income->uw_syariah->line_bussines) ? $income->uw_syariah->line_bussines : '';
@@ -142,7 +141,7 @@ class InsertSettle extends Component
                         }
                     }
 
-                    if($item=='Reinsurance Premium'){
+                    if($item=='Reinsurance Commision'){
                         $coa_id = 0;
                         switch($line_bussines){
                             case "JANGKAWARSA":

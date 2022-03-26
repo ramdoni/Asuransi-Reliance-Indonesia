@@ -60,7 +60,7 @@
                                         <select class="form-control" wire:model="types.{{$k}}">
                                             <option value="">-- select --</option>
                                             <option>Premium Receivable</option>
-                                            <option>Reinsurance Premium</option>
+                                            <option>Reinsurance Commision</option>
                                             <option>Recovery Claim</option>
                                             <option>Recovery Refund</option>
                                             <option>Error Suspense Account</option>
@@ -76,7 +76,7 @@
                                                 <option value="">-- select --</option>
                                             </select>
                                         @endif
-                                        @if($types[$k]=='Reinsurance Premium')
+                                        @if($types[$k]=='Reinsurance Commision')
                                             <select wire:ignore class="form-control select-reinsurance" id="transaction_ids.{{$k}}">
                                                 <option value="">-- select --</option>
                                             </select>
@@ -98,7 +98,7 @@
                                         @if($types[$k]=='Premium Receivable')
                                             <input type="number" class="form-control text-right" wire:model="amounts.{{$k}}" />
                                         @endif
-                                        @if($types[$k]=='Reinsurance Premium')
+                                        @if($types[$k]=='Reinsurance Commision')
                                             {{format_idr($amounts[$k])}}
                                         @endif
                                         @if($types[$k]=='Error Suspense Account' || $types[$k]=='Premium Deposit')

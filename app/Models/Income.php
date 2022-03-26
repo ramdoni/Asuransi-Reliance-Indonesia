@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\BankBookPairing;
 use App\Models\IncomeSettle;
+use App\Models\BankBookTransactionItem;
 
 class Income extends Model
 {
@@ -14,6 +15,11 @@ class Income extends Model
 
     protected $table="income";
     
+    public function bank_books()
+    {
+        return $this->hasMany(BankBookTransactionItem::class,'transaction_id','id')->where('type','Premium Receivable');
+    }
+
     public function settle()
     {
         return $this->hasMany(IncomeSettle::class,'income_id');

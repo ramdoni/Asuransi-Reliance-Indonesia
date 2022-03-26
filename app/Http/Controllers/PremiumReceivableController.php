@@ -10,7 +10,9 @@ class PremiumReceivableController extends Controller
     public function data()
     {
         $data = Income::select('income.*')->where('reference_type','Premium Receivable')
-                        ->where('status',1)->orderBy('income.id','DESC')
+                        ->where(function($table){
+                            $table->where('status',1)->orWhere('status',3);
+                        })->orderBy('income.id','DESC')
                         ->join('policys','policys.id','=','income.policy_id');
         if(isset($_GET['term']))$data->where(function($table){
                 $table->where('reference_no','LIKE',"%{$_GET['term']}%")

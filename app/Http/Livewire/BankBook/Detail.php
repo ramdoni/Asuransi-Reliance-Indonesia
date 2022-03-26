@@ -4,9 +4,12 @@ namespace App\Http\Livewire\BankBook;
 
 use Livewire\Component;
 use App\Models\BankBook;
+use Livewire\WithPagination;
 
 class Detail extends Component
 {
+    use WithPagination;
+
     public $active,$data,$generate_no_voucher;
     public $type="P",$to_bank_account_id,$amount,$note,$opening_balance=0,$status;
     public $filter_type,$filter_amount,$payment_date;
@@ -40,28 +43,34 @@ class Detail extends Component
         $this->opening_balance = $this->data->open_balance;
     }
 
-    public function updated()
+    public function updated($propertyName)
     {
+        if($propertyName=='amount') {
+            if($this->amount=="") $this->amount = 0;
+            $this->amount = str_replace(',','',$this->amount);
+            $this->amount = number_format($this->amount);
+        }
+
         $this->generate_no_voucher = $this->type.str_pad((BankBook::count()+1),8, '0', STR_PAD_LEFT);
         $this->emit('init-form');
     }
 
     public function save()
     {
-        $this->emit('init-bank');
-
         $this->validate([
             'type'=>'required',
             // 'to_bank_account_id'=>'required',
             'amount'=>'required',     
             'payment_date'=>'required'       
         ]);
+        
+        $this->generate_no_voucher = $this->type.str_pad((BankBook::count()+1),8, '0', STR_PAD_LEFT);
 
         $data = new BankBook();
         $data->from_bank_id = $this->data->id;
         $data->type = $this->type;
         $data->to_bank_id = $this->to_bank_account_id;
-        $data->amount = $this->amount;
+        $data->amount = str_replace(',','',$this->amount);
         $data->note = $this->note;
         $data->no_voucher = $this->generate_no_voucher;
         $data->payment_date = $this->payment_date;
@@ -70,5 +79,12 @@ class Detail extends Component
         $this->generate_no_voucher = $this->type.str_pad((BankBook::count()+1),8, '0', STR_PAD_LEFT);
 
         $this->reset(['type','to_bank_account_id','amount','note']);
+    }
+
+    public function delete(BankBook $id)
+    {
+        $id->delete();
+        ;
+        $this->emit('message-success','Data deleted successfully');
     }
 }

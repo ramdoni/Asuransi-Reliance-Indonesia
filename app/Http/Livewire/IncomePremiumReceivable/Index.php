@@ -9,7 +9,7 @@ use App\Models\Income;
 class Index extends Component
 {
     use WithPagination;
-    public $keyword,$unit,$status,$payment_date_from,$payment_date_to,$voucher_date;
+    public $keyword,$unit,$status,$payment_date_from,$payment_date_to,$voucher_date,$selected_data_;
     protected $paginationTheme = 'bootstrap',$export_data,$queryString = ['page'];
     public $ordering_nominal;
     public function render()
@@ -49,6 +49,11 @@ class Index extends Component
         if(isset($_GET['ordering_nominal'])) $this->ordering_nominal = $_GET['ordering_nominal'];
         
         \LogActivity::add('Income - Premium Receivable');
+    }
+
+    public function set_selected(Income $id)
+    {
+        $this->selected_data_ = $id;
     }
 
     public function updated($propertyName="")
