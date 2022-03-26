@@ -6,18 +6,6 @@
             <div class="body">
                 <form id="basic-form" method="post" wire:submit.prevent="save('Submit')">
                     <div class="row">
-                        <div class="form-group col-md-12">
-                            <div>
-                                <label class="fancy-radio">
-                                    <input type="radio" value="1" wire:model="type" /> 
-                                    <span><i></i>Konven</span>
-                                </label> 
-                                <label class="fancy-radio">
-                                    <input type="radio" value="2" wire:model="type" />
-                                    <span><i></i>Syariah</span>
-                                </label> 
-                            </div>
-                        </div>
                         <div class="col-md-6">
                             <div class="px-0 form-group col-md-12">
                                 <label>{{ __('Recipient') }}</label>
@@ -101,7 +89,7 @@
                     <hr>
                     <a href="javascript:void0()" onclick="history.back()"><i class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
                     <button type="submit" class="ml-3 btn btn-primary"><i class="fa fa-save"></i> {{ __('Submit') }}</button>
-                    <span wire:loading>
+                    <span wire:loading wire:target="save">
                         <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
                         <span class="sr-only">{{ __('Loading...') }}</span>
                     </span>

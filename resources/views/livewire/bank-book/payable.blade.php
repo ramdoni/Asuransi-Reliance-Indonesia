@@ -124,7 +124,7 @@
     </script>
 @endpush
 <div wire:ignore.self class="modal fade" id="modal_detail_transaction" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    @livewire('bank-book.detail-settle')
+    @livewire('bank-book.payable-detail',key(123))
 </div>
 <div wire:ignore.self class="modal fade" id="modal_add" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     @livewire('bank-book.payable-insert')

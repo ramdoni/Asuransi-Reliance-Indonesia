@@ -10,6 +10,7 @@ class ClaimController extends Controller
     public function payable()
     {
         $data = Expenses::select('expenses.*')
+                            ->where('status',4)
                             ->with(['pesertas'])
                             ->orderBy('expenses.id','desc')->where('expenses.reference_type','Claim')->groupBy('expenses.id')
                             ->leftJoin('expense_pesertas','expense_pesertas.expense_id','=','expenses.id')

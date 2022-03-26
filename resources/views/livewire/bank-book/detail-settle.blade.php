@@ -9,7 +9,7 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col-md-5">
+                    <div class="col-md-5 table-responsive">
                         <div class="form-group">
                             <table class="table table-bordered">
                                 <tr style="background:#eee">
@@ -45,6 +45,7 @@
                                 <th>No</th>
                                 <th>Type</th>
                                 <th>Debit Note / Kwitansi</th>
+                                <th>Description</th>
                                 <th class="text-right">Amount</th>
                             </tr>
                             @php($total_incomes=0)
@@ -53,21 +54,15 @@
                                 <tr>
                                     <td>{{$num}}</td>
                                     <td>{{$item->type}}</td>
-                                    <td>
-                                        @if($item->type=='Error Suspense Account' || $item->type =='Premium Deposit')
-                                            {{$item->description}}
-                                        @else
-                                            {{$item->dn}}
-                                        @endif
-                                    </td>
+                                    <td>{{$item->dn}}</td>
+                                    <td>{{$item->description}}</td>
                                     <td class="text-right">{{format_idr($item->amount)}}</td>
                                 </tr>
                                 @php($total_incomes += $item->amount)
                                 @php($num++)
                             @endforeach
-                            
-                            
                             <tr style="background:#eee">
+                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <th class="text-right">Total</th>

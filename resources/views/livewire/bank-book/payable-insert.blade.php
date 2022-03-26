@@ -64,6 +64,7 @@
                                             <option value="">-- select --</option>
                                             <option>Claim Payable</option>
                                             <option>Reinsurance</option>
+                                            <option>Others</option>
                                             <option>Error Suspense Account</option>
                                         </select>
                                         @error('type.'.$k)
@@ -81,13 +82,8 @@
                                                 <option value="">-- select --</option>
                                             </select>
                                         @endif
-                                        @if($types[$k]=='Recovery Claim')
-                                            <select wire:ignore class="form-control select-recovery-claim" id="transaction_ids.{{$k}}">
-                                                <option value="">-- select --</option>
-                                            </select>
-                                        @endif
-                                        @if($types[$k]=='Recovery Refund')
-                                            <select wire:ignore class="form-control select-recovery-refund" id="transaction_ids.{{$k}}">
+                                        @if($types[$k]=='Others')
+                                            <select wire:ignore class="form-control select-others" id="transaction_ids.{{$k}}">
                                                 <option value="">-- select --</option>
                                             </select>
                                         @endif
@@ -100,7 +96,7 @@
                                         </span>
                                     </td>
                                     <td class="text-right">
-                                        @if($types[$k]=='Claim Payable' || $types[$k]=='Reinsurance' )
+                                        @if($types[$k]=='Claim Payable' || $types[$k]=='Reinsurance' || $types[$k]=='Others')
                                             {{format_idr($amounts[$k])}}
                                         @endif
                                         @if($types[$k]=='Error Suspense Account')
@@ -147,7 +143,7 @@
 </div>
 @push('after-scripts')
     <script>
-        var select_claim,select_reinsurance;
+        var select_claim,select_reinsurance,select_others;
         Livewire.on('select-type',()=>{
             select_premi = $('.select-claim').select2({
                 placeholder: " -- select -- ",
@@ -195,6 +191,32 @@
                 }
             });
             $('.select-reinsurance').on('change', function (e) {
+                let elementName = $(this).attr('id');
+                var data = $(this).select2("val");
+                @this.set(elementName, data);
+            });
+
+            // Others
+            select_others = $('.select-others').select2({
+                placeholder: " -- select -- ",
+                ajax: {
+                    url: '{{route('ajax.get-ap-others')}}',
+                    dataType: 'json',
+                    delay: 250,
+                    processResults: function (data) {
+                    return {
+                        results:  $.map(data, function (item) {
+                            return {
+                                text: item.reference_no + " - " + item.recipient+" - "+ item.nominal,
+                                id: item.id
+                            }
+                        })
+                    };
+                    },
+                    cache: true
+                }
+            });
+            $('.select-others').on('change', function (e) {
                 let elementName = $(this).attr('id');
                 var data = $(this).select2("val");
                 @this.set(elementName, data);

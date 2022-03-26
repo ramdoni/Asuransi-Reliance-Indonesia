@@ -77,9 +77,9 @@
                             <tr>
                                 <th>No</th>                                    
                                 <th>Status</th>                                    
-                                <th>No Voucher</th>                                    
-                                <th>Payment Date</th>                                    
-                                <th>Voucher Date</th>                                    
+                                {{-- <th>No Voucher</th>                                     --}}
+                                <th>Settle Date</th>                                    
+                                <th>Created Date</th>                                    
                                 <th>Reference Date</th>
                                 <th>Credit Note / Kwitansi</th>
                                 <th>Recipient</th>                    
@@ -97,12 +97,8 @@
                                     <a href="javascript:;" class="text-danger" wire:click="delete({{$item->id}})"><i class="fa fa-trash"></i></a>
                                     @endif
                                 </td>
-                                <td>
-
-                                </td>
+                                <td>{{date('d M Y', strtotime($item->settle_date))}}</td>
                                 <td>{{date('d M Y', strtotime($item->created_at))}}</td>
-                                <td>{{date('d M Y', strtotime($item->payment_date))}}</td>
-                                <td>{{date('d M Y', strtotime($item->reference_date))}}</td>
                                 <td>{{$item->reference_no ? $item->reference_no : '-'}}</td>
                                 <td>{{$item->recipient ? $item->recipient : '-'}}</td>
                                 <td>{{$item->description}}</td>

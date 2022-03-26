@@ -24,10 +24,17 @@ class PayableInsert extends Component
 
     public function updated($propertyName)
     {
+        $property = explode('.',$propertyName);
+        if(isset($property[0]) and $property[0]=='types'){
+            $this->payment_ids[$property[1]]=null;
+            $this->transaction_ids[$property[1]]=null;
+            $this->amounts[$property[1]]=0;
+            $this->payment_rows[$property[1]]=null;
+        }
         $this->reset(['error_settle','total_payment']);
-
+        
         foreach($this->types as $k =>$type){
-            if($type=="Claim Payable" || $type=="Reinsurance"){
+            if($type=="Claim Payable" || $type=="Reinsurance" || $type=="Others"){
                 $premi = Expenses::find($this->transaction_ids[$k]);
                 if($premi){
                     $this->payment_rows[$k] = $premi;
@@ -98,14 +105,13 @@ class PayableInsert extends Component
             $transaction_item->amount = $this->amounts[$k];
             $transaction_item->type = $item;
             $transaction_item->transaction_id = $this->transaction_ids[$k];
-            $transaction_item->description = $this->transaction_ids[$k];
 
-            if($item=='Claim Payable' || $item=='Reinsurance'){
+            if($item=='Claim Payable' || $item=='Reinsurance' || $item='Others'){
                $expense = Expenses::find($this->transaction_ids[$k]);
                if($expense){
                     $transaction_item->dn = $expense->reference_no;
                     $transaction_item->description = $expense->description;
-            
+                    
                     $expense->status = 2;
                     $expense->bank_book_transaction_id = $transaction->id;
                     $expense->settle_date = date('Y-m-d');
@@ -163,6 +169,8 @@ class PayableInsert extends Component
                             break;
                         }
                     }
+                    
+                    if($item=='Others') $coa_id = 206; // Other Payable
 
                     $journal = new Journal();
                     $journal->debit = $this->amounts[$k];
@@ -185,6 +193,8 @@ class PayableInsert extends Component
                 $error->note = $this->transaction_ids[$k];
                 $error->save();
 
+                $transaction_item->description = $this->transaction_ids[$k];
+                
                 # insert journal
                 $journal = new Journal();
                 $journal->coa_id = 349; // Error Suspen Account;
@@ -214,6 +224,7 @@ class PayableInsert extends Component
             $journal->save();
         }
         
+        $this->emit('modal','hide');
         session()->flash('message-success',__('Settle successfully'));
 
         return redirect()->route('bank-book.teknik');

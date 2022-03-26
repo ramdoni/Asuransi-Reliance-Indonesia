@@ -288,6 +288,8 @@ class InsertSettle extends Component
             $journal->save();
         }
         
+        $this->emit('modal','hide');
+
         session()->flash('message-success',__('Settle successfully'));
 
         return redirect()->route('bank-book.teknik');
