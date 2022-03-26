@@ -1,5 +1,5 @@
-@section('title', 'Reinsurance Commision')
-@section('parentPageTitle', 'Income')
+@section('title', 'Account Receivable')
+@section('parentPageTitle', 'Reinsurance Commision')
 <div class="clearfix row">
     <div class="col-md-12">
         <div class="row">
@@ -83,7 +83,9 @@
                             <tr>
                                 <th>No</th>                                    
                                 <th>Status</th>    
-                                <th>Payment Date</th>                   
+                                <th>Voucher Number</th>    
+                                <th>Settle Date</th>                   
+                                <th>Created Date</th>                   
                                 <th>Debit Note / Kwitansi</th>
                                 <th>Policy Number / Policy Holder</th>  
                                 <th>Payment Amount</th>
@@ -94,7 +96,19 @@
                             <tr>
                                 <td style="width: 50px;">{{$k+1}}</td>
                                 <td><a href="{{route('income.reinsurance.detail',['id'=>$item->id])}}">{!!status_income($item->status)!!}</a></td>
-                                <td>{{$item->payment_date?date('d M Y', strtotime($item->payment_date)):'-'}}</td>
+                                <td>
+                                    @if(isset($item->bank_books_direct))
+                                        @foreach($item->bank_books_direct as $k => $bank_book)
+                                            @if($k>0) @continue @endif
+                                            @if($bank_book->no_voucher) 
+                                                <a href="javascript:void(0)" wire:click="$emit('set-voucher',{{$item->id}})" data-toggle="modal" data-target="#modal_detail_voucher">{{$bank_book->no_voucher}}</a>
+                                            @endif
+                                        @endforeach
+                                        @if($item->bank_books->count()>1) <a href="javascript:void(0)" wire:click="$emit('set-voucher',{{$item->id}})" data-toggle="modal" data-target="#modal_detail_voucher"><i class="fa fa-plus"></i></a> @endif
+                                    @endif
+                                </td>
+                                <td>{{$item->settle_date?date('d M Y', strtotime($item->settle_date)):'-'}}</td>
+                                <td>{{$item->payment_date?date('d M Y', strtotime($item->created_at)):'-'}}</td>
                                 <td>{{$item->reference_no ? $item->reference_no : '-'}}</td>
                                 <td>{{$item->client ? $item->client : '-'}}</td>
                                 <td>{{isset($item->nominal) ? format_idr($item->nominal) : '-'}}</td>
@@ -108,4 +122,7 @@
             </div>
         </div>
     </div>
+</div>
+<div class="modal fade" wire:ignore.self id="modal_detail_voucher" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    @livewire('income-reinsurance.detail-voucher')
 </div>

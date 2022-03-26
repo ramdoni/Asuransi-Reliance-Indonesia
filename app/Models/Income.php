@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\BankBookPairing;
 use App\Models\IncomeSettle;
 use App\Models\BankBookTransactionItem;
+use App\Models\BankBook;
 
 class Income extends Model
 {
@@ -15,6 +16,11 @@ class Income extends Model
 
     protected $table="income";
     
+    public function bank_books_direct()
+    {
+        return $this->hasMany(BankBook::class,'bank_book_transaction_id','bank_book_transaction_id');
+    }
+
     public function bank_books()
     {
         return $this->hasMany(BankBookTransactionItem::class,'transaction_id','id')->where('type','Premium Receivable');

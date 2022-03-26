@@ -78,17 +78,11 @@
                                 <th>No</th>                                    
                                 <th>Status</th>                                    
                                 <th>No Voucher</th>                                    
-                                <th>Payment Date</th>                                    
-                                <th>Voucher Date</th>                                    
-                                <th>Reference Date</th>
+                                <th>Settle Date</th>                                    
+                                <th>Created Date</th>  
                                 <th>Debit Note / Kwitansi</th>
                                 <th>Client</th>                    
-                                <th>Description</th>                    
-                                <th>Amount</th>     
-                                <th>From Bank Account</th>
-                                <th>To Bank Account</th>
-                                <th>Outstanding Balance</th>
-                                <th>Bank Charges</th>
+                                <th>Description</th>   
                                 <th>Payment Amount</th>
                             </tr>
                         </thead>
@@ -102,19 +96,23 @@
                                     <a href="javascript:;" class="text-danger" wire:click="delete({{$item->id}})"><i class="fa fa-trash"></i></a>
                                     @endif
                                 </td>
-                                <td><a href="{{route('others-income.detail',['id'=>$item->id])}}">{!!no_voucher($item)!!}</a></td>
+                                <td>
+                                    @if(isset($item->bank_books_direct))
+                                        @foreach($item->bank_books_direct as $k => $bank_book)
+                                            @if($k>0) @continue @endif
+                                            @if($bank_book->no_voucher) 
+                                                <a href="javascript:void(0)" wire:click="$emit('set-voucher',{{$item->id}})" data-toggle="modal" data-target="#modal_detail_voucher">{{$bank_book->no_voucher}}</a>
+                                            @endif
+                                        @endforeach
+                                        @if($item->bank_books->count()>1) <a href="javascript:void(0)" wire:click="$emit('set-voucher',{{$item->id}})" data-toggle="modal" data-target="#modal_detail_voucher"><i class="fa fa-plus"></i></a> @endif
+                                    @endif
+                                </td>
                                 <td>{{date('d M Y', strtotime($item->created_at))}}</td>
                                 <td>{{date('d M Y', strtotime($item->payment_date))}}</td>
-                                <td>{{date('d M Y', strtotime($item->reference_date))}}</td>
                                 <td>{{$item->reference_no ? $item->reference_no : '-'}}</td>
                                 <td>{{$item->client ? $item->client : '-'}}</td>
                                 <td>{{$item->description}}</td>
                                 <td>{{isset($item->nominal) ? format_idr($item->nominal) : '-'}}</td>
-                                <td>{{isset($item->from_bank_account->no_rekening) ? $item->from_bank_account->no_rekening .'- '.$item->from_bank_account->bank.' an '. $item->from_bank_account->owner : '-'}}</td>
-                                <td>{{isset($item->bank_account->no_rekening) ? $item->bank_account->no_rekening .' - '.$item->bank_account->bank.' an '. $item->bank_account->owner : '-'}}</td>
-                                <td>{{isset($item->outstanding_balance) ? format_idr($item->outstanding_balance) : '-'}}</td>
-                                <td>{{isset($item->bank_charges) ?? format_idr($item->bank_charges)}}</td>
-                                <td>{{isset($item->payment_amount) ? format_idr($item->payment_amount) : '-'}}</td>
                             </tr>
                         @endforeach
                         </tbody>
@@ -125,4 +123,7 @@
             </div>
         </div>
     </div>
+</div>
+<div class="modal fade" wire:ignore.self id="modal_detail_voucher" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    @livewire('income-reinsurance.detail-voucher')
 </div>

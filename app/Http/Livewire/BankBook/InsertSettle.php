@@ -256,7 +256,11 @@ class InsertSettle extends Component
                 $data->outstanding_balance = $this->amounts[$k];
                 $data->description = $this->transaction_ids[$k];
                 $data->user_id = \Auth::user()->id;
+                $data->bank_book_transaction_id = $transaction->id;
                 $data->save();
+                
+                $transaction_item->transaction_id = $data->id;
+
                 
                 # insert journal
                 $journal = new Journal();
