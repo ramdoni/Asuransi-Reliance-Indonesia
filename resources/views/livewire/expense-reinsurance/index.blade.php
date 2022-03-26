@@ -1,5 +1,5 @@
-@section('title', 'Reinsurance Premium')
-@section('parentPageTitle', 'Expense')
+@section('title', 'Account Payable')
+@section('parentPageTitle', 'Reinsurance Premium')
 <div class="clearfix row">
     <div class="col-md-12">
         <div class="row">
@@ -83,7 +83,8 @@
                         <thead>
                             <tr>
                                 <th>No</th>                                    
-                                <th>Status</th>                                        
+                                <th>Status</th>    
+                                <th>Voucher Number</th>                                    
                                 <th>Settle Date</th>                                    
                                 <th>Created Date</th>  
                                 <th>Debit Note / Kwitansi</th>
@@ -96,6 +97,17 @@
                             <tr>
                                 <td style="width: 50px;">{{$data->firstItem()+$k}}</td>
                                 <td><a href="{{route('expense.reinsurance-premium.detail',['id'=>$item->id])}}">{!!status_expense($item->status)!!}</a></td>
+                                <td>
+                                    @if(isset($item->bank_books))
+                                        @foreach($item->bank_books as $k => $bank_book)
+                                            @if($k>0) @continue @endif
+                                            @if($bank_book->bank_books->no_voucher) 
+                                                <a href="javascript:void(0)" wire:click="$emit('set-voucher',{{$item->id}})" data-toggle="modal" data-target="#modal_detail_voucher">{{$bank_book->bank_books->no_voucher}}</a>
+                                            @endif
+                                        @endforeach
+                                        @if($item->bank_books->count()>1) <a href="javascript:void(0)" wire:click="$emit('set-voucher',{{$item->id}})" data-toggle="modal" data-target="#modal_detail_voucher"><i class="fa fa-plus"></i></a> @endif
+                                    @endif
+                                </td>
                                 <td>{{$item->settle_date?date('d M Y', strtotime($item->settle_date)):'-'}}</td>
                                 <td>{{date('d M Y', strtotime($item->created_at))}}</td>
                                 <td>{{$item->reference_no ? $item->reference_no : '-'}}</td>
@@ -111,4 +123,7 @@
             </div>
         </div>
     </div>
+</div>
+<div class="modal fade" wire:ignore.self id="modal_detail_voucher" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    @livewire('expense-reinsurance.detail-voucher')
 </div>

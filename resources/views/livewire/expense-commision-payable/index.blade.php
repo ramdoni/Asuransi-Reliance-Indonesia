@@ -145,8 +145,8 @@
                             <tr>
                                 <th rowspan="2">No</th>                                    
                                 <th rowspan="2">Status</th>                                    
-                                <th rowspan="2">No Voucher</th>                                      
-                                <th rowspan="2">Voucher Date</th>  
+                                <th rowspan="2">Voucher number</th>                                      
+                                <th rowspan="2">Settle Date</th>  
                                 <th rowspan="2">Debit Note / Kwitansi</th>
                                 <th rowspan="2">Policy Number / Policy Holder</th>      
                                 <th rowspan="2" class="text-right">Total Payment</th>
@@ -199,8 +199,18 @@
                                     <a href="javascript:;" class="text-danger" wire:click="delete({{$item->id}})"><i class="fa fa-trash"></i></a>
                                     @endif
                                 </td>
-                                <td><a href="{{route('expense.commision-payable.detail',['id'=>$item->id])}}">{!!no_voucher($item)!!}</a></td>
-                                <td>{{date('d M Y', strtotime($item->created_at))}}</td>
+                                <td>
+                                    @if(isset($item->bank_books))
+                                        @foreach($item->bank_books as $k => $bank_book)
+                                            @if($k>0) @continue @endif
+                                            @if($bank_book->bank_books->no_voucher) 
+                                                <a href="javascript:void(0)" wire:click="$emit('set-voucher',{{$item->id}})" data-toggle="modal" data-target="#modal_detail_voucher">{{$bank_book->bank_books->no_voucher}}</a>
+                                            @endif
+                                        @endforeach
+                                        @if($item->bank_books->count()>1) <a href="javascript:void(0)" wire:click="$emit('set-voucher',{{$item->id}})" data-toggle="modal" data-target="#modal_detail_voucher"><i class="fa fa-plus"></i></a> @endif
+                                    @endif
+                                </td>
+                                <td>{{$item->settle_date ? date('d M Y', strtotime($item->settle_date)) : '-'}}</td>
                                 <td>{{$item->reference_no ? $item->reference_no : '-'}}</td>
                                 <td>{{$item->recipient ? $item->recipient : '-'}}</td>
                                 <td class="text-right">{{format_idr($item->payment_amount)}}</td>
@@ -249,4 +259,7 @@
             </div>
         </div>
     </div>
+</div>
+<div class="modal fade" wire:ignore.self id="modal_detail_voucher" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    @livewire('expense-reinsurance.detail-voucher')
 </div>

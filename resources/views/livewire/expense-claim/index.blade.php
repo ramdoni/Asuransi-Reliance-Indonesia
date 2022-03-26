@@ -1,5 +1,5 @@
-@section('title', 'Claim Payable')
-@section('parentPageTitle', 'Expense')
+@section('title', 'Account Payable')
+@section('parentPageTitle', 'Claim Payable')
 <div class="clearfix row">
     <div class="col-md-12">
         <div class="row">
@@ -55,15 +55,13 @@
                         <thead>
                             <tr>
                                 <th>No</th>                                    
-                                <th>Status</th>                                        
+                                <th>Status</th> 
+                                <th>Voucher Number</th>                                       
                                 <th>Settle Date</th>                                    
-                                <th>Record Date</th>         
+                                <th>Created Date</th>         
                                 <th>Debit Note / Kwitansi</th>
                                 <th>Policy Number / Policy Holder</th>                       
-                                <th>No / Nama Peserta</th>                       
-                                {{-- <th>From Bank Account</th>
-                                <th>To Bank Account</th>
-                                <th>Bank Charges</th> --}}
+                                <th>No / Nama Peserta</th>  
                                 <th>Payment Amount</th>
                             </tr>
                         </thead>
@@ -77,14 +75,18 @@
                                     <a href="javascript:;" title="Delete Claim" class="text-danger" wire:click="delete({{$item->id}})"><i class="fa fa-trash"></i></a>
                                     @endif
                                 </td>
-                                {{-- <td>
-                                    @if(isset($item->vouchers_claim))
-                                        @foreach($item->vouchers_claim as $voucher)
-                                            <a href="javascript:void(0)" data-toggle="modal" data-target="#modal_detail_voucher" wire:click="$emit('set-voucher',{{$voucher->bank_book_id}})">{{$voucher->bank_book->no_voucher}}</a>
+                                <td>
+                                    @if(isset($item->bank_books))
+                                        @foreach($item->bank_books as $k => $bank_book)
+                                            @if($k>0) @continue @endif
+                                            @if($bank_book->bank_books->no_voucher) 
+                                                <a href="javascript:void(0)" wire:click="$emit('set-voucher',{{$item->id}})" data-toggle="modal" data-target="#modal_detail_voucher">{{$bank_book->bank_books->no_voucher}}</a>
+                                            @endif
                                         @endforeach
+                                        @if($item->bank_books->count()>1) <a href="javascript:void(0)" wire:click="$emit('set-voucher',{{$item->id}})" data-toggle="modal" data-target="#modal_detail_voucher"><i class="fa fa-plus"></i></a> @endif
                                     @endif
-                                </td> --}}
-                                <td>{{$item->payment_date ? date('d M Y', strtotime($item->payment_date)) : '-'}}</td>
+                                </td>
+                                <td>{{$item->settle_date ? date('d M Y', strtotime($item->settle_date)) : '-'}}</td>
                                 <td>{{date('d M Y', strtotime($item->created_at))}}</td>
                                 <td>{{$item->reference_no ? $item->reference_no : '-'}}</td>
                                 <td>{{$item->recipient ? $item->recipient : '-'}}</td>
@@ -95,9 +97,6 @@
                                         @endforeach
                                     @endif
                                 </td>
-                                {{-- <td>{{isset($item->from_bank_account->no_rekening) ? $item->from_bank_account->no_rekening .' - '.$item->from_bank_account->bank.' an '.$item->from_bank_account->owner : '-'}}</td>
-                                <td>{{isset($item->bank_account->no_rekening) ? $item->bank_account->no_rekening .' - '.$item->bank_account->bank.' an '.$item->bank_account->owner : '-'}}</td>
-                                <td>{{isset($item->bank_charges) ? format_idr($item->bank_charges) : '-'}}</td> --}}
                                 <td>{{isset($item->payment_amount) ? format_idr($item->payment_amount) : '-'}}</td>
                             </tr>
                         @endforeach
@@ -110,4 +109,7 @@
         </div>
     </div>
     @livewire('expense-claim.upload')
+</div>
+<div class="modal fade" wire:ignore.self id="modal_detail_voucher" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    @livewire('expense-reinsurance.detail-voucher')
 </div>

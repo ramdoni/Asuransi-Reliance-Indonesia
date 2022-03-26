@@ -64,8 +64,11 @@
                                             <option value="">-- select --</option>
                                             <option>Reinsurance</option>
                                             <option>Commision</option>
+                                            <option>Cancelation</option>
+                                            <option>Refund</option>
                                             <option>Claim Payable</option>
                                             <option>Others</option>
+                                            <option>Handling Fee</option>
                                             <option>Error Suspense Account</option>
                                         </select>
                                         @error('type.'.$k)
@@ -95,6 +98,25 @@
                                                 <option value="">-- select --</option>
                                             </select>
                                         @endif
+
+                                        @if($types[$k]=='Cancelation')
+                                            <select wire:ignore class="form-control select-cancelation" id="transaction_ids.{{$k}}">
+                                                <option value="">-- select --</option>
+                                            </select>
+                                        @endif
+
+                                        @if($types[$k]=='Refund')
+                                            <select wire:ignore class="form-control select-refund" id="transaction_ids.{{$k}}">
+                                                <option value="">-- select --</option>
+                                            </select>
+                                        @endif
+
+                                        @if($types[$k]=='Handling Fee')
+                                            <select wire:ignore class="form-control select-handling-fee" id="transaction_ids.{{$k}}">
+                                                <option value="">-- select --</option>
+                                            </select>
+                                        @endif
+
                                         @if($types[$k]=='Error Suspense Account')
                                             <input type="text" class="form-control" placeholder="Description" wire:model="transaction_ids.{{$k}}" />
                                         @endif
@@ -151,7 +173,7 @@
 </div>
 @push('after-scripts')
     <script>
-        var select_reinsurance,select_commision,select_claim,select_others;
+        var select_reinsurance,select_commision,select_cancelation,select_refund,select_claim,select_others;,select_handling_fee
         Livewire.on('select-type',()=>{
             select_premi = $('.select-claim').select2({
                 placeholder: " -- select -- ",
@@ -179,7 +201,7 @@
             });
 
             // Commision
-            select_premi = $('.select-commision').select2({
+            select_commision = $('.select-commision').select2({
                 placeholder: " -- select -- ",
                 ajax: {
                     url: '{{route('ajax.get-ap-commision')}}',
@@ -203,6 +225,80 @@
                 @this.set(elementName, data);
             });
 
+            // Cancelation
+            select_cancelation = $('.select-cancelation').select2({
+                placeholder: " -- select -- ",
+                ajax: {
+                    url: '{{route('ajax.get-ap-cancelation')}}',
+                    dataType: 'json',
+                    delay: 250,
+                    processResults: function (data) {
+                    return {
+                        results:  $.map(data, function (item) {
+                            return {
+                                text: item.reference_no + " - " + item.recipient+" - "+ item.nominal,
+                                id: item.id
+                            }
+                        })
+                    };
+                    },cache: true
+                }
+            });
+            $('.select-cancelation').on('change', function (e) {
+                let elementName = $(this).attr('id');
+                var data = $(this).select2("val");
+                @this.set(elementName, data);
+            });
+
+            // Refund
+            select_refund = $('.select-refund').select2({
+                placeholder: " -- select -- ",
+                ajax: {
+                    url: '{{route('ajax.get-ap-refund')}}',
+                    dataType: 'json',
+                    delay: 250,
+                    processResults: function (data) {
+                    return {
+                        results:  $.map(data, function (item) {
+                            return {
+                                text: item.reference_no + " - " + item.recipient+" - "+ item.nominal,
+                                id: item.id
+                            }
+                        })
+                    };
+                    },cache: true
+                }
+            });
+            $('.select-refund').on('change', function (e) {
+                let elementName = $(this).attr('id');
+                var data = $(this).select2("val");
+                @this.set(elementName, data);
+            });
+
+            // Refund
+            select_handling_fee = $('.select-handling-fee').select2({
+                placeholder: " -- select -- ",
+                ajax: {
+                    url: '{{route('ajax.get-ap-handling-fee')}}',
+                    dataType: 'json',
+                    delay: 250,
+                    processResults: function (data) {
+                    return {
+                        results:  $.map(data, function (item) {
+                            return {
+                                text: item.reference_no + " - " + item.recipient+" - "+ item.nominal,
+                                id: item.id
+                            }
+                        })
+                    };
+                    },cache: true
+                }
+            });
+            $('.select-handling-fee').on('change', function (e) {
+                let elementName = $(this).attr('id');
+                var data = $(this).select2("val");
+                @this.set(elementName, data);
+            });
 
 
             // Reinsurance

@@ -1,5 +1,5 @@
-@section('title', 'Handling Fee')
-@section('parentPageTitle', 'Expense')
+@section('title', 'Account Payable')
+@section('parentPageTitle', 'Handling Fee')
 
 <div class="clearfix row">
     <div class="col-md-12">
@@ -71,12 +71,11 @@
                                 <th>No</th>                                    
                                 <th>Status</th>                                    
                                 <th>No Voucher</th>                                    
-                                <th>Payment Date</th>                                    
-                                <th>Voucher Date</th>              
+                                <th>Settle Date</th>                                    
+                                <th>Created Date</th>              
                                 <th>Debit Note / Kwitansi</th>
                                 <th>Policy Number / Policy Holder</th>                    
-                                <th>Description</th>       
-                                <th>From Bank Account</th>
+                                <th>Description</th>      
                                 <th>PPN</th>                                               
                                 <th>PPH</th>                                               
                                 <th>Bank Charges</th>
@@ -88,13 +87,14 @@
                             <tr>
                                 <td style="width: 50px;">{{$k+1}}</td>
                                 <td><a href="{{route('expense-handling-fee.detail',['id'=>$item->id])}}">{!!status_income($item->status)!!}</a></td>
-                                <td><a href="{{route('expense-handling-fee.detail',['id'=>$item->id])}}">{{$item->no_voucher}}</a></td>
-                                <td>{{$item->payment_date?date('d M Y', strtotime($item->payment_date)):'-'}}</td>
+                                <td>
+                                    
+                                </td>
+                                <td>{{$item->settle_date?date('d M Y', strtotime($item->settle_date)):'-'}}</td>
                                 <td>{{date('d M Y', strtotime($item->created_at))}}</td>
                                 <td>{{$item->reference_no ? $item->reference_no : '-'}}</td>
                                 <td>{{$item->recipient ? $item->recipient : '-'}}</td>
                                 <td>{{$item->description}}</td>
-                                <td>{{isset($item->from_bank_account->no_rekening) ? $item->from_bank_account->no_rekening .' - '.$item->from_bank_account->bank.' an '.$item->from_bank_account->owner : '-'}}</td>
                                 <td>{{isset($item->uw->jumlah_pph) ? format_idr($item->uw->jumlah_pph) : '-'}}</td>
                                 <td>{{isset($item->uw->jumlah_ppn) ? format_idr($item->uw->jumlah_ppn) : '-'}}</td>
                                 <td>{{isset($item->bank_charges) ? format_idr($item->bank_charges) : '-'}}</td>

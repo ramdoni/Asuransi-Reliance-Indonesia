@@ -29,6 +29,9 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('get-reinsurance-premium',[App\Http\Controllers\ReinsuranceController::class,'premium'])->name('ajax.get-reinsurance-premium');
     Route::get('get-ap-others',[App\Http\Controllers\ApController::class,'others'])->name('ajax.get-ap-others');
     Route::get('get-ap-commision',[App\Http\Controllers\ApController::class,'commision'])->name('ajax.get-ap-commision');
+    Route::get('get-ap-cancelation',[App\Http\Controllers\ApController::class,'cancelation'])->name('ajax.get-ap-cancelation');
+    Route::get('get-ap-refund',[App\Http\Controllers\ApController::class,'refund'])->name('ajax.get-ap-refund');
+    Route::get('get-ap-handling-fee',[App\Http\Controllers\ApController::class,'handling-fee'])->name('ajax.get-ap-handling-fee');
 });
 
 // Administrator

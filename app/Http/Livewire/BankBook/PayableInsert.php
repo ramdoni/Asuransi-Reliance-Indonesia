@@ -34,7 +34,7 @@ class PayableInsert extends Component
         $this->reset(['error_settle','total_payment']);
         
         foreach($this->types as $k =>$type){
-            if($type=="Claim Payable" || $type=="Reinsurance" || $type=="Others" || $type=='Commision'){
+            if($type!="Error Suspense Account"){
                 $premi = Expenses::find($this->transaction_ids[$k]);
                 if($premi){
                     $this->payment_rows[$k] = $premi;
@@ -106,110 +106,6 @@ class PayableInsert extends Component
             $transaction_item->type = $item;
             $transaction_item->transaction_id = $this->transaction_ids[$k];
 
-            if($item=='Reinsurance' || $item=='Commision' || $item=='Claim Payable' || $item='Others'){
-               $expense = Expenses::find($this->transaction_ids[$k]);
-               if($expense){
-                    $transaction_item->dn = $expense->reference_no;
-                    $transaction_item->description = $expense->description;
-                    
-                    $expense->status = 2;
-                    $expense->bank_book_transaction_id = $transaction->id;
-                    $expense->settle_date = date('Y-m-d');
-                    $expense->save();
-
-                    $line_bussines = $line_bussines = isset($expense->uw->line_bussines) ? $expense->uw->line_bussines : '';
-                    $coa_id = 0;
-                    if($item=='Claim Payable'){
-                        $coa_id = 0;
-                        switch($line_bussines){
-                            case "JANGKAWARSA":
-                                $coa_id = 155;
-                            break;
-                            case "EKAWARSA":
-                                $coa_id = 156;
-                            break;
-                            case "DWIGUNA":
-                                $coa_id = 157;
-                            break;
-                            case "DWIGUNA KOMBINASI":
-                                $coa_id = 158;
-                            break;
-                            case "KECELAKAAN":
-                                $coa_id = 159;
-                            break;
-                            case "TRADISIONAL":
-                                $coa_id = 154;
-                            break;
-                            default: 
-                                $coa_id = 160; 
-                            break;
-                        }
-                    }
-
-                    if($item=='Reinsurance'){
-                        $coa_id = 0;
-                        switch($line_bussines){
-                            case "JANGKAWARSA":
-                                $coa_id = 168;
-                            break;
-                            case "EKAWARSA":
-                                $coa_id = 169;
-                            break;
-                            case "DWIGUNA":
-                                $coa_id = 170;
-                            break;
-                            case "DWIGUNA KOMBINASI":
-                                $coa_id = 171;
-                            break;
-                            case "KECELAKAAN":
-                                $coa_id = 172;
-                            break;
-                            default: 
-                                $coa_id = 173;
-                            break;
-                        }
-                    }
-
-                    if($item=='Commision'){
-                        $coa_id = 0;
-                        switch($line_bussines){
-                            case "JANGKAWARSA":
-                                $coa_id = 175;
-                            break;
-                            case "EKAWARSA":
-                                $coa_id = 176;
-                            break;
-                            case "DWIGUNA":
-                                $coa_id = 177;
-                            break;
-                            case "DWIGUNA KOMBINASI":
-                                $coa_id = 178;
-                            break;
-                            case "KECELAKAAN":
-                                $coa_id = 179;
-                            break;
-                            default: 
-                                $coa_id = 180;
-                            break;
-                        }
-                    }
-                    
-                    if($item=='Others') $coa_id = 206;
-
-                    $journal = new Journal();
-                    $journal->debit = $this->amounts[$k];
-                    $journal->kredit = 0;
-                    $journal->no_voucher = $no_voucher;
-                    $journal->coa_id = $coa_id;
-                    $journal->date_journal = $bank_book->payment_date;
-                    $journal->description = $expense->description;
-                    $journal->transaction_id = $expense->id;
-                    $journal->transaction_table = 'expenses';
-                    $journal->transaction_number = $expense->reference_no;
-                    $journal->save();
-               }
-            }
-
             if($item=='Error Suspense Account'){
                 $error = new ErrorSuspense();
                 $error->bank_book_transaction_id = $transaction->id;
@@ -230,6 +126,132 @@ class PayableInsert extends Component
                 $journal->transaction_id = $error->id;
                 $journal->transaction_table = 'error_suspense';
                 $journal->save();
+            }else{
+                $expense = Expenses::find($this->transaction_ids[$k]);
+                if($expense){
+                     $transaction_item->dn = $expense->reference_no;
+                     $transaction_item->description = $expense->description;
+                     
+                     $expense->status = 2;
+                     $expense->bank_book_transaction_id = $transaction->id;
+                     $expense->settle_date = date('Y-m-d');
+                     $expense->save();
+ 
+                     $line_bussines = $line_bussines = isset($expense->uw->line_bussines) ? $expense->uw->line_bussines : '';
+                     $coa_id = 0;
+                     if($item=='Claim Payable'){
+                         $coa_id = 0;
+                         switch($line_bussines){
+                             case "JANGKAWARSA":
+                                 $coa_id = 155;
+                             break;
+                             case "EKAWARSA":
+                                 $coa_id = 156;
+                             break;
+                             case "DWIGUNA":
+                                 $coa_id = 157;
+                             break;
+                             case "DWIGUNA KOMBINASI":
+                                 $coa_id = 158;
+                             break;
+                             case "KECELAKAAN":
+                                 $coa_id = 159;
+                             break;
+                             case "TRADISIONAL":
+                                 $coa_id = 154;
+                             break;
+                             default: 
+                                 $coa_id = 160; 
+                             break;
+                         }
+                     }
+ 
+                     if($item=='Reinsurance'){
+                         $coa_id = 0;
+                         switch($line_bussines){
+                             case "JANGKAWARSA":
+                                 $coa_id = 168;
+                             break;
+                             case "EKAWARSA":
+                                 $coa_id = 169;
+                             break;
+                             case "DWIGUNA":
+                                 $coa_id = 170;
+                             break;
+                             case "DWIGUNA KOMBINASI":
+                                 $coa_id = 171;
+                             break;
+                             case "KECELAKAAN":
+                                 $coa_id = 172;
+                             break;
+                             default: 
+                                 $coa_id = 173;
+                             break;
+                         }
+                     }
+ 
+                     if($item=='Commision'){
+                         $coa_id = 0;
+                         switch($line_bussines){
+                             case "JANGKAWARSA":
+                                 $coa_id = 175;
+                             break;
+                             case "EKAWARSA":
+                                 $coa_id = 176;
+                             break;
+                             case "DWIGUNA":
+                                 $coa_id = 177;
+                             break;
+                             case "DWIGUNA KOMBINASI":
+                                 $coa_id = 178;
+                             break;
+                             case "KECELAKAAN":
+                                 $coa_id = 179;
+                             break;
+                             default: 
+                                 $coa_id = 180;
+                             break;
+                         }
+                     }
+
+                    if($item=='Cancelation' || $item=='Refund'){
+                        $coa_id = 0;
+                        switch($line_bussines){
+                            case "JANGKAWARSA":
+                                $coa_id = 263;
+                            break;
+                            case "EKAWARSA":
+                                $coa_id = 264;
+                            break;
+                            case "DWIGUNA":
+                                $coa_id = 265;
+                            break;
+                            case "DWIGUNA KOMBINASI":
+                                $coa_id = 266;
+                            break;
+                            case "KECELAKAAN":
+                                $coa_id = 267;
+                            break;
+                            default: 
+                                $coa_id = 268;
+                            break;
+                        }
+                    }
+                     
+                     if($item=='Others') $coa_id = 206;
+ 
+                     $journal = new Journal();
+                     $journal->debit = $this->amounts[$k];
+                     $journal->kredit = 0;
+                     $journal->no_voucher = $no_voucher;
+                     $journal->coa_id = $coa_id;
+                     $journal->date_journal = $bank_book->payment_date;
+                     $journal->description = $expense->description;
+                     $journal->transaction_id = $expense->id;
+                     $journal->transaction_table = 'expenses';
+                     $journal->transaction_number = $expense->reference_no;
+                     $journal->save();
+                }
             }
 
             $transaction_item->save();

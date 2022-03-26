@@ -8,10 +8,16 @@ use App\Models\ExpensePayment;
 use App\Models\Policy;
 use App\Models\ExpensePeserta;
 use App\Models\DistributionChannel;
+use App\Models\BankBookTransactionItem;
 
 class Expenses extends Model
 {
     use HasFactory;
+
+    public function bank_books()
+    {
+        return $this->hasMany(BankBookTransactionItem::class,'transaction_id','id');
+    }
 
     public function settle()
     {
