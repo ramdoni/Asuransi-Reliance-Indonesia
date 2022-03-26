@@ -62,8 +62,9 @@
                                     <td>
                                         <select class="form-control" wire:model="types.{{$k}}">
                                             <option value="">-- select --</option>
-                                            <option>Claim Payable</option>
                                             <option>Reinsurance</option>
+                                            <option>Commision</option>
+                                            <option>Claim Payable</option>
                                             <option>Others</option>
                                             <option>Error Suspense Account</option>
                                         </select>
@@ -72,16 +73,23 @@
                                         @enderror
                                     </td>
                                     <td>
-                                        @if($types[$k]=='Claim Payable')
-                                            <select wire:ignore class="form-control select-claim" id="transaction_ids.{{$k}}">
-                                                <option value="">-- select --</option>
-                                            </select>
-                                        @endif
                                         @if($types[$k]=='Reinsurance')
                                             <select wire:ignore class="form-control select-reinsurance" id="transaction_ids.{{$k}}">
                                                 <option value="">-- select --</option>
                                             </select>
                                         @endif
+                                        @if($types[$k]=='Commision')
+                                            <select wire:ignore class="form-control select-commision" id="transaction_ids.{{$k}}">
+                                                <option value="">-- select --</option>
+                                            </select>
+                                        @endif
+                                        
+                                        @if($types[$k]=='Claim Payable')
+                                            <select wire:ignore class="form-control select-claim" id="transaction_ids.{{$k}}">
+                                                <option value="">-- select --</option>
+                                            </select>
+                                        @endif
+                                        
                                         @if($types[$k]=='Others')
                                             <select wire:ignore class="form-control select-others" id="transaction_ids.{{$k}}">
                                                 <option value="">-- select --</option>
@@ -96,11 +104,11 @@
                                         </span>
                                     </td>
                                     <td class="text-right">
-                                        @if($types[$k]=='Claim Payable' || $types[$k]=='Reinsurance' || $types[$k]=='Others')
-                                            {{format_idr($amounts[$k])}}
-                                        @endif
+                                        
                                         @if($types[$k]=='Error Suspense Account')
                                             <input type="number" class="form-control text-right" wire:model="amounts.{{$k}}" />
+                                        @else
+                                            {{format_idr($amounts[$k])}}
                                         @endif
                                     </td>
                                     <td class="text-center"><a href="javascript:void(0)" wire:click="delete_payment({{$k}})" class="text-danger"><i class="fa fa-trash"></i></a></td>
@@ -143,7 +151,7 @@
 </div>
 @push('after-scripts')
     <script>
-        var select_claim,select_reinsurance,select_others;
+        var select_reinsurance,select_commision,select_claim,select_others;
         Livewire.on('select-type',()=>{
             select_premi = $('.select-claim').select2({
                 placeholder: " -- select -- ",
@@ -169,6 +177,33 @@
                 var data = $(this).select2("val");
                 @this.set(elementName, data);
             });
+
+            // Commision
+            select_premi = $('.select-commision').select2({
+                placeholder: " -- select -- ",
+                ajax: {
+                    url: '{{route('ajax.get-ap-commision')}}',
+                    dataType: 'json',
+                    delay: 250,
+                    processResults: function (data) {
+                    return {
+                        results:  $.map(data, function (item) {
+                            return {
+                                text: item.reference_no + " - " + item.recipient+" - "+ item.nominal,
+                                id: item.id
+                            }
+                        })
+                    };
+                    },cache: true
+                }
+            });
+            $('.select-commision').on('change', function (e) {
+                let elementName = $(this).attr('id');
+                var data = $(this).select2("val");
+                @this.set(elementName, data);
+            });
+
+
 
             // Reinsurance
             select_reinsurance = $('.select-reinsurance').select2({

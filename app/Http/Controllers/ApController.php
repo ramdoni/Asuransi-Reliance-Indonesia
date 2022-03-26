@@ -27,4 +27,24 @@ class ApController extends Controller
         return response()->json($temp, 200);
     }
 
+    public function commision()
+    {
+        $data = Expenses::orderBy('id','desc')->where('reference_type','Komisi');
+        
+        if(isset($_GET['term'])) $data = $data->where(function($table){
+                                        $table->where('description','LIKE', "%{$_GET['term']}%")
+                                        ->orWhere('no_voucher','LIKE',"%{$_GET['term']}%")
+                                        ->orWhere('reference_no','LIKE',"%{$_GET['term']}%")
+                                        ->orWhere('recipient','LIKE',"%{$_GET['term']}%")
+                                        ;
+                                    });
+
+        $temp = [];
+        foreach($data->offset(0)->limit(10)->get() as $k => $item){
+            $temp[$k] = $item;
+            $temp[$k]['nominal'] = format_idr($item->payment_amount);
+        }
+        return response()->json($temp, 200);
+    }
+
 }

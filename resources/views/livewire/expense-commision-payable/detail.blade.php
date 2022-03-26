@@ -59,9 +59,9 @@
                                 <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                                 @enderror
                             </div>
-                            <div class="form-group col-md-6">
+                            {{-- <div class="form-group col-md-6">
                                 <input type="text" class="form-control" wire:model="payment_date.{{$k}}" required onfocus="(this.type='date')" placeholder="{{ __('Payment Date') }}" {{$is_readonly?'disabled':''}}>
-                            </div>        
+                            </div>         --}}
                         </div>
                         @if(!$is_readonly)
                         <a href="javascript:;" wire:click="delete_payment({{$k}})" class="text-danger"><i class="fa fa-trash"></i> Delete</a>
@@ -101,9 +101,9 @@
                                 <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                                 @enderror
                             </div>
-                            <div class="form-group col-md-6">
+                            {{-- <div class="form-group col-md-6">
                                 <input type="text" class="form-control" wire:model="payment_date_temp.{{$k}}" required onfocus="(this.type='date')" placeholder="{{ __('Payment Date') }}">
-                            </div>        
+                            </div>         --}}
                         </div>
                         <a href="javascript:;" wire:click="delete_payment_temp({{$k}})" class="text-danger"><i class="fa fa-trash"></i> Delete</a>
                         <hr />

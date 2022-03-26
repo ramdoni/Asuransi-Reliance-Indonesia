@@ -1,5 +1,5 @@
-@section('title', 'Commision Payable')
-@section('parentPageTitle', 'Expense')
+@section('title', 'Account Payable')
+@section('parentPageTitle', 'Commision Payable')
 <div class="clearfix row">
     <div class="col-md-12">
         <div class="row">
@@ -149,6 +149,7 @@
                                 <th rowspan="2">Voucher Date</th>  
                                 <th rowspan="2">Debit Note / Kwitansi</th>
                                 <th rowspan="2">Policy Number / Policy Holder</th>      
+                                <th rowspan="2" class="text-right">Total Payment</th>
                                 <th colspan="4" class="text-center">Fee Base</th>
                                 <th colspan="4" class="text-center">Maintenance</th>
                                 <th colspan="4" class="text-center">Admin Agency</th>
@@ -202,41 +203,42 @@
                                 <td>{{date('d M Y', strtotime($item->created_at))}}</td>
                                 <td>{{$item->reference_no ? $item->reference_no : '-'}}</td>
                                 <td>{{$item->recipient ? $item->recipient : '-'}}</td>
+                                <td class="text-right">{{format_idr($item->payment_amount)}}</td>
                                 
                                 <td>{{isset($item->payment_fee_base->payment_amount) ? format_idr($item->payment_fee_base->payment_amount) : '-'}}</td>
-                                <td>{{isset($item->payment_fee_base->to_bank_account->owner) ? $item->payment_fee_base->to_bank_account->owner : '-'}}</td>
-                                <td>{{isset($item->payment_fee_base->to_bank_account->bank) ? $item->payment_fee_base->to_bank_account->bank : '-'}}</td>
-                                <td>{{isset($item->payment_fee_base->to_bank_account->no_rekening) ? $item->payment_fee_base->to_bank_account->no_rekening : '-'}}</td>
+                                <td>{{isset($item->payment_fee_base->name) ? $item->payment_fee_base->name : '-'}}</td>
+                                <td>{{isset($item->payment_fee_base->bank) ? $item->payment_fee_base->bank : '-'}}</td>
+                                <td>{{isset($item->payment_fee_base->account_number) ? $item->payment_fee_base->account_number : '-'}}</td>
 
                                 <td>{{isset($item->payment_maintenance->payment_amount) ? format_idr($item->payment_maintenance->payment_amount) : '-'}}</td>
-                                <td>{{isset($item->payment_maintenance->to_bank_account->owner) ? $item->payment_maintenance->to_bank_account->owner : '-'}}</td>
-                                <td>{{isset($item->payment_maintenance->to_bank_account->bank) ? $item->payment_maintenance->to_bank_account->bank : '-'}}</td>
-                                <td>{{isset($item->payment_maintenance->to_bank_account->no_rekening) ? $item->payment_maintenance->to_bank_account->no_rekening : '-'}}</td>
+                                <td>{{isset($item->payment_maintenance->name) ? $item->payment_maintenance->name : '-'}}</td>
+                                <td>{{isset($item->payment_maintenance->bank) ? $item->payment_maintenance->bank : '-'}}</td>
+                                <td>{{isset($item->payment_maintenance->account_number) ? $item->payment_maintenance->account_number : '-'}}</td>
                                 
                                 <td>{{isset($item->payment_admin_agency->payment_amount) ? format_idr($item->payment_admin_agency->payment_amount) : '-'}}</td>
-                                <td>{{isset($item->payment_admin_agency->to_bank_account->owner) ? $item->payment_admin_agency->to_bank_account->owner : '-'}}</td>
-                                <td>{{isset($item->payment_admin_agency->to_bank_account->bank) ? $item->payment_admin_agency->to_bank_account->bank : '-'}}</td>
-                                <td>{{isset($item->payment_admin_agency->to_bank_account->no_rekening) ? $item->payment_admin_agency->to_bank_account->no_rekening : '-'}}</td>
+                                <td>{{isset($item->payment_admin_agency->name) ? $item->payment_admin_agency->name : '-'}}</td>
+                                <td>{{isset($item->payment_admin_agency->bank) ? $item->payment_admin_agency->bank : '-'}}</td>
+                                <td>{{isset($item->payment_admin_agency->account_number) ? $item->payment_admin_agency->account_number : '-'}}</td>
 
                                 <td>{{isset($item->payment_agen_penutup->payment_amount) ? format_idr($item->payment_agen_penutup->payment_amount) : '-'}}</td>
-                                <td>{{isset($item->payment_agen_penutup->to_bank_account->owner) ? $item->payment_agen_penutup->to_bank_account->owner : '-'}}</td>
-                                <td>{{isset($item->payment_agen_penutup->to_bank_account->bank) ? $item->payment_agen_penutup->to_bank_account->bank : '-'}}</td>
-                                <td>{{isset($item->payment_agen_penutup->to_bank_account->no_rekening) ? $item->payment_agen_penutup->to_bank_account->no_rekening : '-'}}</td>
+                                <td>{{isset($item->payment_agen_penutup->name) ? $item->payment_agen_penutup->name : '-'}}</td>
+                                <td>{{isset($item->payment_agen_penutup->bank) ? $item->payment_agen_penutup->bank : '-'}}</td>
+                                <td>{{isset($item->payment_agen_penutup->account_number) ? $item->payment_agen_penutup->account_number : '-'}}</td>
 
                                 <td>{{isset($item->payment_operasional_agency->payment_amount) ? format_idr($item->payment_operasional_agency->payment_amount) : '-'}}</td>
-                                <td>{{isset($item->payment_operasional_agency->to_bank_account->owner) ? $item->payment_operasional_agency->to_bank_account->owner : '-'}}</td>
-                                <td>{{isset($item->payment_operasional_agency->to_bank_account->bank) ? $item->payment_operasional_agency->to_bank_account->bank : '-'}}</td>
-                                <td>{{isset($item->payment_operasional_agency->to_bank_account->no_rekening) ? $item->payment_operasional_agency->to_bank_account->no_rekening : '-'}}</td>
+                                <td>{{isset($item->payment_operasional_agency->name) ? $item->payment_operasional_agency->name : '-'}}</td>
+                                <td>{{isset($item->payment_operasional_agency->bank) ? $item->payment_operasional_agency->bank : '-'}}</td>
+                                <td>{{isset($item->payment_operasional_agency->account_number) ? $item->payment_operasional_agency->account_number : '-'}}</td>
 
                                 <td>{{isset($item->payment_handling_fee_broker->payment_amount) ? format_idr($item->payment_handling_fee_broker->payment_amount) : '-'}}</td>
-                                <td>{{isset($item->payment_handling_fee_broker->to_bank_account->owner) ? $item->payment_handling_fee_broker->to_bank_account->owner : '-'}}</td>
-                                <td>{{isset($item->payment_handling_fee_broker->to_bank_account->bank) ? $item->payment_handling_fee_broker->to_bank_account->bank : '-'}}</td>
-                                <td>{{isset($item->payment_handling_fee_broker->to_bank_account->no_rekening) ? $item->payment_handling_fee_broker->to_bank_account->no_rekening : '-'}}</td>
+                                <td>{{isset($item->payment_handling_fee_broker->name) ? $item->payment_handling_fee_broker->name : '-'}}</td>
+                                <td>{{isset($item->payment_handling_fee_broker->bank) ? $item->payment_handling_fee_broker->bank : '-'}}</td>
+                                <td>{{isset($item->payment_handling_fee_broker->account_number) ? $item->payment_handling_fee_broker->account_number : '-'}}</td>
 
                                 <td>{{isset($item->payment_referal_fee->payment_amount) ? format_idr($item->payment_referal_fee->payment_amount) : '-'}}</td>
-                                <td>{{isset($item->payment_referal_fee->to_bank_account->owner) ? $item->payment_referal_fee->to_bank_account->owner : '-'}}</td>
-                                <td>{{isset($item->payment_referal_fee->to_bank_account->bank) ? $item->payment_referal_fee->to_bank_account->bank : '-'}}</td>
-                                <td>{{isset($item->payment_referal_fee->to_bank_account->no_rekening) ? $item->payment_referal_fee->to_bank_account->no_rekening : '-'}}</td>
+                                <td>{{isset($item->payment_referal_fee->name) ? $item->payment_referal_fee->name : '-'}}</td>
+                                <td>{{isset($item->payment_referal_fee->bank) ? $item->payment_referal_fee->bank : '-'}}</td>
+                                <td>{{isset($item->payment_referal_fee->account_number) ? $item->payment_referal_fee->account_number : '-'}}</td>
                             </tr>
                         @endforeach
                         </tbody>

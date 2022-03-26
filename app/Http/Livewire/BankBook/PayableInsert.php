@@ -34,7 +34,7 @@ class PayableInsert extends Component
         $this->reset(['error_settle','total_payment']);
         
         foreach($this->types as $k =>$type){
-            if($type=="Claim Payable" || $type=="Reinsurance" || $type=="Others"){
+            if($type=="Claim Payable" || $type=="Reinsurance" || $type=="Others" || $type=='Commision'){
                 $premi = Expenses::find($this->transaction_ids[$k]);
                 if($premi){
                     $this->payment_rows[$k] = $premi;
@@ -106,7 +106,7 @@ class PayableInsert extends Component
             $transaction_item->type = $item;
             $transaction_item->transaction_id = $this->transaction_ids[$k];
 
-            if($item=='Claim Payable' || $item=='Reinsurance' || $item='Others'){
+            if($item=='Reinsurance' || $item=='Commision' || $item=='Claim Payable' || $item='Others'){
                $expense = Expenses::find($this->transaction_ids[$k]);
                if($expense){
                     $transaction_item->dn = $expense->reference_no;
@@ -123,25 +123,25 @@ class PayableInsert extends Component
                         $coa_id = 0;
                         switch($line_bussines){
                             case "JANGKAWARSA":
-                                $coa_id = 155; //Claim Payable Jangkawarsa
+                                $coa_id = 155;
                             break;
                             case "EKAWARSA":
-                                $coa_id = 156; //Claim Payable Ekawarsa
+                                $coa_id = 156;
                             break;
                             case "DWIGUNA":
-                                $coa_id = 157; //Claim Payable  Dwiguna
+                                $coa_id = 157;
                             break;
                             case "DWIGUNA KOMBINASI":
-                                $coa_id = 158; //Claim Payable Dwiguna Kombinasi
+                                $coa_id = 158;
                             break;
                             case "KECELAKAAN":
-                                $coa_id = 159; //Claim Payable Kecelakaan Diri
+                                $coa_id = 159;
                             break;
                             case "TRADISIONAL":
-                                $coa_id = 154; //Claim Payable Kecelakaan Diri
+                                $coa_id = 154;
                             break;
                             default: 
-                                $coa_id = 160; //CLaim Payable Other Tradisional
+                                $coa_id = 160; 
                             break;
                         }
                     }
@@ -165,12 +165,36 @@ class PayableInsert extends Component
                                 $coa_id = 172;
                             break;
                             default: 
-                                $coa_id = 173; // Others Tradisional
+                                $coa_id = 173;
+                            break;
+                        }
+                    }
+
+                    if($item=='Commision'){
+                        $coa_id = 0;
+                        switch($line_bussines){
+                            case "JANGKAWARSA":
+                                $coa_id = 175;
+                            break;
+                            case "EKAWARSA":
+                                $coa_id = 176;
+                            break;
+                            case "DWIGUNA":
+                                $coa_id = 177;
+                            break;
+                            case "DWIGUNA KOMBINASI":
+                                $coa_id = 178;
+                            break;
+                            case "KECELAKAAN":
+                                $coa_id = 179;
+                            break;
+                            default: 
+                                $coa_id = 180;
                             break;
                         }
                     }
                     
-                    if($item=='Others') $coa_id = 206; // Other Payable
+                    if($item=='Others') $coa_id = 206;
 
                     $journal = new Journal();
                     $journal->debit = $this->amounts[$k];
@@ -223,7 +247,7 @@ class PayableInsert extends Component
             $journal->transaction_table = 'bank_book';
             $journal->save();
         }
-        
+
         $this->emit('modal','hide');
         session()->flash('message-success',__('Settle successfully'));
 

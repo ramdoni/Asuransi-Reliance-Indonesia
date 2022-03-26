@@ -33,7 +33,8 @@ class ReinsuranceController extends Controller
 
     public function premium()
     {
-        $data = Expenses::orderBy('id','desc')->where('reference_type','Reinsurance Premium');
+        $data = Expenses::orderBy('id','desc')->where('reference_type','Reinsurance Premium')
+                            ->where('status',1);
         if(isset($_GET['term'])) $data = $data->where(function($table){
                                         $table->where('description','LIKE', "%{$_GET['term']}%")
                                         ->orWhere('no_voucher','LIKE',"%{$_GET['term']}%")

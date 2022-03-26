@@ -1,5 +1,5 @@
-@section('title', 'Commision Payable')
-@section('parentPageTitle', 'Expense')
+@section('title', 'Account Payable')
+@section('parentPageTitle', 'Commision Payable')
 <div class="clearfix row">
     <div class="col-md-5">
         <div class="card">
@@ -34,14 +34,14 @@
                             </select>
                         </div>
                         @error('no_polis')
-                        <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                            <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                         @enderror
                     </div>
                     <div class="form-group">
                         <label>{{ __('Reference No') }}</label>
                         <input type="text" class="form-control" wire:model="reference_no" />
                         @error('reference_no')
-                        <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                            <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                         @enderror
                     </div>
                     <hr />
@@ -77,31 +77,23 @@
                             <div class="form-group col-md-6">
                                 <input type="text" class="form-control format_number" required wire:model="payment_amount.{{$k}}" placeholder="{{ __('Payment Amount') }}">
                                 @error('payment_amount.{{$k}}')
-                                <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                                    <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                                 @enderror
                             </div>
-                            <div class="form-group col-md-6">
+                            {{-- <div class="form-group col-md-6">
                                 <input type="text" class="form-control" wire:model="payment_date.{{$k}}" required onfocus="(this.type='date')" placeholder="{{ __('Payment Date') }}">
-                            </div>        
+                            </div>         --}}
                         </div>
                         <a href="javascript:;" wire:click="delete_payment({{$k}})" class="text-danger"><i class="fa fa-trash"></i> Delete</a>
                         <hr />
                     </div>
                     @endforeach
                     <a href="javascript:void(0);" wire:click="add_payment"><i class="fa fa-plus"></i> Add Payment</a>
-                    <div class="form-group">
-                        <select class="form-control" wire:model="from_bank_account_id">
-                            <option value=""> --- {{ __('From Bank Account') }} --- </option>
-                            @foreach (\App\Models\BankAccount::where('is_client',0)->orderBy('owner','ASC')->get() as $bank)
-                                <option value="{{ $bank->id}}">{{ $bank->owner }} - {{ $bank->no_rekening}} {{ $bank->bank}}</option>
-                            @endforeach
-                        </select>
-                    </div>
                     <hr />
                     <a href="javascript:void0()" onclick="history.back()"><i class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
                     <button type="submit" class="ml-3 btn btn-primary" {{!$is_submit?'disabled':''}}><i class="fa fa-save"></i> {{ __('Submit') }}</button>
                     <button type="button" class="ml-3 btn btn-info float-right" wire:click="saveAsDraft"><i class="fa fa-save"></i> {{ __('Save as Draft') }}</button>
-                    <div wire:loading>
+                    <div wire:loading wire:target="save"> 
                         <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
                         <span class="sr-only">Loading...</span>
                     </div>

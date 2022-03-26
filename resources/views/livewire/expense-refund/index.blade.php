@@ -1,5 +1,5 @@
-@section('title', 'Refund')
-@section('parentPageTitle', 'Expense')
+@section('title', 'Account Payable')
+@section('parentPageTitle', 'Refund')
 <div class="clearfix row">
     <div class="col-lg-12">
         <div class="row">
@@ -67,17 +67,12 @@
                         <thead>
                             <tr>
                                 <th>No</th>                                    
-                                <th>Status</th>                                    
-                                <th>No Voucher</th>                                    
-                                <th>Payment Date</th>                                    
-                                <th>Voucher Date</th>  
+                                <th>Status</th>                                        
+                                <th>Settle Date</th>                                    
+                                <th>Created Date</th>  
                                 <th>Debit Note / Kwitansi</th>
                                 <th>Policy Number / Policy Holder</th>                    
-                                <th>Total</th>                                               
-                                <th>From Bank Account</th>
-                                <th>To Bank Account</th>
-                                <th>Bank Charges</th>
-                                <th>Payment Amount</th>
+                                <th>Amount</th>       
                             </tr>
                         </thead>
                         <tbody> 
@@ -85,16 +80,11 @@
                             <tr>
                                 <td style="width: 50px;">{{$k+1}}</td>
                                 <td><a href="{{route('expense-refund.detail',['id'=>$item->id])}}">{!!status_income($item->status)!!}</a></td>
-                                <td><a href="{{route('expense-refund.detail',['id'=>$item->id])}}">{!!no_voucher($item)!!}</a></td>
-                                <td>{{$item->payment_date?date('d M Y', strtotime($item->payment_date)):'-'}}</td>
+                                <td>{{$item->settle_date?date('d M Y', strtotime($item->settle_date)):'-'}}</td>
                                 <td>{{date('d M Y', strtotime($item->created_at))}}</td>
                                 <td>{{$item->reference_no ? $item->reference_no : '-'}}</td>
                                 <td>{{$item->recipient ? $item->recipient : '-'}}</td>
                                 <td>{{isset($item->nominal) ? format_idr($item->nominal) : '-'}}</td>
-                                <td>{{isset($item->from_bank_account->no_rekening) ? $item->from_bank_account->no_rekening .' - '.$item->from_bank_account->bank.' an '.$item->from_bank_account->owner : '-'}}</td>
-                                <td>{{isset($item->bank_account->no_rekening) ? $item->bank_account->no_rekening .' - '.$item->bank_account->bank.' an '.$item->bank_account->owner : '-'}}</td>
-                                <td>{{isset($item->bank_charges) ? format_idr($item->bank_charges) : '-'}}</td>
-                                <td>{{isset($item->payment_amount) ? format_idr($item->payment_amount) : '-'}}</td>
                             </tr>
                         @endforeach
                         </tbody>

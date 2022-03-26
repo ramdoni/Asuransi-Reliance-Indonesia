@@ -63,15 +63,15 @@ class Insert extends Component
         $this->validate($validate);
         $data = new \App\Models\Expenses();
         $data->recipient = $this->data->no_polis .' / '. $this->data->pemegang_polis;
-        $data->no_voucher = $this->no_voucher;
         $data->reference_no = $this->reference_no;
-        $data->from_bank_account_id = $this->from_bank_account_id;
         $data->type = $this->type;
-        $data->status = $type=='Draft' ? 4 : 2;
+        $data->status = 4;
         $data->reference_type = 'Komisi';
         $data->user_id = \Auth::user()->id;
         $data->policy_id = $this->data->id;
         $data->save();
+
+        $payment_amount = 0;
         if($this->payments){
             foreach($this->payments as $k => $val){
                 $payment = new \App\Models\ExpensePayment();
@@ -81,9 +81,17 @@ class Insert extends Component
                 $payment->transaction_type = $this->transaction_type[$k];
                 $payment->payment_date = @$this->payment_date[$k];
                 $payment->description = json_encode(['nama'=>$this->nama[$k],'no_rekening'=>$this->no_rekening[$k],'bank'=>$this->bank[$k]]);
+                $payment->bank = $this->bank[$k];
+                $payment->name = $this->nama[$k];
+                $payment->account_number = $this->no_rekening[$k];
                 $payment->save();
+
+                $payment_amount += replace_idr($this->payment_amount[$k]);
             }
         }
+        $data->payment_amount = $payment_amount;
+        $data->save();
+
         \LogActivity::add("Expense - Commision Payable {$type} {$data->id}");
         session()->flash('message-success',__('Data saved successfully'));
         return redirect()->route('expense.commision-payable');

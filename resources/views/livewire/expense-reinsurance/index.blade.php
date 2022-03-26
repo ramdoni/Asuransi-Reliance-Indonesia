@@ -66,8 +66,8 @@
                             <option value=""> --- Status --- </option>
                             <option value="1"> Unpaid </option>
                             <option value="2"> Paid</option>
-                            <option value="3"> Outstanding</option>
-                            <option value="4"> Draft</option>
+                            {{-- <option value="3"> Outstanding</option> --}}
+                            {{-- <option value="4"> Draft</option> --}}
                         </select>
                     </div>
                     <div class="col-md-5">
