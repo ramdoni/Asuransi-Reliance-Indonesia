@@ -49,19 +49,10 @@ class Insert extends Component
             [
                 'client' => 'required',
                 'reference_no' => 'required',
-                'reference_date' => 'required',
                 'reference_type' => 'required',
-                'nominal' => 'required',
-                'payment_date'=>'required',
-                'from_bank_account_id'=>'required',
-                'to_bank_account_id'=>'required',
             ]
         );
-        $this->nominal = replace_idr($this->nominal);
-        $this->outstanding_balance = replace_idr($this->outstanding_balance);
-        if($this->payment_amount==$this->nominal || $this->payment_amount>$this->nominal) $status=2; // Paid
-        if($this->payment_amount<$this->nominal) $status=3; // Outstanding
-        if($type=='Draft') $status=4; // Draft
+                
         $data = new \App\Models\Income();
         $data->no_voucher = $this->no_voucher;
         $data->client = $this->client;
@@ -73,7 +64,7 @@ class Insert extends Component
         $data->outstanding_balance = replace_idr($this->outstanding_balance);
         $data->reference_no = $this->reference_no;
         $data->payment_amount = $this->payment_amount;
-        $data->status = $status;
+        $data->status = 1;
         $data->rekening_bank_id = $this->to_bank_account_id;
         $data->from_bank_account_id = $this->from_bank_account_id;
         $data->is_others = 1;
@@ -88,55 +79,6 @@ class Insert extends Component
             $ex_payment->transaction_type = $this->add_payment_transaction_type[$k];
             $ex_payment->description = $this->add_payment_description[$k];
             $ex_payment->save();    
-        }
-        if($status==2){
-            // set balance
-            $bank_balance = \App\Models\BankAccount::find($data->to_bank_account_id);
-            if($bank_balance){
-                $bank_balance->open_balance = $bank_balance->open_balance + $this->payment_amount;
-                $bank_balance->save();
-                $balance = new \App\Models\BankAccountBalance();
-                $balance->kredit = $this->payment_amount;
-                $balance->debit = 0;
-                $balance->bank_account_id = $bank_balance->id;
-                $balance->status = 1;
-                $balance->type = 8; // Cancelation
-                $balance->nominal = $bank_balance->open_balance;
-                $balance->transaction_date = $this->payment_date;
-                $balance->save();
-            }
-            // insert Journal
-            if(isset($data->to_bank_account_id->coa->id)){
-                $journal_no_voucher = generate_no_voucher($data->to_bank_account_id->coa->id,$data->id);
-                $new  = new \App\Models\Journal();
-                $new->transaction_number = $data->reference_no;
-                $new->transaction_id = $data->id;
-                $new->transaction_table = 'income'; 
-                $new->coa_id = $data->to_bank_account_id->coa->id;
-                $new->no_voucher = $journal_no_voucher;
-                $new->date_journal = date('Y-m-d');
-                $new->debit = $this->payment_amount;
-                $new->kredit = 0;
-                $new->saldo = $this->payment_amount;
-                $new->description = $this->description;
-                $new->save();
-
-                foreach($this->add_payment as $k =>$i){
-                    // insert Journal
-                    $new  = new \App\Models\Journal();
-                    $new->transaction_number = $data->reference_no;
-                    $new->transaction_id = $data->id;
-                    $new->transaction_table = 'income'; 
-                    $new->coa_id = $this->add_payment_transaction_type[$k];
-                    $new->no_voucher = $journal_no_voucher;
-                    $new->date_journal = date('Y-m-d');
-                    $new->kredit = replace_idr($this->add_payment_amount[$k]);
-                    $new->debit = 0;
-                    $new->saldo = replace_idr($this->add_payment_amount[$k]);
-                    $new->description = $this->add_payment_description[$k];
-                    $new->save();
-                }
-            }
         }
         \LogActivity::add("Income Others Submit {$data->id}");
         session()->flash('message-success',__('Data saved successfully'));

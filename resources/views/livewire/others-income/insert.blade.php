@@ -1,26 +1,11 @@
-@section('title', 'Others Income')
-@section('parentPageTitle', 'Income')
+@section('title', 'Account Receivable')
+@section('parentPageTitle', 'Others')
 <div class="clearfix row">
     <div class="col-md-7">
         <div class="card">
             <div class="body">
                 <form id="basic-form" method="post" wire:submit.prevent="save('Submit')">
                     <div class="row">
-                        <div class="form-group col-md-6">
-                            <label>{{ __('Voucher Number') }} : <span class="text-success">{{$no_voucher}}</span></label>
-                        </div>
-                        <div class="form-group col-md-6">
-                            <div class="float-right">
-                                <label class="fancy-radio">
-                                    <input type="radio" value="1" wire:model="type" /> 
-                                    <span><i></i>Konven</span>
-                                </label> 
-                                <label class="fancy-radio">
-                                    <input type="radio" value="2" wire:model="type" />
-                                    <span><i></i>Syariah</span>
-                                </label> 
-                            </div>
-                        </div>
                         <div class="col-md-6">
                             <div class="px-0 form-group col-md-12">
                                 <label>{{ __('Client') }}</label>
@@ -42,6 +27,9 @@
                                 <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                                 @enderror
                             </div>
+                            
+                        </div>
+                        <div class="col-md-6">
                             <div class="px-0 form-group col-md-12">
                                 <label>{{ __('Reference No') }}</label>
                                 <input type="text" class="form-control" wire:model="reference_no" />
@@ -49,95 +37,22 @@
                                 <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                                 @enderror
                             </div>
-                            <div class="form-group">
-                                <label>{{ __('Reference Date') }} *<small>{{__('Default today')}}</small></label>
-                                <input type="date" class="form-control" wire:model="reference_date" />
-                                @error('reference_date')
-                                <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                                @enderror
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-md-6">
-                                    <label>{{ __('Amount (Rp)') }}</label>
-                                    <input type="text" class="form-control format_number text-right" wire:ignore wire:model="nominal" />
-                                    @error('nominal')
-                                    <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                                    @enderror
-                                </div>
-                                <div class="form-group">
-                                    <label>{{ __('Bank Charges') }}</label>
-                                    <input type="text" class="form-control format_number text-right" wire:ignore wire:model="bank_charges" />
-                                    @error('bank_charges')
-                                    <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>{{ __('From Bank Account') }}</label>
-                                <select class="form-control from_bank_account" id="from_bank_account_id" wire:model="from_bank_account_id">
-                                    <option value=""> --- Select --- </option>
-                                    @foreach (\App\Models\BankAccount::where('is_client',2)->orderBy('bank','ASC')->get() as $bank)
-                                        <option value="{{ $bank->id}}">{{ $bank->no_rekening}} {{ $bank->bank}} an {{$bank->owner}}</option>
-                                    @endforeach
-                                </select>
-                                @error('from_bank_account_id')
-                                <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                                @enderror
-                            </div>
-                            <div class="form-group">
-                                <label>{{ __('To Bank Account') }}</label><a href="javascript:;" data-toggle="modal" data-target="#modal_add_bank" class="ml-3"><i class="fa fa-plus"></i> Add Bank</a>
-                                <select class="form-control to_bank_account" id="to_bank_account_id" wire:model="to_bank_account_id">
-                                    <option value=""> --- Select --- </option>
-                                    @foreach (\App\Models\BankAccount::where('is_client',0)->orderBy('bank','ASC')->get() as $bank)
-                                        <option value="{{ $bank->id}}">{{ $bank->no_rekening}} {{ $bank->bank}} an {{$bank->owner}}</option>
-                                    @endforeach
-                                </select>
-                                @error('to_bank_account_id')
-                                <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                                @enderror
-                            </div>
-                            <div class="form-group">
-                                <label>{{ __('Payment Date') }} *<small>{{__('Default today')}}</small></label>
-                                <input type="date" class="form-control" {{$is_readonly?'disabled':''}} wire:model="payment_date" />
-                                @error('payment_date')
-                                <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                                @enderror
-                            </div>
                             <div class="px-0 form-group col-md-12">
+                                <label>{{ __('Description') }}</label>
                                 <textarea class="form-control" wire:model="description" placeholder="Description"></textarea>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-md-6">
-                                    <label>{{ __('Payment Amount') }} <br/> <span class="btn btn-outline-success">{{format_idr($payment_amount)}}</span></label>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label>{{ __('Outstanding Balance') }} <br/> <span class="btn btn-outline-danger">{{$outstanding_balance}}</span></label>
-                                </div>
                             </div>
                         </div>
                     </div>
                     <hr />
                     @foreach($add_payment as $k => $item)
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-7">
                             <div class="form-group">
-                                <label>{{ __('Transaction Type') }}</label>
-                                <select class="form-control select_transaction_type" id="add_payment_transaction_type.{{$k}}" wire:model="add_payment_transaction_type.{{$k}}">
-                                    <option value=""> --- Select --- </option>
-                                    @foreach(\App\Models\Coa::where('is_others_income',1)->get() as $coa)
-                                    <option value="{{$coa->id}}">{{$coa->name}}</option>
-                                    @endforeach
-                                </select>
-                                <a href="javascript:;" title="Delete" wire:click="delete({{$k}})" class="text-danger"><i class="fa fa-trash"></i> Delete</a>
-                                @error('add_payment_transaction_type.'.$k)
-                                <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                                @enderror
+                                <label>{{ __('Description') }}</label>
+                                <input type="text" class="form-control" wire:model="add_payment_description.{{$k}}" />
                             </div>
-
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-5">
                             <div class="form-group">
                                 <label>{{ __('Payment Amount (Rp)') }}</label>
                                 <input type="text" {{$is_readonly?'disabled':''}} class="form-control format_number text-right" wire:ignore wire:model="add_payment_amount.{{$k}}" />
@@ -146,22 +61,13 @@
                                 @enderror
                             </div>
                         </div>
-                        <div class="col-md-5">
-                            <div class="form-group">
-                                <label>{{ __('Description') }}</label>
-                                <input type="text" class="form-control" wire:model="add_payment_description.{{$k}}" />
-                            </div>
-                        </div>
                     </div>
                     @endforeach
                     <hr />
                     <a href="javascript:;" wire:click="addPayment"><i class="fa fa-plus"></i> Payment</a>
                     <hr>
                     <a href="javascript:void0()" onclick="history.back()"><i class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
-                    @if($outstanding_balance==0 and $payment_amount!=0)
                     <button type="submit" class="ml-3 btn btn-primary"><i class="fa fa-save"></i> {{ __('Submit') }}</button>
-                    @endif
-                    <button type="button" wire:click="save('Draft')" class="ml-3 btn btn-info"><i class="fa fa-save"></i> {{ __('Save as Draft') }}</button>
                     <span wire:loading>
                         <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
                         <span class="sr-only">{{ __('Loading...') }}</span>
