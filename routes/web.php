@@ -82,6 +82,12 @@ Route::group(['middleware' => ['auth','access:1']], function(){
     Route::get('log-activity',App\Http\Livewire\LogActivity\Index::class)->name('log-activity');
     Route::get('migration',App\Http\Livewire\Migration\Index::class)->name('migration.index');
     Route::get('distribution-channel',App\Http\Livewire\DistributionChannel\Index::class)->name('distribution-channel.index');
+
+    Route::get('konven-underwriting',App\Http\Livewire\Konven\Underwriting::class)->name('konven.underwriting');
+    Route::get('konven-reinsurance',App\Http\Livewire\Konven\Reinsurance::class)->name('konven.reinsurance');
+    Route::get('konven-claim',App\Http\Livewire\Konven\Claim::class)->name('konven.claim');
+    Route::get('syariah-underwriting',App\Http\Livewire\Syariah\Index::class)->name('syariah.underwriting');
+    Route::get('syariah-reinsurance',App\Http\Livewire\Syariah\Reinsurance::class)->name('syariah.reinsurance');
 });
 
 // Accounting
@@ -171,11 +177,11 @@ Route::group(['middleware' => ['auth','access:4']], function(){
 
 // Teknis
 Route::group(['middleware' => ['auth','access:5']], function(){
-    Route::get('konven-underwriting',App\Http\Livewire\Konven\Underwriting::class)->name('konven.underwriting');
-    Route::get('konven-reinsurance',App\Http\Livewire\Konven\Reinsurance::class)->name('konven.reinsurance');
-    Route::get('konven-claim',App\Http\Livewire\Konven\Claim::class)->name('konven.claim');
-    Route::get('syariah-underwriting',App\Http\Livewire\Syariah\Index::class)->name('syariah.underwriting');
-    Route::get('syariah-reinsurance',App\Http\Livewire\Syariah\Reinsurance::class)->name('syariah.reinsurance');
+    // Route::get('konven-underwriting',App\Http\Livewire\Konven\Underwriting::class)->name('konven.underwriting');
+    // Route::get('konven-reinsurance',App\Http\Livewire\Konven\Reinsurance::class)->name('konven.reinsurance');
+    // Route::get('konven-claim',App\Http\Livewire\Konven\Claim::class)->name('konven.claim');
+    // Route::get('syariah-underwriting',App\Http\Livewire\Syariah\Index::class)->name('syariah.underwriting');
+    // Route::get('syariah-reinsurance',App\Http\Livewire\Syariah\Reinsurance::class)->name('syariah.reinsurance');
 });
 
 // Account Payable

@@ -23,6 +23,10 @@
             <div class="pt-0 body">
                 <div class="table-responsive">
                     <table class="table table-striped m-b-0 c_list">
+                        <tr>
+                            <th>Type</th>
+                            <th>Channel</th>
+                        </tr>
                         @if($is_insert)
                             <tr>
                                 <td>

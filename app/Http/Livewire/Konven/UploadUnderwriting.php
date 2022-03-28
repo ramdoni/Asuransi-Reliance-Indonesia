@@ -42,63 +42,29 @@ class UploadUnderwriting extends Component
                 
                 foreach($i as $k=>$a){ $i[$k] = trim($a); }
                 
-                // $bulan = $i[1];
-                // $user_memo = $i[2];
-                // $user_akseptasi = $i[3];
-                // $transaksi_id = $i[4];
-                // $berkas_akseptasi = $i[5];
-                // $tanggal_pengajuan_email = $i[6]? @\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[6]):'';
-                // $tanggal_produksi = $i[7]?@\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[7]):'';;
-                // $no_reg = $i[8];
                 $no_polis = $i[1];
-                $no_polis_sistem = $i[2];
-                $pemegang_polis = $i[3];
-                $alamat = $i[4];
-                $cabang = $i[5];
-                $produk = $i[6];
-                $jumlah_peserta_pending = round($i[7]);
-                $up_peserta_pending = round($i[8]);
-                $premi_peserta_pending = round($i[9]);
-                $jumlah_peserta = round($i[10]);
-                $nomor_peserta_awal = $i[11];
-                $extsd = $i[12];
-                $nomor_peserta_akhir = $i[13];
-                $periode_awal = $i[14]?@\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[14]):'';
-                $periode_akhir = $i[15]?@\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[15]):'';
-                $up = round($i[16]);
-                $premi_gross = round($i[17]);
-                $extra_premi = round($i[18]);
-                $discount = round($i[19]);
-                $jumlah_discount = round($i[20]);
-                $jumlah_cad_klaim = round($i[21]);
-                $ext_diskon = $i[22];
-                $cad_klaim = $i[23];
-                $handling_fee = round($i[24]);
-                $jumlah_fee = round($i[25]);
-                $pph = round($i[26]);
-                $jumlah_pph = round($i[27]);
-                $ppn = round($i[28]);
-                $jumlah_ppn = round($i[29]);
-                $biaya_polis = round($i[30]);
-                $biaya_sertifikat = round($i[31]);
-                $extsertifikat = round($i[32]);
-                $premi_netto = round($i[33]);
-                $terbilang = $i[34];
-                $tgl_update_database = $i[35]?@\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[35]):'';
-                $tgl_update_sistem = $i[36]?@\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[36]):'';
-                $no_berkas_sistem = $i[37];
-                $tgl_posting_sistem = $i[38]?@\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[38]):'';
-                $ket_postingan = $i[39];
-                $tgl_invoice = $i[40]?@\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[40]):'';
-                $no_kwitansi_debit_note = $i[41];
-                $total_gross_kwitansi = round($i[42]);
-                $grace_periode_terbilang = $i[43];
-                $grace_periode = $i[44];
-                $tgl_jatuh_tempo = $i[45]?@\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[45]):'';
-                $extend_tgl_jatuh_tempo = $i[46]?@\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[46]):'';
-                $tgl_lunas = $i[47]?@\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[47]):'';
-                $ket_lampiran = $i[48];
-                $line_bussines = $i[49];
+                $pemegang_polis = $i[2];
+                $alamat = $i[3];
+                $cabang = $i[4];
+                $premi_gross = round($i[5]);
+                $extra_premi = round($i[6]);
+                $discount = round($i[7]);
+                $jumlah_discount = round($i[8]);
+                $handling_fee = round($i[9]);
+                $jumlah_fee = round($i[10]);
+                $jumlah_pph = round($i[11]);
+                $jumlah_ppn = round($i[12]);
+                $biaya_polis = round($i[13]);
+                $biaya_sertifikat = round($i[14]);
+                $premi_netto = round($i[15]);
+                $tgl_invoice = $i[16]?@\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[16]):'';
+                $no_kwitansi_debit_note = $i[17];
+                $total_gross_kwitansi = round($i[18]);
+                $tgl_jatuh_tempo = $i[19]?@\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[19]):'';
+                $tgl_lunas = $i[20]?@\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[20]):'';
+                $line_bussines = $i[21];
+                $channel_type = $i[22];
+                $channel_name = $i[23];
                 if(empty($no_polis))continue; // skip data
                 // cek no polis
                 $polis = Policy::where('no_polis',$no_polis)->first();
@@ -130,15 +96,7 @@ class UploadUnderwriting extends Component
                 }
 
                 $data->user_id = \Auth::user()->id;
-                // $data->bulan = $bulan;
-                // $data->no_reg = $no_reg;
-                // $data->user_memo = $user_memo;
-                // $data->user_akseptasi = $user_akseptasi;
-                // $data->transaksi_id = $transaksi_id;
-                // $data->berkas_akseptasi = $berkas_akseptasi;
-                // if($tanggal_pengajuan_email) $data->tanggal_pengajuan_email = date('Y-m-d',$tanggal_pengajuan_email);
-                // if($tanggal_produksi) $data->tanggal_produksi = date('Y-m-d',$tanggal_produksi);
-                // $data->no_reg = $no_reg;
+            
                 $data->no_polis = $no_polis;
                 $data->no_polis_sistem = $no_polis_sistem;
                 $data->pemegang_polis = $pemegang_polis;

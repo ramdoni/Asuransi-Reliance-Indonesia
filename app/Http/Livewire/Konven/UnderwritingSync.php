@@ -29,7 +29,7 @@ class UnderwritingSync extends Component
     {
         if($this->is_sync==false) return false;
 
-        $is_teknis = \Auth::uset()->user_access_id ==5?true:false;
+        $is_teknis = \Auth::user()->user_access_id ==5?true:false;
 
         $this->emit('is_sync');
         foreach(KonvenUnderwriting::where('status',1)->get() as $key => $item){
@@ -43,6 +43,7 @@ class UnderwritingSync extends Component
                 $item->note_invalid = $note_invalid;
                 $item->status = 3;
                 $item->save();
+                $this->total_failed++;
                 continue;
             }
 
@@ -113,7 +114,10 @@ class UnderwritingSync extends Component
                 $income->due_date = $item->tgl_jatuh_tempo;
                 $income->type = 1;
                 $income->policy_id = $policy->id;
-                if($is_teknis) $income->status = 2; // otomatis paid ketika Administrator yang melakukan upload
+                if(!$is_teknis) 
+                    $income->status = 2; // otomatis paid ketika Administrator yang melakukan upload
+                else
+                    $income->status = 1; 
                 $income->save();
             }
             if(!empty($item->ppn) and !empty($item->jumlah_discount)){
@@ -130,6 +134,12 @@ class UnderwritingSync extends Component
                 $expense->transaction_table = 'konven_underwriting';
                 $expense->type = 1;
                 $expense->policy_id = $policy->id;
+                
+                if(!$is_teknis) 
+                    $expense->status = 2; // otomatis paid ketika Administrator yang melakukan upload
+                else
+                    $expense->status = 1;
+
                 $expense->save();
                 $ordering++;
             }elseif(!empty($item->jumlah_discount)){
