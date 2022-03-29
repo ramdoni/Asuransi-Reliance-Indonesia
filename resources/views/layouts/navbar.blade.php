@@ -110,15 +110,15 @@
                             <li class="dropdown">
                                 <a href="#" class="text-info dropdown-toggle icon-menu px-1" data-toggle="dropdown">Konven</a>
                                 <ul class="dropdown-menu user-menu menu-icon">
-                                    <li><a href="{{ route('konven.underwriting') }}">Underwriting</a></li>
-                                    <li><a href="{{ route('konven.reinsurance') }}">Reinsurance</a></li>
+                                    <li><a href="{{ route('teknis.konven.underwriting') }}">Underwriting</a></li>
+                                    <li><a href="{{ route('teknis.konven.reinsurance') }}">Reinsurance</a></li>
                                 </ul>
                             </li>
                             <li  class="dropdown">
                                 <a href="#" class="text-info dropdown-toggle icon-menu px-1" data-toggle="dropdown">Syariah</a>
                                 <ul class="dropdown-menu user-menu menu-icon">
-                                    <li><a href="{{ route('syariah.underwriting') }}">Underwriting</a></li>
-                                    <li><a href="{{ route('syariah.reinsurance') }}">Reinsurance</a></li>
+                                    <li><a href="{{ route('teknis.syariah.underwriting') }}">Underwriting</a></li>
+                                    <li><a href="{{ route('teknis.syariah.reinsurance') }}">Reinsurance</a></li>
                                 </ul>
                             </li>
                         @endif

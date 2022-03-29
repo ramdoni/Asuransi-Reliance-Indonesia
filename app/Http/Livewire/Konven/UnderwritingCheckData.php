@@ -10,7 +10,8 @@ class UnderwritingCheckData extends Component
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
     public $keyword;
-    protected $listeners = ['emit-check-data'=>'$refresh',
+    protected $listeners = [
+                            //'emit-check-data'=>'$refresh',
                             'keep-all'=>'keepAll',
                             'replace-all'=>'replaceAll',
                             'replace-old'=>'replaceOld',
@@ -94,7 +95,7 @@ class UnderwritingCheckData extends Component
     }
     public function keepNew()
     {
-        \App\Models\KonvenUnderwriting::find($id)->update(['is_temp'=>0]);
+        // \App\Models\KonvenUnderwriting::find($id)->update(['is_temp'=>0]);
         if(\App\Models\KonvenUnderwriting::where('is_temp',1)->count()==0){
             session()->flash('message-success',__('Data saved successfully'));
             return redirect()->route('konven.underwriting');

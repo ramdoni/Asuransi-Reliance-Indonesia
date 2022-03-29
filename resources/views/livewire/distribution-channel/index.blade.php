@@ -1,5 +1,5 @@
-@section('title', 'Distribution Channel')
-@section('parentPageTitle', 'Home')
+@section('title', 'Administrator')
+@section('parentPageTitle', 'Distribution Channel')
 
 <div class="clearfix row">
     <div class="col-lg-9">
@@ -22,29 +22,44 @@
             </div>
             <div class="pt-0 body">
                 <div class="table-responsive">
-                    <table class="table table-striped m-b-0 c_list">
-                        <tr>
+                    <table class="table m-b-0 c_list">
+                        <tr style="background:#eee">
                             <th>Type</th>
                             <th>Channel</th>
+                            <th></th>
                         </tr>
                         @if($is_insert)
-                            <tr>
+                            <tr wire:loading.remove wire:target="save">
                                 <td>
-                                    <input type="text" class="form-control" wire:model="name" placeholder="Name" />
+                                    <input type="text" class="form-control" wire:model="type" placeholder="Type" wire:keydown.enter="save" />
                                 </td>
                                 <td>
-                                    <input type="text" class="form-control" wire:model="description" placeholder="Description" />
+                                    <input type="text" class="form-control" wire:model="name" placeholder="Name" wire:keydown.enter="save" />
                                 </td>
                                 <td>
                                     <a href="javascript:void()" wire:click="save" class="badge badge-info badge-active"><i class="fa fa-save"></i> Save</a>
                                 </td>
                             </tr>
+                            <tr wire:loading wire:target="save">
+                                <td colspan="3" class="text-center">
+                                    <span>
+                                        <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                                        <span class="sr-only">{{ __('Loading...') }}</span>
+                                    </span>
+                                </td>
+                            </tr>
                         @endif
                         @foreach($data as $item)
                             <tr>
+                                <td>{{$item->type}}</td>
                                 <td>{{$item->name}}</td>
-                                <td>{{$item->description}}</td>
-                                <td></td>
+                                <td>
+                                    <a wire:loading.remove wire:target="delete({{$item->id}})" href="javascript:void(0)" wire:click="delete({{$item->id}})" class="text-danger"><i class="fa fa-trash"></i></a>
+                                    <span wire:loading wire:target="delete({{$item->id}})">
+                                        <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                                        <span class="sr-only">{{ __('Loading...') }}</span>
+                                    </span>
+                                </td>
                             </tr>
                         @endforeach
                     </table>

@@ -7,7 +7,7 @@ use App\Models\DistributionChannel;
 
 class Index extends Component
 {
-    public $name,$description,$is_insert=false;
+    public $type,$name,$description,$is_insert=false;
     public function render()
     {
         $data = DistributionChannel::orderBy('id','DESC');
@@ -17,12 +17,24 @@ class Index extends Component
 
     public function save()
     {
+        $this->validate([
+            'type'=>'required',
+            'name'=>'required',
+        ]);
+
         $data = new DistributionChannel();
         $data->name = $this->name;
-        $data->description = $this->description;
+        $data->type = $this->type;
         $data->save();
 
         $this->is_insert = false;
         $this->emit('message-success','Data saved');
+    }
+
+    public function delete(DistributionChannel $item)
+    {
+        $item->delete();
+
+        $this->emit('message-success','Data deleted.');
     }
 }

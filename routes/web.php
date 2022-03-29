@@ -177,11 +177,11 @@ Route::group(['middleware' => ['auth','access:4']], function(){
 
 // Teknis
 Route::group(['middleware' => ['auth','access:5']], function(){
-    // Route::get('konven-underwriting',App\Http\Livewire\Konven\Underwriting::class)->name('konven.underwriting');
-    // Route::get('konven-reinsurance',App\Http\Livewire\Konven\Reinsurance::class)->name('konven.reinsurance');
-    // Route::get('konven-claim',App\Http\Livewire\Konven\Claim::class)->name('konven.claim');
-    // Route::get('syariah-underwriting',App\Http\Livewire\Syariah\Index::class)->name('syariah.underwriting');
-    // Route::get('syariah-reinsurance',App\Http\Livewire\Syariah\Reinsurance::class)->name('syariah.reinsurance');
+    Route::get('teknis-konven-underwriting',App\Http\Livewire\Konven\Underwriting::class)->name('teknis.konven.underwriting');
+    Route::get('teknis-konven-reinsurance',App\Http\Livewire\Konven\Reinsurance::class)->name('teknis.konven.reinsurance');
+    Route::get('teknis-konven-claim',App\Http\Livewire\Konven\Claim::class)->name('teknis.konven.claim');
+    Route::get('teknis-syariah-underwriting',App\Http\Livewire\Syariah\Index::class)->name('teknis.syariah.underwriting');
+    Route::get('teknis-syariah-reinsurance',App\Http\Livewire\Syariah\Reinsurance::class)->name('teknis.syariah.reinsurance');
 });
 
 // Account Payable
