@@ -41,8 +41,6 @@
                                             <th>Status</th>     
                                             <th>No Polis</th>
                                             <th>Pemegang Polis</th>
-                                            {{-- <th>Alamat</th> --}}
-                                            {{-- <th>Cabang</th> --}}
                                             <th>Premi Gross</th>
                                             <th>Extra Premi</th>
                                             <th>Discount</th>
@@ -64,8 +62,9 @@
                                             <th>Grace Periode</th>
                                             <th>Tgl Jatuh Tempo</th>
                                             <th>Tgl Lunas</th>
-                                            <th>Ket Lampiran</th>
                                             <th>Line Bussines</th>
+                                            <th>Channel Type</th>
+                                            <th>Channel Name</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -108,6 +107,8 @@
                                             <td>{{$item->tgl_jatuh_tempo}}</td>
                                             <td>{{$item->tgl_lunas}}</td>
                                             <td>{{$item->line_bussines}}</td>
+                                            <td>{{$item->channel_type}}</td>
+                                            <td>{{$item->channel_name}}</td>
                                         </tr>
                                         @php($num++)
                                         @endforeach
