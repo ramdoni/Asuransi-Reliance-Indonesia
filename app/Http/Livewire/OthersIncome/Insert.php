@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\OthersIncome;
 
 use Livewire\Component;
+use App\Models\Income;
 
 class Insert extends Component
 {
@@ -48,12 +49,12 @@ class Insert extends Component
         $this->validate(
             [
                 'client' => 'required',
-                'reference_no' => 'required',
+                // 'reference_no' => 'required',
                 'reference_type' => 'required',
             ]
         );
                 
-        $data = new \App\Models\Income();
+        $data = new Income();
         $data->no_voucher = $this->no_voucher;
         $data->client = $this->client;
         $data->user_id = \Auth::user()->id;
@@ -62,7 +63,7 @@ class Insert extends Component
         $data->description = $this->description;
         $data->nominal = replace_idr($this->nominal);
         $data->outstanding_balance = replace_idr($this->outstanding_balance);
-        $data->reference_no = $this->reference_no;
+        $data->reference_no = "AR/".date('Ym').'/'. str_pad((Income::count()+1),6, '0', STR_PAD_LEFT);
         $data->payment_amount = $this->payment_amount;
         $data->status = 1;
         $data->rekening_bank_id = $this->to_bank_account_id;
