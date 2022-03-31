@@ -106,7 +106,8 @@
                                             <td>{{format_idr($item->total_gross_kwitansi)}}</td>
                                             <td>{{$item->tgl_jatuh_tempo}}</td>
                                             <td>{{$item->tgl_lunas}}</td>
-                                            <td>{{$item->line_bussines}}</td>
+                                            <td>@livewire('konven.editable',['data'=>$item,'field'=>'line_bussines'],key((int)$item->id+10))</td>
+                                            {{-- <td>{{$item->line_bussines}}</td> --}}
                                             <td>{{$item->channel_type}}</td>
                                             <td>{{$item->channel_name}}</td>
                                         </tr>

@@ -5,17 +5,6 @@
     <div class="col-lg-9">
         <div class="card">
             <div class="header row">
-                {{-- <div class="col-md-2">
-                    <input type="text" class="form-control" wire:model="keyword" placeholder="Searching..." />
-                </div>
-                <div class="px-0 col-md-2">
-                    <select class="form-control" wire:model="coa_group_id">
-                        <option value=""> --- COA Group --- </option>
-                        @foreach(\App\Models\CoaGroup::orderBy('name','ASC')->get() as $i)
-                        <option value="{{$i->id}}">{{$i->name}}</option>
-                        @endforeach
-                    </select>
-                </div> --}}
                 <div class="col-md-1">
                     <a href="javascript:void()" wire:click="$set('is_insert',true)" class="btn btn-primary"><i class="fa fa-plus"></i> Distribution Channel</a>
                 </div>
@@ -31,7 +20,13 @@
                         @if($is_insert)
                             <tr wire:loading.remove wire:target="save">
                                 <td>
-                                    <input type="text" class="form-control" wire:model="type" placeholder="Type" wire:keydown.enter="save" />
+                                    {{-- <input type="text" class="form-control" wire:model="type" placeholder="Type" wire:keydown.enter="save" /> --}}
+                                    <select class="form-control" wire:model="type">
+                                        <option value=""> -- Select Type -- </option>
+                                        @foreach(config('vars.distribution_type') as $item)
+                                            <option>{{$item}}</option>
+                                        @endforeach
+                                    </select>
                                 </td>
                                 <td>
                                     <input type="text" class="form-control" wire:model="name" placeholder="Name" wire:keydown.enter="save" />
