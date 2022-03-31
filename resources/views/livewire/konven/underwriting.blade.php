@@ -58,8 +58,6 @@
                                             <th>Premi Netto</th>
                                             <th>No Kwitansi / Debit Note</th>
                                             <th>Total Gross Kwitansi</th>
-                                            <th>Grace Periode Terbilang</th>
-                                            <th>Grace Periode</th>
                                             <th>Tgl Jatuh Tempo</th>
                                             <th>Tgl Lunas</th>
                                             <th>Line Bussines</th>

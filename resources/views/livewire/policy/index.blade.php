@@ -27,7 +27,7 @@
                                 <th>Alamat</th>                                    
                                 <th>Cabang</th>
                                 <th>Produk</th>
-                                <th></th>
+                                <!-- <th></th> -->
                             </tr>
                         </thead>
                         <tbody>
@@ -44,7 +44,7 @@
                                 <td>{{$item->alamat}}</td>
                                 <td>{{$item->cabang}}</td>
                                 <td>{{$item->produk}}</td>
-                                <td><a href="javascript:void(0)" wire:click="delete({{$item->id}})" class="text-danger"><i class="fa fa-trash"></i></a></td>
+                                <!-- <td><a href="javascript:void(0)" wire:click="delete({{$item->id}})" class="text-danger"><i class="fa fa-trash"></i></a></td> -->
                             </tr>
                             @endforeach
                         </tbody>

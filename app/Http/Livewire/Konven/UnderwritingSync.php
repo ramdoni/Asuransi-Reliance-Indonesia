@@ -9,6 +9,7 @@ use App\Models\Income;
 use App\Models\Expenses;
 use App\Models\Journal;
 use App\Models\Policy;
+use App\Models\DistributionChannel;
 
 class UnderwritingSync extends Component
 {
@@ -49,6 +50,15 @@ class UnderwritingSync extends Component
 
             $item->status=2;
             $item->save();  
+
+            // find distribution channel
+            $channel = DistributionChannel::where(['name'=>$item->channel_name,'type'=>$item->channel_type])->first();
+            if(!$channel){
+                $channel = new DistributionChannel();
+                $channel->name = $item->channel_name;
+                $channel->type = $item->channel_type;
+                $channel->save();
+            }
 
             $policy = Policy::where('no_polis',$item->no_polis)->first(); 
             if(!$policy){
