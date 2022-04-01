@@ -105,9 +105,8 @@
                                             <td>{{$item->tgl_jatuh_tempo}}</td>
                                             <td>{{$item->tgl_lunas}}</td>
                                             <td>@livewire('konven.editable',['data'=>$item,'field'=>'line_bussines'],key((int)$item->id+10))</td>
-                                            {{-- <td>{{$item->line_bussines}}</td> --}}
-                                            <td>{{$item->channel_type}}</td>
-                                            <td>{{$item->channel_name}}</td>
+                                            <td>@livewire('konven.editable',['data'=>$item,'field'=>'channel_type'],key((int)$item->id+11))</td>
+                                            <td>@livewire('konven.editable',['data'=>$item,'field'=>'channel_name'],key((int)$item->id+12))</td>
                                         </tr>
                                         @php($num++)
                                         @endforeach

@@ -12,10 +12,15 @@ class UploadUnderwriting extends Component
 {
     use WithFileUploads;
 
-    public $file;
+    public $file,$uploaded_date;
     public function render()
     {
         return view('livewire.konven.upload-underwriting');
+    }
+
+    public function mount()
+    {
+        $this->uploaded_date = date('Y-m-d');
     }
 
     public function save()
@@ -120,6 +125,7 @@ class UploadUnderwriting extends Component
                 $data->line_bussines = $line_bussines;
                 $data->channel_type = $channel_type;
                 $data->channel_name = $channel_name;
+                $data->uploaded_date = $this->uploaded_date;
                 $data->save(); 
             }
         }

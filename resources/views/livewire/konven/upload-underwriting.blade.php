@@ -8,6 +8,10 @@
     </div>
     <div class="modal-body">
         <div class="form-group">
+            <label>Uploaded Date</label>
+            <input type="date" class="form-control" wire:model="uploaded_date" />
+        </div>
+        <div class="form-group">
             <label>File</label>
             <input type="file" class="form-control" name="file" wire:model="file" />
             @error('file')

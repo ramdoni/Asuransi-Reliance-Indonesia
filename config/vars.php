@@ -13,5 +13,6 @@
     */
 
 return [
-    'distribution_type' =>['Broker'],
+    'distribution_type' =>['CROSS SELLING','AGENCY','BROKER ASURANSI','CO INSURANCE','BANCASSURANCE','DIRECT MARKETING'],
+    'line_bussines' =>['DWIGUNA','JANGKAWARSA','EKAWARSA','KECELAKAAN'],
 ];
