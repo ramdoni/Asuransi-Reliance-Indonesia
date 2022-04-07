@@ -49,32 +49,6 @@ class Detail extends Component
         $this->emit('init-form');
     }
 
-    public function save()
-    {
-        $this->validate([
-            'type'=>'required',
-            // 'to_bank_account_id'=>'required',
-            'amount'=>'required',     
-            'payment_date'=>'required'       
-        ]);
-        
-        $this->generate_no_voucher = $this->type.str_pad((BankBook::count()+1),8, '0', STR_PAD_LEFT);
-
-        $data = new BankBook();
-        $data->from_bank_id = $this->data->id;
-        $data->type = $this->type;
-        // $data->to_bank_id = $this->to_bank_account_id;
-        $data->amount = str_replace(',','',$this->amount);
-        $data->note = $this->note;
-        $data->no_voucher = $this->generate_no_voucher;
-        $data->payment_date = $this->payment_date;
-        $data->save();
-        
-        $this->generate_no_voucher = $this->type.str_pad((BankBook::count()+1),8, '0', STR_PAD_LEFT);
-
-        $this->reset(['type','amount','note']);
-    }
-
     public function delete(BankBook $id)
     {
         $id->delete();

@@ -27,42 +27,7 @@
         <span class="alert alert-secondary" title="Balance">Balance : {{format_idr($total)}}</span> 
     </div>
     <div class="table-responsive">
-        <table class="table table-striped m-b-0 c_list mt-3">
-            <thead>
-                <tr x-show="insert" style="background:#d4edda">
-                    <td></td>
-                    <td>{{$generate_no_voucher}}</td>
-                    <td>{{date('d-M-Y')}}</td>
-                    <td>
-                        <input type="date" class="form-control" wire:model="payment_date" />
-                        @error('payment_date')
-                            <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                        @enderror
-                    </td>
-                    <td>
-                        <select class="form-control" wire:model="type">
-                            <option value=""> -- Type -- </option>
-                            <option value="R">R - Receivable</option>
-                            <option value="P">P - Payable</option>
-                        </select>
-                        @error('type')
-                            <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                        @enderror
-                    </td>
-                    <td>
-                        <input type="text" class="form-control text-right" wire:model="amount" placeholder="Amount" wire:keydown.enter="save" />
-                        @error('amount')
-                            <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                        @enderror
-                    </td>
-                    <td><input type="text" class="form-control" wire:model="note" placeholder="Note" wire:keydown.enter="save" /></td>
-                    <td>
-                        <a href="javascript:void(0)" wire:click="save" class="text-success"><i class="fa fa-save"></i></a>
-                        <a href="javascript:void(0)" @click="insert = false" class="text-danger"><i class="fa fa-times"></i></a>
-                    </td>
-                </tr>
-            </thead>
-        </table>
+        @livewire('bank-book.insert',['data'=>$data])
         <br />
         <table class="table table-striped m-b-0 c_list">
             <thead>
