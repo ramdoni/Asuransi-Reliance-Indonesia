@@ -87,7 +87,7 @@
                         <td>{{$item->no_voucher}}</td>
                         <td>{{date('d-m-Y',strtotime($item->created_at))}}</td>
                         <td>
-                            @livewire('bank-book.editable',['data'=> $item,'field'=>'payment_date'],key($item->id+1))
+                            @livewire('bank-book.editable',['data'=> $item,'field'=>'payment_date'],key($item->id.time()))
                         </td>
                         <td>{{$item->date_pairing?calculate_aging($item->date_pairing):calculate_aging(date('Y-m-d',strtotime($item->created_at)))}}</td>
                         <td class="text-center">
@@ -97,9 +97,9 @@
                                 <span class="badge badge-success">Settle</span>
                             @endif
                         </td>
-                        <td class="text-center">@livewire('bank-book.editable',['data'=> $item,'field'=>'type'],key($item->id+2))</td>
-                        <td>@livewire('bank-book.editable',['data'=> $item,'field'=>'amount'],key($data->id+$item->id+3))</td>
-                        <td>@livewire('bank-book.editable',['data'=> $item,'field'=>'note'],key($data->id+$item->id+4))</td>
+                        <td class="text-center">@livewire('bank-book.editable',['data'=> $item,'field'=>'type'],key($item->id.time()))</td>
+                        <td>@livewire('bank-book.editable',['data'=> $item,'field'=>'amount'],key($data->id+$item->id.time()))</td>
+                        <td>@livewire('bank-book.editable',['data'=> $item,'field'=>'note'],key($data->id+$item->id.time()))</td>
                         <td>
                             @if($item->status==0)
                                 <span wire:loading wire:target="delete({{$item->id}})">

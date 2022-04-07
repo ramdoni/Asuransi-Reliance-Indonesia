@@ -7,7 +7,7 @@
                 {{is_numeric($data->$field)?format_idr($data->$field):$data->$field}}
             @endif
         @endif
-        <!-- <span wire:loading wire:target="save">
+        <span wire:loading wire:target="save">
             <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
             <span class="sr-only">{{ __('Loading...') }}</span>
         </span>
@@ -31,6 +31,6 @@
                     <a href="javascript:void(0)" class="text-danger" wire:click="set_edit(false)"><i class="fa fa-times"></i></a>
                 </div>
             </div>
-        @endif -->
+        @endif
     @endif
 </div>
