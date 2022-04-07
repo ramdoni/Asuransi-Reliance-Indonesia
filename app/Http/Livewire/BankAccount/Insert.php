@@ -34,6 +34,7 @@ class Insert extends Component
         $data->open_balance = $this->open_balance;
         $data->code = $this->code;
         $data->coa_id = $this->coa_id;
+        $data->is_client = 0;
         $data->save();
         session()->flash('message-success',__('Data saved successfully'));
         \LogActivity::add("Bank Account Submit {$data->id}");

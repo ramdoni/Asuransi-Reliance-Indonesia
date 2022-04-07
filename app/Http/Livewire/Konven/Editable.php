@@ -21,6 +21,7 @@ class Editable extends Component
 
     public function save()
     {
+        if($this->data->status==3) $this->data->status=1; // jika status failed rubah jadi draft dan bisa kembali dilakukan syncron
         $field = $this->field;
         $this->data->$field = $this->value;
         $this->data->save();

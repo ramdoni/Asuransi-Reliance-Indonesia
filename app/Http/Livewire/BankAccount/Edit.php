@@ -26,7 +26,7 @@ class Edit extends Component
     public function save()
     {
         $this->validate([
-            'code'=>'required',
+            // 'code'=>'required',
             'owner'=>'required',
             'bank'=>'required',
             'no_rekening'=>'required',

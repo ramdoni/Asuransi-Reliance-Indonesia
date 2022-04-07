@@ -40,7 +40,7 @@ class Index extends Component
     public function save()
     {
         $this->validate([
-            'code'=>'required',
+            // 'code'=>'required',
             'owner'=>'required',
             'bank'=>'required',
             'no_rekening'=>'required',
@@ -57,6 +57,7 @@ class Index extends Component
         $data->code = $this->code;
         $data->coa_id = $this->coa_id;
         $data->active_date = $this->active_date;
+        $data->status = 1;
         $data->save();
         $this->emit('message-success',__('Data saved successfully'));
         \LogActivity::add("Bank Account Submit {$data->id}");

@@ -63,7 +63,7 @@ class Detail extends Component
         $data = new BankBook();
         $data->from_bank_id = $this->data->id;
         $data->type = $this->type;
-        $data->to_bank_id = $this->to_bank_account_id;
+        // $data->to_bank_id = $this->to_bank_account_id;
         $data->amount = str_replace(',','',$this->amount);
         $data->note = $this->note;
         $data->no_voucher = $this->generate_no_voucher;
@@ -72,13 +72,12 @@ class Detail extends Component
         
         $this->generate_no_voucher = $this->type.str_pad((BankBook::count()+1),8, '0', STR_PAD_LEFT);
 
-        $this->reset(['type','to_bank_account_id','amount','note']);
+        $this->reset(['type','amount','note']);
     }
 
     public function delete(BankBook $id)
     {
         $id->delete();
-        ;
         $this->emit('message-success','Data deleted successfully');
     }
 }

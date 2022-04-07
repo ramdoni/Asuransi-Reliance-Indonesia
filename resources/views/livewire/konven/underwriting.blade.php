@@ -39,6 +39,7 @@
                                         <tr>
                                             <th>No</th>
                                             <th>Status</th>     
+                                            <th>Uploaded Date</th>     
                                             <th>No Polis</th>
                                             <th>Pemegang Polis</th>
                                             <th>Premi Gross</th>
@@ -81,6 +82,7 @@
                                                     <span class="badge text-danger" title="{{$item->note_invalid}}">Failed</span>
                                                 @endif
                                             </td>
+                                            <td>{{$item->uploaded_date? date('d-M-Y',strtotime($item->uploaded_date)) : '-'}}</td>
                                             <td>{{$item->no_polis}}</td>
                                             <td>{{$item->pemegang_polis}}</td>
                                             {{-- <td>{{$item->alamat}}</td> --}}
