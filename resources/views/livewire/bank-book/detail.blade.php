@@ -39,6 +39,7 @@
                     <th>Aging</th>
                     <th class="text-center">Status</th>
                     <th class="text-center">Type</th>
+                    <th class="text-center">Propose</th>
                     <th>Amount</th>
                     <th>Note</th>
                     <th></th>
@@ -57,12 +58,15 @@
                         <td>{{$item->date_pairing?calculate_aging($item->date_pairing):calculate_aging(date('Y-m-d',strtotime($item->created_at)))}}</td>
                         <td class="text-center">
                             @if($item->status==0)
-                                <span class="badge badge-warning">Unidentity</span>
+                                <span class="badge badge-warning">Open</span>
+                            @elseif($item->status==2)
+                                <span class="badge badge-danger">On Hold</span>
                             @else
-                                <span class="badge badge-success">Settle</span>
+                                <span class="badge badge-success">Post</span>
                             @endif
                         </td>
                         <td class="text-center">@livewire('bank-book.editable',['data'=> $item,'field'=>'type'],key($item->id.time().'2'))</td>
+                        <td class="text-center">{{ $item->propose }}</td>
                         <td>@livewire('bank-book.editable',['data'=> $item,'field'=>'amount'],key($data->id+$item->id.time().'3'))</td>
                         <td>@livewire('bank-book.editable',['data'=> $item,'field'=>'note'],key($data->id+$item->id.time().'4'))</td>
                         <td>

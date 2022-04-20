@@ -1,4 +1,7 @@
 <div>
+    @error('bank_code')
+        <ul class="parsley-errors-list filled pt-2" id="parsley-id-29"><li class="parsley-required">Bank Code harus diisi, edit <a href="{{route('bank-account-company.edit',['id'=>$data->id])}}">disini</a></li></ul>
+    @enderror
     <table class="table table-striped m-b-0 c_list mt-3">
         <thead>
             <tr x-show="insert" style="background:#d4edda">
@@ -18,6 +21,16 @@
                         <option value="P">P - Payable</option>
                     </select>
                     @error('type')
+                        <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                    @enderror
+                </td>
+                <td>
+                    <select class="form-control" wire:model="propose">
+                        <option value=""> -- Propose -- </option>
+                        <option value="T">T - Teknik</option>
+                        <option value="N">N - Non Teknik</option>
+                    </select>
+                    @error('propose')
                         <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                     @enderror
                 </td>
