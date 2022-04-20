@@ -29,6 +29,8 @@ class Editable extends Component
         $this->data->$field = $this->value;
         $this->data->save();
 
+        \LogActivity::add("Bank Book - Edit {$this->data->id}");
+
         $this->edit=false;
         $this->emit('message-success','data saved successfully');
     }

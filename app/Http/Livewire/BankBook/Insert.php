@@ -43,5 +43,7 @@ class Insert extends Component
         $this->generate_no_voucher = $this->type.str_pad((BankBook::count()+1),8, '0', STR_PAD_LEFT);
         $this->emit('refresh');
         $this->reset(['type','amount','note']);
+
+        \LogActivity::add("Bank Book - Insert #{$data->id}");
     }
 }

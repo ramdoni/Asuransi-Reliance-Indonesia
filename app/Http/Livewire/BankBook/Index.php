@@ -10,4 +10,9 @@ class Index extends Component
     {
         return view('livewire.bank-book.index');
     }
+
+    public function mount()
+    {
+        \LogActivity::add("Bank Book");
+    }
 }
