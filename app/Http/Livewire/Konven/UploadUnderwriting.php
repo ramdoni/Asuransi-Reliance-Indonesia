@@ -39,6 +39,7 @@ class UploadUnderwriting extends Component
         $total_double = 0;
         $countLimit = 1;
         $total_success = 0;
+        $total_failed = 0;
         if(count($sheetData) > 0){
             
             KonvenUnderwriting::where('is_temp',1)->delete(); // delete data temp
@@ -51,26 +52,34 @@ class UploadUnderwriting extends Component
                 $pemegang_polis = $i[1];
                 $alamat = $i[2];
                 $cabang = $i[3];
-                $premi_gross = round($i[4]);
-                $extra_premi = round($i[5]);
-                $discount = round($i[6]);
-                $jumlah_discount = round($i[7]);
-                $handling_fee = round($i[8]);
-                $jumlah_fee = round($i[9]);
-                $jumlah_pph = round($i[10]);
-                $jumlah_ppn = round($i[11]);
-                $biaya_polis = round($i[12]);
-                $biaya_sertifikat = round($i[13]);
-                $extsertifikat = round($i[14]);
-                $premi_netto = round($i[15]);
-                $tgl_invoice = $i[16]?@\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[16]):'';
-                $no_kwitansi_debit_note = $i[17];
-                $total_gross_kwitansi = round($i[18]);
-                $tgl_jatuh_tempo = $i[19]?@\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[19]):'';
-                $tgl_lunas = $i[20]?@\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[20]):'';
-                $line_bussines = $i[21];
-                $channel_type = $i[22];
-                $channel_name = $i[23];
+                $tanggal_produksi = $i[4];
+                $premi_gross = round($i[5]);
+                $extra_premi = round($i[6]);
+                $discount = round($i[7]);
+                $jumlah_discount = round($i[8]);
+                $handling_fee = round($i[9]);
+                $jumlah_fee = round($i[10]);
+                $jumlah_pph = round($i[11]);
+                $jumlah_ppn = round($i[12]);
+                $biaya_polis = round($i[13]);
+                $biaya_sertifikat = round($i[14]);
+                $extsertifikat = round($i[15]);
+                $premi_netto = round($i[16]);
+                $tgl_invoice = $i[17]?@\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[17]):'';
+                $no_kwitansi_debit_note = $i[18];
+                $total_gross_kwitansi = round($i[19]);
+                $tgl_jatuh_tempo = $i[20]?@\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[20]):'';
+                $tgl_lunas = $i[21]?@\PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($i[21]):'';
+                $line_bussines = $i[22];
+                $product_code = $i[23];
+                $client_code = $i[24];
+                $channel_type = $i[25];
+                $channel_name = $i[26];
+
+                if($line_bussines=="") {
+                    $total_failed++;
+                    continue;
+                }
                 if(empty($no_polis))continue; // skip data
                 // cek no polis
                 $polis = Policy::where('no_polis',$no_polis)->first();
@@ -104,6 +113,7 @@ class UploadUnderwriting extends Component
                 $data->pemegang_polis = $pemegang_polis;
                 $data->alamat = $alamat;
                 $data->cabang = $cabang;
+                $data->tanggal_produksi = $tanggal_produksi;
                 $data->premi_gross = $premi_gross;
                 $data->extra_premi = $extra_premi;
                 $data->discount = $discount;
@@ -123,6 +133,8 @@ class UploadUnderwriting extends Component
                 if($tgl_lunas) $data->tgl_lunas = date('Y-m-d',$tgl_lunas);
                 $data->status = 1;
                 $data->line_bussines = $line_bussines;
+                $data->product_code = $product_code;
+                $data->client_code = $client_code;
                 $data->channel_type = $channel_type;
                 $data->channel_name = $channel_name;
                 $data->uploaded_date = $this->uploaded_date;
@@ -133,7 +145,7 @@ class UploadUnderwriting extends Component
         if($total_double>0)
             $this->emit('emit-check-data');
         else{
-            session()->flash('message-success','Upload success, Success Upload <strong>'. $total_success.'</strong>, Double Data :<strong>'. $total_double.'</strong>');   
+            session()->flash('message-success','Upload success, Success Upload '. $total_success.', Double Data :'. $total_double.', Failed : '. $total_failed);   
             return redirect()->route('konven.underwriting');
         }
     }
