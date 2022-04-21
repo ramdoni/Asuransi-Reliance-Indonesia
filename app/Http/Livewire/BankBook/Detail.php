@@ -51,6 +51,8 @@ class Detail extends Component
 
     public function delete(BankBook $id)
     {
+        \LogActivity::add("Bank Book - Delete #{$id->id}");
+
         $id->delete();
         $this->emit('message-success','Data deleted successfully');
     }
