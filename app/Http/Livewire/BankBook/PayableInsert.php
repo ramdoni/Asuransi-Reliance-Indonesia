@@ -79,6 +79,11 @@ class PayableInsert extends Component
         $this->emit('select-type');
     }
 
+    public function onhold()
+    {
+        
+    }
+
     public function save()
     {
         if($this->total_payment != $this->total_voucher){ 
