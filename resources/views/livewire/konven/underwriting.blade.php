@@ -62,6 +62,8 @@
                                             <th>Tgl Jatuh Tempo</th>
                                             <th>Tgl Lunas</th>
                                             <th>Line Bussines</th>
+                                            <th>Product Code</th>
+                                            <th>Client Code</th>
                                             <th>Channel Type</th>
                                             <th>Channel Name</th>
                                         </tr>
@@ -107,6 +109,8 @@
                                             <td>{{$item->tgl_jatuh_tempo}}</td>
                                             <td>{{$item->tgl_lunas}}</td>
                                             <td>@livewire('konven.editable',['data'=>$item,'field'=>'line_bussines'],key((int)$item->id+10))</td>
+                                            <td>{{$item->product_code}}</td>
+                                            <td>{{$item->client_code}}</td>
                                             <td>@livewire('konven.editable',['data'=>$item,'field'=>'channel_type'],key((int)$item->id+11))</td>
                                             <td>@livewire('konven.editable',['data'=>$item,'field'=>'channel_name'],key((int)$item->id+12))</td>
                                         </tr>
