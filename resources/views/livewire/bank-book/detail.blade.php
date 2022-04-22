@@ -7,10 +7,14 @@
                 <option value="R">R - Receivable</option>
             </select>
         </div>
-        <div class="col-md-1">
+        <div class="col-md-1 px-0">
             <input type="number" class="form-control" wire:model="filter_amount" placeholder="Amount" />
         </div>
+        <div class="col-md-1 pr-0">
+            <input type="text" class="form-control date_range_{{$data->id}}" placeholder="Date" />
+        </div>
         <div class="col-md-9">
+            <a href="javascript:void(0)" class="mr-2" title="Reset filter" wire:click="reset_filter"><i class="fa fa-refresh"></i> Reset filter</a>
             <a href="javascript:void(0)" class="btn btn-info" @click="insert = true"><i class="fa fa-plus"></i></a>
             <span wire:loading wire:target="save">
                 <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
@@ -24,7 +28,7 @@
         <span class="alert alert-info" title="Opening Balance">Opening Balance : {{format_idr($opening_balance)}}</span>
         <span class="alert alert-info" title="Payable">Payable : {{format_idr($total_payable)}}</span>
         <span class="alert alert-success" title="Receivable">Receivable : {{format_idr($total_receivable)}}</span>
-        <span class="alert alert-secondary" title="Balance">Balance : {{format_idr($total)}}</span> 
+        <span class="alert alert-secondary" title="Balance">Balance : {{format_idr($opening_balance - $total_payable + $total_receivable)}}</span> 
     </div>
     <div class="table-responsive">
         @livewire('bank-book.insert',['data'=>$data])
@@ -85,4 +89,24 @@
         </table>
         {{$lists->links()}}
     </div>
+    @push('after-scripts')
+        <script type="text/javascript" src="{{ asset('assets/vendor/daterange/moment.min.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('assets/vendor/daterange/daterangepicker.js') }}"></script>
+        <link rel="stylesheet" type="text/css" href="{{ asset('assets/vendor/daterange/daterangepicker.css') }}" />
+        <script>
+            Livewire.on('update-url',(url)=>{
+                setTimeout(function(){
+                    window.history.pushState('', '', url);
+                });
+            })
+            
+            $('.date_range_{{$data->id}}').daterangepicker({
+                opens: 'left'
+            }, function(start, end, label) {
+                @this.set("date_from", start.format('YYYY-MM-DD'));
+                @this.set("date_to", end.format('YYYY-MM-DD'));
+            });
+        </script>
+    @endpush
+
 </div>
