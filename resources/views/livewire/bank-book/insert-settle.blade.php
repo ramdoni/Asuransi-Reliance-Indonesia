@@ -67,7 +67,9 @@
                                             <option>Recovery Claim</option>
                                             <option>Recovery Refund</option>
                                             <option>Error Suspense Account</option>
-                                            <option>Premium Deposit</option>
+                                            @if($this->bank_book_id->count()==1)
+                                                <option>Premium Deposit</option>
+                                            @endif
                                         </select>
                                         @error('type.'.$k)
                                             <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
@@ -143,7 +145,10 @@
                     <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
                     <span class="sr-only">{{ __('Loading...') }}</span>
                 </span>
-                <a href="#" data-dismiss="modal"><i class="fa fa-times"></i> Cancel</a>
+                <a href="#" data-dismiss="modal"><i class="fa fa-times"></i> Close</a>
+                @if($total_payment!=0)
+                    <a href="#" wire:click="onhold" class="btn btn-warning"><i class="fa fa-bookmark"></i> On Hold</a>
+                @endif
                 @if($total_voucher==$total_payment)
                     <button type="submit" class="btn btn-primary btn-sm ml-4"><i class="fa fa-save"></i> Submit</button>
                 @endif

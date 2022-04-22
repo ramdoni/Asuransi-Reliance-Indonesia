@@ -75,9 +75,11 @@
                                     </td>
                                     <td class="text-center">
                                         @if($item->status==0)
-                                            <span class="badge badge-warning">Unidentity</span>
+                                            <span class="badge badge-warning">Open</span>
+                                        @elseif($item->status==2)
+                                            <span class="badge badge-danger">On Hold</span>
                                         @else
-                                            <a href="javascript:void(0)" data-toggle="modal" wire:click="$emit('setid',{{$item->id}})" data-target="#modal_detail_transaction" class="badge badge-success">Settle</a>
+                                            <a href="javascript:void(0)" data-toggle="modal" wire:click="$emit('setid',{{$item->id}})" data-target="#modal_detail_transaction" class="badge badge-success">Post</a>
                                         @endif
                                     </td>
                                     <td>{{$item->no_voucher}}</td>

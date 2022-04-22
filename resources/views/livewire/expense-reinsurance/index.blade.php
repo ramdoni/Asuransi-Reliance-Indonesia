@@ -96,7 +96,8 @@
                         @foreach($data as $k => $item)
                             <tr>
                                 <td style="width: 50px;">{{$data->firstItem()+$k}}</td>
-                                <td><a href="{{route('expense.reinsurance-premium.detail',['id'=>$item->id])}}">{!!status_expense($item->status)!!}</a></td>
+                                {{-- <td><a href="{{route('expense.reinsurance-premium.detail',['id'=>$item->id])}}">{!!status_expense($item->status)!!}</a></td> --}}
+                                <td>{!!status_expense($item->status)!!}</td>
                                 <td>
                                     @if(isset($item->bank_books))
                                         @foreach($item->bank_books as $k => $bank_book)

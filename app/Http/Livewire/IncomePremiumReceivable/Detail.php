@@ -17,6 +17,7 @@ use App\Models\BankAccount;
 use App\Models\BankAccountBalance;
 use App\Models\BankBook;
 use App\Models\BankBookPairing;
+use App\Models\BankBookAdjustment;
 
 class Detail extends Component
 {
@@ -238,6 +239,16 @@ class Detail extends Component
 
                     $income_settle->amount = $income_titipan_premi->nominal;
                     $temp_payment_amount -= $income_titipan_premi->nominal;
+                }
+
+                if(isset($this->payment_rows[$k]->bank_book_id)){
+                    // BankBookAdjustment
+                    $adjust = new BankBookAdjustment();
+                    $adjust->bank_book_id = $this->payment_rows[$k]->bank_book_id;
+                    $adjust->transaction_id = $this->data->id;
+                    $adjust->amount = $this->payment_amounts[$k];
+                    $adjust->voucher_number = "A".str_pad((BankBookAdjustment::count()+1),8, '0', STR_PAD_LEFT);
+                    $adjust->save();
                 }
             }
 

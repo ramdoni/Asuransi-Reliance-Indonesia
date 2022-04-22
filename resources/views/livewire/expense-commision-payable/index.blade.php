@@ -194,7 +194,7 @@
                             <tr>
                                 <td style="width: 50px;">{{$data->firstItem()+$k}}</td>
                                 <td>
-                                    <a href="{{route('expense.commision-payable.detail',['id'=>$item->id])}}">{!!status_expense($item->status)!!}</a>
+                                    {!!status_expense($item->status)!!}
                                     @if($item->status==4)
                                     <a href="javascript:;" class="text-danger" wire:click="delete({{$item->id}})"><i class="fa fa-trash"></i></a>
                                     @endif

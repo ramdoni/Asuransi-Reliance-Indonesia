@@ -100,7 +100,11 @@
                                         </a>
                                     </td>
                                     <td>
-                                        @if(isset($item->bank_books_direct))
+                                        @if(isset($item->bank_book->no_voucher))
+                                            <a href="javascript:void(0)" wire:click="$emit('set-voucher',{{$item->id}})" data-toggle="modal" data-target="#modal_detail_voucher">{{$item->bank_book->no_voucher}}</a>
+                                        @endif
+
+                                        {{-- @if(isset($item->bank_books_direct))
                                             @foreach($item->bank_books_direct as $k => $bank_book)
                                                 @if($k>0) @continue @endif
                                                 @if($bank_book->no_voucher) 
@@ -108,7 +112,7 @@
                                                 @endif
                                             @endforeach
                                             @if($item->bank_books->count()>1) <a href="javascript:void(0)" wire:click="$emit('set-voucher',{{$item->id}})" data-toggle="modal" data-target="#modal_detail_voucher"><i class="fa fa-plus"></i></a> @endif
-                                        @endif
+                                        @endif --}}
                                     </td>
                                     <td>{{ date('d M Y', strtotime($item->created_at)) }}</td>
                                     <td>{{ $item->description ? $item->description : '-' }}</td>

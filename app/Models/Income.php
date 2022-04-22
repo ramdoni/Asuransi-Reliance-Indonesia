@@ -20,6 +20,11 @@ class Income extends Model
     {
         return $this->hasMany(BankBook::class,'bank_book_transaction_id','bank_book_transaction_id');
     }
+    
+    public function bank_book()
+    {
+        return $this->hasOne(BankBook::class,'id','bank_book_id');
+    }
 
     public function bank_books()
     {
