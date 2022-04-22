@@ -35,6 +35,7 @@
         "platform": {
             "php": "7.3"
         },
+        "platform-check": false,
         "allow-plugins": {
             "composer/package-versions-deprecated": true
         }

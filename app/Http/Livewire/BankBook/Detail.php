@@ -12,7 +12,7 @@ class Detail extends Component
 
     public $active,$data,$generate_no_voucher;
     public $type="P",$to_bank_account_id,$amount,$note,$opening_balance=0,$status;
-    public $filter_type,$filter_amount,$payment_date;
+    public $filter_type,$filter_amount,$payment_date,$date_from,$date_to;
     protected $listeners = ['refresh'=>'$refresh'];
     public function render()
     {
@@ -25,6 +25,13 @@ class Detail extends Component
                 $min = $this->filter_amount - (int)(0.1*$this->filter_amount);
                 $table->where('amount','<=',$max)->where('amount','>=',$min);
             });
+        if($this->date_from and $this->date_to) {
+            if($this->date_from == $this->date_to)
+                $data->whereDate('payment_date',$this->date_from);
+            else
+                $data->whereBetween('payment_date',[$this->date_from,$this->date_to]);
+        }
+
         $p = clone $data;
         $r = clone $data;
         $a = clone $data;
@@ -32,7 +39,19 @@ class Detail extends Component
         $settle = clone $data;
         $total = clone $data;
 
-        return view('livewire.bank-book.detail')->with(['lists'=>$data->paginate(100), 'total_unidentity'=>$u->where('status',0)->count(), 'total_settle'=>$settle->where('status',1)->count(), 'unidentity'=>$u->where('status',0)->sum('amount'),'total'=>$total->sum('amount'),'total_payable'=>$p->where('type','p')->sum('amount'),'total_receivable'=>$r->where('type','r')->sum('amount'),'total_a'=>$a->where('type','a')->sum('amount')]);
+        return view('livewire.bank-book.detail')->with(['lists'=>$data->paginate(100), 
+                                                        'total_unidentity'=>$u->where('status',0)->count(), 
+                                                        'total_settle'=>$settle->where('status',1)->count(), 
+                                                        'unidentity'=>$u->where('status',0)->sum('amount'),
+                                                        'total'=>$total->sum('amount'),
+                                                        'total_payable'=>$p->where('type','p')->sum('amount'),
+                                                        'total_receivable'=>$r->where('type','r')->sum('amount'),
+                                                        'total_a'=>$a->where('type','a')->sum('amount')]);
+    }
+
+    public function reset_filter()
+    {
+        $this->reset(['date_from','date_to','filter_type','status','filter_amount']);
     }
 
     public function mount($data,$active)
