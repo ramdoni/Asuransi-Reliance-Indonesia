@@ -7,13 +7,20 @@
                 <option value="R">R - Receivable</option>
             </select>
         </div>
+        <div class="col-md-1">
+            <select class="form-control" wire:model="filter_propose">
+                <option value=""> - Propose - </option>
+                <option value="T">T - Teknik</option>
+                <option value="N">N - Non Teknik</option>
+            </select>
+        </div>
         <div class="col-md-1 px-0">
             <input type="number" class="form-control" wire:model="filter_amount" placeholder="Amount" />
         </div>
         <div class="col-md-1 pr-0">
             <input type="text" class="form-control date_range_{{$data->id}}" placeholder="Date" />
         </div>
-        <div class="col-md-9">
+        <div class="col-md-2">
             <a href="javascript:void(0)" class="mr-2" title="Reset filter" wire:click="reset_filter"><i class="fa fa-refresh"></i> Reset filter</a>
             <a href="javascript:void(0)" class="btn btn-info" @click="insert = true"><i class="fa fa-plus"></i></a>
             <span wire:loading wire:target="save">
@@ -23,8 +30,8 @@
         </div>
     </div>
     <div class="mt-3">
-        <span class="alert alert-info" title="Unidentity" wire:click="$set('status',0)">Unidentity : {{$total_unidentity}}</span> 
-        <span class="alert alert-info" title="Unidentity" wire:click="$set('status',1)">Settle : {{$total_settle}}</span> 
+        <span class="alert alert-info" title="Unidentity" wire:click="$set('status',0)">Open : {{$total_unidentity}}</span> 
+        <span class="alert alert-info" title="Unidentity" wire:click="$set('status',1)">Post : {{$total_settle}}</span> 
         <span class="alert alert-info" title="Opening Balance">Opening Balance : {{format_idr($opening_balance)}}</span>
         <span class="alert alert-info" title="Payable">Payable : {{format_idr($total_payable)}}</span>
         <span class="alert alert-success" title="Receivable">Receivable : {{format_idr($total_receivable)}}</span>
@@ -59,7 +66,7 @@
                         <td>
                             @livewire('bank-book.editable',['data'=> $item,'field'=>'payment_date'],key($item->id.time().'1'))
                         </td>
-                        <td>{{$item->date_pairing?calculate_aging($item->date_pairing):calculate_aging(date('Y-m-d',strtotime($item->created_at)))}}</td>
+                        <td>{{$item->date_pairing?calculate_aging($item->date_pairing):calculate_aging(date('Y-m-d',strtotime($item->payment_date)))}}</td>
                         <td class="text-center">
                             @if($item->status==0)
                                 <span class="badge badge-warning">Open</span>

@@ -15,12 +15,16 @@
                                     <div class="from-group my-2">
                                         <select class="form-control" wire:model="filter_status">
                                             <option value=""> - Status - </option>
-                                            <option value="0">Unidentity</option>
-                                            <option value="1">Settle</option>
+                                            <option value="0">Open</option>
+                                            <option value="1">Post</option>
+                                            <option value="2">On Hold</option>
                                         </select>
                                     </div>
                                     <div class="from-group my-2">
                                         <input type="number" class="form-control" wire:model="filter_amount" placeholder="Amount" />
+                                    </div>
+                                    <div class="from-group my-2">
+                                        <input type="text" class="form-control select_payment_date" placeholder="Payment Date" />
                                     </div>
                                     <div class="from-group my-2" wire:ignore>
                                         <select class="form-control filter_from_bank">
@@ -75,9 +79,11 @@
                                     </td>
                                     <td class="text-center">
                                         @if($item->status==0)
-                                            <span class="badge badge-warning">Unidentity</span>
+                                            <span class="badge badge-warning">Open</span>
+                                        @elseif($item->status==1)
+                                            <a href="javascript:void(0)" data-toggle="modal" wire:click="$emit('setid',{{$item->id}})" data-target="#modal_detail_transaction" class="badge badge-success">Post</a>
                                         @else
-                                            <a href="javascript:void(0)" data-toggle="modal" wire:click="$emit('setid',{{$item->id}})" data-target="#modal_detail_transaction" class="badge badge-success">Settle</a>
+                                            <span class="badge badge-danger">On Hold</span>
                                         @endif
                                     </td>
                                     <td>{{$item->no_voucher}}</td>
@@ -100,6 +106,9 @@
 @push('after-scripts')
     <link rel="stylesheet" href="{{ asset('assets/vendor/select2/css/select2.min.css') }}"/>
     <script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('assets/vendor/daterange/moment.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('assets/vendor/daterange/daterangepicker.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/vendor/daterange/daterangepicker.css') }}" />
     <style>
         .select2-container .select2-selection--single {height:36px;padding-left:10px;}
         .select2-container .select2-selection--single .select2-selection__rendered{padding-top:3px;}
@@ -121,6 +130,12 @@
             $('.filter_from_bank').val(null).trigger('change');
             $('.filter_to_bank').val(null).trigger('change');
         })
+        $('.select_payment_date').daterangepicker({
+                opens: 'left'
+            }, function(start, end, label) {
+                @this.set("payment_date_from", start.format('YYYY-MM-DD'));
+                @this.set("payment_date_to", end.format('YYYY-MM-DD'));
+            });
     </script>
 @endpush
 <div wire:ignore.self class="modal fade" id="modal_detail_transaction" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

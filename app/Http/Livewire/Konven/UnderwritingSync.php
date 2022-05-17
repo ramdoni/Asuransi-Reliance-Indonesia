@@ -77,7 +77,13 @@ class UnderwritingSync extends Component
                 $commision_paid = 91;
                 $discount_coa = 60; 
                 $gross_premium = 75;
-            }elseif($item->line_bussines=='JANGKAWARSA'){
+            }elseif($item->line_bussines=='DWIGUNA KOMBINASI'){
+                $coa_premi_netto = 61;
+                $commision_paid = 92;
+                $discount_coa = 68; 
+                $gross_premium = 76;
+            }
+            elseif($item->line_bussines=='JANGKAWARSA'){
                 $coa_premi_netto = 58;
                 $commision_paid = 89;
                 $discount_coa = 65;
@@ -209,7 +215,7 @@ class UnderwritingSync extends Component
                     $new->transaction_table = 'konven_underwriting'; 
                     $new->coa_id = $coa->coa_id;
                     $new->no_voucher = generate_no_voucher($coa->coa_id,$item->id);
-                    $new->date_journal = date('Y-m-d');
+                    $new->date_journal = $item->tanggal_produksi;
                     $new->debit = $coa->debit;
                     $new->kredit = $coa->kredit;
                     $new->description = $coa->description;

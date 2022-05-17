@@ -9,7 +9,7 @@ use Livewire\WithPagination;
 class Detail extends Component
 {
     use WithPagination;
-
+    protected $paginationTheme = 'bootstrap';
     public $active,$data,$generate_no_voucher;
     public $type="P",$to_bank_account_id,$amount,$note,$opening_balance=0,$status;
     public $filter_type,$filter_amount,$payment_date,$date_from,$date_to;
