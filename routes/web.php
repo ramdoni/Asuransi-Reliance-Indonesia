@@ -82,7 +82,6 @@ Route::group(['middleware' => ['auth','access:1']], function(){
     Route::get('log-activity',App\Http\Livewire\LogActivity\Index::class)->name('log-activity');
     Route::get('migration',App\Http\Livewire\Migration\Index::class)->name('migration.index');
     Route::get('distribution-channel',App\Http\Livewire\DistributionChannel\Index::class)->name('distribution-channel.index');
-
     Route::get('konven-underwriting',App\Http\Livewire\Konven\Underwriting::class)->name('konven.underwriting');
     Route::get('konven-reinsurance',App\Http\Livewire\Konven\Reinsurance::class)->name('konven.reinsurance');
     Route::get('konven-claim',App\Http\Livewire\Konven\Claim::class)->name('konven.claim');

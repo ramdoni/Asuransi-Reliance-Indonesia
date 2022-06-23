@@ -176,7 +176,7 @@
 </div>
 @push('after-scripts')
     <script>
-        var select_reinsurance,select_commision,select_cancelation,select_refund,select_claim,select_others;,select_handling_fee
+        var select_reinsurance,select_commision,select_cancelation,select_refund,select_claim,select_others,select_handling_fee;
         Livewire.on('select-type',()=>{
             select_premi = $('.select-claim').select2({
                 placeholder: " -- select -- ",
@@ -188,7 +188,7 @@
                     return {
                         results:  $.map(data, function (item) {
                             return {
-                                text: item.reference_no + " - " + item.recipient+" - "+ item.nominal,
+                                text: (item.reference_no!=null?item.reference_no + " - " : '') +  item.recipient+" - "+ item.nominal,
                                 id: item.id
                             }
                         })

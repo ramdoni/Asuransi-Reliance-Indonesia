@@ -1,4 +1,4 @@
-<div class="tab-pane {{$active?'show active':''}}" wire:ignore.self id="bank-{{$data->id}}" x-data="{ insert:false }">
+<div>
     <div class="row mb-2">
         <div class="col-md-1">
             <select class="form-control" wire:model="filter_type">
@@ -24,6 +24,10 @@
             <a href="javascript:void(0)" class="mr-2" title="Reset filter" wire:click="reset_filter"><i class="fa fa-refresh"></i> Reset filter</a>
             <a href="javascript:void(0)" class="btn btn-info" @click="insert = true"><i class="fa fa-plus"></i></a>
             <span wire:loading wire:target="save">
+                <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                <span class="sr-only">{{ __('Loading...') }}</span>
+            </span>
+            <span wire:loading>
                 <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
                 <span class="sr-only">{{ __('Loading...') }}</span>
             </span>
@@ -77,7 +81,8 @@
                             @endif
                         </td>
                         <td class="text-center">@livewire('bank-book.editable',['data'=> $item,'field'=>'type'],key($item->id.time().'2'))</td>
-                        <td class="text-center">{{ $item->propose }}</td>
+                        <!-- <td class="text-center">{{ $item->propose }}</td> -->
+                        <td class="text-center">@livewire('bank-book.editable',['data'=> $item,'field'=>'propose'],key($item->id.time().'5'))</td>
                         <td>@livewire('bank-book.editable',['data'=> $item,'field'=>'amount'],key($data->id+$item->id.time().'3'))</td>
                         <td>@livewire('bank-book.editable',['data'=> $item,'field'=>'note'],key($data->id+$item->id.time().'4'))</td>
                         <td>

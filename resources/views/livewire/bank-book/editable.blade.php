@@ -23,6 +23,12 @@
                         <option value="R">R - Receivable</option>
                         <option value="P">P - Payable</option>
                     </select>
+                @elseif($field=='propose')
+                    <select class="form-control" wire:model="value">
+                        <option value=""> -- Propose -- </option>
+                        <option value="T">T - Teknik</option>
+                        <option value="N">N - Non Teknik</option>
+                    </select>
                 @else
                     <input type="{{$type_input}}" class="form-control {{$type_input=="number"?"text-right":""}}" wire:model="value" wire:keydown.enter="save" />
                 @endif
