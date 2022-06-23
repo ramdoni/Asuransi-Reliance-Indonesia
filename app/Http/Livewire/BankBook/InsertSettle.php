@@ -239,7 +239,7 @@ class InsertSettle extends Component
                 $journal = new Journal();
                 $journal->coa_id = 349; // Error Suspen Account;
                 $journal->no_voucher = $no_voucher;
-                $journal->date_journal = date('Y-m-d');
+                $journal->date_journal = $bank_book->payment_date;
                 $journal->kredit = $this->amounts[$k];
                 $journal->debit = 0;
                 $journal->saldo = 0;
@@ -250,32 +250,30 @@ class InsertSettle extends Component
             }
 
             if($item=='Premium Deposit'){
-                foreach($this->bank_book_id as $bank_book_id){
-                    $data = new Income();
-                    $data->reference_type = 'Titipan Premi';
-                    $data->nominal = $this->amounts[$k];
-                    $data->outstanding_balance = $this->amounts[$k];
-                    $data->description = $this->transaction_ids[$k];
-                    $data->user_id = \Auth::user()->id;
-                    $data->bank_book_transaction_id = $transaction->id;
-                    $data->bank_book_id = $bank_book_id->id;
-                    $data->save();
-                    
-                    $transaction_item->transaction_id = $data->id;
-                    
-                    # insert journal
-                    $journal = new Journal();
-                    $journal->coa_id = get_coa(406000); // premium suspend;
-                    $journal->no_voucher = $no_voucher;
-                    $journal->date_journal = date('Y-m-d');
-                    $journal->kredit = $this->amounts[$k];
-                    $journal->debit = 0;
-                    $journal->saldo = 0;
-                    $journal->description = $this->transaction_ids[$k];
-                    $journal->transaction_id = $data->id;
-                    $journal->transaction_table = 'income';
-                    $journal->save();
-                }
+                $data = new Income();
+                $data->reference_type = 'Titipan Premi';
+                $data->nominal = $this->amounts[$k];
+                $data->outstanding_balance = $this->amounts[$k];
+                $data->description = $this->transaction_ids[$k];
+                $data->user_id = \Auth::user()->id;
+                $data->bank_book_transaction_id = $transaction->id;
+                $data->save();
+                
+                $transaction_item->transaction_id = $data->id;
+
+                
+                # insert journal
+                $journal = new Journal();
+                $journal->coa_id = get_coa(406000); // premium suspend;
+                $journal->no_voucher = $no_voucher;
+                $journal->date_journal = $bank_book->payment_date;
+                $journal->kredit = $this->amounts[$k];
+                $journal->debit = 0;
+                $journal->saldo = 0;
+                $journal->description = $this->transaction_ids[$k];
+                $journal->transaction_id = $data->id;
+                $journal->transaction_table = 'income';
+                $journal->save();
             }
 
             $transaction_item->save();
@@ -285,7 +283,7 @@ class InsertSettle extends Component
             $journal = new Journal();
             $journal->coa_id = (isset($bank_book->from_bank->coa_id) ? $bank_book->from_bank->coa_id :24); // Cash in bank
             $journal->no_voucher = $no_voucher;
-            $journal->date_journal = date('Y-m-d');
+            $journal->date_journal = $bank_book->payment_date;
             $journal->debit = $bank_book->amount;
             $journal->kredit = 0;
             $journal->description = $bank_book->note;

@@ -77,7 +77,13 @@ class UnderwritingSync extends Component
                 $commision_paid = 91;
                 $discount_coa = 60; 
                 $gross_premium = 75;
-            }elseif($item->line_bussines=='JANGKAWARSA'){
+            }elseif($item->line_bussines=='DWIGUNA KOMBINASI'){
+                $coa_premi_netto = 61;
+                $commision_paid = 92;
+                $discount_coa = 68; 
+                $gross_premium = 76;
+            }
+            elseif($item->line_bussines=='JANGKAWARSA'){
                 $coa_premi_netto = 58;
                 $commision_paid = 89;
                 $discount_coa = 65;
