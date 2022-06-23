@@ -245,6 +245,11 @@
                                 </tbody>
                                 <tfoot>
                                     <tr style="background:#eee">
+                                        <th colspan="4" class="text-right">Outstanding</th>
+                                        <th class="text-right">{{format_idr($data->nominal - $total_payment_amount)}}</th>
+                                        <th></th>
+                                    </tr>
+                                    <tr style="background:#eee">
                                         <th colspan="4" class="text-right">Total</th>
                                         <th class="text-right">{{format_idr($total_payment_amount)}}</th>
                                         <th></th>

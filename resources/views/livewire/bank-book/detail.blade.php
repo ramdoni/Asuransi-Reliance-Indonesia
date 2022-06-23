@@ -95,6 +95,13 @@
                             @endif
                         </td>
                     </tr>
+                    @foreach($item->adjustment as $k_a => $adjust)
+                        <tr>
+                            <td>{{$num}}.{{$k_a}}</td>
+                            <td>{{$adjust->no_voucher}}</td>
+                            <td>{{date('d-M-Y',strtotime($adjust->created_at))}}</td>
+                        </tr>
+                    @endforeach
                     @php($num++)
                 @endforeach
             </tbody>

@@ -17,6 +17,7 @@ use App\Models\BankAccount;
 use App\Models\BankAccountBalance;
 use App\Models\BankBook;
 use App\Models\BankBookPairing;
+use App\Models\BankBookAdjustment;
 
 class Detail extends Component
 {
@@ -199,7 +200,9 @@ class Detail extends Component
         $this->data->save();
         
         $temp_payment_amount = $this->data->nominal;
+        
         foreach($this->payment_type as $k=>$i){
+            if($i==null) continue;
             // insert to income_settle
             $income_settle = new IncomeSettle();
             $income_settle->income_id = $this->data->id;
@@ -281,6 +284,7 @@ class Detail extends Component
         if($temp_payment_amount<=0) {
             $this->data->status=2;
             $this->payment_amount = $this->data->nominal;
+            $this->settle_date = date('Y-m-d');
             $this->data->save();
         } 
 
