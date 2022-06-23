@@ -77,7 +77,7 @@
                                 <a href="#" class="text-info dropdown-toggle icon-menu px-1" data-toggle="dropdown">Expense</a>
                                 <ul class="dropdown-menu user-menu menu-icon">
                                     <li><a href="{{ route('expense.reinsurance-premium') }}"> Reinsurance Premium</a></li>
-                                    <li><a href="{{ route('expense.commision-payable') }}"> Commision Payable</a></li>
+                                    {{-- <li><a href="{{ route('expense.commision-payable') }}"> Commision Payable</a></li> --}}
                                     <li><a href="{{ route('expense-cancelation') }}"> Cancelation</a></li>
                                     <li><a href="{{ route('expense-refund') }}"> Refund</a></li>
                                     <li><a href="{{ route('expense.claim') }}"> Claim Payable</a></li>
@@ -126,7 +126,7 @@
                             <!--Account Payable-->
                             <li><a href="{{route('bank-book.payable')}}" class="text-info px-1 icon-menu">Bank Book</a></li>
                             <li><a href="{{ route('expense.reinsurance-premium') }}" class="text-info px-1 icon-menu"> Reinsurance</a></li>
-                            <li><a href="{{ route('expense.commision-payable') }}" class="text-info px-1 icon-menu"> Commision</a></li>
+                            {{-- <li><a href="{{ route('expense.commision-payable') }}" class="text-info px-1 icon-menu"> Commision</a></li> --}}
                             <li><a href="{{ route('expense-cancelation') }}" class="text-info px-1 icon-menu"> Cancelation</a></li>
                             <li><a href="{{ route('expense-refund') }}" class="text-info px-1 icon-menu"> Refund</a></li>
                             <li><a href="{{ route('expense.claim') }}" class="text-info px-1 icon-menu"> Claim Payable</a></li>

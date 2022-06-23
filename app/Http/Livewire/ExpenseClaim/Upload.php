@@ -8,6 +8,7 @@ use App\Models\KonvenClaim;
 use App\Models\Expenses;
 use App\Models\ExpensePeserta;
 use App\Models\Policy;
+use App\Models\Journal;
 
 class Upload extends Component
 {
@@ -62,6 +63,38 @@ class Upload extends Component
                     if($expense){
                         $expense->payment_amount = $nilai_klaim;
                         $expense->save();
+
+                        if(isset($expense->uw->line_bussines)){
+                            // generate coa
+                            $no_voucher = generate_no_voucer_journal("AP");
+                            
+                            switch($expense->uw->line_bussines){
+                                case 'DWIGUNA':
+                                        $coa_credit = 157;
+                                        $coa_debit = 259;
+                                    break;
+                                case 'JANGKAWARSA':
+                                        $coa_credit = 155;
+                                        $coa_debit = 257;
+                                    break;
+                                case 'EKAWARSA':
+                                        $coa_credit = 156;
+                                        $coa_debit = 258;
+                                    break;
+                                case 'KECELAKAAN':
+                                        $coa_credit = 159;
+                                        $coa_debit = 261;
+                                    break;
+                                default:
+                                        $coa_credit = 160; //Claim Payable Other Tradisional
+                                        $coa_debit = 262; //Claim Payable Other Tradisional
+                                    break;
+                            }
+
+                            // journal
+                            Journal::insert(['coa_id'=>$coa_debit,'no_voucer'=>$no_voucher,'date_journal'=>date('Y-m-d'),'debit'=>$nilai_klaim,'transaction_id'=>$expense->id,'transaction_table'=>'expenses']);
+                            Journal::insert(['coa_id'=>$coa_credit,'no_voucer'=>$no_voucher,'date_journal'=>date('Y-m-d'),'kredit'=>$nilai_klaim,'transaction_id'=>$expense->id,'transaction_table'=>'expenses']);
+                        }
                     }
                 }else{
                     $claim = new KonvenClaim();
@@ -74,14 +107,6 @@ class Upload extends Component
                     $claim->reas = $reas;
                     $claim->status = $status;
                     $claim->save();
-                    
-                    // $policy = Policy::where('no_polis',$nomor_polis)->first();
-                    // if(!$policy){
-                    //     $policy = new Policy();
-                    //     $policy->no_polis = $nomor_polis;
-                    //     $policy->pemegang_polis = $nama_pemegang;
-                    //     $policy->save();
-                    // }
     
                     $data = new Expenses();
                     $data->policy_id = isset($policy->id) ? $policy->id : 0;
@@ -104,8 +129,6 @@ class Upload extends Component
                     $peserta->policy_id = isset($policy->id) ? $policy->id : 0;
                     $peserta->save();
                 }
-
-               
             }
         }
         

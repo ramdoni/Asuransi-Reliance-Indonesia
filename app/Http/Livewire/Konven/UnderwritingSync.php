@@ -209,7 +209,7 @@ class UnderwritingSync extends Component
                     $new->transaction_table = 'konven_underwriting'; 
                     $new->coa_id = $coa->coa_id;
                     $new->no_voucher = generate_no_voucher($coa->coa_id,$item->id);
-                    $new->date_journal = date('Y-m-d');
+                    $new->date_journal = $item->tanggal_produksi;
                     $new->debit = $coa->debit;
                     $new->kredit = $coa->kredit;
                     $new->description = $coa->description;

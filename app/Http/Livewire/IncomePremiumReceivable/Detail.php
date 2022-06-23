@@ -200,7 +200,9 @@ class Detail extends Component
         $this->data->save();
         
         $temp_payment_amount = $this->data->nominal;
+        
         foreach($this->payment_type as $k=>$i){
+            if($i==null) continue;
             // insert to income_settle
             $income_settle = new IncomeSettle();
             $income_settle->income_id = $this->data->id;
@@ -239,16 +241,6 @@ class Detail extends Component
 
                     $income_settle->amount = $income_titipan_premi->nominal;
                     $temp_payment_amount -= $income_titipan_premi->nominal;
-                }
-
-                if(isset($this->payment_rows[$k]->bank_book_id)){
-                    // BankBookAdjustment
-                    $adjust = new BankBookAdjustment();
-                    $adjust->bank_book_id = $this->payment_rows[$k]->bank_book_id;
-                    $adjust->transaction_id = $this->data->id;
-                    $adjust->amount = $this->payment_amounts[$k];
-                    $adjust->voucher_number = "A".str_pad((BankBookAdjustment::count()+1),8, '0', STR_PAD_LEFT);
-                    $adjust->save();
                 }
             }
 
@@ -292,6 +284,7 @@ class Detail extends Component
         if($temp_payment_amount<=0) {
             $this->data->status=2;
             $this->payment_amount = $this->data->nominal;
+            $this->settle_date = date('Y-m-d');
             $this->data->save();
         } 
 
