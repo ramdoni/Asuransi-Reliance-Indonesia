@@ -188,7 +188,7 @@
                     return {
                         results:  $.map(data, function (item) {
                             return {
-                                text: item.reference_no + " - " + item.recipient+" - "+ item.nominal,
+                                text: (item.reference_no!=null?item.reference_no + " - " : '') +  item.recipient+" - "+ item.nominal,
                                 id: item.id
                             }
                         })

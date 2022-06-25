@@ -7,14 +7,22 @@
                 <div class="tabbable">
                     <ul class="nav nav-tabs-new2">
                         @foreach(\App\Models\BankAccount::where('is_client',0)->where('status',1)->get() as $k=>$item)
-                            <li class="nav-item"><a class="nav-link {{$k==0?'active':''}}" data-toggle="tab" href="#bank-{{$item->id}}">{{ $item->bank }}</a></li>
+                            <li class="nav-item"><a class="nav-link {{$k==0?'active':''}}" wire:click="$set('set_active',{{$item->id}})" data-toggle="tab" href="#bank-{{$item->id}}">{{ $item->bank }}</a></li>
                         @endforeach
                     </ul>
                 </div>
                 <div class="px-0 tab-content">
                     @foreach(\App\Models\BankAccount::where('is_client',0)->where('status',1)->get() as $k=> $item)
-                        @livewire('bank-book.detail',['data'=>$item,'active'=>$k==0?true:false],key($item->id))
+                        <div class="tab-pane {{$set_active==$item->id?'show active':''}}" id="bank-{{$item->id}}" x-data="{ insert:false }">
+                            @if($set_active==$item->id)
+                                @livewire('bank-book.detail',['data'=>$item,'active'=>$k==0?true:false],key($item->id))
+                            @endif
+                        </div>
                     @endforeach
+                    <span wire:loading>
+                        <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                        <span class="sr-only">{{ __('Loading...') }}</span> Please wait...
+                    </span>
                 </div>
             </div>
         </div>

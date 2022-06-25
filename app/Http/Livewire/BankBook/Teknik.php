@@ -20,7 +20,7 @@ class Teknik extends Component
         if($this->filter_status!="") $data->where('status',$this->filter_status);
         if($this->filter_from_bank) $data->where('from_bank_id',$this->filter_from_bank);
         if($this->filter_to_bank) $data->where('to_bank_id',$this->filter_to_bank);
-        if($this->filter_propose) $data->where('propose',$this->propose);
+        if($this->filter_propose) $data->where('propose',$this->filter_propose);
         if($this->filter_amount) $data->where(function($table){
             $max = (int)(0.1*$this->filter_amount)+$this->filter_amount;
             $min = $this->filter_amount - (int)(0.1*$this->filter_amount);

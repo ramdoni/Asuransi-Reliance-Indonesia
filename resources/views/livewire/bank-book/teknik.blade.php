@@ -34,6 +34,13 @@
                                             @endforeach
                                         </select>
                                     </div>
+                                    <div class="form-group">
+                                        <select class="form-control" wire:model="filter_propose">
+                                            <option value=""> - Propose - </option>
+                                            <option value="T">T - Teknik</option>
+                                            <option value="N">N - Non Teknik</option>
+                                        </select>
+                                    </div>
                                     <a href="javascript:void(0)" wire:click="clear_filter()"><small>Clear filter</small></a>
                                 </form>
                             </div>
