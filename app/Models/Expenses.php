@@ -14,6 +14,11 @@ class Expenses extends Model
 {
     use HasFactory;
 
+    public function others_payment()
+    {
+        return $this->hasMany(ExpensePayment::class,'expense_id','id');
+    }
+
     public function bank_books()
     {
         return $this->hasMany(BankBookTransactionItem::class,'transaction_id','id');

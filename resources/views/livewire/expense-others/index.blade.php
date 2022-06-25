@@ -97,8 +97,9 @@
                                     <a href="javascript:;" class="text-danger" wire:click="delete({{$item->id}})"><i class="fa fa-trash"></i></a>
                                     @endif
                                 </td>
-                                <td>{{date('d M Y', strtotime($item->settle_date))}}</td>
+                                <td>{{$item->settle_date ? date('d M Y', strtotime($item->settle_date)) : '-'}}</td>
                                 <td>{{date('d M Y', strtotime($item->created_at))}}</td>
+                                <td>{{$item->reference_date ? date('d M Y', strtotime($item->reference_date)) : '-'}}</td>
                                 <td>{{$item->reference_no ? $item->reference_no : '-'}}</td>
                                 <td>{{$item->recipient ? $item->recipient : '-'}}</td>
                                 <td>{{$item->description}}</td>

@@ -176,7 +176,7 @@
 </div>
 @push('after-scripts')
     <script>
-        var select_reinsurance,select_commision,select_cancelation,select_refund,select_claim,select_others;,select_handling_fee
+        var select_reinsurance,select_commision,select_cancelation,select_refund,select_claim,select_others,select_handling_fee;
         Livewire.on('select-type',()=>{
             select_premi = $('.select-claim').select2({
                 placeholder: " -- select -- ",

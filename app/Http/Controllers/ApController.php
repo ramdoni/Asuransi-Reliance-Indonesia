@@ -9,7 +9,7 @@ class ApController extends Controller
 {
     public function others()
     {
-        $data = Expenses::orderBy('id','desc')->where(['is_others'=>1,'status'=>4]);
+        $data = Expenses::orderBy('id','desc')->where(['is_others'=>1,'status'=>1]);
         
         if(isset($_GET['term'])) $data = $data->where(function($table){
                                         $table->where('description','LIKE', "%{$_GET['term']}%")
