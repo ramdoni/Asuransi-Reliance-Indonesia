@@ -1,25 +1,10 @@
-@section('title', 'Others Expense')
-@section('parentPageTitle', 'Expense')
+@section('title', 'Payable')
+@section('parentPageTitle', "Transaction Number : {$data->reference_no}")
 <div class="clearfix row">
     <div class="col-md-7">
         <div class="card">
             <div class="body">
                 <form id="basic-form" method="post" wire:submit.prevent="save()">
-                    <table class="table">
-                        <tr>
-                            <th>{{ __('Recipient') }}</th>
-                            <td>{{$data->recipient}}</td>
-                            <th>{{ __('Reference Date') }}</th>
-                            <td>{{$data->reference_date ? date('d F Y',strtotime($data->reference_date)) : '-'}}</td>
-                        </tr>
-                        <tr>
-                            <th>{{ __('Reference No') }}</th>
-                            <td>{{$data->reference_no}}</td>
-                            <th>{{ __('Description') }}</th>
-                            <td>{{$data->description}}</td>
-                        </tr>
-                    </table>
-                    <hr />
                     @if(isset($data->others_payment))
                         <table class="table">
                             <thead>

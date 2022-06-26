@@ -8,6 +8,7 @@ use App\Models\BankBookPairing;
 use App\Models\IncomeSettle;
 use App\Models\BankBookTransactionItem;
 use App\Models\BankBook;
+use App\Models\IncomePayment;
 
 class Income extends Model
 {
@@ -15,6 +16,11 @@ class Income extends Model
     protected $guarded = [];
 
     protected $table="income";
+
+    public function others_payment()
+    {
+        return $this->hasMany(IncomePayment::class,'income_id','id');
+    }
     
     public function bank_books_direct()
     {

@@ -67,6 +67,7 @@
                                             <option>Recovery Claim</option>
                                             <option>Recovery Refund</option>
                                             <option>Error Suspense Account</option>
+                                            <option>Others</option>
                                             @if($this->bank_book_id->count()==1)
                                                 <option>Premium Deposit</option>
                                             @endif
@@ -96,6 +97,11 @@
                                                 <option value="">-- select --</option>
                                             </select>
                                         @endif
+                                        @if($types[$k]=='Others')
+                                            <select wire:ignore class="form-control select-others" id="transaction_ids.{{$k}}">
+                                                <option value="">-- select --</option>
+                                            </select>
+                                        @endif
                                         @if($types[$k]=='Error Suspense Account' || $types[$k]=='Premium Deposit' )
                                             <input type="text" class="form-control" placeholder="Description" wire:model="transaction_ids.{{$k}}" />
                                         @endif
@@ -108,7 +114,7 @@
                                         @if($types[$k]=='Premium Receivable')
                                             <input type="number" class="form-control text-right" wire:model="amounts.{{$k}}" />
                                         @endif
-                                        @if($types[$k]=='Reinsurance Commision' || $types[$k]=='Recovery Claim' || $types[$k]=='Recovery Refund')
+                                        @if($types[$k]=='Reinsurance Commision' || $types[$k]=='Recovery Claim' || $types[$k]=='Recovery Refund' || $types[$k]=='Others')
                                             {{format_idr($amounts[$k])}}
                                         @endif
                                         @if($types[$k]=='Error Suspense Account' || $types[$k]=='Premium Deposit')
@@ -150,7 +156,7 @@
                     <a href="#" wire:click="onhold" class="btn btn-warning"><i class="fa fa-bookmark"></i> On Hold</a>
                 @endif
                 @if($total_voucher==$total_payment)
-                    <button type="submit" class="btn btn-primary btn-sm ml-4"><i class="fa fa-save"></i> Submit</button>
+                    <button type="submit" class="btn btn-primary ml-4"><i class="fa fa-save"></i> Submit</button>
                 @endif
             </div>
         </form>
@@ -158,7 +164,7 @@
 </div>
 @push('after-scripts')
     <script>
-        var select_premi,select_reinsurance,recovery_claim,recovery_refund;
+        var select_premi,select_reinsurance,recovery_claim,recovery_refund,select_others;
         Livewire.on('select-type',()=>{
             select_premi = $('.select-premi').select2({
                 placeholder: " -- select -- ",
@@ -238,18 +244,18 @@
                 @this.set(elementName, data);
             });
 
-            // select recovery refund
-            select_recovery_refund = $('.select-recovery-refund').select2({
+            // select others
+            select_others = $('.select-others').select2({
                 placeholder: " -- select -- ",
                 ajax: {
-                    url: '{{route('ajax.get-recovery-refund')}}',
+                    url: '{{route('ajax.get-ar-others')}}',
                     dataType: 'json',
                     delay: 250,
                     processResults: function (data) {
                     return {
                         results:  $.map(data, function (item) {
                             return {
-                                text: item.reference_no + " - " + item.client +" / Rp. "+item.nominal,
+                                text: item.reference_no + " / Rp. "+item.nominal,
                                 id: item.id
                             }
                         })
@@ -258,7 +264,8 @@
                     cache: true
                 }
             });
-            $('.select-recovery-refund').on('change', function (e) {
+            
+            $('.select-others').on('change', function (e) {
                 let elementName = $(this).attr('id');
                 var data = $(this).select2("val");
                 @this.set(elementName, data);

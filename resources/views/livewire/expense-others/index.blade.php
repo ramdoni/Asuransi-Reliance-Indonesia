@@ -57,9 +57,9 @@
                     <div class="col-md-2">
                         <select class="form-control" wire:model="status">
                             <option value=""> --- Status --- </option>
-                            <option value="1"> Unpaid </option>
-                            <option value="2"> Paid</option>
-                            <option value="3"> Outstanding</option>
+                            <option value="0"> Draft </option>
+                            <option value="1"> Unpaid</option>
+                            <option value="2"> Settle</option>
                         </select>
                     </div>
                     <div class="col-md-7">
@@ -77,14 +77,11 @@
                             <tr>
                                 <th>No</th>                                    
                                 <th>Status</th>                                    
-                                {{-- <th>No Voucher</th>                                     --}}
                                 <th>Settle Date</th>                                    
-                                <th>Created Date</th>                                    
-                                <th>Reference Date</th>
-                                <th>Credit Note / Kwitansi</th>
-                                <th>Recipient</th>                    
+                                <th>Created Date</th>  
+                                <th>Transaction Number</th>               
                                 <th>Description</th>                    
-                                <th>Amount</th>     
+                                <th class="text-right">Amount</th>     
                             </tr>
                         </thead>
                         <tbody>
@@ -92,18 +89,30 @@
                             <tr>
                                 <td style="width: 50px;">{{$k+1}}</td>
                                 <td>
-                                    <a href="{{route('expense.others.detail',['id'=>$item->id])}}">{!!status_expense($item->status)!!}</a>
+                                    <a href="{{route('expense.others.detail',['id'=>$item->id])}}">
+                                        @if($item->status==0)
+                                            <span class="badge badge-warning">Draft</span>
+                                        @endif
+                                        @if($item->status==1)
+                                            <span class="badge badge-info">Unpaid</span>
+                                        @endif
+                                        @if($item->status==2)
+                                            <span class="badge badge-success">Settle</span>
+                                        @endif
+                                    </a>
                                     @if($item->status==4)
                                     <a href="javascript:;" class="text-danger" wire:click="delete({{$item->id}})"><i class="fa fa-trash"></i></a>
                                     @endif
                                 </td>
                                 <td>{{$item->settle_date ? date('d M Y', strtotime($item->settle_date)) : '-'}}</td>
                                 <td>{{date('d M Y', strtotime($item->created_at))}}</td>
-                                <td>{{$item->reference_date ? date('d M Y', strtotime($item->reference_date)) : '-'}}</td>
                                 <td>{{$item->reference_no ? $item->reference_no : '-'}}</td>
-                                <td>{{$item->recipient ? $item->recipient : '-'}}</td>
-                                <td>{{$item->description}}</td>
-                                <td>{{isset($item->payment_amount) ? format_idr($item->payment_amount) : '-'}}</td>
+                                <td>
+                                    @if(isset($item->others_payment))
+                                        {{implode(', ', $item->others_payment->pluck('description')->toArray())}}
+                                    @endif
+                                </td>
+                                <td class="text-right">{{isset($item->payment_amount) ? format_idr($item->payment_amount) : '-'}}</td>
                             </tr>
                         @endforeach
                         </tbody>

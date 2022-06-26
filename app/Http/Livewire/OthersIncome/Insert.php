@@ -17,7 +17,7 @@ class Insert extends Component
     }
     public function mount()
     {
-        $this->no_voucher = generate_no_voucher_expense();
+        $this->reference_no = "AR-".date('dmy').str_pad((Income::count()+1),6, '0', STR_PAD_LEFT);
         $this->payment_date = date('Y-m-d');
         $this->reference_date = date('Y-m-d');
         $this->add_payment[] = '';
@@ -44,15 +44,18 @@ class Insert extends Component
         }
         $this->outstanding_balance = format_idr(abs(replace_idr($this->payment_amount) - replace_idr($this->nominal)));
     }
-    public function save($type)
+    public function save()
     {
-        $this->validate(
-            [
-                'client' => 'required',
-                // 'reference_no' => 'required',
-                'reference_type' => 'required',
-            ]
-        );
+        $validate = [];
+        $validate_msg = [];
+        foreach($this->add_payment as $k => $i){
+            $validate["add_payment_amount.{$k}"] = 'required|not_in:0';
+            $validate["add_payment_description.{$k}"] = 'required';
+            $validate_msg["add_payment_amount.{$k}.not_in"] = 'The Payment Amount field is required.';
+            $validate_msg["add_payment_amount.{$k}.required"] = 'The Payment Amount field is required.';
+            $validate_msg["add_payment_description.{$k}.required"] = 'The Description field is required.';
+        }
+        $this->validate($validate,$validate_msg);
                 
         $data = new Income();
         $data->no_voucher = $this->no_voucher;
@@ -61,17 +64,18 @@ class Insert extends Component
         $data->reference_type = $this->reference_type;
         $data->reference_date = $this->reference_date;
         $data->description = $this->description;
-        $data->nominal = replace_idr($this->nominal);
+        $data->nominal = replace_idr($this->payment_amount);
         $data->outstanding_balance = replace_idr($this->outstanding_balance);
         $data->reference_no = "AR/".date('Ym').'/'. str_pad((Income::count()+1),6, '0', STR_PAD_LEFT);
         $data->payment_amount = $this->payment_amount;
-        $data->status = 1;
+        $data->status = 0;
         $data->rekening_bank_id = $this->to_bank_account_id;
         $data->from_bank_account_id = $this->from_bank_account_id;
         $data->is_others = 1;
         $data->payment_date = $this->payment_date;
         $data->bank_charges = replace_idr($this->bank_charges);
         $data->save();
+        
         foreach($this->add_payment as $k =>$i){
             $ex_payment = new \App\Models\IncomePayment();
             $ex_payment->income_id = $data->id;
@@ -81,8 +85,11 @@ class Insert extends Component
             $ex_payment->description = $this->add_payment_description[$k];
             $ex_payment->save();    
         }
+        
         \LogActivity::add("Income Others Submit {$data->id}");
+        
         session()->flash('message-success',__('Data saved successfully'));
+
         return redirect()->route('others-income.index');
     }
     public function addPayment() 

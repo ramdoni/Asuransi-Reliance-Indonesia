@@ -76,12 +76,10 @@
                         <thead>
                             <tr>
                                 <th>No</th>                                    
-                                <th>Status</th>                                    
-                                <th>No Voucher</th>                                    
+                                <th>Status</th>                                        
                                 <th>Settle Date</th>                                    
                                 <th>Created Date</th>  
-                                <th>Debit Note / Kwitansi</th>
-                                <th>Client</th>                    
+                                <th>Transaction Number</th>         
                                 <th>Description</th>   
                                 <th>Payment Amount</th>
                             </tr>
@@ -91,27 +89,25 @@
                             <tr>
                                 <td style="width: 50px;">{{$k+1}}</td>
                                 <td>
-                                    <a href="{{route('others-income.detail',['id'=>$item->id])}}">{!!status_expense($item->status)!!}</a>
-                                    @if($item->status==4)
-                                    <a href="javascript:;" class="text-danger" wire:click="delete({{$item->id}})"><i class="fa fa-trash"></i></a>
+                                    @if($item->status==0)
+                                        <span class="badge badge-warning">Draft</span>
+                                    @endif
+                                    @if($item->status==1)
+                                        <span class="badge badge-info">Unpaid</span>
+                                    @endif
+                                    @if($item->status==2)
+                                        <span class="badge badge-success">Settle</span>
                                     @endif
                                 </td>
-                                <td>
-                                    @if(isset($item->bank_books_direct))
-                                        @foreach($item->bank_books_direct as $k => $bank_book)
-                                            @if($k>0) @continue @endif
-                                            @if($bank_book->no_voucher) 
-                                                <a href="javascript:void(0)" wire:click="$emit('set-voucher',{{$item->id}})" data-toggle="modal" data-target="#modal_detail_voucher">{{$bank_book->no_voucher}}</a>
-                                            @endif
-                                        @endforeach
-                                        @if($item->bank_books->count()>1) <a href="javascript:void(0)" wire:click="$emit('set-voucher',{{$item->id}})" data-toggle="modal" data-target="#modal_detail_voucher"><i class="fa fa-plus"></i></a> @endif
-                                    @endif
-                                </td>
+                                <td>{{$item->settle_date ? date('d M Y', strtotime($item->settle_date)) : '-'}}</td>
                                 <td>{{date('d M Y', strtotime($item->created_at))}}</td>
                                 <td>{{date('d M Y', strtotime($item->payment_date))}}</td>
                                 <td>{{$item->reference_no ? $item->reference_no : '-'}}</td>
-                                <td>{{$item->client ? $item->client : '-'}}</td>
-                                <td>{{$item->description}}</td>
+                                <td>
+                                    @if(isset($item->others_payment))
+                                        {{implode(', ', $item->others_payment->pluck('description')->toArray())}}
+                                    @endif
+                                </td>
                                 <td>{{isset($item->nominal) ? format_idr($item->nominal) : '-'}}</td>
                             </tr>
                         @endforeach

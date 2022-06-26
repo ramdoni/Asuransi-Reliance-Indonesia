@@ -7,32 +7,8 @@
                 <form id="basic-form" method="post" wire:submit.prevent="save('Submit')">
                     <div class="row">
                         <div class="col-md-6">
-                            <div class="px-0 form-group col-md-12">
-                                <label>{{ __('Recipient') }}</label>
-                                <input type="text" class="form-control" wire:model="recipient" />
-                                @error('recipient')
-                                    <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                                @enderror
-                            </div>
-                            <div class="form-group">
-                                <label>{{ __('Reference Date') }} *<small>{{__('Default today')}}</small></label>
-                                <input type="date" class="form-control" wire:model="reference_date" />
-                                @error('reference_date')
-                                    <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="px-0 form-group col-md-12">
-                                <label>{{ __('Reference No') }}</label>
-                                <input type="text" class="form-control" wire:model="reference_no" />
-                                @error('reference_no')
-                                    <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                                @enderror
-                            </div>
-                            <div class="px-0 form-group col-md-12">
-                                <label>{{ __('Description') }}</label>
-                                <textarea class="form-control" wire:model="description" placeholder="Description"></textarea>
+                            <div class="px-0 mb-0 form-group col-md-12">
+                                <label>{{ __('Transaction Number') }} </label> : {{$reference_no}}
                             </div>
                         </div>
                     </div>
@@ -58,7 +34,6 @@
                                     @enderror
                                 </div>
                             </div> --}}
-
                             <div class="col-md-8">
                                 <div class="form-group">
                                     <label>{{ __('Description') }}</label>
@@ -73,7 +48,7 @@
                                         <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                                     @enderror
                                 </div>
-                                <a href="javascript:;" style="position: absolute;right: 14px;" title="Delete" wire:click="delete({{$k}})" class="text-danger"><i class="fa fa-trash"></i></a>
+                                <a href="javascript:;" style="position: absolute;right: 0px;bottom: 21px;" title="Delete" wire:click="delete({{$k}})" class="text-danger"><i class="fa fa-trash"></i></a>
                             </div>
                         </div>
                     @endforeach
@@ -85,7 +60,11 @@
                             <label>{{format_idr($payment_amount)}}</label>
                         </div>
                     </div>
-                    <a href="javascript:;" wire:click="addPayment"><i class="fa fa-plus"></i> Add Row</a>
+                    <span wire:loading wire:target="addPayment">
+                        <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                        <span class="sr-only">{{ __('Loading...') }}</span>
+                    </span>
+                    <a href="javascript:;" wire:loading.remove wire:target="addPayment" wire:click="addPayment"><i class="fa fa-plus"></i> Add Row</a>
                     <hr>
                     <a href="javascript:void0()" onclick="history.back()"><i class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
                     <button type="submit" class="ml-3 btn btn-primary"><i class="fa fa-save"></i> {{ __('Submit') }}</button>

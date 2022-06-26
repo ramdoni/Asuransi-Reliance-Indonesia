@@ -12,11 +12,8 @@ class ApController extends Controller
         $data = Expenses::orderBy('id','desc')->where(['is_others'=>1,'status'=>1]);
         
         if(isset($_GET['term'])) $data = $data->where(function($table){
-                                        $table->where('description','LIKE', "%{$_GET['term']}%")
-                                        ->orWhere('no_voucher','LIKE',"%{$_GET['term']}%")
-                                        ->orWhere('reference_no','LIKE',"%{$_GET['term']}%")
-                                        ->orWhere('recipient','LIKE',"%{$_GET['term']}%")
-                                        ;
+                                        $table->where('payment_amount','LIKE', "%{$_GET['term']}%")
+                                        ->orWhere('reference_no','LIKE',"%{$_GET['term']}%");
                                     });
 
         $temp = [];

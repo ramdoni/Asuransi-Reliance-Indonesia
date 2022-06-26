@@ -16,14 +16,13 @@
             <thead>
                 <tr>
                     <th>No</th>                                    
-                    <th>Status</th>                                        
+                    <th>Status</th>                                          
                     <th>Created Date</th>                                    
-                    <th>Voucher Date</th>                                    
                     <th>Reference Date</th>
-                    <th>Debit Note / Kwitansi</th>
-                    <th>Client</th>                    
+                    <th>Transaction Number</th>          
                     <th>Description</th>                    
-                    <th>Amount</th>
+                    <th>Amount</th>     
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -31,17 +30,32 @@
                 <tr>
                     <td style="width: 50px;">{{$k+1}}</td>
                     <td>
-                        <a href="{{route('others-income.detail',['id'=>$item->id])}}">{!!status_expense($item->status)!!}</a>
-                        @if($item->status==4)
-                        <a href="javascript:;" class="text-danger" wire:click="delete({{$item->id}})"><i class="fa fa-trash"></i></a>
-                        @endif
+                        <a href="#">
+                            @if($item->status==0)
+                                <span class="badge badge-warning">Draft</span>
+                            @endif
+                            @if($item->status==1)
+                                <span class="badge badge-info">Unpaid</span>
+                            @endif
+                            @if($item->status==2)
+                                <span class="badge badge-success">Settle</span>
+                            @endif
+                        </a>
                     </td>
                     <td>{{date('d M Y', strtotime($item->created_at))}}</td>
                     <td>{{date('d M Y', strtotime($item->reference_date))}}</td>
                     <td>{{$item->reference_no ? $item->reference_no : '-'}}</td>
-                    <td>{{$item->client ? $item->client : '-'}}</td>
-                    <td>{{$item->description}}</td>
+                    <td>
+                        @if(isset($item->others_payment))
+                            {{implode(', ', $item->others_payment->pluck('description')->toArray())}}
+                        @endif
+                    </td>
                     <td>{{isset($item->payment_amount) ? format_idr($item->payment_amount) : '-'}}</td>
+                    <td>
+                        @if($item->status==0)
+                            <a href="{{route('accounting.others.receivable',$item->id)}}" class="badge badge-info badge-active"><i class="fa fa-edit"></i> Assign COA</a>
+                        @endif
+                    </td>
                 </tr>
             @endforeach
             </tbody>

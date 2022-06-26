@@ -17,12 +17,13 @@ class Index extends Component
             ->orWhere('recipient','LIKE',"%{$this->keyword}%");
         });
         if($this->type) $data = $data->where('type',$this->type);
-        if($this->status) $data = $data->where('status',$this->status);
-
+        if($this->status!="") $data = $data->where('status',$this->status);
+        
         $total = clone $data;
 
         return view('livewire.expense-others.index')->with(['data'=>$data->paginate(100),'total'=>$total->sum('nominal'),'payment_amount'=>$total->sum('payment_amount'),'outstanding'=>$total->sum('outstanding_balance')]);
     }
+
     public function mount()
     {
         \LogActivity::add("Expense Others");

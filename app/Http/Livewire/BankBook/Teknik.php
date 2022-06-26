@@ -11,7 +11,7 @@ class Teknik extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
-    public $check_id=[],$type,$transaction_id,$filter_status,$filter_from_bank,$filter_to_bank,$filter_propose,$filter_amount;
+    public $check_id=[],$type,$transaction_id,$filter_status,$filter_from_bank,$filter_to_bank,$filter_propose,$filter_amount,$filter_note;
     public $payment_date_from,$payment_date_to;
     public function render()
     {
@@ -21,6 +21,7 @@ class Teknik extends Component
         if($this->filter_from_bank) $data->where('from_bank_id',$this->filter_from_bank);
         if($this->filter_to_bank) $data->where('to_bank_id',$this->filter_to_bank);
         if($this->filter_propose) $data->where('propose',$this->filter_propose);
+        if($this->filter_note) $data->where('note','LIKE',"%{$this->filter_note}%");
         if($this->filter_amount) $data->where(function($table){
             $max = (int)(0.1*$this->filter_amount)+$this->filter_amount;
             $min = $this->filter_amount - (int)(0.1*$this->filter_amount);

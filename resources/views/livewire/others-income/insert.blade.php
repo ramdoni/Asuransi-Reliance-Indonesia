@@ -4,21 +4,32 @@
     <div class="col-md-7">
         <div class="card">
             <div class="body">
-                <form id="basic-form" method="post" wire:submit.prevent="save('Submit')">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="px-0 mb-0 form-group col-md-12">
+                            <label>{{ __('Transaction Number') }} </label> : {{$reference_no}}
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <form id="basic-form" method="post" wire:submit.prevent="save">
                     @foreach($add_payment as $k => $item)
                         <div class="row">
                             <div class="col-md-7">
                                 <div class="form-group">
                                     <label>{{ __('Description') }}</label>
                                     <input type="text" class="form-control" wire:model="add_payment_description.{{$k}}" />
+                                    @error("add_payment_description.{$k}")
+                                        <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                                    @enderror
                                 </div>
                             </div>
                             <div class="col-md-5">
                                 <div class="form-group">
                                     <label>{{ __('Payment Amount (Rp)') }}</label>
                                     <input type="text" {{$is_readonly?'disabled':''}} class="form-control format_number text-right" wire:ignore wire:model="add_payment_amount.{{$k}}" />
-                                    @error('payment_amount')
-                                    <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                                    @error("add_payment_amount.{$k}")
+                                        <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                                     @enderror
                                 </div>
                             </div>

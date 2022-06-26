@@ -27,7 +27,7 @@ class InsertSettle extends Component
         $this->reset(['error_settle','total_payment']);
 
         foreach($this->types as $k =>$type){
-            if($type=="Premium Receivable" || $type=="Reinsurance Commision" || $type=="Recovery Claim" || $type=="Recovery Refund"){
+            if($type=="Premium Receivable" || $type=="Reinsurance Commision" || $type=="Recovery Claim" || $type=="Recovery Refund" || $type=='Others'){
                 $premi = Income::find($this->transaction_ids[$k]);
                 if($premi){
                     $this->payment_rows[$k] = $premi;
@@ -102,7 +102,7 @@ class InsertSettle extends Component
             $transaction_item->transaction_id = $this->transaction_ids[$k];
             $transaction_item->description = $this->transaction_ids[$k];
 
-            if($item=='Premium Receivable' || $item=='Reinsurance Commision' || $item=='Recovery Claim' || $item=='Recovery Refund'){
+            if($item=='Premium Receivable' || $item=='Reinsurance Commision' || $item=='Recovery Claim' || $item=='Recovery Refund' || $item='Others'){
                $income = Income::find($this->transaction_ids[$k]);
                if($income){
                     $transaction_item->dn = $income->reference_no;
@@ -261,7 +261,6 @@ class InsertSettle extends Component
                 
                 $transaction_item->transaction_id = $data->id;
 
-                
                 # insert journal
                 $journal = new Journal();
                 $journal->coa_id = get_coa(406000); // premium suspend;
@@ -274,6 +273,22 @@ class InsertSettle extends Component
                 $journal->transaction_id = $data->id;
                 $journal->transaction_table = 'income';
                 $journal->save();
+            }
+
+            if($item=='Others'){
+                if(isset($income->others_payment)){
+                    foreach($income->others_payment as $k => $expense_item){
+                        Journal::insert([
+                            'kredit' => $expense_item->payment_amount,
+                            'no_voucher' => $no_voucher,
+                            'coa_id' => $expense_item->coa_id,
+                            'date_journal' => $bank_book->payment_date,
+                            'description' => $expense_item->description,
+                            'transaction_table' => 'income_payments',
+                            'transaction_id' => $expense_item->id
+                        ]);
+                    }
+                }
             }
 
             $transaction_item->save();

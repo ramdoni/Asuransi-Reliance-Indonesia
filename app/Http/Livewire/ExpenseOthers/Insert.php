@@ -21,6 +21,7 @@ class Insert extends Component
         $this->no_voucher = generate_no_voucher_expense();
         $this->payment_date = date('Y-m-d');
         $this->reference_date = date('Y-m-d');
+        $this->reference_no = "AP-".date('dmy').str_pad((Expenses::count()+1),6, '0', STR_PAD_LEFT);
         $this->add_payment[] = '';
         $this->add_payment_id[]='';
         $this->add_payment_amount[]=0;
@@ -50,8 +51,10 @@ class Insert extends Component
     {
         $this->validate(
             [
-                'recipient' => 'required',
-                'reference_date' => 'required'
+                'reference_no' => 'required',
+            ],
+            [
+                'reference_no.required' => 'Credit Note / Kwitansi field is required'
             ]
         );
 
@@ -64,7 +67,7 @@ class Insert extends Component
         $data->description = $this->description;
         $data->reference_no = $this->reference_no;
         $data->payment_amount = $this->payment_amount;
-        $data->status = 1;
+        $data->status = 0;
         $data->is_others = 1;
         $data->save();
 

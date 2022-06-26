@@ -19,8 +19,7 @@
                     <th>Status</th>                                          
                     <th>Created Date</th>                                    
                     <th>Reference Date</th>
-                    <th>Credit Note / Kwitansi</th>
-                    <th>Recipient</th>                    
+                    <th>Transaction Number</th>          
                     <th>Description</th>                    
                     <th>Amount</th>     
                     <th></th>
@@ -46,8 +45,11 @@
                     <td>{{date('d M Y', strtotime($item->created_at))}}</td>
                     <td>{{date('d M Y', strtotime($item->reference_date))}}</td>
                     <td>{{$item->reference_no ? $item->reference_no : '-'}}</td>
-                    <td>{{$item->recipient ? $item->recipient : '-'}}</td>
-                    <td>{{$item->description}}</td>
+                    <td>
+                        @if(isset($item->others_payment))
+                            {{implode(', ', $item->others_payment->pluck('description')->toArray())}}
+                        @endif
+                    </td>
                     <td>{{isset($item->payment_amount) ? format_idr($item->payment_amount) : '-'}}</td>
                     <td>
                         @if($item->status==0)

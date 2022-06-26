@@ -168,7 +168,7 @@
                     <a href="#" wire:click="onhold" class="btn btn-warning"><i class="fa fa-bookmark"></i> On Hold</a>
                 @endif
                 @if($total_voucher==$total_payment)
-                    <button type="submit" class="btn btn-primary btn-sm ml-4"><i class="fa fa-save"></i> Submit</button>
+                    <button type="submit" class="btn btn-primary ml-2"><i class="fa fa-save"></i> Submit</button>
                 @endif
             </div>
         </form>
@@ -341,7 +341,7 @@
                     return {
                         results:  $.map(data, function (item) {
                             return {
-                                text: item.reference_no + " - " + item.recipient+" - "+ item.nominal,
+                                text: item.reference_no + " - " + item.nominal,
                                 id: item.id
                             }
                         })

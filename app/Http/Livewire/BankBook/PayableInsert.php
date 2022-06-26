@@ -44,7 +44,7 @@ class PayableInsert extends Component
 
                     if($this->amounts[$k] > $amount) $this->error_settle = $premi->reference_no ." Nominal has exceeded the limit!";
                 }
-            }
+            } 
         
             $this->total_payment += $this->amounts[$k]?$this->amounts[$k]:0;
         }
@@ -243,19 +243,34 @@ class PayableInsert extends Component
                         }
                     }
                      
-                     if($item=='Others') $coa_id = 206;
- 
-                     $journal = new Journal();
-                     $journal->debit = $this->amounts[$k];
-                     $journal->kredit = 0;
-                     $journal->no_voucher = $no_voucher;
-                     $journal->coa_id = $coa_id;
-                     $journal->date_journal = $bank_book->payment_date;
-                     $journal->description = $expense->description;
-                     $journal->transaction_id = $expense->id;
-                     $journal->transaction_table = 'expenses';
-                     $journal->transaction_number = $expense->reference_no;
-                     $journal->save();
+                    if($item=='Others'){
+                        $coa_id = 206;
+                        foreach($expense->others_payment as $k => $expense_item){
+                            Journal::insert([
+                                'debit' => $expense_item->payment_amount,
+                                'no_voucher' => $no_voucher,
+                                'coa_id' => $expense_item->coa_id,
+                                'date_journal' => $bank_book->payment_date,
+                                'description' => $expense_item->description,
+                                'transaction_table' => 'expense_payments',
+                                'transaction_id' => $expense_item->id
+                            ]);
+                        }
+                        $expense->status = 2;
+                        $expense->save();
+                    }else{
+                        $journal = new Journal();
+                        $journal->debit = $this->amounts[$k];
+                        $journal->kredit = 0;
+                        $journal->no_voucher = $no_voucher;
+                        $journal->coa_id = $coa_id;
+                        $journal->date_journal = $bank_book->payment_date;
+                        $journal->description = $expense->description;
+                        $journal->transaction_id = $expense->id;
+                        $journal->transaction_table = 'expenses';
+                        $journal->transaction_number = $expense->reference_no;
+                        $journal->save();
+                    }
                 }
             }
 
