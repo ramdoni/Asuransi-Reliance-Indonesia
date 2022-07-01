@@ -4,7 +4,26 @@
     <div class="col-md-7">
         <div class="card">
             <div class="body">
-                <form id="basic-form" method="post" wire:submit.prevent="save()">
+                <form wire:submit.prevent="save()">
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label>Type</label>
+                            <select class="form-control" wire:model="type">
+                                <option value=""> -- Select -- </option>
+                                <option value="364">Operational Payable </option>
+                                <option value="174">Commision Payable Tradisional</option>
+                                <option value="175">Commision Payable Jangkawarsa</option>
+                                <option value="176">Commision Payable Ekawarsa</option>
+                                <option value="177">Commision Payable Dwiguna</option>
+                                <option value="178">Commision Payable Dwiguna Kombinasi</option>
+                                <option value="179">Commision Payable Kecelakaan Diri</option>
+                                <option value="1780">Commision Payable Other Tradisional</option>
+                            </select>
+                            @error('type')
+                                <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                            @enderror
+                        </div>
+                    </div>
                     @if(isset($data->others_payment))
                         <table class="table">
                             <thead>
@@ -19,17 +38,19 @@
                             @foreach($data->others_payment as $k => $item)
                                 <tr>
                                     <td>{{$k+1}}</td>
-                                    <td wire:ignore>
-                                        <select class="form-control select2_{{$k}}" id="coa_id.{{$k}}">
-                                            <option value=""> --- Select --- </option>
-                                            @foreach(\App\Models\Coa::where('is_others_expense',1)->groupBy('coa_group_id')->get() as $group)
-                                                <optgroup label="{{isset($group->group->name) ? $group->group->name : ''}}">
-                                                    @foreach(\App\Models\Coa::where(['is_others_expense'=>1,'coa_group_id'=>$group->coa_group_id])->get() as $coa)
-                                                        <option value="{{$coa->id}}">{{$coa->name}} ({{$coa->code}})</option>
-                                                    @endforeach
-                                                </optgroup>
-                                            @endforeach
-                                        </select>
+                                    <td>
+                                        <div wire:ignore>
+                                            <select class="form-control select2_{{$k}}" id="coa_id.{{$k}}">
+                                                <option value=""> --- Select --- </option>
+                                                @foreach(\App\Models\Coa::where('is_others_expense',1)->groupBy('coa_group_id')->get() as $group)
+                                                    <optgroup label="{{isset($group->group->name) ? $group->group->name : ''}}">
+                                                        @foreach(\App\Models\Coa::where(['is_others_expense'=>1,'coa_group_id'=>$group->coa_group_id])->get() as $coa)
+                                                            <option value="{{$coa->id}}">{{$coa->name}} ({{$coa->code}})</option>
+                                                        @endforeach
+                                                    </optgroup>
+                                                @endforeach
+                                            </select>
+                                        </div>
                                         @error('coa_id.'.$k)
                                             <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                                         @enderror

@@ -4,7 +4,7 @@ namespace App\Http\Livewire\Accounting\Others\Receivable;
 
 use Livewire\Component;
 use App\Models\Income;
-use App\Models\IncomePayment;
+use App\Models\Journal;
 
 class Edit extends Component
 {
@@ -40,11 +40,17 @@ class Edit extends Component
 
         $this->data->status = 1;
         $this->data->save();
+
+        $no_voucher = generate_no_voucer_journal("AR");
         
         foreach($this->data->others_payment as $k => $item){
             $item->coa_id = $this->coa_id[$k];
             $item->save();
+
+            Journal::insert(['coa_id'=>$this->coa_id[$k],'no_voucher'=>$no_voucher,'date_journal'=>date('Y-m-d'),'kredit'=>$item->payment_amount,'transaction_id'=>$item->id,'transaction_table'=>'income_payments']);
         }
+
+        Journal::insert(['coa_id'=>152,'no_voucher'=>$no_voucher,'date_journal'=>date('Y-m-d'),'debit'=>$this->data->nominal,'transaction_id'=>$this->data->id,'transaction_table'=>'income']);
 
         session()->flash('message-success',__('Data has been successfully saved'));
         

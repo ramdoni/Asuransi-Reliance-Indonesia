@@ -92,8 +92,8 @@ class Upload extends Component
                             }
 
                             // journal
-                            Journal::insert(['coa_id'=>$coa_debit,'no_voucer'=>$no_voucher,'date_journal'=>date('Y-m-d'),'debit'=>$nilai_klaim,'transaction_id'=>$expense->id,'transaction_table'=>'expenses']);
-                            Journal::insert(['coa_id'=>$coa_credit,'no_voucer'=>$no_voucher,'date_journal'=>date('Y-m-d'),'kredit'=>$nilai_klaim,'transaction_id'=>$expense->id,'transaction_table'=>'expenses']);
+                            Journal::insert(['coa_id'=>$coa_debit,'no_voucher'=>$no_voucher,'date_journal'=>date('Y-m-d'),'debit'=>$nilai_klaim,'transaction_id'=>$expense->id,'transaction_table'=>'expenses']);
+                            Journal::insert(['coa_id'=>$coa_credit,'no_voucher'=>$no_voucher,'date_journal'=>date('Y-m-d'),'kredit'=>$nilai_klaim,'transaction_id'=>$expense->id,'transaction_table'=>'expenses']);
                         }
                     }
                 }else{

@@ -153,7 +153,7 @@
                 </span>
                 <a href="#" data-dismiss="modal"><i class="fa fa-times"></i> Close</a>
                 @if($total_payment!=0)
-                    <a href="#" wire:click="onhold" class="btn btn-warning"><i class="fa fa-bookmark"></i> On Hold</a>
+                    {{-- <a href="#" wire:click="onhold" class="btn btn-warning"><i class="fa fa-bookmark"></i> On Hold</a> --}}
                 @endif
                 @if($total_voucher==$total_payment)
                     <button type="submit" class="btn btn-primary ml-4"><i class="fa fa-save"></i> Submit</button>

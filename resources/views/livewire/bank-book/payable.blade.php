@@ -30,6 +30,9 @@
                                             @endforeach
                                         </select>
                                     </div>
+                                    <div class="from-group my-2">
+                                        <input type="text" class="form-control" placeholder="Note" wire:model="filter_note" />
+                                    </div>
                                     <a href="javascript:void(0)" wire:click="clear_filter()"><small>Clear filter</small></a>
                                 </form>
                             </div>

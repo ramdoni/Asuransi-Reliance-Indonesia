@@ -33,7 +33,7 @@ class Teknik extends Component
             else
                 $data->whereBetween('payment_date',[$this->payment_date_from,$this->payment_date_to]);
         }
-
+        
         return view('livewire.bank-book.teknik')->with(['data'=>$data->paginate(100)]);
     }
 
@@ -53,6 +53,10 @@ class Teknik extends Component
         if($propertyName=='type'){
             $this->emit('select-premium-receivable');
         }
+        
+        $query['page'] = $this->page;
+
+        session(['url_back'=>route('bank-book.teknik',$query)]);
 
         if($propertyName=='check_id') $this->emit('set_bank_book',$this->check_id);
     }

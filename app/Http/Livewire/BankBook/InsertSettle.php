@@ -4,12 +4,10 @@ namespace App\Http\Livewire\BankBook;
 
 use Livewire\Component;
 use App\Models\BankBook;
-use App\Models\BankBookSettle;
 use App\Models\BankBookTransaction;
 use App\Models\BankBookTransactionItem;
 use App\Models\Income;
 use App\Models\ErrorSuspense;
-use App\Models\BankAccount;
 use App\Models\Journal;
 
 class InsertSettle extends Component
@@ -32,9 +30,9 @@ class InsertSettle extends Component
                 if($premi){
                     $this->payment_rows[$k] = $premi;
                     $amount = $premi->outstanding_balance ? $premi->outstanding_balance : $premi->nominal;
-                    if($this->amounts[$k]==0 and $type=="Premium Receivable")
-                        $this->amounts[$k] = $amount;
-                    else
+                    if($this->amounts[$k]==0 and $type=="Premium Receivable"){
+                        if($this->amounts[$k]!="") $this->amounts[$k] = $amount;
+                    }else
                         $this->amounts[$k] = $amount;
 
                     if($this->amounts[$k] > $amount) $this->error_settle = $premi->reference_no ." Nominal has exceeded the limit!";
@@ -102,7 +100,7 @@ class InsertSettle extends Component
             $transaction_item->transaction_id = $this->transaction_ids[$k];
             $transaction_item->description = $this->transaction_ids[$k];
 
-            if($item=='Premium Receivable' || $item=='Reinsurance Commision' || $item=='Recovery Claim' || $item=='Recovery Refund' || $item='Others'){
+            if($item=='Premium Receivable' || $item=='Reinsurance Commision' || $item=='Recovery Claim' || $item=='Recovery Refund' || $item=='Others'){
                $income = Income::find($this->transaction_ids[$k]);
                if($income){
                     $transaction_item->dn = $income->reference_no;
@@ -213,18 +211,27 @@ class InsertSettle extends Component
                             break;
                         }        
                     }
-
-                    $journal = new Journal();
-                    $journal->kredit = $this->amounts[$k];
-                    $journal->debit = 0;
-                    $journal->no_voucher = $no_voucher;
-                    $journal->coa_id = $coa_id;
-                    $journal->date_journal = $bank_book->payment_date;
-                    $journal->description = $income->description;
-                    $journal->transaction_id = $income->id;
-                    $journal->transaction_table = 'income';
-                    $journal->transaction_number = $income->reference_no;
-                    $journal->save();
+                    
+                    if($item=='Others'){
+                        // find journal 
+                        $find_journal = Journal::where(['transaction_table'=>'income','transaction_id'=>$income->id])->first();
+                        if($find_journal){
+                            $no_voucher = $find_journal->no_voucher;
+                            Journal::insert(['coa_id'=>$find_journal->coa_id,'no_voucher'=>$no_voucher,'date_journal'=>date('Y-m-d'),'kredit'=>$find_journal->debit,'transaction_id'=>$income->id,'transaction_table'=>'income']);
+                        }
+                    }else{
+                        $journal = new Journal();
+                        $journal->kredit = $this->amounts[$k];
+                        $journal->debit = 0;
+                        $journal->no_voucher = $no_voucher;
+                        $journal->coa_id = $coa_id;
+                        $journal->date_journal = $bank_book->payment_date;
+                        $journal->description = $income->description;
+                        $journal->transaction_id = $income->id;
+                        $journal->transaction_table = 'income';
+                        $journal->transaction_number = $income->reference_no;
+                        $journal->save();
+                    }
                }
             }
 
@@ -275,22 +282,6 @@ class InsertSettle extends Component
                 $journal->save();
             }
 
-            if($item=='Others'){
-                if(isset($income->others_payment)){
-                    foreach($income->others_payment as $k => $expense_item){
-                        Journal::insert([
-                            'kredit' => $expense_item->payment_amount,
-                            'no_voucher' => $no_voucher,
-                            'coa_id' => $expense_item->coa_id,
-                            'date_journal' => $bank_book->payment_date,
-                            'description' => $expense_item->description,
-                            'transaction_table' => 'income_payments',
-                            'transaction_id' => $expense_item->id
-                        ]);
-                    }
-                }
-            }
-
             $transaction_item->save();
         }
 
@@ -310,7 +301,10 @@ class InsertSettle extends Component
         $this->emit('modal','hide');
 
         session()->flash('message-success',__('Settle successfully'));
-
-        return redirect()->route('bank-book.teknik');
+        
+        if(session()->get('url_back'))
+            return redirect(session()->get('url_back'));
+        else
+            return redirect()->route('bank-book.teknik');
     }
 }

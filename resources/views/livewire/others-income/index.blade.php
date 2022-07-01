@@ -81,7 +81,7 @@
                                 <th>Created Date</th>  
                                 <th>Transaction Number</th>         
                                 <th>Description</th>   
-                                <th>Payment Amount</th>
+                                <th class="text-right">Payment Amount</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -101,14 +101,13 @@
                                 </td>
                                 <td>{{$item->settle_date ? date('d M Y', strtotime($item->settle_date)) : '-'}}</td>
                                 <td>{{date('d M Y', strtotime($item->created_at))}}</td>
-                                <td>{{date('d M Y', strtotime($item->payment_date))}}</td>
                                 <td>{{$item->reference_no ? $item->reference_no : '-'}}</td>
                                 <td>
                                     @if(isset($item->others_payment))
                                         {{implode(', ', $item->others_payment->pluck('description')->toArray())}}
                                     @endif
                                 </td>
-                                <td>{{isset($item->nominal) ? format_idr($item->nominal) : '-'}}</td>
+                                <td class="text-right">{{isset($item->nominal) ? format_idr($item->nominal) : '-'}}</td>
                             </tr>
                         @endforeach
                         </tbody>
