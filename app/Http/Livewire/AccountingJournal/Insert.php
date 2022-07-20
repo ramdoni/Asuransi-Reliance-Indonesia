@@ -7,7 +7,7 @@ use App\Models\Journal;
 
 class Insert extends Component
 {
-    public $no_voucher,$date_journal,$coa_id,$kredit,$debit,$description,$array_coa,$is_submit=false;
+    public $no_voucher,$date_journal,$coa_id,$kredit,$debit,$description,$array_coa,$is_submit=false,$type='AP';
     public function render()
     {
         return view('livewire.accounting-journal.insert');
@@ -25,7 +25,7 @@ class Insert extends Component
             $this->is_submit = true;
         else
             $this->is_submit = false;
-
+ 
         $this->emit('init-form');
     }
 
@@ -52,12 +52,14 @@ class Insert extends Component
     {
         $this->emit('init-form');
         $this->validate([
-            'coa_id.*' => 'required'    
+            'coa_id.*' => 'required',
+            'type' => 'required',
+            'date_journal' => 'required'
         ]);
         
+        $this->no_voucher = generate_no_voucer_journal($this->type);
+        
         foreach($this->array_coa as $k => $i){
-            if($k==0) $this->no_voucher = generate_no_voucher($this->coa_id[$k]);
-
             $data = new Journal();
             $data->no_voucher = $this->no_voucher;
             $data->coa_id = $this->coa_id[$k];
