@@ -119,7 +119,7 @@
                                             @if(isset($item->bank_books))
                                                 @foreach($item->bank_books as $k => $bank_book)
                                                     @if($k>0) @continue @endif
-                                                    @if($bank_book->bank_books->no_voucher) 
+                                                    @if(isset($bank_book->bank_books->no_voucher)) 
                                                         <a href="javascript:void(0)" wire:click="$emit('set-voucher',{{$item->id}})" data-toggle="modal" data-target="#modal_detail_voucher">{{$bank_book->bank_books->no_voucher}}</a>
                                                     @endif
                                                 @endforeach

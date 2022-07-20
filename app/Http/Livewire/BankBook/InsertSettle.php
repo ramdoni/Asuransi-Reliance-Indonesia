@@ -30,11 +30,12 @@ class InsertSettle extends Component
                 if($premi){
                     $this->payment_rows[$k] = $premi;
                     $amount = $premi->outstanding_balance ? $premi->outstanding_balance : $premi->nominal;
+                    
                     if($this->amounts[$k]==0 and $type=="Premium Receivable"){
-                        if($this->amounts[$k]!="") $this->amounts[$k] = $amount;
+                        if($this->amounts[$k]=="" || $this->amounts[$k]==0) $this->amounts[$k] = $amount;
                     }else
                         $this->amounts[$k] = $amount;
-
+                    
                     if($this->amounts[$k] > $amount) $this->error_settle = $premi->reference_no ." Nominal has exceeded the limit!";
                 }
             }
