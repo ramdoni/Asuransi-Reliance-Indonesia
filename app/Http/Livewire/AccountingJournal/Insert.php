@@ -15,6 +15,17 @@ class Insert extends Component
 
     public function updated($propertyName)
     {
+        $total_kredit =0;$total_debit=0;
+        foreach($this->array_coa as $k => $i){
+            $total_kredit += $this->kredit[$k]>0?$this->kredit[$k]:0;
+            $total_debit += $this->debit[$k]>0?$this->debit[$k]:0;
+        }
+
+        if($total_debit == $total_kredit)
+            $this->is_submit = true;
+        else
+            $this->is_submit = false;
+
         $this->emit('init-form');
     }
 

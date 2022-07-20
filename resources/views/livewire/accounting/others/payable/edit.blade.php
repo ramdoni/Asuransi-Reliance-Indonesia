@@ -10,6 +10,7 @@
                             <label>Type</label>
                             <select class="form-control" wire:model="type">
                                 <option value=""> -- Select -- </option>
+                                <option value="206">Other Payable</option>
                                 <option value="364">Operational Payable </option>
                                 <option value="174">Commision Payable Tradisional</option>
                                 <option value="175">Commision Payable Jangkawarsa</option>
@@ -42,9 +43,9 @@
                                         <div wire:ignore>
                                             <select class="form-control select2_{{$k}}" id="coa_id.{{$k}}">
                                                 <option value=""> --- Select --- </option>
-                                                @foreach(\App\Models\Coa::where('is_others_expense',1)->groupBy('coa_group_id')->get() as $group)
+                                                @foreach(\App\Models\Coa::groupBy('coa_group_id')->get() as $group)
                                                     <optgroup label="{{isset($group->group->name) ? $group->group->name : ''}}">
-                                                        @foreach(\App\Models\Coa::where(['is_others_expense'=>1,'coa_group_id'=>$group->coa_group_id])->get() as $coa)
+                                                        @foreach(\App\Models\Coa::where(['coa_group_id'=>$group->coa_group_id])->get() as $coa)
                                                             <option value="{{$coa->id}}">{{$coa->name}} ({{$coa->code}})</option>
                                                         @endforeach
                                                     </optgroup>

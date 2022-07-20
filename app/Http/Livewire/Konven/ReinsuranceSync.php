@@ -22,7 +22,6 @@ class ReinsuranceSync extends Component
     public function reas_sync()
     {
         if($this->is_sync==false) return false;
-        //$this->emit('is_sync');
         foreach(\App\Models\KonvenReinsurance::where('status',1)->get() as $key => $item){
             //if($key > 1) continue;
             $no_polis = \App\Models\Policy::where('no_polis',$item->no_polis)->first();
