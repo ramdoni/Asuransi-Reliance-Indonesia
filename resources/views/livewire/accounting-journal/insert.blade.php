@@ -8,15 +8,28 @@
     <div class="modal-body">
         <div class="row">
             <div class="form-group col-md-3">
+                <label>Type </label>
+                <select class="form-control" wire:model="type">
+                    <option value="AP">Account Payable</option>
+                    <option value="AR">Account Receivable</option>
+                    <option value="JM">Jurnal Memorial</option>
+                </select>
+                @error('type')
+                    <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                @enderror
+            </div>
+            <div class="form-group col-md-3">
                 <label>Journal Date </label>
                 <input type="date" class="form-control" wire:model="date_journal" />
+                @error('date_journal')
+                    <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                @enderror
             </div>
         </div>
         <table class="table">
             @foreach($array_coa as $k=>$v)
             <tr>
-                <td class="px-0 text-grey"><a href="javascript:;" class="text-danger" wire:click="delete({{$k}})"><i class="fa fa-times"></i></a></td>
-                <td style="width: 40%"> 
+                <td style="width: 40%;padding-left:0;"> 
                     <select class="form-control select_coa" id="coa_id.{{$k}}" wire:model="coa_id.{{$k}}">
                         <option value=""> --- Account -- </option>
                         @foreach(\App\Models\CoaGroup::orderBy('name','ASC')->get() as $group)
@@ -34,6 +47,7 @@
                 <td class="px-0"><input type="text" class="form-control" wire:model="description.{{$k}}" placeholder="Description" /></td>
                 <td><input type="text" class="form-control text-right format_number" wire:model="debit.{{$k}}" placeholder="Debit" /></td>
                 <td><input type="text" class="form-control text-right format_number" wire:model="kredit.{{$k}}" placeholder="Kredit" /></td>
+                <td class="px-0 text-grey"><a href="javascript:;" class="text-danger" wire:click="delete({{$k}})"><i class="fa fa-times"></i></a></td>
             </tr>
             @endforeach
         </table>
@@ -44,7 +58,7 @@
             <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
             <span class="sr-only">Loading...</span>
         </div>
-        <button type="submit" {{!$is_submit?'disabled' : ''}} class="btn btn-info close-modal"><i class="fa fa-save"></i> Submit Journal</button>
+        <button type="submit" wire:loading.remove {{!$is_submit?'disabled' : ''}} class="btn btn-info close-modal"><i class="fa fa-save"></i> Submit Journal</button>
     </div>
 </form>
 @push('after-scripts')
