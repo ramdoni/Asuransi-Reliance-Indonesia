@@ -17,8 +17,8 @@ class Insert extends Component
     {
         $total_kredit =0;$total_debit=0;
         foreach($this->array_coa as $k => $i){
-            $total_kredit += $this->kredit[$k]>0?$this->kredit[$k]:0;
-            $total_debit += $this->debit[$k]>0?$this->debit[$k]:0;
+            $total_kredit += replace_idr($this->kredit[$k])>0?replace_idr($this->kredit[$k]):0;
+            $total_debit += replace_idr($this->debit[$k])>0?replace_idr($this->debit[$k]):0;
         }
 
         if($total_debit == $total_kredit)
@@ -63,9 +63,10 @@ class Insert extends Component
             $data = new Journal();
             $data->no_voucher = $this->no_voucher;
             $data->coa_id = $this->coa_id[$k];
-            $data->debit = $this->debit[$k];
-            $data->kredit = $this->kredit[$k];
+            $data->debit = replace_idr($this->debit[$k]);
+            $data->kredit = replace_idr($this->kredit[$k]);
             $data->date_journal = $this->date_journal;
+            $data->description = $this->description[$k];
             $data->is_auto = 0;
             $data->save();
         }
