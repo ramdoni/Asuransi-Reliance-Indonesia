@@ -150,9 +150,10 @@ function sum_journal_cashflow_by_group($month,$year,$group)
 }
 function sum_journal_cashflow($year,$month,$cashflow)
 {
-    $sum = \App\Models\Journal::whereYear('date_journal',$year)->whereMonth('date_journal',$month)->where('code_cashflow_id',$cashflow)->sum('saldo');
+    $sum_kredit = \App\Models\Journal::whereYear('date_journal',$year)->whereMonth('date_journal',$month)->where('code_cashflow_id',$cashflow)->sum('kredit');
+    $sum_debit = \App\Models\Journal::whereYear('date_journal',$year)->whereMonth('date_journal',$month)->where('code_cashflow_id',$cashflow)->sum('debit');
     
-    return ($sum ? $sum : 0);
+    return $sum_kredit+$sum_debit;
 }
 function month()
 {

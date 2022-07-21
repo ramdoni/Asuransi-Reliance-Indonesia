@@ -94,7 +94,12 @@
                                 @endif
                                 <tr>
                                     <td>{{isset($item->coa->code)?$item->coa->code:''}}</td>
-                                    <td><a href="{{route('accounting-journal.detail',['id'=>$item->id])}}">{{$item->no_voucher}}</a></td>
+                                    <td>
+                                        <a href="{{route('accounting-journal.detail',['id'=>$item->id])}}">{{$item->no_voucher}}</a>
+                                        @if($item->is_auto==0)
+                                            <a href="javascript:void(0)" wire:click="delete({{$item->id}})"><i class="fa fa-trash text-danger"></i></a>
+                                        @endif
+                                    </td>
                                     <td>{{date('d-M-Y',strtotime($item->date_journal))}}</td>
                                     <td>{{isset($item->coa->name)?$item->coa->name:''}}</td>
                                     <td>{{$item->description}}</td>
