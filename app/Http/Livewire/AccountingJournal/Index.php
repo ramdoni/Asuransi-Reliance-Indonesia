@@ -33,6 +33,12 @@ class Index extends Component
         
         return view('livewire.accounting-journal.index')->with(['data'=>$data->paginate(100)]);
     }
+
+    public function delete(Journal $id)
+    {
+        $id->delete();
+    }
+
     public function mount(){
         \LogActivity::add("Accounting - Journal");
     }
@@ -43,7 +49,7 @@ class Index extends Component
         $this->check_all = false;
     } 
     public function saveCodeCashflow(){
-        $this->emit('modalEdit',$id);
+        $this->emit('modalEdit');
     }
     public function submitCashFlow()
     {

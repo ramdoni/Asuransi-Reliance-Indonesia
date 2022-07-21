@@ -251,17 +251,6 @@ class PayableInsert extends Component
                             $no_voucher = $find_journal->no_voucher;
                             Journal::insert(['coa_id'=>$find_journal->coa_id,'no_voucher'=>$no_voucher,'date_journal'=>date('Y-m-d'),'debit'=>$find_journal->kredit,'transaction_id'=>$expense->id,'transaction_table'=>'expenses']);
                         }
-                        // foreach($expense->others_payment as $k => $expense_item){
-                        //     Journal::insert([
-                        //         'debit' => $expense_item->payment_amount,
-                        //         'no_voucher' => $no_voucher,
-                        //         'coa_id' => $expense_item->coa_id,
-                        //         'date_journal' => $bank_book->payment_date,
-                        //         'description' => $expense_item->description,
-                        //         'transaction_table' => 'expense_payments',
-                        //         'transaction_id' => $expense_item->id
-                        //     ]);
-                        // }
                         $expense->status = 2;
                         $expense->save();
                     }else{

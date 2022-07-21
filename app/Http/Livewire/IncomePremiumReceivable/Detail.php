@@ -16,8 +16,6 @@ use App\Models\JournalPenyesuaian;
 use App\Models\BankAccount;
 use App\Models\BankAccountBalance;
 use App\Models\BankBook;
-use App\Models\BankBookPairing;
-use App\Models\BankBookAdjustment;
 
 class Detail extends Component
 {
@@ -141,7 +139,7 @@ class Detail extends Component
         $this->bank_charges = $this->bank_charges;
         // cek titipan premi
         $this->titipan_premi = IncomeTitipanPremi::where(['income_premium_id'=>$this->data->id,'transaction_type'=>'Premium Receive'])->get();      
-        if($this->data->status==1) $this->description = 'Premi ab '. (isset($this->data->uw->pemegang_polis) ? ($this->data->uw->pemegang_polis .' bulan '. $this->data->uw->bulan .' dengan No Invoice :'.$this->data->uw->no_kwitansi_debit_note) : ''); 
+        if($this->data->status==1) $this->description = 'Premi ab '. (isset($this->data->client) ? ($this->data->client .' dengan No Invoice :'.$this->data->reference_no) : ''); 
         if($this->payment_amount =="") $this->payment_amount=$this->data->nominal;
         if($this->data->status==2 || $this->data->status==4){ $this->is_readonly = true;}
         if($this->data->type==1){ // Konven
@@ -444,7 +442,7 @@ class Detail extends Component
                         $journal->saldo = $this->bank_charges + $this->payment_amount;
                         $journal->no_voucher = generate_no_voucher(get_coa(406000),$this->data->id);
                     }
-
+ 
                     $journal->coa_id = get_coa(406000); // premium suspend
                     $journal->date_journal = $this->payment_date;
                     $journal->description = $this->description;

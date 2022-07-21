@@ -7,6 +7,7 @@ use App\Models\Income;
 use App\Models\Expenses;
 use App\Models\IncomeRecoveryClaim;
 use App\Models\IncomeTitipanPremi;
+use App\Models\Journal;
 
 class Insert extends Component
 {
@@ -91,7 +92,18 @@ class Insert extends Component
         $data->nominal = replace_idr($this->amount);
         $data->transaction_id = $this->expense_id;
         $data->transaction_table = 'expenses';
-        $data->save();
+        $data->save(); 
+
+        // insert coa accrued
+        $no_voucher = generate_no_voucer_journal('AR');
+        $gross_claim_coa = 0;
+        Journal::insert([
+            'coa_id'=>0,
+            'no_voucher'=>$no_voucher,
+            'date_journal'=>date('Y-m-d'),
+            'debit'=>$data->nominal,
+            'transaction_id'=>$data->id, 
+            'transaction_table'=>'income']);
 
         if($this->add_claim_payables){
             foreach($this->add_claim_payables as $k => $v){

@@ -10,7 +10,6 @@
                             <thead>
                                 <tr style="background: #eee;">
                                     <th style="width:10px">No</th>
-                                    <th>COA</th>
                                     <th>Description</th>
                                     <th class="text-right">Amount</th>
                                 </tr>
@@ -19,21 +18,7 @@
                             @foreach($data->others_payment as $k => $item)
                                 <tr>
                                     <td>{{$k+1}}</td>
-                                    <td wire:ignore>
-                                        <select class="form-control select2_{{$k}}" id="coa_id.{{$k}}">
-                                            <option value=""> --- Select --- </option>
-                                            @foreach(\App\Models\Coa::groupBy('coa_group_id')->get() as $group)
-                                                <optgroup label="{{isset($group->group->name) ? $group->group->name : ''}}">
-                                                    @foreach(\App\Models\Coa::where(['coa_group_id'=>$group->coa_group_id])->get() as $coa)
-                                                        <option value="{{$coa->id}}">{{$coa->name}} ({{$coa->code}})</option>
-                                                    @endforeach
-                                                </optgroup>
-                                            @endforeach
-                                        </select>
-                                        @error('coa_id.'.$k)
-                                            <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
-                                        @enderror
-                                    </td>
+                                   
                                     <td>{{$item->description}}</td>
                                     <td class="text-right">{{format_idr($item->payment_amount)}}</td>
                                 </tr>
@@ -41,10 +26,77 @@
                             @endforeach
                             <tr  style="background: #eee;">
                                 <th></th>
-                                <th></th>
                                 <th class="text-right">Total</th>
                                 <th class="text-right">{{format_idr($total)}}</th>
                             </tr>
+                        </table>
+                        <table class="table">
+                            <thead>
+                                <tr style="background: #eee;">
+                                    <th style="width:10px">No</th>
+                                    <th>COA</th>
+                                    <th>Description</th>
+                                    <th class="text-right">Debit</th>
+                                    <th class="text-right">Credit</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($add_coas as $k => $item)
+                                    <tr>
+                                        <td>{{$k+1}}</td>
+                                        <td>
+                                            <div wire:ignore>
+                                                <select class="form-control select2" id="coa_id.{{$k}}">
+                                                    <option value=""> --- Select --- </option>
+                                                    @foreach(\App\Models\Coa::groupBy('coa_group_id')->get() as $group)
+                                                        <optgroup label="{{isset($group->group->name) ? $group->group->name : ''}}">
+                                                            @foreach(\App\Models\Coa::where(['coa_group_id'=>$group->coa_group_id])->get() as $coa)
+                                                                <option value="{{$coa->id}}">{{$coa->name}} ({{$coa->code}})</option>
+                                                            @endforeach
+                                                        </optgroup>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            @error('coa_id.'.$k)
+                                                <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                                            @enderror
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control" wire:model="description.{{$k}}" />
+                                        </td>
+                                        <td>
+                                            <input type="number" class="form-control text-right" wire:model="debit.{{$k}}" />
+                                        </td>
+                                        <td>
+                                            <input type="number" class="form-control text-right" wire:model="kredit.{{$k}}" />
+                                        </td>
+                                        <td>
+                                            <a href="javascript:void(0)" wire:loading.remove wire:target="delete({{$k}})" wire:click="delete({{$k}})" class="text-danger"><i class="fa fa-trash"></i></a>
+                                            <span wire:loading wire:target="delete({{$k}})">
+                                                <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                                                <span class="sr-only">{{ __('Loading...') }}</span>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                <tfoot style="background: #eee;">
+                                    <tr>
+                                        <th colspan="3">Total</th>
+                                        <th class="text-right">{{format_idr($total_debit)}}</th>
+                                        <th class="text-right">{{format_idr($total_kredit)}}</th>
+                                    </tr>
+                                </tfoot>
+                                <tr>
+                                    <td colspan="5" class="text-center">
+                                        <span wire:loading wire:target="add">
+                                            <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                                            <span class="sr-only">{{ __('Loading...') }}</span>
+                                        </span>
+                                        <a href="javascript:void(0)" wire:loading.remove wire:target="add" wire:click="add"><i class="fa fa-plus"></i> Add</a>
+                                    </td>
+                                </tr>
+                            </tbody>
                         </table>
                     @endif
                     <hr>
@@ -59,11 +111,6 @@
         </div>
     </div>
 </div>
-<div wire:ignore.self class="modal fade" id="modal_add_bank" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <livewire:expense-others.add-bank />
-    </div>
-</div>
 @push('after-scripts')
     <link rel="stylesheet" href="{{ asset('assets/vendor/select2/css/select2.min.css') }}"/>
     <script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
@@ -75,23 +122,23 @@
     </style>
     <script src="{{ asset('assets/js/jquery.priceformat.min.js') }}"></script>
     <script>
-        Livewire.on('emit-add-bank',()=>{
-            $("#modal_add_bank").modal("hide");    
-        });
         Livewire.on('init-form', () =>{
             init_form();
         });
         function init_form(){
-            @foreach($data->others_payment as $k => $item)
-                $(".select2_{{$k}}").select2();
-                $('.select2_{{$k}}').on('select2:select', function (e) {
+            $(".select2").each(function(k,v){
+                var select_ = $(this);
+                var id = $(this).attr('id');
+
+                select_.select2();
+                select_.on('select2:select', function (e) {
                     var data = e.params.data;
-                    @this.set('coa_id.{{$k}}',data.id);
+                    @this.set(id,data.id);
                     setTimeout(function(){
-                        $('.select2_{{$k}}').select2().val(data.id).trigger("change")
+                        select_.select2().val(data.id).trigger("change")
                     },1000);
                 });
-            @endforeach
+            });
             
             $('.format_number').priceFormat({
                 prefix: '',
