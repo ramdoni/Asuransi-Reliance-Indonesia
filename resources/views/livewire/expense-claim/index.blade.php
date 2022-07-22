@@ -63,18 +63,14 @@
                                 <th>Policy Number / Policy Holder</th>                       
                                 <th>No / Nama Peserta</th>  
                                 <th>Payment Amount</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
                         @foreach($data as $k => $item)
                             <tr>
                                 <td style="width: 50px;">{{$k+1}}</td>
-                                <td>
-                                    <a href="{{route('expense.claim.detail',['id'=>$item->id])}}" style="cursor:pointer;">{!!status_expense($item->status)!!}</a>
-                                    @if($item->status==4)
-                                    <a href="javascript:;" title="Delete Claim" class="text-danger" wire:click="delete({{$item->id}})"><i class="fa fa-trash"></i></a>
-                                    @endif
-                                </td>
+                                <td><a href="{{route('expense.claim.detail',['id'=>$item->id])}}" style="cursor:pointer;">{!!status_expense($item->status)!!}</a></td>
                                 <td>
                                     @if(isset($item->bank_books))
                                         @foreach($item->bank_books as $k => $bank_book)
@@ -98,6 +94,11 @@
                                     @endif
                                 </td>
                                 <td>{{isset($item->payment_amount) ? format_idr($item->payment_amount) : '-'}}</td>
+                                <td>
+                                    @if($item->status==4)
+                                        <a href="javascript:;" title="Delete Claim" class="text-danger" wire:click="delete({{$item->id}})"><i class="fa fa-trash"></i></a>
+                                    @endif
+                                </td>
                             </tr>
                         @endforeach
                         </tbody>

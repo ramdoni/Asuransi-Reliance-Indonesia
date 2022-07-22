@@ -17,7 +17,7 @@ class Index extends Component
     public function render() 
     {
         $data = Expenses::select('expenses.*')
-                            ->with(['pesertas'])
+                            ->with(['pesertas','bank_books','bank_books.bank_books'])
                             ->orderBy('expenses.id','desc')->where('expenses.reference_type','Claim')->groupBy('expenses.id')
                             ->leftJoin('expense_pesertas','expense_pesertas.expense_id','=','expenses.id')
                             ->leftJoin('policys','policys.id','=','expenses.policy_id');

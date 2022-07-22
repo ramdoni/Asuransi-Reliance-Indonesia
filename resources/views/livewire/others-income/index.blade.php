@@ -65,7 +65,7 @@
                     <div class="col-md-7">
                         <a href="{{route('others-income.insert')}}" class="btn btn-success"><i class="fa fa-plus"></i> Income</a>
                         <a href="javascript:;" class="btn btn-info" wire:click="downloadExcel"><i class="fa fa-download"></i> Download</a>
-                        <span wire:loading>
+                        <span wire:loading wire:target="status,keyword">
                             <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
                             <span class="sr-only">{{ __('Loading...') }}</span>
                         </span>
@@ -82,6 +82,7 @@
                                 <th>Transaction Number</th>         
                                 <th>Description</th>   
                                 <th class="text-right">Payment Amount</th>
+                                <td></td>
                             </tr>
                         </thead>
                         <tbody>
@@ -108,6 +109,15 @@
                                     @endif
                                 </td>
                                 <td class="text-right">{{isset($item->nominal) ? format_idr($item->nominal) : '-'}}</td>
+                                <td>
+                                    @if($item->status==0)
+                                        <a href="javascript:void(0)" wire:loading.remove wire:target="delete({{$item->id}})" wire:click="delete({{$item->id}})"><i class="fa fa-trash text-danger"></i></a>
+                                        <span wire:loading wire:target="delete({{$item->id}})">
+                                            <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                                            <span class="sr-only">{{ __('Loading...') }}</span>
+                                        </span>
+                                    @endif
+                                </td>
                             </tr>
                         @endforeach
                         </tbody>

@@ -10,7 +10,7 @@ use Livewire\WithPagination;
 class Teknik extends Component
 {
     use WithPagination;
-    protected $paginationTheme = 'bootstrap';
+    protected $paginationTheme = 'bootstrap',$listeners = ['reload'=>'$refresh'];
     public $check_id=[],$type,$transaction_id,$filter_status,$filter_from_bank,$filter_to_bank,$filter_propose,$filter_amount,$filter_note;
     public $payment_date_from,$payment_date_to;
     public function render()
@@ -50,9 +50,7 @@ class Teknik extends Component
 
     public function updated($propertyName)
     {
-        if($propertyName=='type'){
-            $this->emit('select-premium-receivable');
-        }
+        if($propertyName=='type') $this->emit('select-premium-receivable');
         
         $query['page'] = $this->page;
 
