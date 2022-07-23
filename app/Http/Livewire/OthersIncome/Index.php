@@ -4,7 +4,7 @@ namespace App\Http\Livewire\OthersIncome;
 
 use Livewire\Component;
 use Livewire\WithPagination;
-
+use App\Models\Income;
 class Index extends Component
 {
     use WithPagination;
@@ -12,7 +12,7 @@ class Index extends Component
     protected $paginationTheme = 'bootstrap',$export_data;
     public function render()
     {
-        $data = \App\Models\Income::orderBy('id','desc')->where('is_others',1);
+        $data = Income::orderBy('id','desc')->where('is_others',1);
         $received = clone $data;
         $outstanding = clone $data;
         if($this->keyword) $data = $data->where('description','LIKE', "%{$this->keyword}%")
@@ -32,6 +32,11 @@ class Index extends Component
     public function mount()
     {
         \LogActivity::add('Income - Premium Receivable');
+    }
+
+    public function delete(Income $id)
+    {
+        $id->delete();
     }
 
     public function downloadExcel()
@@ -91,7 +96,7 @@ class Index extends Component
         $objPHPExcel->getActiveSheet()->setAutoFilter('B3:O3');
         $num=4;
         
-        $data = \App\Models\Income::orderBy('id','desc')->where('is_others',1);
+        $data = Income::orderBy('id','desc')->where('is_others',1);
         if($this->keyword) $data = $data->where('description','LIKE', "%{$this->keyword}%")
                                         ->orWhere('no_voucher','LIKE',"%{$this->keyword}%")
                                         ->orWhere('reference_no','LIKE',"%{$this->keyword}%")

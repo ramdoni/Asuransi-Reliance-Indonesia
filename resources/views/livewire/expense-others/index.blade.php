@@ -82,6 +82,7 @@
                                 <th>Transaction Number</th>               
                                 <th>Description</th>                    
                                 <th class="text-right">Amount</th>     
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -100,9 +101,6 @@
                                             <span class="badge badge-success">Settle</span>
                                         @endif
                                     </a>
-                                    @if($item->status==4)
-                                    <a href="javascript:;" class="text-danger" wire:click="delete({{$item->id}})"><i class="fa fa-trash"></i></a>
-                                    @endif
                                 </td>
                                 <td>{{$item->settle_date ? date('d M Y', strtotime($item->settle_date)) : '-'}}</td>
                                 <td>{{date('d M Y', strtotime($item->created_at))}}</td>
@@ -113,6 +111,15 @@
                                     @endif
                                 </td>
                                 <td class="text-right">{{isset($item->payment_amount) ? format_idr($item->payment_amount) : '-'}}</td>
+                                <td>
+                                    @if($item->status==0)
+                                        <a href="javascript:void(0)" wire:loading.remove wire:target="delete({{$item->id}})" wire:click="delete({{$item->id}})"><i class="fa fa-trash text-danger"></i></a>
+                                        <span wire:loading wire:target="delete({{$item->id}})">
+                                            <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                                            <span class="sr-only">{{ __('Loading...') }}</span>
+                                        </span>
+                                    @endif
+                                </td>
                             </tr>
                         @endforeach
                         </tbody>

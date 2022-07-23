@@ -300,12 +300,13 @@ class InsertSettle extends Component
         }
         
         $this->emit('modal','hide');
-
-        session()->flash('message-success',__('Settle successfully'));
+        $this->emit('reload');
+        $this->emit('message-success',__('Settle successfully'));
+        // session()->flash('message-success',__('Settle successfully'));
         
-        if(session()->get('url_back'))
-            return redirect(session()->get('url_back'));
-        else
-            return redirect()->route('bank-book.teknik');
+        // if(session()->get('url_back'))
+        //     return redirect(session()->get('url_back'));
+        // else
+        //     return redirect()->route('bank-book.teknik');
     }
 }
