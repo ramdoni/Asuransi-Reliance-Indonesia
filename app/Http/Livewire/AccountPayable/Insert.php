@@ -30,6 +30,7 @@ class Insert extends Component
         $data->no_voucher = $this->no_voucher;
         $data->description = $this->description;
         $data->type = 1; // Debit / Payable
+        $data->saldo = $data->debit ? $data->debit : $data->kredit;
         $data->save();
         
         session()->flash('message-success',__('Data saved successfully'));
