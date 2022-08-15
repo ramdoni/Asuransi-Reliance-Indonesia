@@ -12,6 +12,7 @@ class Payable extends Component
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
     public $check_id=[],$type,$transaction_id,$filter_status,$filter_from_bank,$filter_to_bank,$filter_amount,$filter_note;
+    public $payment_date_from,$payment_date_to,$filter_propose;
     public function render()
     {
         $data = BankBook::where('type','P')->orderBy('id','desc');
@@ -19,12 +20,19 @@ class Payable extends Component
         if($this->filter_status!="") $data->where('status',$this->filter_status);
         if($this->filter_from_bank) $data->where('from_bank_id',$this->filter_from_bank);
         if($this->filter_to_bank) $data->where('to_bank_id',$this->filter_to_bank);
+        if($this->filter_propose) $data->where('propose',$this->filter_propose);
         if($this->filter_note) $data->where('note','LIKE',"%{$this->filter_note}%");
         if($this->filter_amount) $data->where(function($table){
             $max = (int)(0.1*$this->filter_amount)+$this->filter_amount;
             $min = $this->filter_amount - (int)(0.1*$this->filter_amount);
             $table->where('amount','<=',$max)->where('amount','>=',$min);
         });
+        if($this->payment_date_from and $this->payment_date_to) {
+            if($this->payment_date_from == $this->payment_date_to)
+                $data->whereDate('payment_date',$this->payment_date_from);
+            else
+                $data->whereBetween('payment_date',[$this->payment_date_from,$this->payment_date_to]);
+        }
         return view('livewire.bank-book.payable')->with(['data'=>$data->paginate(100)]);
     }
 

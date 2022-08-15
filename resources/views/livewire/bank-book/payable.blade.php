@@ -22,12 +22,22 @@
                                     <div class="from-group my-2">
                                         <input type="number" class="form-control" wire:model="filter_amount" placeholder="Amount" />
                                     </div>
+                                    <div class="from-group my-2">
+                                        <input type="text" class="form-control select_payment_date" placeholder="Payment Date" />
+                                    </div>
                                     <div class="from-group my-2" wire:ignore>
                                         <select class="form-control filter_from_bank">
                                             <option value=""> -- Bank Company -- </option>
                                             @foreach(\App\Models\BankAccount::where('is_client',0)->where('status',1)->get() as $k=>$item)
                                                 <option value="{{$item->id}}">{{isset($item->no_rekening) ? $item->no_rekening .'- '.$item->bank.' an '. $item->owner : '-'}}</option>
                                             @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <select class="form-control" wire:model="filter_propose">
+                                            <option value=""> - Propose - </option>
+                                            <option value="T">T - Teknik</option>
+                                            <option value="N">N - Non Teknik</option>
                                         </select>
                                     </div>
                                     <div class="from-group my-2">
@@ -106,6 +116,9 @@
 @push('after-scripts')
     <link rel="stylesheet" href="{{ asset('assets/vendor/select2/css/select2.min.css') }}"/>
     <script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('assets/vendor/daterange/moment.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('assets/vendor/daterange/daterangepicker.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/vendor/daterange/daterangepicker.css') }}" />
     <style>
         .select2-container .select2-selection--single {height:36px;padding-left:10px;}
         .select2-container .select2-selection--single .select2-selection__rendered{padding-top:3px;}
@@ -127,6 +140,12 @@
             $('.filter_from_bank').val(null).trigger('change');
             $('.filter_to_bank').val(null).trigger('change');
         })
+        $('.select_payment_date').daterangepicker({
+                opens: 'left'
+            }, function(start, end, label) {
+                @this.set("payment_date_from", start.format('YYYY-MM-DD'));
+                @this.set("payment_date_to", end.format('YYYY-MM-DD'));
+            });
         $(document).ready(function() { 
             var table = $('#data_table').DataTable( { fixedColumns :true,"searching": false,scrollY: "600px", scrollX: true, scrollCollapse: true, paging: false } ); 
             // new $.fn.dataTable.FixedColumns( table, { leftColumns: 10 } ); 
