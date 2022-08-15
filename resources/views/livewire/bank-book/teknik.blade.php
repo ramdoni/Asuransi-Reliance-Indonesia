@@ -60,7 +60,7 @@
                     </div>
                 </div>
                 <div class="table-responsive">
-                    <table class="table hovered m-b-0 c_list">
+                    <table class="table hovered m-b-0 c_list" id="data_table">
                         <thead>
                             <tr style="background:#eee">
                                 <th>No</th>
@@ -147,6 +147,10 @@
                 @this.set("payment_date_from", start.format('YYYY-MM-DD'));
                 @this.set("payment_date_to", end.format('YYYY-MM-DD'));
             });
+        $(document).ready(function() { 
+            var table = $('#data_table').DataTable( { fixedColumns :true,"searching": false,scrollY: "600px", scrollX: true, scrollCollapse: true, paging: false } ); 
+            // new $.fn.dataTable.FixedColumns( table, { leftColumns: 10 } ); 
+        } );
     </script>
 @endpush
 <div wire:ignore.self class="modal fade" id="modal_detail_transaction" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

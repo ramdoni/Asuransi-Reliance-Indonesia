@@ -108,15 +108,10 @@ class Index extends Component
                     ->setCellValue('O3', 'To Bank Account')
                     ->setCellValue('P3', 'Outstanding Balance')
                     ->setCellValue('Q3', 'Bank Charges')
-                    ->setCellValue('R3', 'Payment Amount')
-                    ;
+                    ->setCellValue('R3', 'Payment Amount');
 
         $objPHPExcel->getActiveSheet()->getStyle('A3:R3')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
         $objPHPExcel->getActiveSheet()->getStyle('A3:R3')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-        //$objPHPExcel->getActiveSheet()->getStyle('A3:I3')->getFill()
-                            //->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                            //->getStartColor()->setRGB('e2efd9')
-                        // ;
         $objPHPExcel->getActiveSheet()->getRowDimension('3')->setRowHeight(34);
         $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(5);
         $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
