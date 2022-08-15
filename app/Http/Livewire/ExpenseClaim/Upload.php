@@ -13,7 +13,7 @@ use App\Models\Journal;
 class Upload extends Component
 {
     use WithFileUploads;
-    public $file,$line_bussines;
+    public $file,$line_bussines,$type_data=1;
     public function render()
     {
         return view('livewire.expense-claim.upload');
@@ -93,7 +93,7 @@ class Upload extends Component
                     $peserta->save();
                 // }
 
-                if(isset($this->line_bussines)){
+                if(isset($this->line_bussines) and $this->type_data==2){
                     // generate coa
                     $no_voucher = generate_no_voucer_journal("AP");
                     
