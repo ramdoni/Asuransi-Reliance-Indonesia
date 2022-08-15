@@ -181,6 +181,7 @@ class MemoPosSync extends Component
                         $new->date_journal = date('Y-m-d');
                         $new->debit = $item->refund;
                         $new->description = "Refund {$item->pemegang_polis}";
+                        $new->saldo = $new->debit ? $new->debit : $new->kredit;
                         $new->save();
 
                         // Refund Premium Payable
@@ -193,6 +194,7 @@ class MemoPosSync extends Component
                         $new->date_journal = date('Y-m-d');
                         $new->kredit = $item->refund;
                         $new->description = "Refund {$item->pemegang_polis}";
+                        $new->saldo = $new->debit ? $new->debit : $new->kredit;
                         $new->save();
                     }
                 }

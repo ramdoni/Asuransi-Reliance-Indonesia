@@ -39,18 +39,21 @@ class CheckJournal extends Command
      */
     public function handle()
     {
-        $journal = Journal::where('coa_id',78)->get();
+        $journal = Journal::get();
         foreach($journal as $item){
-            if($item->transaction_table=='konven_underwriting'){
-                $uw = KonvenUnderwriting::find($item->transaction_id);
-                if($uw){
-                    if($uw->line_bussines=='JANGKAWARSA'){
-                        $item->coa_id = 73;
-                        $item->save();
-                        echo "Change Item : {$item->no_voucher}\n";
-                    }
-                }
-            }
+            $item->saldo = $item->debit ? $item->debit : $item->kredit;
+            $item->save();
+            echo "No Voucher : ".$item->no_voucher ."\n";
+            // if($item->transaction_table=='konven_underwriting'){
+            //     $uw = KonvenUnderwriting::find($item->transaction_id);
+            //     if($uw){
+            //         if($uw->line_bussines=='JANGKAWARSA'){
+            //             $item->coa_id = 73;
+            //             $item->save();
+            //             echo "Change Item : {$item->no_voucher}\n";
+            //         }
+            //     }
+            // }
         }
     }
 }

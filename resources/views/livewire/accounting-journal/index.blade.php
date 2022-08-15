@@ -67,15 +67,22 @@
                     <div class="table-responsive">
                         <table class="table m-b-0 c_list table-bordered table-style1 table-hover">
                             <thead style="background:#eee">
+                                <tr>
+                                    <th colspan="5" class="text-right">Total</th>
+                                    <th class="text-right">{{format_idr($data->sum('debit'))}}</th>
+                                    <th class="text-right">{{format_idr($data->sum('kredit'))}}</th>
+                                    <th class="text-right">{{format_idr($data->sum('saldo'))}}</th>
+                                    <th></th>
+                                </tr>
                                 <tr>                    
                                     <th>COA</th>                                    
                                     <th>No Voucher</th>                                    
                                     <th>Journal Date</th>                                    
                                     <th>Account</th>                                    
                                     <th>Description</th>                                    
-                                    <th>Debit</th>                                    
-                                    <th>Kredit</th>
-                                    <th>Saldo</th>
+                                    <th class="text-right">Debit</th>                                    
+                                    <th class="text-right">Kredit</th>
+                                    <th class="text-right">Saldo</th>
                                     <th style="text-align:center;">
                                         @if($set_multiple_cashflow)
                                             <label class="text-succes" wire:click="checkAll"><input type="checkbox" wire:model="check_all" value="1" /> Check All</label>

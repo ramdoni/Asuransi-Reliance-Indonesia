@@ -68,6 +68,7 @@ class Insert extends Component
             $data->date_journal = $this->date_journal;
             $data->description = $this->description[$k];
             $data->is_auto = 0;
+            $data->saldo = $data->debit ? $data->debit : $data->kredit;
             $data->save();
         }
         

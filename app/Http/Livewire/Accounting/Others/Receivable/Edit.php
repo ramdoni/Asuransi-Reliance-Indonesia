@@ -73,7 +73,8 @@ class Edit extends Component
                 'debit'=>$this->debit[$k],
                 'description'=>$this->description[$k],
                 'transaction_id'=>$this->data->id,
-                'transaction_table'=>'income'
+                'transaction_table'=>'income',
+                'saldo' => $this->debit[$k] ? $this->debit[$k] : $this->kredit[$k]
             ]);
         }
 
