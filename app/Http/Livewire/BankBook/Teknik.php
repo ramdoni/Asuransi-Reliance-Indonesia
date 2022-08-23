@@ -52,6 +52,15 @@ class Teknik extends Component
     {
         if($propertyName=='type') $this->emit('select-premium-receivable');
         
+        $query['filter_status'] = $this->filter_status;
+        $query['filter_from_bank'] = $this->filter_from_bank;
+        $query['filter_to_bank'] = $this->filter_to_bank;
+        $query['filter_propose'] = $this->filter_propose;
+        $query['filter_note'] = $this->filter_note;
+        $query['filter_amount'] = $this->filter_amount;
+        $query['payment_date_from'] = $this->payment_date_from;
+        $query['payment_date_to'] = $this->payment_date_to;
+        
         $query['page'] = $this->page;
 
         session(['url_back'=>route('bank-book.teknik',$query)]);

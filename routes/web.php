@@ -173,6 +173,7 @@ Route::group(['middleware' => ['auth','access:4']], function(){
     Route::get('bank-account-company/insert',App\Http\Livewire\Treasury\BankAccountCompany\Insert::class)->name('bank-account-company.insert');
     Route::get('bank-account-company/edit/{id}',App\Http\Livewire\Treasury\BankAccountCompany\Edit::class)->name('bank-account-company.edit');
     Route::get('bank-book',App\Http\Livewire\BankBook\Index::class)->name('bank-book.index');
+    Route::get('treasury/summary',App\Http\Livewire\Treasury\Summary::class)->name('treasury.summary');
 });
 
 // Teknis
