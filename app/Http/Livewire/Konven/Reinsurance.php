@@ -6,7 +6,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 class Reinsurance extends Component
 {
-    public $keyword,$total_sync;
+    public $keyword,$total_sync,$status;
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
     public function render()
@@ -28,6 +28,9 @@ class Reinsurance extends Component
                                         ->orWhere('bulan', 'LIKE',"%{$this->keyword}%")
                                         ->orWhere('ekawarsa_jangkawarsa', 'LIKE',"%{$this->keyword}%")
                                         ->orWhere('produk', 'LIKE',"%{$this->keyword}%");
+        
+        if($this->status) $data->where('status',$this->status);
+
         return view('livewire.konven.reinsurance')->with(['data'=>$data->paginate(100)]);
     }
     public function mount()

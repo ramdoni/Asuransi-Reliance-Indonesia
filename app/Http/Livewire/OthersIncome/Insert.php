@@ -72,7 +72,7 @@ class Insert extends Component
         $data->rekening_bank_id = $this->to_bank_account_id;
         $data->from_bank_account_id = $this->from_bank_account_id;
         $data->is_others = 1;
-        $data->payment_date = $this->payment_date;
+        // $data->payment_date = $this->payment_date;
         $data->bank_charges = replace_idr($this->bank_charges);
         $data->save();
         

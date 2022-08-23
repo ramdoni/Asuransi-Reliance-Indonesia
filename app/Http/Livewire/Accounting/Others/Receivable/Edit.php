@@ -6,11 +6,13 @@ use Livewire\Component;
 use App\Models\Income;
 use App\Models\Journal;
 use App\Models\IncomeOthersCoa;
+use App\Models\CoaGroup;
 
 class Edit extends Component
 {
     public $data,$is_readonly = false,$payment_amount,$outstanding_balance,$add_payment=[],$add_payment_temp=[];
     public $no_voucher,$add_coas=[],$coa_id=[],$debit=[],$kredit=[],$description=[],$total_debit=0,$total_kredit=0;
+    public $coa_groups=[];
     public function render()
     {
         return view('livewire.accounting.others.receivable.edit');
@@ -20,13 +22,19 @@ class Edit extends Component
     {
         $this->no_voucher = $data->no_voucher;
         $this->data = $data;
-        $this->add();        
+        $this->add();
+        $this->coa_group = CoaGroup::with('coa')->get();        
     }
 
     public function add()
     {
         $this->add_coas[] = '';$this->coa_id[] = '';$this->debit[]=0;$this->kredit[]=0;$this->description[]='';
         $this->emit('init-form');    
+    }
+
+    public function delete($k)
+    {
+        unset($this->add_coas[$k],$this->coa_id[$k],$this->debit[$k],$this->kredit[$k],$this->description[$k]);
     }
 
     public function updated($propertyName)

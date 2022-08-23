@@ -130,8 +130,15 @@
                                         <td>{{ date('d M Y', strtotime($item->created_at)) }}</td>
                                         <td>{{ calculate_aging($item->due_date) }}</td>
                                         <td>{{ $item->due_date ? date('d M Y', strtotime($item->due_date)) : '' }}</td>
-                                        <td class="text-info" title="Source  From : {{$item->transaction_table}}"><a href="{{ route('income.premium-receivable.detail', ['id' => $item->id,'page'=>$page,'keyword'=>$keyword,'unit'=>$unit,'status'=>$status,'payment_date_from'=>$payment_date_from,'payment_date_to'=>$payment_date_to])}}">{{ $item->reference_no ? $item->reference_no : '-' }}</a></td>
-                                        <td>{{ isset($item->policys->no_polis) ? $item->policys->no_polis .'-' .$item->policys->pemegang_polis : '-' }}</td>
+                                        <td class="text-info" title="Source  From : {{$item->transaction_table}}">
+                                            @if($item->type==1)
+                                                <span class="badge badge-info">K</span>
+                                            @else
+                                                <span class="badge badge-warning">S</span>
+                                            @endif
+                                            <a href="{{ route('income.premium-receivable.detail', ['id' => $item->id,'page'=>$page,'keyword'=>$keyword,'unit'=>$unit,'status'=>$status,'payment_date_from'=>$payment_date_from,'payment_date_to'=>$payment_date_to])}}">{{ $item->reference_no ? $item->reference_no : '-' }}</a>
+                                        </td>
+                                        <td>{{ isset($item->policys->no_polis) ? $item->policys->no_polis .'-' .$item->policys->pemegang_polis : $item->client }}</td>
                                         <td class="text-right">
                                             @if ($item->type == 1)
                                                 {{ isset($item->cancelation_konven) ? format_idr($item->cancelation_konven->sum('nominal')) : 0 }}

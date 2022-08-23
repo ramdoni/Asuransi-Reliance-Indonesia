@@ -22,9 +22,9 @@ class SetCodeCashflowCheckbox extends Component
     }
     public function save()
     {
-        $this->validate([
-            'code_cashflow_id'=>'required'
-        ]);
+        // $this->validate([
+        //     'code_cashflow_id'=>'required'
+        // ]);
         
         foreach($this->value_multiple_cashflow as $k => $id){
             if($id){

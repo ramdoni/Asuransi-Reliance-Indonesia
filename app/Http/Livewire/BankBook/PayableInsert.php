@@ -244,12 +244,12 @@ class PayableInsert extends Component
                     }
                      
                     if($item=='Others'){
-                        $coa_id = 206;
                         // find journal 
                         $find_journal = Journal::where(['transaction_table'=>'expenses','transaction_id'=>$expense->id])->first();
                         if($find_journal){
                             $no_voucher = $find_journal->no_voucher;
-                            Journal::insert(['coa_id'=>$find_journal->coa_id,'no_voucher'=>$no_voucher,'date_journal'=>date('Y-m-d'),'debit'=>$find_journal->kredit,'transaction_id'=>$expense->id,'transaction_table'=>'expenses']);
+                            //Operational Payable
+                            Journal::insert(['coa_id'=>364,'no_voucher'=>$no_voucher,'date_journal'=>date('Y-m-d'),'debit'=>$find_journal->kredit,'transaction_id'=>$expense->id,'transaction_table'=>'expenses']);
                         }
                         $expense->status = 2;
                         $expense->save();

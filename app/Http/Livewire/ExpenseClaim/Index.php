@@ -28,7 +28,8 @@ class Index extends Component
                                         ->orWhere('expense_pesertas.no_peserta','LIKE',"%{$this->keyword}%")
                                         ->orWhere('expense_pesertas.nama_peserta','LIKE',"%{$this->keyword}%")
                                         ->orWhere('policys.no_polis','LIKE',"%{$this->keyword}%")
-                                        ->orWhere('policys.pemegang_polis','LIKE',"%{$this->keyword}%");
+                                        ->orWhere('policys.pemegang_polis','LIKE',"%{$this->keyword}%")
+                                        ->orWhere('expenses.recipient','LIKE',"%{$this->keyword}%");
                                     });
         if($this->status) $data = $data->where('expenses.status',$this->status);
         if($this->type) $data = $data->where('expenses.type',$this->type);

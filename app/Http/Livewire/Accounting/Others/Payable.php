@@ -4,13 +4,16 @@ namespace App\Http\Livewire\Accounting\Others;
 
 use Livewire\Component;
 use App\Models\Expenses;
+use Livewire\WithPagination;
 
 class Payable extends Component
 {
     public $keyword,$type,$status;
+    use WithPagination;
+    protected $paginationTheme = 'bootstrap';
     public function render()
     {
-        $data = Expenses::orderBy('id','DESC')->where('is_others',1);
+        $data = Expenses::with('others_payment')->orderBy('id','DESC')->where('is_others',1);
         if($this->keyword) $data = $data->where(function($table){
             $table->where('description','LIKE', "%{$this->keyword}%")
             ->orWhere('no_voucher','LIKE',"%{$this->keyword}%")

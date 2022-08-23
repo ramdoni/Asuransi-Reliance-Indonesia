@@ -25,9 +25,9 @@ class SetCodeCashflow extends Component
     }
     public function save()
     {
-        $this->validate([
-            'code_cashflow_id'=>'required'
-        ]);
+        // $this->validate([
+        //     'code_cashflow_id'=>'required'
+        // ]);
 
         $this->active_id->code_cashflow_id = $this->code_cashflow_id;
         $this->active_id->save();

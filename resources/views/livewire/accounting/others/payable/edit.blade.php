@@ -50,7 +50,7 @@
                                         <div wire:ignore>
                                             <select class="form-control select2" id="coa_id.{{$k}}">
                                                 <option value=""> --- Select --- </option>
-                                                @foreach(\App\Models\Coa::groupBy('coa_group_id')->get() as $group)
+                                                @foreach(\App\Models\Coa::with('group')->groupBy('coa_group_id')->get() as $group)
                                                     <optgroup label="{{isset($group->group->name) ? $group->group->name : ''}}">
                                                         @foreach(\App\Models\Coa::where(['coa_group_id'=>$group->coa_group_id])->get() as $coa)
                                                             <option value="{{$coa->id}}">{{$coa->name}} ({{$coa->code}})</option>
