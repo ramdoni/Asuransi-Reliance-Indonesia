@@ -284,10 +284,12 @@ class PayableInsert extends Component
             $journal->transaction_table = 'bank_book';
             $journal->save();
         }
-
-        $this->emit('modal','hide');
+        
         session()->flash('message-success',__('Settle successfully'));
 
-        return redirect()->route('bank-book.teknik');
+        if(session()->get('url_back'))
+            return redirect(session()->get('url_back'));
+        else
+            return redirect()->route('bank-book.teknik');
     }
 }
