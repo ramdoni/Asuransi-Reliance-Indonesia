@@ -9,6 +9,7 @@ use App\Models\IncomeSettle;
 use App\Models\BankBookTransactionItem;
 use App\Models\BankBook;
 use App\Models\IncomePayment;
+use App\Models\IncomeOthersCoa;
 
 class Income extends Model
 {
@@ -17,6 +18,11 @@ class Income extends Model
 
     protected $table="income";
 
+    public function income_other_coa()
+    {
+        return $this->hasMany(IncomeOthersCoa::class,'income_id','id');
+    }
+    
     public function others_payment()
     {
         return $this->hasMany(IncomePayment::class,'income_id','id');
