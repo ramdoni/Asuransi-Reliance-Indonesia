@@ -20,7 +20,8 @@
                     <select class="form-control" wire:model="year">
                         <option value=""> -- Year -- </option>
                         @foreach(\App\Models\Journal::select( DB::raw( 'YEAR(date_journal) AS year' ))->groupBy('year')->get() as $i)
-                        <option>{{$i->year}}</option>
+                            @if($i->year==0 || $i->year=="") @continue @endif
+                            <option>{{$i->year}}</option>
                         @endforeach
                     </select>
                 </div>
@@ -33,7 +34,11 @@
                     </select>
                 </div>
                 <div class="px-0 col-md-4">
-                    <a href="javascript:void(0)" class="btn btn-info" wire:click="downloadExcel"><i class="fa fa-download"></i> Download Excel</a>
+                    <a href="javascript:void(0)" class="btn btn-info" wire:click="downloadExcel"><i class="fa fa-download"></i> Download</a>
+                    <span wire:loading>
+                        <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                        <span class="sr-only">{{ __('Loading...') }}</span>
+                    </span>
                 </div>
             </div>
             <div class="pt-0 body">
@@ -55,21 +60,25 @@
                         </thead>
                         <tbody>
                             @foreach($data as $k => $item)
-                            @php($debit = isset($item->journal)?$item->journal->sum('debit'):0)
-                            @php($kredit = isset($item->journal)?$item->journal->sum('kredit'):0)
-                            <tr>
-                                <td style="width: 50px;">{{$k+1}}</td>
-                                <td>{{isset($item->code)?$item->code:''}}</td>
-                                <td></td>
-                                <td>{{$item->name}}</td>
-                                <td class="text-right">{{format_idr($item->opening_balance)}}</td>
-                                <td class="text-right">{{format_idr($debit)}}</td>
-                                <td class="text-right">{{format_idr($kredit)}}</td>
-                                <td class="text-right">{{format_idr(($item->opening_balance?$item->opening_balance:0)+$debit-$kredit)}}</td>
-                                <td>-</td>
-                                <td class="text-right">{{format_idr(($item->opening_balance?$item->opening_balance:0)+$debit-$kredit)}}</td>
-                                <td></td>
-                            </tr>
+                                @php($debit = isset($item->journal)?$item->journal()->where(function($table)use ($year){
+                                    if($year) $table->whereYear('date_journal',$year);
+                                })->sum('debit'):0)
+                                @php($kredit = isset($item->journal)?$item->journal()->where(function($table)use ($year){
+                                    if($year) $table->whereYear('date_journal',$year);
+                                })->sum('kredit'):0)
+                                <tr>
+                                    <td style="width: 50px;">{{$k+1}}</td>
+                                    <td>{{isset($item->code)?$item->code:''}}</td>
+                                    <td></td>
+                                    <td>{{$item->name}}</td>
+                                    <td class="text-right">{{format_idr($item->opening_balance)}}</td>
+                                    <td class="text-right">{{format_idr($debit)}}</td>
+                                    <td class="text-right">{{format_idr($kredit)}}</td>
+                                    <td class="text-right">{{format_idr(($item->opening_balance?$item->opening_balance:0)+$debit-$kredit)}}</td>
+                                    <td>-</td>
+                                    <td class="text-right">{{format_idr(($item->opening_balance?$item->opening_balance:0)+$debit-$kredit)}}</td>
+                                    <td></td>
+                                </tr>
                             @endforeach
                         </tbody>
                     </table>

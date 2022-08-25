@@ -11,6 +11,7 @@ class Index extends Component
     protected $data;
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
+    public $year;
     public function render()
     {
         $data = Coa::with('journal')->get();
