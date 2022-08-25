@@ -10,14 +10,8 @@
         </div>
         <div class="navbar-right">
             <form id="navbar-search" class="navbar-form search-form col-md-9">
-                {{-- <h5 class="mt-2 ml-3 mb-0 pb-0">@yield('title')</h5>
-                @if (trim($__env->yieldContent('parentPageTitle')))
-                    <span class="ml-3">@yield('parentPageTitle')</span>
-                @endif --}}
                 <div id="navbar-menu float-left">
                     <ul class="nav navbar-nav">
-                        {{-- <li><a href="" class="px-1 text-info icon-menu">Dashboard</a></li> --}}
-                        {{-- Administrator --}}
                         @if (\Auth::user()->user_access_id == 1)
                             <li class="dropdown">
                                 <a href="#" class="text-info dropdown-toggle icon-menu px-1" data-toggle="dropdown">Konven</a>
@@ -57,10 +51,8 @@
                                 </ul>
                             </li>
                         @endif
-                        
                         <!--Finance-->
                         @if (\Auth::user()->user_access_id == 2)
-                            
                             <li class="dropdown">
                                 <a href="#" class="text-info dropdown-toggle icon-menu px-1" data-toggle="dropdown">Income</a>
                                 <ul class="dropdown-menu user-menu menu-icon">
@@ -77,7 +69,6 @@
                                 <a href="#" class="text-info dropdown-toggle icon-menu px-1" data-toggle="dropdown">Expense</a>
                                 <ul class="dropdown-menu user-menu menu-icon">
                                     <li><a href="{{ route('expense.reinsurance-premium') }}"> Reinsurance Premium</a></li>
-                                    {{-- <li><a href="{{ route('expense.commision-payable') }}"> Commision Payable</a></li> --}}
                                     <li><a href="{{ route('expense-cancelation') }}"> Cancelation</a></li>
                                     <li><a href="{{ route('expense-refund') }}"> Refund</a></li>
                                     <li><a href="{{ route('expense.claim') }}"> Claim Payable</a></li>
@@ -87,7 +78,6 @@
                             </li>
                             <li><a href="{{ route('endorsement.index') }}" class="text-info">Endorsement</a></li>
                         @endif
-
                         @if (\Auth::user()->user_access_id == 3)
                             <!--Accounting-->
                             <li><a href="{{ route('accounting-journal.index') }}" class="text-info px-1 icon-menu"> Journal </a></li>
