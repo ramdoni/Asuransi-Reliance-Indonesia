@@ -63,7 +63,7 @@ class Insert extends Component
         $data->recipient = $this->recipient;
         $data->user_id = \Auth::user()->id;
         $data->reference_type = $this->reference_type;
-        $data->reference_date = $this->reference_date;
+        // $data->reference_date = $this->reference_date;
         $data->description = $this->description;
         $data->reference_no = $this->reference_no;
         $data->payment_amount = $this->payment_amount;

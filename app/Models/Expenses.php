@@ -9,10 +9,16 @@ use App\Models\Policy;
 use App\Models\ExpensePeserta;
 use App\Models\DistributionChannel;
 use App\Models\BankBookTransactionItem;
+use App\Models\ExpenseOthersCoa;
 
 class Expenses extends Model
 {
     use HasFactory;
+
+    public function expense_other_coa()
+    {
+        return $this->hasMany(ExpenseOthersCoa::class,'expense_id','id');        
+    }
 
     public function others_payment()
     {

@@ -85,7 +85,7 @@ class Detail extends Component
         $this->data->recipient = $this->recipient;
         $this->data->user_id = \Auth::user()->id;
         $this->data->reference_type = $this->reference_type;
-        $this->data->reference_date = $this->reference_date;
+        // $this->data->reference_date = $this->reference_date;
         $this->data->description = $this->description;
         $this->data->nominal = replace_idr($this->nominal);
         $this->data->outstanding_balance = replace_idr($this->outstanding_balance);

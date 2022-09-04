@@ -93,7 +93,7 @@
                             <!--Treasury-->
                             <li><a href="{{ route('bank-book.index') }}" class="text-info px-1">Bank Book</a></li>
                             <li><a href="{{ route('bank-account-company') }}" class="text-info px-1">Bank Account</span></a></li>
-                            {{-- <li><a href="{{ route('treasury.summary') }}" class="text-info px-1">Summary</span></a></li> --}}
+                            <li><a href="{{ route('treasury.summary') }}" class="text-info px-1">Summary</span></a></li>
                         @endif
                         @if (\Auth::user()->user_access_id == 5)
                             <!--Teknis-->

@@ -111,6 +111,8 @@ class PayableInsert extends Component
             $transaction_item->type = $item;
             $transaction_item->transaction_id = $this->transaction_ids[$k];
 
+            $bank_book_item = BankBook::find($this->transaction_ids[$k]);
+
             if($item=='Error Suspense Account'){
                 $error = new ErrorSuspense();
                 $error->bank_book_transaction_id = $transaction->id;
@@ -140,6 +142,7 @@ class PayableInsert extends Component
                      $expense->status = 2;
                      $expense->bank_book_transaction_id = $transaction->id;
                      $expense->settle_date = date('Y-m-d');
+                     if($bank_book_item) $expense->reference_date =  $bank_book_item->created_at;
                      $expense->save();
  
                      $line_bussines = $line_bussines = isset($expense->uw->line_bussines) ? $expense->uw->line_bussines : '';
