@@ -43,6 +43,10 @@ class Edit extends Component
     public function delete_temp($k)
     {
         IncomeOthersCoa::find($this->income_others_id[$k])->delete();
+
+        \LogActivity::add("Others Payable {$this->data->id}");
+    
+        return redirect()->route('accounting.others');
     }
 
     public function delete($k)
@@ -76,54 +80,50 @@ class Edit extends Component
             $arr_validate['coa_id.'.$k] = 'required';
             $arr_validate_msg['coa_id.'.$k.'.required'] = 'The coa field is required.';
         }
-
-        if($this->is_save_as_draft){
-            foreach($this->add_coas as $k => $item){
-                IncomeOthersCoa::insert([
-                    'income_id'=>$this->data->id,
-                    'coa_id'=>$this->coa_id[$k],
-                    'description'=>$this->description[$k],
-                    'debit'=>$this->debit[$k],
-                    'kredit'=>$this->kredit[$k]
-                ]);
-            }
-            session()->flash('message-success',__('Data has been successfully saved'));
-        
-            \LogActivity::add("Others Payable {$this->data->id}");
-    
-            return redirect()->route('accounting.others');
-
+        foreach($this->income_others_id as $k => $item){
+            $temp = IncomeOthersCoa::find($item);
+            $temp->coa_id = $this->coa_id_temp[$k];
+            $temp->description = $this->description_temp[$k];
+            $temp->debit = $this->debit_temp[$k]?$this->debit_temp[$k]:0;
+            $temp->kredit = $this->kredit_temp[$k]?$this->kredit_temp[$k]:0;
+            $temp->save();
         }
+
         $this->validate($arr_validate,$arr_validate_msg);
        
-        $no_voucher = generate_no_voucer_journal("AR");
-        $this->data->no_voucher = $no_voucher;
-        $this->data->status = 1;
-        $this->data->save();
+        if($this->is_save_as_draft==false){
+            $no_voucher = generate_no_voucer_journal("AR");
+            $this->data->no_voucher = $no_voucher;
+            $this->data->status = 1;
+            $this->data->save();
+        }
 
         foreach($this->add_coas as $k => $item){
+            if($this->coa_id[$k]=="") continue;
             IncomeOthersCoa::insert([
                 'income_id'=>$this->data->id,
                 'coa_id'=>$this->coa_id[$k],
                 'description'=>$this->description[$k],
-                'debit'=>$this->debit[$k],
-                'kredit'=>$this->kredit[$k]
-            ]);
-
-            Journal::insert([
-                'coa_id'=>$this->coa_id[$k],
-                'no_voucher'=>$no_voucher,
-                'date_journal'=>date('Y-m-d'),
-                'kredit'=>$this->kredit[$k],
-                'debit'=>$this->debit[$k],
-                'description'=>$this->description[$k],
-                'transaction_id'=>$this->data->id,
-                'transaction_table'=>'income',
-                'saldo' => $this->debit[$k] ? $this->debit[$k] : $this->kredit[$k]
+                'debit'=>$this->debit[$k]?$this->debit[$k]:0,
+                'kredit'=>$this->kredit[$k]?$this->kredit[$k]:0
             ]);
         }
 
-        // Journal::insert(['coa_id'=>152,'no_voucher'=>$no_voucher,'date_journal'=>date('Y-m-d'),'debit'=>$this->data->nominal,'transaction_id'=>$this->data->id,'transaction_table'=>'income']);
+        if($this->is_save_as_draft==false){
+            foreach(IncomeOthersCoa::where('income_id',$this->data->id)->get() as $item){
+                Journal::insert([
+                    'coa_id'=>$item->coa_id,
+                    'no_voucher'=>$this->data->no_voucher,
+                    'date_journal'=>date('Y-m-d'),
+                    'kredit'=>$item->kredit,
+                    'debit'=>$item->debit,
+                    'description'=>$item->description,
+                    'transaction_id'=>$this->data->id,
+                    'transaction_table'=>'income',
+                    'saldo' => $item->debit ? $item->debit : $item->kredit
+                ]);
+            }
+        }
 
         session()->flash('message-success',__('Data has been successfully saved'));
         

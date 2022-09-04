@@ -106,6 +106,8 @@ class InsertSettle extends Component
                if($income){
                     $transaction_item->dn = $income->reference_no;
                     $transaction_item->description = $income->description;
+
+                    $bank_book_item = BankBook::find($this->transaction_ids[$k]);
             
                     $income_nominal = $income->outstanding_balance ? $income->outstanding_balance : $income->nominal;
                     $income->outstanding_balance = $income_nominal - $this->amounts[$k];
@@ -113,6 +115,7 @@ class InsertSettle extends Component
                     $income->status = ($income->outstanding_balance != 0 ? 3 : 2);
                     $income->bank_book_transaction_id = $transaction->id;
                     $income->settle_date = date('Y-m-d');
+                    if($bank_book_item) $income->reference_date = $bank_book_item->created_at;
                     $income->save();
 
                     $line_bussines = $line_bussines = isset($income->uw->line_bussines) ? $income->uw->line_bussines : '';

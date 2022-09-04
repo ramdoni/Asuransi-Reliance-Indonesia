@@ -58,7 +58,7 @@
                                                     @endforeach
                                                 </select>
                                             </div>
-                                            @error('coa_id.'.$k)
+                                            @error('coa_id_temp.'.$k)
                                                 <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
                                             @enderror
                                         </td>

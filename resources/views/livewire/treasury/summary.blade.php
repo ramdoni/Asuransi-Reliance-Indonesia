@@ -29,7 +29,7 @@
                             <tr style="background:#eee">
                                 <th>Bank</th>
                                 @foreach($summary as $item)
-                                    <th>{{$item->date_summary}}</th>
+                                    <th>{{date('d/m/Y',strtotime($item->date_summary))}}</th>
                                 @endforeach
                             </tr>
                         </thead>
@@ -37,7 +37,7 @@
                             @foreach($summary as $item)
                                 <tr>
                                     <td>{{isset($item->bank->owner) ? $item->bank->owner : '-'}}</td>
-                                    <td>{{format_idr($item->amount)}}</td>
+                                    <td>{{$item->amount ? format_idr($item->amount) : '-' }}</td>
                                 </tr>
                             @endforeach
                         </tbody>

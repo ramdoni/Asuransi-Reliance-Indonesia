@@ -18,6 +18,7 @@
                     <th>No</th>                                    
                     <th>Status</th>                                          
                     <th>Created Date</th>                                    
+                    <th>Transaction Date</th>                                    
                     <th>Payment Date</th>
                     <th>No Voucher</th>          
                     <th>Transaction Number</th>          
@@ -44,6 +45,7 @@
                         </a>
                     </td>
                     <td>{{date('d M Y', strtotime($item->created_at))}}</td>
+                    <td>{{$item->reference_date ? date('d M Y', strtotime($item->reference_date)) : '-'}}</td>
                     <td>{{$item->payment_date ? date('d M Y', strtotime($item->payment_date)) : '-'}}</td>
                     <td>{{$item->no_voucher ? $item->no_voucher : '-'}}</td>
                     <td>{{$item->reference_no ? $item->reference_no : '-'}}</td>

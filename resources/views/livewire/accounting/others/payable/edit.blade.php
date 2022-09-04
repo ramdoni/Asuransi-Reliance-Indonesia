@@ -43,9 +43,49 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @php($num=1)
+                            @foreach($data->expense_other_coa as $k => $item_other)
+                                <tr>
+                                    <td>{{$num}}</td>
+                                    <td>
+                                        <div wire:ignore>
+                                            <select class="form-control select2" wire:model="coa_id_temp.{{$k}}">
+                                                <option value=""> --- Select --- </option>
+                                                @foreach($coa_groups as $group)
+                                                    <optgroup label="{{isset($group->name) ? $group->name : ''}}">
+                                                        @foreach($group->coa as $coa)
+                                                            <option value="{{$coa->id}}">{{$coa->name}} ({{$coa->code}})</option>
+                                                        @endforeach
+                                                    </optgroup>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        @error('coa_id_temp.'.$k)
+                                            <ul class="parsley-errors-list filled" id="parsley-id-29"><li class="parsley-required">{{ $message }}</li></ul>
+                                        @enderror
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" wire:model="description_temp.{{$k}}" />
+                                    </td>
+                                    <td>
+                                        <input type="number" class="form-control text-right" wire:model="debit_temp.{{$k}}" />
+                                    </td>
+                                    <td>
+                                        <input type="number" class="form-control text-right" wire:model="kredit_temp.{{$k}}" />
+                                    </td>
+                                    <td>
+                                        <a href="javascript:void(0)" wire:loading.remove wire:target="delete_temp({{$k}})" wire:click="delete_temp({{$k}})" class="text-danger"><i class="fa fa-trash"></i></a>
+                                        <span wire:loading wire:target="delete_temp({{$k}})">
+                                            <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                                            <span class="sr-only">{{ __('Loading...') }}</span>
+                                        </span>
+                                    </td>
+                                </tr>
+                                @php($num++)
+                            @endforeach
                             @foreach($add_coas as $k => $item)
                                 <tr>
-                                    <td>{{$k+1}}</td>
+                                    <td>{{$num}}</td>
                                     <td>
                                         <div wire:ignore>
                                             <select class="form-control select2" id="coa_id.{{$k}}">
@@ -80,6 +120,7 @@
                                         </span>
                                     </td>
                                 </tr>
+                                @php($num++)
                             @endforeach
                             <tfoot style="background: #eee;">
                                 <tr>
@@ -100,11 +141,11 @@
                             </tr>
                         </tbody>
                     </table>
-                    
                     <hr>
                     <a href="javascript:void0()" onclick="history.back()"><i class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
-                    <button type="submit" class="ml-3 btn btn-primary"><i class="fa fa-save"></i> {{ __('Submit') }}</button>
-                    <span wire:loading wire:target="save">
+                    <a href="javascript:void(0)"  wire:loading.remove wire:target="save_as_draft,save" wire:click="save_as_draft" class="ml-3 btn btn-warning">Save as Draft</a>
+                    <button type="submit" wire:loading.remove wire:target="save_as_draft,save" class="ml-3 btn btn-primary"><i class="fa fa-save"></i> {{ __('Submit') }}</button>
+                    <span wire:loading wire:target="save,save_as_draft">
                         <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
                         <span class="sr-only">{{ __('Loading...') }}</span>
                     </span>
@@ -113,7 +154,6 @@
         </div>
     </div>
 </div>
-
 @push('after-scripts')
     <link rel="stylesheet" href="{{ asset('assets/vendor/select2/css/select2.min.css') }}"/>
     <script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
