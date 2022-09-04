@@ -45,6 +45,9 @@ class GenerateBankSummary extends Command
             foreach($bank_book as $item){
                 if($item->group_payment_date=="") continue;
 
+                $find = BankBooksSummary::where('date_summary',$item->group_payment_date)->first->first();
+                if($find) continue;
+
                 $data = new BankBooksSummary();
                 $data->date_summary = $item->group_payment_date;
                 $data->debit = BankBook::whereDate('payment_date',$item->group_payment_date)->where(['type'=>'R','from_bank_id'=>$bank->id])->sum('amount');

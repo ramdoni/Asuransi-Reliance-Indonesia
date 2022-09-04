@@ -6,13 +6,28 @@
             <div class="body">
                 <div class="row">
                     <div class="col-md-2">
-                        <select class="form-control">
+                        <select class="form-control" wire:model="filter_year">
                             <option value=""> -- Year -- </option>
+                            @foreach($years as $item)
+                                <option>{{$item->year}}</option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <select class="form-control">
+                        <select class="form-control" wire:model="filter_month">
                             <option value=""> -- Month -- </option>
+                            <option value="1">Januari</option>
+                            <option value="2">Februari</option>
+                            <option value="3">Maret</option>
+                            <option value="4">April</option>
+                            <option value="5">Mei</option>
+                            <option value="6">Juni</option>
+                            <option value="7">Juli</option>
+                            <option value="8">Agustus</option>
+                            <option value="9">September</option>
+                            <option value="10">Oktober</option>
+                            <option value="11">November</option>
+                            <option value="12">Desember</option>
                         </select>
                     </div>
                     <div class="col-md-8">
@@ -29,15 +44,30 @@
                             <tr style="background:#eee">
                                 <th>Bank</th>
                                 @foreach($summary as $item)
-                                    <th>{{date('d/m/Y',strtotime($item->date_summary))}}</th>
+                                    <th class="text-right">{{date('d/m/Y',strtotime($item->date_summary))}}</th>
                                 @endforeach
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($summary as $item)
+                            @foreach($bank as $item)
                                 <tr>
-                                    <td>{{isset($item->bank->owner) ? $item->bank->owner : '-'}}</td>
-                                    <td>{{$item->amount ? format_idr($item->amount) : '-' }}</td>
+                                    <td>{{$item->bank}} - {{$item->owner}}</td>
+                                    @foreach($summary as $sum)
+                                        <td class="text-right">
+                                            @php($amount=$item->summary->where('date_summary',$sum->date_summary)->first())
+                                            @if($amount)
+                                                @if($amount->debit and $amount->kredit)
+                                                    {{format_idr($amount->debit - $amount->kredit)}}
+                                                @elseif($amount->debit and $amount->kredit==0)
+                                                    {{format_idr($amount->debit)}}
+                                                @elseif($amount->debit==0 and $amount->kredit)
+                                                    -{{format_idr($amount->kredit)}}
+                                                @endif
+                                            @else
+                                                -
+                                            @endif
+                                        </td>
+                                    @endforeach
                                 </tr>
                             @endforeach
                         </tbody>
