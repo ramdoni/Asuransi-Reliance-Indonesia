@@ -18,7 +18,6 @@
                             @foreach($data->others_payment as $k => $item)
                                 <tr>
                                     <td>{{$k+1}}</td>
-                                   
                                     <td>{{$item->description}}</td>
                                     <td class="text-right">{{format_idr($item->payment_amount)}}</td>
                                 </tr>

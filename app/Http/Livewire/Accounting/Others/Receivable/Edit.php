@@ -42,7 +42,7 @@ class Edit extends Component
 
     public function delete_temp($k)
     {
-        $temp = IncomeOthersCoa::find($this->income_others_id[$k]);
+        IncomeOthersCoa::find($this->income_others_id[$k])->delete();
     }
 
     public function delete($k)
