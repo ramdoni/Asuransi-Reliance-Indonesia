@@ -5,7 +5,7 @@
         <div class="card">
             <div class="body">
                 <div class="row">
-                    <div class="col-md-2">
+                    <div class="col-md-2" wire:ignore>
                         <select class="form-control" wire:model="filter_year">
                             <option value=""> -- Year -- </option>
                             @foreach($years as $item)
