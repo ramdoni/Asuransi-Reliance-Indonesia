@@ -114,3 +114,15 @@
 <div class="modal fade" wire:ignore.self id="modal_detail_voucher" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     @livewire('expense-reinsurance.detail-voucher')
 </div>
+
+<div class="modal fade" wire:ignore.self id="modal_show_double" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    @livewire('expense-claim.check-double')
+</div>
+
+@push('after-scripts')
+    <script>
+        Livewire.on('check-double',()=>{
+            $("#modal_show_double").modal("show");
+        });
+    </script>
+@endpush
