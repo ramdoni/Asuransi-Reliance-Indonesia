@@ -10,6 +10,7 @@
                             <thead>
                                 <tr style="background: #eee;">
                                     <th style="width:10px">No</th>
+                                    <th>Date</th>
                                     <th>Description</th>
                                     <th class="text-right">Amount</th>
                                 </tr>
@@ -18,12 +19,14 @@
                             @foreach($data->others_payment as $k => $item)
                                 <tr>
                                     <td>{{$k+1}}</td>
+                                    <td>{{$item->transaction_date ? date('d-F-Y',strtotime($item->transaction_date)) : '-'}}</td>
                                     <td>{{$item->description}}</td>
                                     <td class="text-right">{{format_idr($item->payment_amount)}}</td>
                                 </tr>
                                 @php($total+= $item->payment_amount)
                             @endforeach
                             <tr  style="background: #eee;">
+                                <th></th>
                                 <th></th>
                                 <th class="text-right">Total</th>
                                 <th class="text-right">{{format_idr($total)}}</th>

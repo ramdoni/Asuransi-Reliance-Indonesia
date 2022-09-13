@@ -34,13 +34,19 @@
                                     @enderror
                                 </div>
                             </div> --}}
-                            <div class="col-md-8">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>{{ __('Date') }}</label>
+                                    <input type="date" class="form-control" wire:model="add_payment_date.{{$k}}" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label>{{ __('Description') }}</label>
                                     <input type="text" class="form-control" wire:model="add_payment_description.{{$k}}" />
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="form-group">
                                     <label class="text-right">{{ __('Amount (Rp)') }}</label>
                                     <input type="text" {{$is_readonly?'disabled':''}} class="form-control format_number text-right" wire:ignore wire:model="add_payment_amount.{{$k}}" />

@@ -9,7 +9,7 @@ class Insert extends Component
 {
     public $from_bank_account_id,$type=1,$no_voucher,$client,$reference_type,$reference_no,$reference_date,$description,$description_payment,$nominal,$outstanding_balance=0,$payment_date,$payment_amount=0,$transaction_type;
     public $is_readonly=false,$to_bank_account_id,$is_submit=false;
-    public $add_payment,$add_payment_id,$add_payment_amount,$add_payment_description,$add_payment_transaction_type,$data,$bank_charges;
+    public $add_payment,$add_payment_id,$add_payment_amount,$add_payment_description,$add_payment_transaction_type,$data,$bank_charges,$add_payment_date;
     protected $listeners = ['emit-add-bank'=>'emitAddBank'];
     public function render()
     {
@@ -25,6 +25,7 @@ class Insert extends Component
         $this->add_payment_amount[]=0;
         $this->add_payment_description[]='';
         $this->add_payment_transaction_type[]='';
+        $this->add_payment_date[]='';
     }
     public function updated($propertyName)
     {
@@ -54,6 +55,7 @@ class Insert extends Component
             $validate_msg["add_payment_amount.{$k}.not_in"] = 'The Payment Amount field is required.';
             $validate_msg["add_payment_amount.{$k}.required"] = 'The Payment Amount field is required.';
             $validate_msg["add_payment_description.{$k}.required"] = 'The Description field is required.';
+            $validate_msg["add_payment_date.{$k}.required"] = 'Date field is required.';
         }
         $this->validate($validate,$validate_msg);
                 
@@ -83,6 +85,7 @@ class Insert extends Component
             $ex_payment->payment_amount = replace_idr($this->add_payment_amount[$k]);
             $ex_payment->transaction_type = $this->add_payment_transaction_type[$k];
             $ex_payment->description = $this->add_payment_description[$k];
+            $ex_payment->transaction_date = $this->add_payment_date[$k];
             $ex_payment->save();    
         }
         
@@ -98,6 +101,7 @@ class Insert extends Component
         $this->add_payment_amount[] = 0;
         $this->add_payment_description[] = '';
         $this->add_payment_transaction_type[] = '';
+        $this->add_payment_date[] = '';
         $this->emit('init-form');
     }
     public function delete($k)
@@ -106,6 +110,7 @@ class Insert extends Component
         unset($this->add_payment_amount[$k]);
         unset($this->add_payment_description[$k]);
         unset($this->add_payment_transaction_type[$k]);
+        unset($this->add_payment_date[$k]);
         $this->emit('init-form');
         $this->calculate();
     }
