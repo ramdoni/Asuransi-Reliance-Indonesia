@@ -37,7 +37,7 @@
                                 <td>{{$item->no_rekening}}</td>
                                 <td>{{$item->owner}}</td>
                                 <td>{{$item->cabang}}</td>
-                                <td>{{format_idr($item->open_balance)}}</td>
+                                <td>{{$item->open_balance_last? format_idr($item->open_balance_last) : format_idr($item->open_balance)}}</td>
                                 <td>{{isset($item->coa->name)?$item->coa->code.' - '.$item->coa->name : ''}}</td>
                                 <td class="text-center">
                                     @if($item->status==0 || $item->status=="")

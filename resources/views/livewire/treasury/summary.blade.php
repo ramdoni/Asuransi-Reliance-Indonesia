@@ -51,18 +51,12 @@
                         <tbody>
                             @foreach($bank as $item)
                                 <tr>
-                                    <td>{{$item->bank}} - {{$item->owner}}</td>
+                                    <td>{{$item->no_rekening}} {{$item->bank}} - {{$item->owner}}</td>
                                     @foreach($summary as $sum)
                                         <td class="text-right">
                                             @php($amount=$item->summary->where('date_summary',$sum->date_summary)->first())
                                             @if($amount)
-                                                @if($amount->debit and $amount->kredit)
-                                                    {{format_idr($amount->debit - $amount->kredit)}}
-                                                @elseif($amount->debit and $amount->kredit==0)
-                                                    {{format_idr($amount->debit)}}
-                                                @elseif($amount->debit==0 and $amount->kredit)
-                                                    -{{format_idr($amount->kredit)}}
-                                                @endif
+                                               {{format_idr($amount->amount)}}
                                             @else
                                                 -
                                             @endif

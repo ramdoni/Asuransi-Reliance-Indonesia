@@ -110,7 +110,7 @@
                                     <td>{{$item->no_rekening}}</td>
                                     <td>{{$item->owner}}</td>
                                     <td>{{$item->cabang}}</td>
-                                    <td>{{format_idr($item->open_balance)}}</td>
+                                    <td>{{$item->open_balance_last? format_idr($item->open_balance_last) : format_idr($item->open_balance)}}</td>
                                     <td>{{$item->active_date?date('Y-m-d',strtotime($item->active_date)):'-'}}</td>
                                     <td>{{isset($item->coa->name)?$item->coa->code.' - '.$item->coa->name : ''}}</td>
                                     <td>
