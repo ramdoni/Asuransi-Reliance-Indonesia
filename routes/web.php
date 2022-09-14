@@ -113,13 +113,14 @@ Route::group(['middleware' => ['auth','access:3']], function(){
     Route::get('accounting/others',App\Http\Livewire\Accounting\Others::class)->name('accounting.others');
     Route::get('account/others/payable/{data}',App\Http\Livewire\Accounting\Others\Payable\Edit::class)->name('accounting.others.payable');
     Route::get('account/others/receivable/{data}',App\Http\Livewire\Accounting\Others\Receivable\Edit::class)->name('accounting.others.receivable');
+    Route::get('income-statement',App\Http\Livewire\IncomeStatement\Index::class)->name('income-statement');
 });
 
 // Finance
 Route::group(['middleware' => ['auth','access:2']], function(){    
     // Route::get('trial-balance',App\Http\Livewire\TrialBalance\Index::class)->name('trial-balance');
     // Route::get('cash-flow',App\Http\Livewire\CashFlow\Index::class)->name('cash-flow');
-    Route::get('income-statement',App\Http\Livewire\IncomeStatement\Index::class)->name('income-statement');
+    // Route::get('income-statement',App\Http\Livewire\IncomeStatement\Index::class)->name('income-statement');
     Route::get('balance-sheet',App\Http\Livewire\BalanceSheet\Index::class)->name('balance-sheet');
     Route::get('konven',App\Http\Livewire\Konven\Index::class)->name('konven');
     Route::get('konven/underwriting/detail/{id}',App\Http\Livewire\Konven\UnderwritingDetail::class)->name('konven.underwriting.detail');

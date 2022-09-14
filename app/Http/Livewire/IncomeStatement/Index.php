@@ -3,17 +3,27 @@
 namespace App\Http\Livewire\IncomeStatement;
 
 use Livewire\Component;
+use App\Models\CoaGroup;
+use App\Models\IncomeStatement;
 
 class Index extends Component
 {
-    public $data;
+    public $data,$tahun;
     public function render()
     {
-        return view('livewire.income-statement.index');
+        $period = IncomeStatement::where('tahun',$this->tahun)->groupBy('bulan')->orderBy('bulan','ASC')->get();
+
+        $data_arr = [];
+        foreach(IncomeStatement::where('tahun',$this->tahun)->get() as $item){
+            $data_arr[$item->tahun][$item->bulan][$item->coa_id] = $item->amount;
+        }
+
+        return view('livewire.income-statement.index')->with(['data_arr'=>$data_arr,'period'=>$period]);
     }
 
     public function mount()
     {
-        $this->data = \App\Models\Journal::groupBy('coa_id')->where('transaction_table','income')->get();
+        $this->tahun = date('Y');
+        $this->data = CoaGroup::with('coa')->get();
     }
 }

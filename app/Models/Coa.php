@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Journal;
+use App\Models\IncomeStatement;
 
 class Coa extends Model
 {
@@ -28,5 +29,10 @@ class Coa extends Model
     public function journal()
     {
         return $this->hasMany(Journal::class,'coa_id','id');
+    }
+
+    public function income_statement()
+    {
+        return $this->hasOne(IncomeStatement::class,'coa_id','id');
     }
 }

@@ -1,56 +1,61 @@
-@section('title', 'Trial Balance')
-@section('parentPageTitle', 'Home')
-
+@section('title', 'Accounting')
+@section('parentPageTitle', 'Income Statement')
 <div class="clearfix row">
     <div class="col-lg-12">
         <div class="card">
             <div class="header row">
-                <div class="col-md-2">
-                    <select class="form-control" wire:model="coa_id">
-                        <option value=""> --- COA --- </option>
-                        @foreach(\App\Models\Coa::orderBy('name','ASC')->get() as $k=>$i)
-                        <option value="{{$i->id}}">{{$i->name}} / {{$i->code}}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="pl-0 col-md-2">
-                    <input type="text" class="form-control" wire:model="keyword" placeholder="Searching..." />
-                </div>
-                <div class="px-0 col-md-1">
-                    <select class="form-control" wire:model="year">
+                <div class="col-md-1">
+                    <select class="form-control" wire:model="tahun">
                         <option value=""> -- Year -- </option>
-                        @foreach(\App\Models\Journal::select( DB::raw( 'YEAR(date_journal) AS year' ))->groupBy('year')->get() as $i)
-                        <option>{{$i->year}}</option>
+                        @foreach(\App\Models\IncomeStatement::groupBy('tahun')->get() as $i)
+                            @if($i->tahun=="") @continue @endif
+                            <option>{{$i->tahun}}</option>
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-2">
-                    <select class="form-control" wire:model="month">
-                        <option value=""> --- Month --- </option>
-                        @foreach(month() as $k=>$i)
-                        <option value="{{$k}}">{{$i}}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="px-0 col-md-4">
-                    <a href="javascript:void(0)" class="btn btn-info" wire:click="downloadExcel"><i class="fa fa-download"></i> Download Excel</a>
+                <div class="col-md-3">
+                    <span wire:loading>
+                        <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                        <span class="sr-only">{{ __('Loading...') }}</span>
+                    </span>
                 </div>
             </div>
             <div class="pt-0 body">
                 <div class="table-responsive">
-                    <table class="table table-striped m-b-0 c_list">
-                        <thead>
-                            <tr>       
-                                <th>Key</th>                                    
-                                <th>Description</th>          
-                            </tr>
-                        </thead>
+                    <table class="table  m-b-0 c_list">
                         <tbody>
-                            @foreach($data as $k => $item)
-                            <tr>
-                                <td>{{isset($item->coa->code)?$item->coa->code:''}}</td>
-                                <td>{{isset($item->coa->name)?$item->coa->name:''}}</td>
+                            <tr style="background: #eee;">
+                                <th>Keterangan</th>
+                                @foreach($period as $item)
+                                    <th class="text-right">{{date('M', mktime(0, 0, 0, $item->bulan, 10))}}-{{$tahun}}</th>
+                                @endforeach
                             </tr>
+                            @foreach($data as $group)
+                                <tr>
+                                    <th>{{$group->name}}</th>
+                                </tr>
+                                @foreach($period as $item)
+                                    @php($total[$group->id][$tahun][$item->bulan] = 0)
+                                @endforeach
+                                @foreach($group->coa as $coa)
+                                    <tr>
+                                        <td style="padding-left:20px;">{{$coa->name}}</td>
+                                        
+                                        @foreach($period as $item)
+                                            <td class="text-right">{{isset($data_arr[$tahun][$item->bulan][$coa->id])?format_idr($data_arr[$tahun][$item->bulan][$coa->id]):0}}</td>
+                                            @php($total[$group->id][$tahun][$item->bulan] +=isset($data_arr[$tahun][$item->bulan][$coa->id])?$data_arr[$tahun][$item->bulan][$coa->id]:0)
+                                        @endforeach
+                                    </tr>
+                                @endforeach
+                                <tr>
+                                    <th>Total {{$group->name}}</th>
+                                    @foreach($period as $item)
+                                        <th class="text-right">{{@format_idr($total[$group->id][$tahun][$item->bulan])}}</th>
+                                    @endforeach
+                                </tr>
+                                <tr>
+                                    <td colspan="2">&nbsp;</td>
+                                </tr>
                             @endforeach
                         </tbody>
                     </table>

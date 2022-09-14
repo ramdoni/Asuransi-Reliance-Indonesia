@@ -85,7 +85,7 @@
                             <li><a href="{{ route('general-ledger.index') }}" class="text-info px-1 icon-menu"> General Ledger </a></li>
                             <li><a href="{{route('cashflow.index')}}" class="text-info px-1 icon-menu"> Cashflow </a></li>
                             <li><a href="{{route('trial-balance.index')}}" class="text-info px-1 icon-menu"> Trial Balance </a></li>
-                            <li><a href="#" class="text-info px-1 icon-menu"> Income Statement </a></li>
+                            <li><a href="{{route('income-statement')}}" class="text-info px-1 icon-menu"> Income Statement </a></li>
                             <li><a href="#" class="text-info px-1 icon-menu"> Balance Sheet </a></li>
                             <li><a href="{{route('accounting.others')}}" class="text-info px-1 icon-menu"> Others </a></li>
                         @endif
