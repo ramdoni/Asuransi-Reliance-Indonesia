@@ -34,12 +34,12 @@
         </div>
     </div>
     <div class="mt-3">
-        <span class="alert alert-info" title="Unidentity" wire:click="$set('status',0)">Open : {{$total_unidentity}}</span> 
-        <span class="alert alert-info" title="Unidentity" wire:click="$set('status',1)">Post : {{$total_settle}}</span> 
-        <span class="alert alert-info" title="Opening Balance">Opening Balance : {{format_idr($opening_balance)}}</span>
-        <span class="alert alert-info" title="Payable">Payable : {{format_idr($total_payable)}}</span>
-        <span class="alert alert-success" title="Receivable">Receivable : {{format_idr($total_receivable)}}</span>
-        <span class="alert alert-secondary" title="Balance">Balance : {{format_idr($opening_balance - $total_payable + $total_receivable)}}</span> 
+        <span class="alert alert-info" title="Unidentity" wire:click="$set('status',0)">Open : {{isset($total_unidentity) ? $total_unidentity : '-'}}</span> 
+        <span class="alert alert-info" title="Unidentity" wire:click="$set('status',1)">Post : {{isset($total_settle) ? $total_settle : '-'}}</span> 
+        <span class="alert alert-info" title="Opening Balance">Opening Balance : {{isset($opening_balance) ? format_idr($opening_balance) : '-'}}</span>
+        <span class="alert alert-info" title="Payable">Payable : {{isset($total_payable) ? format_idr($total_payable) : '-'}}</span>
+        <span class="alert alert-success" title="Receivable">Receivable : {{isset($total_receivable) ? format_idr($total_receivable) : '-'}}</span>
+        <span class="alert alert-secondary" title="Balance">Balance : {{isset($total_receivable) ? format_idr($opening_balance - $total_payable + $total_receivable) : '-   '}}</span> 
     </div>
     <div class="table-responsive">
         @livewire('bank-book.insert',['data'=>$data])
@@ -61,64 +61,56 @@
                 </tr>
             </thead>
             <tbody>
-                @php($num=$lists->firstItem())
-                @foreach($lists as $item)
-                    <tr>
-                        <td>{{$num}}</td>
-                        <td>{{$item->no_voucher}}</td>
-                        <td>{{date('d-m-Y',strtotime($item->created_at))}}</td>
-                        <td>
-                            @livewire('bank-book.editable',['data'=> $item,'field'=>'payment_date'],key($item->id.time().'1'))
-                        </td>
-                        <td>{{$item->date_pairing?calculate_aging($item->date_pairing):calculate_aging(date('Y-m-d',strtotime($item->payment_date)))}}</td>
-                        <td class="text-center">
-                            @if($item->status==0)
-                                <span class="badge badge-warning">Open</span>
-                            @elseif($item->status==2)
-                                <span class="badge badge-danger">On Hold</span>
-                            @else
-                                <span class="badge badge-success">Post</span>
-                            @endif
-                        </td>
-                        <td class="text-center">@livewire('bank-book.editable',['data'=> $item,'field'=>'type'],key($item->id.time().'2'))</td>
-                        <!-- <td class="text-center">{{ $item->propose }}</td> -->
-                        <td class="text-center">@livewire('bank-book.editable',['data'=> $item,'field'=>'propose'],key($item->id.time().'5'))</td>
-                        <td>@livewire('bank-book.editable',['data'=> $item,'field'=>'amount'],key($data->id+$item->id.time().'3'))</td>
-                        <td>@livewire('bank-book.editable',['data'=> $item,'field'=>'note'],key($data->id+$item->id.time().'4'))</td>
-                        <td>
-                            @if($item->status==0)
-                                <span wire:loading wire:target="delete({{$item->id}})">
-                                    <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
-                                    <span class="sr-only">{{ __('Loading...') }}</span>
-                                </span>
-                                <a href="javascript:void(0)" wire:loading.remove wire:target="delete" wire:click="delete({{$item->id}})" class="text-danger"><i class="fa fa-trash"></i></a>
-                            @endif
-                        </td>
-                    </tr>
-                    @foreach($item->adjustment as $k_a => $adjust)
+                @if(isset($lists))
+                    @php($num=$lists->firstItem())
+                    @foreach($lists as $item)
                         <tr>
-                            <td>{{$num}}.{{$k_a}}</td>
-                            <td>{{$adjust->no_voucher}}</td>
-                            <td>{{date('d-M-Y',strtotime($adjust->created_at))}}</td>
+                            <td>{{$num}}</td>
+                            <td>{{$item->no_voucher}}</td>
+                            <td>{{date('d-m-Y',strtotime($item->created_at))}}</td>
+                            <td>
+                                @livewire('bank-book.editable',['data'=> $item,'field'=>'payment_date'],key($item->id.time().'1'))
+                            </td>
+                            <td>{{$item->date_pairing?calculate_aging($item->date_pairing):calculate_aging(date('Y-m-d',strtotime($item->payment_date)))}}</td>
+                            <td class="text-center">
+                                @if($item->status==0)
+                                    <span class="badge badge-warning">Open</span>
+                                @elseif($item->status==2)
+                                    <span class="badge badge-danger">On Hold</span>
+                                @else
+                                    <span class="badge badge-success">Post</span>
+                                @endif
+                            </td>
+                            <td class="text-center">@livewire('bank-book.editable',['data'=> $item,'field'=>'type'],key($item->id.time().'2'))</td>
+                            <td class="text-center">@livewire('bank-book.editable',['data'=> $item,'field'=>'propose'],key($item->id.time().'5'))</td>
+                            <td>@livewire('bank-book.editable',['data'=> $item,'field'=>'amount'],key($data->id+$item->id.time().'3'))</td>
+                            <td>@livewire('bank-book.editable',['data'=> $item,'field'=>'note'],key($data->id+$item->id.time().'4'))</td>
+                            <td>
+                                @if($item->status==0)
+                                    <span wire:loading wire:target="delete({{$item->id}})">
+                                        <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                                        <span class="sr-only">{{ __('Loading...') }}</span>
+                                    </span>
+                                    <a href="javascript:void(0)" wire:loading.remove wire:target="delete" wire:click="delete({{$item->id}})" class="text-danger"><i class="fa fa-trash"></i></a>
+                                @endif
+                            </td>
                         </tr>
+                        @foreach($item->adjustment as $k_a => $adjust)
+                            <tr>
+                                <td>{{$num}}.{{$k_a}}</td>
+                                <td>{{$adjust->no_voucher}}</td>
+                                <td>{{date('d-M-Y',strtotime($adjust->created_at))}}</td>
+                            </tr>
+                        @endforeach
+                        @php($num++)
                     @endforeach
-                    @php($num++)
-                @endforeach
+                @endif
             </tbody>
         </table>
-        {{$lists->links()}}
+        {{isset($lists) ? $lists->links() : '-'}}
     </div>
     @push('after-scripts')
-        <script type="text/javascript" src="{{ asset('assets/vendor/daterange/moment.min.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('assets/vendor/daterange/daterangepicker.js') }}"></script>
-        <link rel="stylesheet" type="text/css" href="{{ asset('assets/vendor/daterange/daterangepicker.css') }}" />
         <script>
-            Livewire.on('update-url',(url)=>{
-                setTimeout(function(){
-                    window.history.pushState('', '', url);
-                });
-            })
-            
             $('.date_range_{{$data->id}}').daterangepicker({
                 opens: 'left'
             }, function(start, end, label) {
@@ -127,5 +119,4 @@
             });
         </script>
     @endpush
-
 </div>
