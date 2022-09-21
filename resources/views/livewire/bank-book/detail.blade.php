@@ -18,7 +18,7 @@
             <input type="number" class="form-control" wire:model="filter_amount" placeholder="Amount" />
         </div>
         <div class="col-md-1 pr-0">
-            <input type="text" class="form-control date_range_{{$data->id}}" placeholder="Date" />
+            <input type="text" class="form-control date_range" placeholder="Date" />
         </div>
         <div class="col-md-2">
             <a href="javascript:void(0)" class="mr-2" title="Reset filter" wire:click="reset_filter"><i class="fa fa-refresh"></i> Reset filter</a>
@@ -69,7 +69,7 @@
                             <td>{{$item->no_voucher}}</td>
                             <td>{{date('d-m-Y',strtotime($item->created_at))}}</td>
                             <td>
-                                @livewire('bank-book.editable',['data'=> $item,'field'=>'payment_date'],key($item->id.time().'1'))
+                                @livewire('bank-book.editable',['data'=> $item,'field'=>'payment_date'],key('payment_date_'.$item->id))
                             </td>
                             <td>{{$item->date_pairing?calculate_aging($item->date_pairing):calculate_aging(date('Y-m-d',strtotime($item->payment_date)))}}</td>
                             <td class="text-center">
@@ -111,7 +111,7 @@
     </div>
     @push('after-scripts')
         <script>
-            $('.date_range_{{$data->id}}').daterangepicker({
+            $('.date_range').daterangepicker({
                 opens: 'left'
             }, function(start, end, label) {
                 @this.set("date_from", start.format('YYYY-MM-DD'));

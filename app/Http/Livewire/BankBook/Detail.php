@@ -17,7 +17,7 @@ class Detail extends Component
     protected $listeners = ['refresh'=>'$refresh','set_active'=>'set_active'];
     public function render()
     {
-        if($this->data->id == $this->active){
+        if(isset($this->data->id) and $this->data->id == $this->active){
             $data = BankBook::with(['adjustment'])->where('from_bank_id',$this->data->id)->orderBy('id','DESC');
 
             if($this->filter_type) $data->where('type',$this->filter_type);
@@ -64,13 +64,13 @@ class Detail extends Component
         $this->data = BankAccount::find($id);
     }
 
-    public function mount($data,$active,$is_first)
+    public function mount($active)
     {
         // $this->data = $data;
         $this->active = $active;
         $this->generate_no_voucher = $this->type.str_pad((BankBook::count()+1),8, '0', STR_PAD_LEFT);
-        $this->opening_balance = $this->data->open_balance;
-        $this->is_first = $is_first;
+        // $this->opening_balance = $this->data->open_balance;
+        // $this->is_first = $is_first;
     }
 
     public function updated($propertyName)

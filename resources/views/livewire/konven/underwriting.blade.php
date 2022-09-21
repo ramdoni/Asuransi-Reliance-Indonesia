@@ -28,6 +28,10 @@
                                     @if($total_sync>0)
                                     <a href="javascript:void(0)" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal_confirm_sync" class="mb-2 btn btn-warning btn-sm"><i class="fa fa-refresh"></i> Sync {{$total_sync?"(".$total_sync.")" : "(0)"}}</a>
                                     @endif
+                                    <span wire:loading>
+                                        <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                                        <span class="sr-only">{{ __('Loading...') }}</span>
+                                    </span>
                                 </div>
                                 <div class="col-md-4 text-right">
                                     <h6>Sync : <span class="text-info">{{format_idr(\App\Models\KonvenUnderwriting::where('status',2)->count())}}</span>, Draft : <span class="text-warning">{{format_idr(\App\Models\KonvenUnderwriting::where('status',1)->count())}}</span>, Total : <span class="text-success">{{format_idr($data->total())}}</span></h6>

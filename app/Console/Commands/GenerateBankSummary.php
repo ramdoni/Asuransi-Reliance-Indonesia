@@ -44,7 +44,7 @@ class GenerateBankSummary extends Command
             $bank_book = BankBook::select('*',\DB::raw('date(payment_date) as group_payment_date'))->where('from_bank_id',$bank->id)->groupBy('group_payment_date')->get();
             $saldo = $bank->open_balance_last ? $bank->open_balance_last : $bank->open_balance;
 
-            if($saldo <0) continue; // saldo kosong skip
+            // if($saldo <0) continue; // saldo kosong skip
 
             foreach($bank_book as $item){
                 if($item->group_payment_date=="") continue;

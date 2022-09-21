@@ -4,19 +4,21 @@ namespace App\Http\Livewire\BankBook;
 
 use Livewire\Component;
 use App\Models\BankBook;
+use App\Models\BankAccount;
 
 class Insert extends Component
 {
     public $generate_no_voucher,$type,$data,$amount,$note,$payment_date,$propose,$bank_code;
+    protected $listeners = ['set_active'=>'set_active'];
 
     public function render()
     {
         return view('livewire.bank-book.insert');
     }
 
-    public function mount($data)
+    public function set_active($data)
     {
-        $this->data = $data;
+        $this->data = BankAccount::find($data);
         $this->generate_no_voucher = $this->type.$this->propose.str_pad((BankBook::count()+1),8, '0', STR_PAD_LEFT).$this->data->code;
         $this->payment_date = date('Y-m-d');
         $this->bank_code = $this->data->code;

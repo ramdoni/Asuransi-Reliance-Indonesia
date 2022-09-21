@@ -25,6 +25,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('generate:bank-summary')->dailyAt('23:59')->timezone('Asia/Jakarta');
+        $schedule->command('generate:income-statement')->dailyAt('23:30')->timezone('Asia/Jakarta');
     }
 
     /**

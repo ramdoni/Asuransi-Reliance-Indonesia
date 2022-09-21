@@ -23,11 +23,9 @@
                     </ul>
                 </div>
                 <div class="px-0 tab-content">
-                    @foreach(\App\Models\BankAccount::where('is_client',0)->where('status',1)->get() as $k=> $item)
-                        <div class="tab-pane {{$set_active==$item->id?'show active':''}}" id="bank-{{$item->id}}" x-data="{ insert:false }">
-                            @livewire('bank-book.detail',['data'=>$item,'active'=>$set_active,'is_first'=>$k],key($item->id))
-                        </div>
-                    @endforeach
+                    <div class="tab-pane show active" x-data="{ insert:false }">
+                        @livewire('bank-book.detail',['active'=>$set_active],key($item->id))
+                    </div>
                 </div>
             </div>
         </div>
