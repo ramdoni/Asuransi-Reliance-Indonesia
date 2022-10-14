@@ -13,10 +13,12 @@ class Receivable extends Component
     protected $paginationTheme = 'bootstrap';
     public function render()
     {
-        $data = Income::with('others_payment')->orderBy('id','desc')->where('is_others',1);
+        $data = Income::with('others_payment')->orderBy('id','desc')->where('is_others',1)
+                            ->whereHas('others_payment',function($query){
+                                if($this->keyword) $query->where('income_payments.description','LIKE',"%{$this->keyword}%");
+                            });
         
-        if($this->keyword) $data = $data->where('description','LIKE', "%{$this->keyword}%")
-                                        ->orWhere('no_voucher','LIKE',"%{$this->keyword}%")
+        if($this->keyword) $data->orWhere('no_voucher','LIKE',"%{$this->keyword}%")
                                         ->orWhere('reference_no','LIKE',"%{$this->keyword}%")
                                         ->orWhere('client','LIKE',"%{$this->keyword}%");
                                         

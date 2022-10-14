@@ -41,6 +41,8 @@ class Detail extends Component
             $u = clone $data;
             $settle = clone $data;
             $total = clone $data;
+            
+            $this->opening_balance = isset($this->data->open_balance) ? $this->data->open_balance : '0';
 
             return view('livewire.bank-book.detail')->with(['lists'=>$data->paginate(100), 
                                                             'total_unidentity'=>$u->where('status',0)->count(), 
@@ -69,7 +71,6 @@ class Detail extends Component
         // $this->data = $data;
         $this->active = $active;
         $this->generate_no_voucher = $this->type.str_pad((BankBook::count()+1),8, '0', STR_PAD_LEFT);
-        // $this->opening_balance = $this->data->open_balance;
         // $this->is_first = $is_first;
     }
 

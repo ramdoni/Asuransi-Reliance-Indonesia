@@ -39,7 +39,7 @@
                 </div>
                 <br />  
                 <div class="table-responsive">
-                    <table class="table hovered m-b-0 c_list" id="data_table">
+                    <table class="table table-hover m-b-0 c_list" id="data_table">
                         <thead>
                             <tr style="background:#eee">
                                 <th>Bank</th>

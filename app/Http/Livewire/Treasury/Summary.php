@@ -18,8 +18,8 @@ class Summary extends Component
         if($this->filter_year) $bank_book->whereYear('date_summary',$this->filter_year);
 
         $bank = BankAccount::with('summary')->where('is_client',0)->where('status',1)->get() ;
-        
-        return view('livewire.treasury.summary')->with(['summary'=>$bank_book->get(),'bank'=>$bank]);
+
+        return view('livewire.treasury.summary')->with(['summary'=>$bank_book->groupBy('date_summary')->get(),'bank'=>$bank]);
     }
 
     public function mount()

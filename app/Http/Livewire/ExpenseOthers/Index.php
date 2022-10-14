@@ -3,19 +3,23 @@
 namespace App\Http\Livewire\ExpenseOthers;
 
 use Livewire\Component;
+use App\Models\Expenses;
+use App\Models\ExpensePayment;
 
 class Index extends Component
 {
     public $keyword,$status,$type;
     public function render()
     {
-        $data = \App\Models\Expenses::orderBy('id','DESC')->where('is_others',1);
-        if($this->keyword) $data = $data->where(function($table){
-            $table->where('description','LIKE', "%{$this->keyword}%")
-            ->orWhere('no_voucher','LIKE',"%{$this->keyword}%")
-            ->orWhere('reference_no','LIKE',"%{$this->keyword}%")
-            ->orWhere('recipient','LIKE',"%{$this->keyword}%");
-        });
+        $data = Expenses::orderBy('id','DESC')->where('is_others',1)->with('others_payment')
+            ->whereHas('others_payment',function($query){
+                if($this->keyword) $query->where('expense_payments.description','LIKE',"%{$this->keyword}%");
+            });
+        if($this->keyword) $data->orWhere(function($table){
+                                        $table->orWhere('no_voucher','LIKE',"%{$this->keyword}%")
+                                        ->orWhere('reference_no','LIKE',"%{$this->keyword}%")
+                                        ->orWhere('recipient','LIKE',"%{$this->keyword}%");
+                                    });
         if($this->type) $data = $data->where('type',$this->type);
         if($this->status!="") $data = $data->where('status',$this->status);
         
@@ -30,8 +34,8 @@ class Index extends Component
     }
     public function delete($id)
     {
-        \App\Models\Expenses::find($id)->delete();
-        \App\Models\ExpensePayment::where('expense_id',$id)->delete();
+        Expenses::find($id)->delete();
+        ExpensePayment::where('expense_id',$id)->delete();
     }
     public function downloadExcel()
     {

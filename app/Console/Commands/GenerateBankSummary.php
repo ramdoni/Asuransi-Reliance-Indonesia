@@ -41,23 +41,27 @@ class GenerateBankSummary extends Command
     public function handle()
     {
         foreach(BankAccount::where('is_client',0)->where('status',1)->get() as $bank){
-            $bank_book = BankBook::select('*',\DB::raw('date(payment_date) as group_payment_date'))->where('from_bank_id',$bank->id)->groupBy('group_payment_date')->get();
-            $saldo = $bank->open_balance_last ? $bank->open_balance_last : $bank->open_balance;
+            $bank_book = BankBook::select('*',\DB::raw('date(payment_date) as group_payment_date'))
+            ->where(function($table)use($bank){
+                $table->where('to_bank_id',$bank->id)->orWhere('from_bank_id',$bank->id);
+            })->groupBy('group_payment_date')->orderBy('group_payment_date','ASC')->get();
 
-            // if($saldo <0) continue; // saldo kosong skip
-
+            $saldo = $bank->open_balance_last!=0 ? $bank->open_balance_last : $bank->open_balance;
+            
+            echo "\n================================================\nBANK- {$bank->id} : {$bank->bank}\n";
+            
             foreach($bank_book as $item){
                 if($item->group_payment_date=="") continue;
 
-                $find = BankBooksSummary::where('date_summary',$item->group_payment_date)->first();
+                $find = BankBooksSummary::where('date_summary',$item->group_payment_date)->where('bank_account_id',$bank->id)->first();
                 if($find) continue;
 
                 $data = new BankBooksSummary();
                 $data->amount_before = $saldo;
 
-                $debit = BankBook::whereDate('payment_date',$item->group_payment_date)->where(['type'=>'R','from_bank_id'=>$bank->id])->sum('amount');
+                $debit = BankBook::whereDate('payment_date',$item->group_payment_date)->where('type','R')->where('from_bank_id',$bank->id)->get()->sum('amount');
                 $saldo += $debit;
-                $kredit = BankBook::whereDate('payment_date',$item->group_payment_date)->where(['type'=>'P','from_bank_id'=>$bank->id])->sum('amount');
+                $kredit = BankBook::whereDate('payment_date',$item->group_payment_date)->where('type','P')->where('from_bank_id',$bank->id)->get()->sum('amount');
                 $saldo -= $kredit;
 
                 $data->date_summary = $item->group_payment_date;
@@ -67,8 +71,9 @@ class GenerateBankSummary extends Command
                 $data->amount = $saldo;
                 $data->save();
 
-                echo "Date : {$item->group_payment_date}\n";
+                echo "{$item->group_payment_date},";
             }
+            echo "\n";
 
             $bank->open_balance_last = $saldo;
             $bank->save();

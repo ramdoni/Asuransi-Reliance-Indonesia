@@ -12,11 +12,13 @@ class Index extends Component
     protected $paginationTheme = 'bootstrap',$export_data;
     public function render()
     {
-        $data = Income::orderBy('id','desc')->where('is_others',1);
+        $data = Income::orderBy('id','desc')->where('is_others',1)->with('others_payment')
+                        ->whereHas('others_payment',function($query){
+                            if($this->keyword) $query->where('income_payments.description','LIKE',"%{$this->keyword}%");
+                        });
         $received = clone $data;
         $outstanding = clone $data;
-        if($this->keyword) $data = $data->where('description','LIKE', "%{$this->keyword}%")
-                                        ->orWhere('no_voucher','LIKE',"%{$this->keyword}%")
+        if($this->keyword) $data->orWhere('no_voucher','LIKE',"%{$this->keyword}%")
                                         ->orWhere('reference_no','LIKE',"%{$this->keyword}%")
                                         ->orWhere('client','LIKE',"%{$this->keyword}%");
         if($this->unit) $data = $data->where('type',$this->unit);
