@@ -98,9 +98,8 @@ class Upload extends Component
                 $peserta->type = 1; // Claim Payable
                 $peserta->policy_id = isset($policy->id) ? $policy->id : 0;
                 $peserta->save();
-                
 
-                if(isset($this->line_bussines) and $this->type_data==2 and $is_double==0){
+                if(isset($this->line_bussines) and $this->type_data==1 and $is_double==0){
                     // generate coa
                     $no_voucher = generate_no_voucer_journal("AP");
                     

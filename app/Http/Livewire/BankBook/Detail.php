@@ -28,7 +28,7 @@ class Detail extends Component
                     $table->where('amount','<=',$max)->where('amount','>=',$min);
                 });
             if($this->filter_propose) $data->where('propose',$this->filter_propose);
-            if($this->date_from and $this->date_to) {
+            if($this->date_from and $this->date_to){
                 if($this->date_from == $this->date_to)
                     $data->whereDate('payment_date',$this->date_from);
                 else

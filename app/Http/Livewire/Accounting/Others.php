@@ -10,4 +10,9 @@ class Others extends Component
     {
         return view('livewire.accounting.others');
     }
+    
+    public function mount()
+    {
+        \LogActivity::add("Accounting Others");
+    }
 }

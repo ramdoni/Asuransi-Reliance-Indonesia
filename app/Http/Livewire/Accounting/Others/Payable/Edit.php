@@ -31,6 +31,7 @@ class Edit extends Component
             $this->debit_temp[$k] = $item->debit;
             $this->kredit_temp[$k] = $item->kredit;
         }
+        \LogActivity::add("Others Payable {$this->data->id}");
     }
 
     public function add()
