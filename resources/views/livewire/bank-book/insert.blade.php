@@ -1,6 +1,6 @@
 <div>
     @error('bank_code')
-        <ul class="parsley-errors-list filled pt-2" id="parsley-id-29"><li class="parsley-required">Bank Code harus diisi, edit <a href="{{route('bank-account-company.edit',['id'=>$data->id])}}">disini</a></li></ul>
+        <ul class="parsley-errors-list filled pt-2" id="parsley-id-29"><li class="parsley-required">Bank Code harus diisi</li></ul>
     @enderror
     <table class="table table-striped m-b-0 c_list mt-3">
         <thead>

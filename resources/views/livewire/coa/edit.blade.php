@@ -8,7 +8,7 @@
                 <form id="basic-form" method="post" wire:submit.prevent="save">
                     <div class="form-group">
                         <label>{{ __('COA Group') }}</label>
-                        <select class="form-control" wire:model="coa_group_id" disabled>
+                        <select class="form-control" wire:model="coa_group_id">
                             <option value=""> --- Select --- </option>
                             @foreach(\App\Models\CoaGroup::orderBy('name','ASC')->get() as $k =>$i)
                             <option value="{{$i->id}}">{{$i->name}} / {{$i->code}}</option>

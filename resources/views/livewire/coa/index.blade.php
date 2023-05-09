@@ -12,23 +12,29 @@
             <div class="pt-0 body">
                 <div class="table-responsive">
                     <table class="table table-striped m-b-0 c_list">
-                        @foreach(\App\Models\CoaGroup::orderBy('name')->get() as $group)
+                        @foreach(\App\Models\CoaGroup::with(['coa'])->orderBy('name')->get() as $group)
                             <tr>
                                 <th><a href="{{route('coa-group.edit',['id'=>$group->id])}}">{{$group->name}}</a></th>
                                 <th>{{$group->code}}</th>
                                 <th></th>
                                 <th class="text-right">Opening Balance</th>
                             </tr>
-                            @foreach(\App\Models\Coa::where('coa_group_id',$group->id)->get() as $k => $coa)
-                            <tr>
-                                <td><a href="{{route('coa.edit',['id'=>$coa->id])}}">{{$coa->name}}</a></td>
-                                <td>{{$coa->code}}</td>
-                                <td>{{$coa->code_voucher}}</td>
-                                <td class="text-right">
-                                    {{format_idr($coa->opening_balance)}}
-                                </td>
-                            </tr>
+                            @php($total=0)
+                            @foreach($group->coa as $k => $coa)
+                                <tr>
+                                    <td><a href="{{route('coa.edit',['id'=>$coa->id])}}">{{$coa->name}}</a></td>
+                                    <td>{{$coa->code}}</td>
+                                    <td>{{$coa->code_voucher}}</td>
+                                    <td class="text-right">{{format_idr($coa->opening_balance)}}</td>
+                                </tr>
+                                @php($total += $coa->opening_balance)    
                             @endforeach
+                            <tr>
+                                <th>Total {{$coa->name}}</th>
+                                <th></th>
+                                <th></th>
+                                <th class="text-right">{{format_idr($total)}}</th>
+                            </tr>
                             <tr><td colspan="6">&nbsp;</td></tr>
                         @endforeach
                     </table>

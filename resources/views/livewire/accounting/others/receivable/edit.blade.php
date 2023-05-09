@@ -32,6 +32,7 @@
                                 <th class="text-right">{{format_idr($total)}}</th>
                             </tr>
                         </table>
+                        <h6 class="mt-5">Assign COA</h6>
                         <table class="table">
                             <thead>
                                 <tr style="background: #eee;">

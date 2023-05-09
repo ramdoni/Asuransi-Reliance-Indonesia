@@ -12,7 +12,7 @@ class Index extends Component
     protected $paginationTheme = 'bootstrap';
     public function render()
     {
-        $data = \App\Models\Coa::orderBy('id','DESC');
+        $data = \App\Models\Coa::with(['group'])->orderBy('id','DESC');
         if($this->keyword) $data = $data->where('code','LIKE', '%'.$this->keyword.'%')
                                                     ->orWhere('name','LIKE', '%'.$this->keyword.'%')
                                                     ->orWhere('description','LIKE', '%'.$this->keyword.'%');

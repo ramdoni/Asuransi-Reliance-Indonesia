@@ -26,31 +26,30 @@
                         <tbody>
                             <tr style="background: #eee;">
                                 <th>Keterangan</th>
-                                @foreach($period as $item)
-                                    <th class="text-right">{{date('M', mktime(0, 0, 0, $item->bulan, 10))}}-{{$tahun}}</th>
+                                @foreach([1,2,3,4,5,6,7,8,9,10,11,12] as $item)
+                                    <th class="text-right" style="width:100px">{{date('M', mktime(0, 0, 0, $item, 10))}}-{{$tahun}}</th>
                                 @endforeach
                             </tr>
                             @foreach($data as $group)
                                 <tr>
                                     <th>{{$group->name}}</th>
                                 </tr>
-                                @foreach($period as $item)
-                                    @php($total[$group->id][$tahun][$item->bulan] = 0)
+                                @foreach([1,2,3,4,5,6,7,8,9,10,11,12] as $bulan)
+                                    @php($total[$group->id][$tahun][$bulan] = 0)
                                 @endforeach
                                 @foreach($group->coa as $coa)
                                     <tr>
                                         <td style="padding-left:20px;">{{$coa->name}}</td>
-                                        
-                                        @foreach($period as $item)
-                                            <td class="text-right">{{isset($data_arr[$tahun][$item->bulan][$coa->id])?format_idr($data_arr[$tahun][$item->bulan][$coa->id]):0}}</td>
-                                            @php($total[$group->id][$tahun][$item->bulan] +=isset($data_arr[$tahun][$item->bulan][$coa->id])?$data_arr[$tahun][$item->bulan][$coa->id]:0)
+                                        @foreach([1,2,3,4,5,6,7,8,9,10,11,12] as $bulan)
+                                            <td class="text-right">{{isset($data_arr[$tahun][$bulan][$coa->id])?format_idr($data_arr[$tahun][$bulan][$coa->id]):0}}</td>
+                                            @php($total[$group->id][$tahun][$bulan] += isset($data_arr[$tahun][$bulan][$coa->id])?$data_arr[$tahun][$bulan][$coa->id]:0)
                                         @endforeach
                                     </tr>
                                 @endforeach
-                                <tr>
+                                <tr style="background: #eee">
                                     <th>Total {{$group->name}}</th>
-                                    @foreach($period as $item)
-                                        <th class="text-right">{{@format_idr($total[$group->id][$tahun][$item->bulan])}}</th>
+                                    @foreach([1,2,3,4,5,6,7,8,9,10,11,12] as $bulan)
+                                        <th class="text-right">{{@format_idr($total[$group->id][$tahun][$bulan])}}</th>
                                     @endforeach
                                 </tr>
                                 <tr>

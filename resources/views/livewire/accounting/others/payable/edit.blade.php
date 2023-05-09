@@ -33,7 +33,7 @@
                             </tr>
                         </table>
                     @endif
-                    <hr />
+                    <h6 class="mt-5">Assign COA</h6>
                     <table class="table">
                         <thead>
                             <tr style="background: #eee;">
